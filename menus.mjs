@@ -26,7 +26,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const semBr = s => String(s || '').replace(/<br\s*\/?>/gi, ' ');        // descrição do dump traz <br> escrito: no Figma o texto é puro (v2, rodada 28)
 const CAT_CURTA = { 'Itens transportados': 'Transportado', 'Máquina Técnica': 'MT', 'Chamando a Pedra': 'Pedra', 'Edifícios do Habitat': 'Habitat', 'Materiais do Habitat': 'Habitat', 'Comida do Habitat': 'Habitat', 'Sementes do Habitat': 'Habitat' };
-const catCurta = s => CAT_CURTA[s] || s;                                  // o selo de categoria do detalhe do item (v2) é [max:12]
+const catCurta = s => tr(CAT_CURTA[s] || s);                                  // o selo de categoria do detalhe do item (v2) é [max:12]
 export const JANELAS = {
   pokemon:   { titulo: 'Pokémon', icone: 'pokebola', tecla: 'KeyP', sub: 'time e caixa' },
   mochila:   { titulo: 'Mochila', icone: 'mochila', tecla: 'KeyI', sub: 'itens e bolas' },
@@ -591,10 +591,10 @@ function rMochila(corpo){
   const aba = abas(lista.length ? lista : [{ id: '7', nome: 'Pokébola' }]);
   const itens = Object.entries(q).filter(([id]) => String(D.itens[id]?.t) === aba && q[id] > 0);
   const av = avisoMo && Date.now() < avisoMo.ate ? avisoMo : null;         // 17/09: o motivo/resultado do "Usar no parceiro" aparece aqui, não atrás da janela
-  const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(D.moedas?.[1] || 'Moeda')}</div>`
+  const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))}</div>`
     + (av ? `<div class="aviso-uso" style="margin:-2px 0 8px;font-size:13px;font-weight:700;color:${av.ok ? '#8ef58e' : '#ffd23a'}">${esc(tr(av.texto))}</div>` : '');
   if (!itens.length){ corpo.innerHTML = cab + '<div class="vazio">Nada aqui ainda. O Pokémart da cidade (fale com o vendedor) vende bolas e remédios; itens de missão chegam com as recompensas.</div>'; return; }
-  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(it.n)}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(it.d || D.tipos[it.t] || '')}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Usar no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Usar no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Usar no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
+  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || D.tipos[it.t] || ''))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Usar no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Usar no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Usar no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-bola]').forEach(b => b.onclick = () => { ctx.jogo.bolaSel = b.dataset.bola; ctx.gravarLS('bolaSel', ctx.jogo.bolaSel); render(); });
   corpo.querySelectorAll('[data-evoitem]').forEach(b => b.onclick = () => { fechar(); ctx.usarItemEvolucao?.(b.dataset.evoitem); });
   corpo.querySelectorAll('[data-usar]').forEach(b => b.onclick = () => { const id = b.dataset.usar; ctx.usarItem?.(id, D.itens[id]?.n || '', (txt, ok) => avisarMo(id, txt, ok)); render(); });   // a cura em si vive no index (usarItem), igual à dos atalhos; o aviso volta pra janela (17/09)
@@ -667,9 +667,9 @@ function itensMochila(){
   return Object.entries(q)
     .filter(([id, n]) => n > 0 && D.itens[id])
     .filter(([id]) => !tipos || tipos.includes(D.itens[id].t))
-    .filter(([id]) => !busca || (D.itens[id].n || '').toLowerCase().includes(busca))
+    .filter(([id]) => !busca || tr(D.itens[id].n || '').toLowerCase().includes(busca))
     .map(([id, n]) => ({ id, n, it: D.itens[id] }))
-    .sort((a, b) => (a.it.t - b.it.t) || String(a.it.n).localeCompare(String(b.it.n), 'pt-BR'));
+    .sort((a, b) => (a.it.t - b.it.t) || tr(String(a.it.n)).localeCompare(tr(String(b.it.n)), I18n.idioma() === 'en' ? 'en' : I18n.idioma() === 'es' ? 'es' : 'pt-BR'));
 }
 function acaoMochila(nome){
   const lista = itensMochila(), alvo = lista[selMo];
@@ -729,7 +729,7 @@ function encherMochila(pop){
     const mostrarDica = alvo => {                                        // [passa:item]: descrição inteira numa caixinha
       const c = alvo?.closest?.('[data-fig^="item-"]');
       const e = c && itensMochila()[+c.dataset.fig.split('-').pop() - 1];
-      Popup.dica(pop, 'tooltip', e ? c : null, e ? { titulo: e.it.n || '', descricao: semBr(e.it.d) } : null);
+      Popup.dica(pop, 'tooltip', e ? c : null, e ? { titulo: tr(e.it.n || ''), descricao: tr(semBr(e.it.d)) } : null);
     };
     pop.addEventListener('mouseover', ev => mostrarDica(ev.target));
     pop.addEventListener('mouseout', ev => { if (!pop.contains(ev.relatedTarget)) mostrarDica(null); });
@@ -741,9 +741,9 @@ function encherMochila(pop){
     const e = lista[i];
     for (const f of c.children){ if (f.dataset.sobre) continue; f.style.display = e ? (f.dataset.txt ? (f.dataset.display || 'flex') : 'block') : 'none'; }   // a marca de selecionado (v2) é da seleção, não do preenchimento
     if (!e) return;
-    Popup.texto(pop, 'item-nome', e.it.n || ('item ' + e.id), c);
+    Popup.texto(pop, 'item-nome', tr(e.it.n || ('item ' + e.id)), c);
     Popup.texto(pop, 'item-qtd', '×' + e.n, c);
-    Popup.texto(pop, 'item-descricao', semBr(e.it.d), c);
+    Popup.texto(pop, 'item-descricao', tr(semBr(e.it.d)), c);
     Popup.imagem(pop, 'item', e.it.i ? './ui/itens/' + e.it.i + '.png' : null, c);
   });
   Popup.selecionar(pop, selMo + 1, 'item', 'item');
@@ -751,10 +751,10 @@ function encherMochila(pop){
   const av = avisoMo && Date.now() < avisoMo.ate && (alvo?.id === avisoMo.id || !lista.some(x => x.id === avisoMo.id)) ? avisoMo : null;   // o item gasto até o fim sai da lista: o aviso fica
   const det = Popup.grupo(pop, 'detalhe-item');                          // v2 (rodada 27): painel do item escolhido (nome, categoria, quantidade, descrição, dica, foto)
   if (det){
-    Popup.texto(pop, 'item-nome', alvo ? (alvo.it.n || '') : '', det);
+    Popup.texto(pop, 'item-nome', alvo ? tr(alvo.it.n || '') : '', det);
     Popup.texto(pop, 'item-categoria', alvo ? catCurta(D.tipos?.[alvo.it.t] || '') : '', det);
-    Popup.texto(pop, 'item-qtd', alvo ? ('Você tem ' + alvo.n) : '', det);
-    Popup.texto(pop, 'item-descricao', alvo ? semBr(alvo.it.d) : '', det);
+    Popup.texto(pop, 'item-qtd', alvo ? tr('Você tem {n}').replace('{n}', alvo.n) : '', det);
+    Popup.texto(pop, 'item-descricao', alvo ? tr(semBr(alvo.it.d)) : '', det);
     const dica = Popup.no(pop, 'item-dica', det);
     if (dica && dica.dataset.corBase == null) dica.dataset.corBase = dica.style.color;
     if (av){ Popup.texto(pop, 'item-dica', av.texto, det); if (dica) dica.style.color = av.ok ? '#8EF58E' : '#FFD23A'; }   // 17/09: motivo/resultado do Usar
