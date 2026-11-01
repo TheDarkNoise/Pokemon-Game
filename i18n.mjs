@@ -1,18 +1,18 @@
-/* IDIOMA DO JOGADOR (11/09/2026) — PT (a fonte), EN e ES. Etapa 1: telas, HUD, menus, avisos e os nomes que vieram do
- * dump (itens, golpes, áreas, títulos, roupas, NPCs). Missões e falas dos NPCs ficam pra etapa 2.
+/* PLAYER LANGUAGES — English is the default; Portuguese remains the source language and Spanish is also supported.
+ * The translation dictionaries cover the interface, HUD, menus, notices, game data, quests and NPC dialogue.
  *
- * COMO FUNCIONA: o código continua escrito em português. `t(texto)` procura o texto no dicionário do idioma escolhido e
- * devolve a tradução; sem tradução, devolve o próprio texto. Duas formas de chave:
+ * HOW IT WORKS: source strings remain unchanged. `t(text)` looks up the selected language dictionary and returns the
+ * translated string; if no translation exists, it returns the original source text. Duas formas de chave:
  *   exata     "Criar conta" → "Create account"
  *   padrão    "Você chegou em {x}." → "You arrived in {x}."   (o {x} casa com qualquer trecho; o que casou também passa
  *             pelo t(), então "Cidade Pallet" dentro da frase vira "Pallet Town")
  * Os pontos de saída (rótulos da maquete, Chat.sistema, flutuar, telaEscura, Popup.texto/botao, avisos das telas) chamam
  * o t() — assim as ~140 chamadas com texto montado por concatenação não precisaram mudar.
  *
- * Dicionários: data/idioma/ui_<l>.json (escritos à mão) + data/idioma/nomes_<l>.json (gerados de LanguageConfig_<l> pelo
- * tools/idioma_nomes.mjs). Escolha: ?idioma=en|es|pt na URL, a barra PT·EN·ES da tela de login (telas.mjs), o localStorage
- * `idioma` e a conta (POST /conta/idioma; volta no login). Padrão: o idioma do navegador, caindo em pt.
- * Nomes dos Pokémon ficam em inglês em todos os idiomas (decisão do Jaime, 11/09). */
+ * Dictionaries: data/idioma/ui_<l>.json, conteudo_<l>.json and nomes_<l>.json. Selection order: ?idioma=en|es|pt in the URL,
+ * saved device preference, then browser language. English is the fallback for new players. Account language preferences are
+ * restored at login. Portuguese and Spanish remain available.
+ * Pokémon names remain in English in every language. */
 export const IDIOMAS = { pt: 'Português', en: 'English', es: 'Español' };
 const LS = 'idioma';
 let atual = 'en', exatas = new Map(), padroes = [], carregado = { pt: true };
