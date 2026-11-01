@@ -22,6 +22,11 @@ export default defineConfig({
     port: 5300,
     host: true
   },
+  preview: {
+    port: 5300,
+    host: true,
+    strictPort: true
+  },
   build: {
     outDir: 'dist',
     assetsInlineLimit: 0
