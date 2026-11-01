@@ -1,34 +1,54 @@
 # Pokémon 3D Web Game
 
-A 3D Pokémon adventure that runs in your web browser, built with Three.js and Vite.
+A browser-based 3D Pokémon adventure built with Three.js, Vite, Node.js and WebSocket multiplayer.
 
-## Requirements
+## Supported platforms
 
-- Node.js 18 or newer
-- npm
+- **Windows 10/11 (x64):** use `Ligar jogo.bat` for the local development setup.
+- **Raspberry Pi OS 64-bit (ARM64):** use the PM2 setup in [raspberry-pi/README.md](raspberry-pi/README.md).
+- **Node.js:** 20.19.0 or newer (Node.js 22 LTS recommended).
 
-## Installation
+Both platforms use the same game source and dependencies. Platform-specific startup configuration is kept separate.
+
+## Windows quick start
+
+1. Install Node.js 22 LTS.
+2. Run `Ligar jogo.bat` from the project folder.
+3. Open [http://localhost:5300](http://localhost:5300).
+
+The batch file starts the local HTTP/WebSocket game server on port 5190 and Vite on port 5300.
+
+## Raspberry Pi quick start
+
+See [Raspberry Pi OS + PM2 setup](raspberry-pi/README.md) for installation, production build, PM2 startup and LAN access instructions.
+
+## Development
 
 ```bash
-git clone https://github.com/TheDarkNoise/Pokemon-Game.git
-cd Pokemon-Game
 npm install
-```
-
-## Run in development mode
-
-```bash
 npm run dev
+npm run start:server
 ```
 
-Open the local URL printed by Vite (the project uses port 5300).
-
-## Production build
+Build and preview:
 
 ```bash
 npm run build
-npm run preview
+npm run start:preview
 ```
+
+## Network ports
+
+| Port | Service |
+|---|---|
+| 5300 | Vite development / production preview (HTTP) |
+| 5190 | Game HTTP API and WebSocket server |
+
+The game client automatically connects to port 5190 on the same host as the page unless a `?servidor=ws://host:port` override is supplied. Use `?rede=0` to disable the network connection.
+
+## Language support
+
+English is the default language for new players and first-time visits. Portuguese and Spanish remain available in the in-game language selector. A player's saved language preference is preserved.
 
 ## Controls
 
@@ -40,13 +60,8 @@ npm run preview
 - **M:** Mount or dismount
 - **B:** Call the boss
 
-## Language support
+## Notes
 
-English is the default language for new players and first-time visits. Portuguese and Spanish remain available in the in-game language selector. A player's saved language preference is preserved.
-
-## Game features
-
-- 3D world and exploration
-- Turn-based battles
-- Flying mounts
-- Minimap
+- The Raspberry Pi hosts the web files and game API; players use a modern browser on their own computer.
+- This setup is intended for a private LAN test. Do not expose the development game server directly to the public internet.
+- Back up `servidor/dados/contas.json` before replacing or updating the project.
