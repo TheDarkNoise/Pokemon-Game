@@ -9,3 +9,4 @@ dist/
 fairy_map.obj
 .env.*
 !.env.example
+.env.* !.env.example
