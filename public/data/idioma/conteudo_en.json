@@ -2475,5 +2475,20 @@
   "Uma armadura mágica que permite a evolução de certos Pokémon, cheia de sentimentos de congratulação. <br> Permite que Charcadet evolua para Armarouge.": "A magical armor filled with auspicious feelings. <br>Allows Charcadet to evolve into Armarouge.",
   "Uma armadura mágica que permite a evolução de certos Pokémon, cheia de sentimentos de maldição. <br> Permite que Charcadet evolua para Ceruledge.": "A magical armor filled with malicious feelings. <br>Allows Charcadet to evolve into Ceruledge.",
   "Usado em Applin para evoluí-lo para Appletun.": "Used on Applin to evolve it into Appletun.",
-  "Usado em Applin para evoluí-lo para Flapple.": "Used on Applin to evolve it into Flapple."
+  "Usado em Applin para evoluí-lo para Flapple.": "Used on Applin to evolve it into Flapple.",
+  "Ensina o movimento [Desejo Curativo]: Causa desmaio ao usuário, cura status anormais e restaura HP do próximo Pokémon.\nPrecisão: 0\nPoder: 0": "Teaches the move [Healing Wish]: The user faints, cures the next Pokémon's status conditions, and restores its HP.\nAccuracy: 0\nPower: 0",
+  "Ensina o golpe [Enxame Cristalino]: Libera energia cristalina para repelir inimigos. Se usado por Terapagos em forma Estelar, causa dano a todos os oponentes.\nPrecisão: 100\nPoder: 120": "Teaches the move [Tera Starstorm]: The user attacks with crystalline energy. When used by Terapagos in its Stellar Form, it damages all opposing Pokémon.\nAccuracy: 100\nPower: 120",
+  "30 peças podem fazer as composturas da máquina de aprendizagem: apertar": "Use 30 pieces to craft the Technical Machine for [Squeeze].",
+  "30 peças podem fazer as composturas da máquina de aprendizagem: ataque interdimensional": "Use 30 pieces to craft the Technical Machine for [Interdimensional Attack].",
+  "Pode ser usado para aprender um movimento de habilidade: [Vento dos duendes] <br>Prepara um vento de duende e sopra-o contra o teu adversário para o atacar. <br>Acertar: 100 <br>Potência: 40": "Teaches the move [Fairy Wind]. The user stirs up a fairy-like wind and blows it at the target to attack.\nAccuracy: 100\nPower: 40",
+  "Pode ser usado para aprender truques de habilidade: [Rotação de alta velocidade]<br>Ataque o oponente girando. Você também pode se livrar de truques como amarrar, amarrar, sementes parasitárias e sabusa. Hits: 100 Potência: 50": "Teaches the move [Rapid Spin]. The user attacks by spinning. It can also remove effects such as binding, Leech Seed, and entry hazards.\nAccuracy: 100\nPower: 50",
+  "Pode ser usado para aprender truques de habilidade: [Luz da Ruína]<br>Usa o poder da flor eterna para disparar um raio poderoso, mas sofre um pouco de dano.<br>Hits: 90<br>Força: 140": "Teaches the move [Light of Ruin]. The user fires a powerful beam using the power of the Eternal Flower, but takes some recoil damage.\nAccuracy: 90\nPower: 140",
+  "Pode ser usado para aprender truques de habilidade: [Bloqueio de Cura]<br>Impede a recuperação de HP por habilidades, movimentos e itens durante cinco turnos.<br>Hits: 100<br>Força: 0": "Teaches the move [Heal Block]. For five turns, the target cannot recover HP through moves, Abilities, or items.\nAccuracy: 100\nPower: 0",
+  "venussauro": "Venusaur",
+  "Ao equipar, permite que venussauro evolua para Mega Venussauro durante a batalha.": "When held, allows Venusaur to Mega Evolve into Mega Venusaur during battle.",
+  "Usado em Sinistea (forma Falsa) para evoluí-lo para Polteageist (forma Falsa).": "Used on Antique Form Sinistea to evolve it into Antique Form Polteageist.",
+  "Um item mágico que permite a evolução de certos Pokémon. <br>Permite que Kadabra evolua para Alakazam. <br>Machoke para Machamp. <br>Graveler evolua Golem. <br>Haunter evolua para Gengar.": "A mysterious cord that can make certain Pokémon evolve. It allows Kadabra to evolve into Alakazam, Machoke into Machamp, Graveler into Golem, and Haunter into Gengar.",
+  "Usado em Scyther para evoluí-lo para Kleavor.": "Used on Scyther to evolve it into Kleavor.",
+  "Usado em Duraludon para evoluí-lo para Archaludon.": "Used on Duraludon to evolve it into Archaludon.",
+  "Usado em Ursaring durante a lua cheia para evoluí-lo para Ursaluna.": "Used on Ursaring during a full moon to evolve it into Ursaluna."
 }
