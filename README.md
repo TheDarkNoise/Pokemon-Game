@@ -1,49 +1,52 @@
-# Pokemon 3D Web Game
+# Pokémon 3D Web Game
 
-Jogo Pokemon 3D no navegador usando Three.js.
+A 3D Pokémon adventure that runs in your web browser, built with Three.js and Vite.
 
-## Requisitos
+## Requirements
 
-- Node.js 18+
+- Node.js 18 or newer
 - npm
 
-## Instalação
+## Installation
 
 ```bash
-git clone https://github.com/rodalb/pokemon-3d-client.git
-cd pokemon-3d-client
+git clone https://github.com/TheDarkNoise/Pokemon-Game.git
+cd Pokemon-Game
 npm install
 ```
 
-## Rodar em desenvolvimento
+## Run in development mode
 
 ```bash
 npm run dev
 ```
 
-Acesse: http://localhost:5173
+Open the local URL printed by Vite (the project uses port 5300).
 
-## Build para produção
+## Production build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Controles
+## Controls
 
-- **WASD** / **Setas**: Mover
-- **Mouse**: Rotacionar câmera
-- **Clique no chão**: Ir até o local
-- **Tab**: Alternar alvo
-- **1, 2**: Usar golpes
-- **M**: Montar/desmontar
-- **B**: Chamar chefe
+- **WASD / Arrow keys:** Move
+- **Mouse:** Rotate the camera
+- **Click the ground:** Move to that location
+- **Tab:** Switch target
+- **1 / 2:** Use moves
+- **M:** Mount or dismount
+- **B:** Call the boss
 
-## Conteúdo
+## Language support
 
-- Mapa: Pallet Town + Rota 1
-- 11 Pokemon
-- Sistema de batalha por turnos
-- Montarias voadoras
-- Minimapa
+English is the default language for new players and first-time visits. Portuguese and Spanish remain available in the in-game language selector. A player's saved language preference is preserved.
+
+## Game features
+
+- 3D world and exploration
+- Turn-based battles
+- Flying mounts
+- Minimap
