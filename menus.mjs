@@ -587,14 +587,14 @@ function rMochila(corpo){
   const q = quantidades();
   const tiposPresentes = new Set(Object.keys(q).map(id => D.itens[id]?.t).filter(Boolean));
   const ordem = [7, 9, 3, 4, 1, 2, 5, 6, 8, 10, 11, 12, 13, 14, 15];
-  const lista = ordem.filter(t => tiposPresentes.has(t)).map(t => ({ id: String(t), nome: D.tipos[t] || ('tipo ' + t) }));
+  const lista = ordem.filter(t => tiposPresentes.has(t)).map(t => ({ id: String(t), nome: tr(D.tipos[t] || ('tipo ' + t)) }));
   const aba = abas(lista.length ? lista : [{ id: '7', nome: 'Pokébola' }]);
   const itens = Object.entries(q).filter(([id]) => String(D.itens[id]?.t) === aba && q[id] > 0);
   const av = avisoMo && Date.now() < avisoMo.ate ? avisoMo : null;         // 17/09: o motivo/resultado do "Usar no parceiro" aparece aqui, não atrás da janela
   const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))}</div>`
     + (av ? `<div class="aviso-uso" style="margin:-2px 0 8px;font-size:13px;font-weight:700;color:${av.ok ? '#8ef58e' : '#ffd23a'}">${esc(tr(av.texto))}</div>` : '');
   if (!itens.length){ corpo.innerHTML = cab + '<div class="vazio">Nada aqui ainda. O Pokémart da cidade (fale com o vendedor) vende bolas e remédios; itens de missão chegam com as recompensas.</div>'; return; }
-  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || D.tipos[it.t] || ''))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Usar no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Usar no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Usar no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
+  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || tr(D.tipos[it.t] || '')))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Usar no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Usar no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Usar no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-bola]').forEach(b => b.onclick = () => { ctx.jogo.bolaSel = b.dataset.bola; ctx.gravarLS('bolaSel', ctx.jogo.bolaSel); render(); });
   corpo.querySelectorAll('[data-evoitem]').forEach(b => b.onclick = () => { fechar(); ctx.usarItemEvolucao?.(b.dataset.evoitem); });
   corpo.querySelectorAll('[data-usar]').forEach(b => b.onclick = () => { const id = b.dataset.usar; ctx.usarItem?.(id, D.itens[id]?.n || '', (txt, ok) => avisarMo(id, txt, ok)); render(); });   // a cura em si vive no index (usarItem), igual à dos atalhos; o aviso volta pra janela (17/09)
@@ -1392,7 +1392,7 @@ function rMissoes(corpo){
   const M = ctx.missoes;
   if (!M?.pronto?.()){ corpo.innerHTML = '<div class="vazio">As missões ainda estão carregando…</div>'; return; }
   const caps = M.capitulos(), ativa = M.ativa(), idx = M.indicePasso(), prog = M.progresso();
-  const nomeItem = id => D.itens[id]?.n || ('item ' + id);
+  const nomeItem = id => tr(D.itens[id]?.n || ('item ' + id));
   const rec = r => [r?.dinheiro ? r.dinheiro + ' Moedas' : null, ...Object.entries(r?.itens || {}).map(([id, n]) => esc(nomeItem(id)) + ' ×' + n), r?.exp ? r.exp + ' XP' : null].filter(Boolean).join(' · ') || '—';
   const passoTxt = (p, i) => { const n = p.n || 0; const c = i === idx && n > 1 ? ' ' + Math.min(prog, n) + '/' + n : ''; return esc(p.texto) + c + (p.onde ? ' <small style="color:var(--muted)">(' + esc(p.onde) + ')</small>' : ''); };
   const atual = ativa ? `<div class="missao-atual"><small style="color:var(--muted)">Capítulo ${ativa.capitulo} · ${esc(ativa.capNome)}</small><br><b>${esc(ativa.nome)}</b><br><span style="font-size:12px">${esc(ativa.des)}</span>
@@ -1853,7 +1853,7 @@ function rLoja(corpo){
   const aba = (abaAtual && lojas[abaAtual]) ? abaAtual : '2150101';   // SÓ a loja deste vendedor: as abas "Loja 1107/1501/4103/4401" (outras lojas do dump) não fazem sentido no Pokémart (Jaime, 31/08)
   abas([{ id: aba, nome: nomeLoja(aba) }]);                              // uma aba só, com o nome da loja (e limpa abas da janela anterior)
   const lista = lojas[aba] || [];
-  corpo.innerHTML = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(D.moedas?.[1] || 'Moeda')} · preços do jogo original</div><div class="grade-itens">${lista.map(l => { const it = D.itens[l.item]; if (!it) return ''; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">${l.preco.toLocaleString('pt-BR')}</span><b>${esc(it.n)}${l.n > 1 ? ' ×' + l.n : ''}</b><small>${esc(it.d || D.tipos[it.t] || '')}</small><div class="acoes"><button type="button" class="btn ouro" data-comprar="${l.item}" data-preco="${l.preco}" data-n="${l.n}" ${dinheiro() < l.preco ? 'disabled' : ''}>Comprar</button></div></div>`; }).join('')}</div>`;
+  corpo.innerHTML = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))} · preços do jogo original</div><div class="grade-itens">${lista.map(l => { const it = D.itens[l.item]; if (!it) return ''; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">${l.preco.toLocaleString('pt-BR')}</span><b>${esc(tr(it.n))}${l.n > 1 ? ' ×' + l.n : ''}</b><small>${esc(tr(it.d || D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-comprar="${l.item}" data-preco="${l.preco}" data-n="${l.n}" ${dinheiro() < l.preco ? 'disabled' : ''}>Comprar</button></div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-comprar]').forEach(b => b.onclick = () => { const id = b.dataset.comprar, preco = +b.dataset.preco, n = +b.dataset.n || 1; if (dinheiro() < preco) return; if (ctx.comConta?.()) ctx.bolsaOp('comprar', { loja: aba, item: +id }).then(() => render()); else if (D.itens[id]?.t === 7){ ctx.jogo.bolas[id] = (ctx.jogo.bolas[id] || 0) + n; ctx.gravarLS('bolas', ctx.jogo.bolas); } else { const it = itensLS(); it[id] = (it[id] || 0) + n; ctx.gravarLS('itens', it); } if (!ctx.comConta?.()){ setDinheiro(dinheiro() - preco); ctx.Som?.tocar?.('ui/sound_itemget', { volume: .7, prio: true }); } render(); });
 }
 
@@ -2438,8 +2438,8 @@ async function abrirPreviaMochila(){
     const lista = () => {
       const tipos = CATS_MO[st.cat], b = st.busca.trim().toLowerCase();
       return MOCHILA_PREVIA.filter(([id]) => D.itens[id]).map(([id, n]) => ({ id: String(id), n, it: D.itens[id] }))
-        .filter(e => (!tipos || tipos.includes(e.it.t)) && (!b || (e.it.n || '').toLowerCase().includes(b)))
-        .sort((x, y) => (x.it.t - y.it.t) || String(x.it.n).localeCompare(String(y.it.n), 'pt-BR'));
+        .filter(e => (!tipos || tipos.includes(e.it.t)) && (!b || tr(e.it.n || '').toLowerCase().includes(b)))
+        .sort((x, y) => (x.it.t - y.it.t) || tr(String(x.it.n)).localeCompare(tr(String(y.it.n)), I18n.idioma() === 'en' ? 'en' : I18n.idioma() === 'es' ? 'es' : 'pt-BR'));
     };
     const avisa = a => Chat.sistema('Prévia: "' + a + '" não mexe no inventário (mochila de exemplo).');
     const encher = () => {
@@ -2450,16 +2450,16 @@ async function abrirPreviaMochila(){
         const e = L[i];
         for (const f of c.children){ if (f.dataset.sobre) continue; f.style.display = e ? (f.dataset.txt ? (f.dataset.display || 'flex') : 'block') : 'none'; }
         if (!e) return;
-        Popup.texto(pop, 'item-nome', e.it.n || ('item ' + e.id), c); Popup.texto(pop, 'item-qtd', '×' + e.n, c);
-        Popup.texto(pop, 'item-descricao', semBr(e.it.d), c); Popup.imagem(pop, 'item', e.it.i ? './ui/itens/' + e.it.i + '.png' : null, c);
+        Popup.texto(pop, 'item-nome', tr(e.it.n || ('item ' + e.id)), c); Popup.texto(pop, 'item-qtd', '×' + e.n, c);
+        Popup.texto(pop, 'item-descricao', tr(semBr(e.it.d)), c); Popup.imagem(pop, 'item', e.it.i ? './ui/itens/' + e.it.i + '.png' : null, c);
       });
       Popup.selecionar(pop, st.sel + 1, 'item', 'item');
       const alvo = L[st.sel], det = Popup.grupo(pop, 'detalhe-item');
       if (det){
-        Popup.texto(pop, 'item-nome', alvo ? (alvo.it.n || '') : '', det);
+        Popup.texto(pop, 'item-nome', alvo ? tr(alvo.it.n || '') : '', det);
         Popup.texto(pop, 'item-categoria', alvo ? catCurta(D.tipos?.[alvo.it.t] || '') : '', det);
         Popup.texto(pop, 'item-qtd', alvo ? ('Você tem ' + alvo.n) : '', det);
-        Popup.texto(pop, 'item-descricao', alvo ? semBr(alvo.it.d) : '', det);
+        Popup.texto(pop, 'item-descricao', alvo ? tr(semBr(alvo.it.d)) : '', det);
         if (alvo && podeUsarMo(alvo)) Popup.rotulo(pop, 'item-dica', det); else Popup.texto(pop, 'item-dica', '', det);
         Popup.imagem(pop, 'item', alvo && alvo.it.i ? './ui/itens/' + alvo.it.i + '.png' : null, det);
       } else linhaAvisoMo(pop, alvo && podeUsarMo(alvo) && !pop.querySelector(':scope > [data-tag="acao"][data-tagval="usar"]') ? { texto: 'Toque duas vezes no item pra usar', dica: true } : null);
@@ -2482,7 +2482,7 @@ async function abrirPreviaMochila(){
     });
     const dica = el => {                                                   /* [passa:item]: a descrição inteira na caixinha, como na Mochila de verdade */
       const c = el?.closest?.('[data-fig^="item-"]'), e = c && pop.contains(c) && lista()[+c.dataset.fig.split('-').pop() - 1];
-      Popup.dica(pop, 'tooltip', e ? c : null, e ? { titulo: e.it.n || '', descricao: semBr(e.it.d) } : null);
+      Popup.dica(pop, 'tooltip', e ? c : null, e ? { titulo: tr(e.it.n || ''), descricao: tr(semBr(e.it.d)) } : null);
     };
     pop.addEventListener('mouseover', ev => dica(ev.target));
     pop.addEventListener('mouseout', ev => { if (!pop.contains(ev.relatedTarget)) dica(null); });
