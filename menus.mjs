@@ -1437,7 +1437,7 @@ function arteExemplo(el){
   if (+el.dataset.exemploPad) Hud.fundoComFolga(el, +el.dataset.exemploPad);
 }
 function textoRecompensaMi(r){
-  const nomeItem = id => D.itens[id]?.n || ('item ' + id);
+  const nomeItem = id => tr(D.itens[id]?.n || ('item ' + id));
   return [r?.dinheiro ? r.dinheiro + ' Moedas' : null,
           ...Object.entries(r?.itens || {}).map(([id, n]) => nomeItem(id) + ' ×' + n),
           r?.exp ? r.exp + ' XP' : null].filter(Boolean).join(' · ') || '—';
@@ -1893,7 +1893,7 @@ function rAtalho(corpo){
   const prender = (b) => { ctx.definirAtalho?.(slotAtalho, b); fechar(); };
   if (aba === 'itens'){
     const q = quantidades(); const lista = Object.entries(q).filter(([id, n]) => n > 0 && [7, 9].includes(D.itens[id]?.t));
-    corpo.innerHTML = cab + (lista.length ? `<div class="grade-itens">${lista.map(([id, n]) => { const it = D.itens[id]; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(it.n)}</b><small>${esc(D.tipos[it.t] || '')}</small><div class="acoes"><button type="button" class="btn ouro" data-item="${id}">Prender no ${tecla}</button></div></div>`; }).join('')}</div>` : '<div class="vazio">Nada pra prender: poções e bolas ficam aqui quando estiverem na mochila (Loja).</div>');
+    corpo.innerHTML = cab + (lista.length ? `<div class="grade-itens">${lista.map(([id, n]) => { const it = D.itens[id]; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}</b><small>${esc(tr(D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-item="${id}">Prender no ${tecla}</button></div></div>`; }).join('')}</div>` : '<div class="vazio">Nada pra prender: poções e bolas ficam aqui quando estiverem na mochila (Loja).</div>');
     corpo.querySelectorAll('[data-item]').forEach(b => b.onclick = () => { const it = D.itens[b.dataset.item]; prender({ tipo: 'item', id: +b.dataset.item, nome: it.n, icone: './ui/itens/' + it.i + '.png', bola: it.t === 7 }); });
   } else {
     const lista = ctx.montarias?.() || [];
@@ -2458,7 +2458,7 @@ async function abrirPreviaMochila(){
       if (det){
         Popup.texto(pop, 'item-nome', alvo ? tr(alvo.it.n || '') : '', det);
         Popup.texto(pop, 'item-categoria', alvo ? catCurta(D.tipos?.[alvo.it.t] || '') : '', det);
-        Popup.texto(pop, 'item-qtd', alvo ? ('Você tem ' + alvo.n) : '', det);
+        Popup.texto(pop, 'item-qtd', alvo ? tr('Você tem {n}').replace('{n}', alvo.n) : '', det);
         Popup.texto(pop, 'item-descricao', alvo ? tr(semBr(alvo.it.d)) : '', det);
         if (alvo && podeUsarMo(alvo)) Popup.rotulo(pop, 'item-dica', det); else Popup.texto(pop, 'item-dica', '', det);
         Popup.imagem(pop, 'item', alvo && alvo.it.i ? './ui/itens/' + alvo.it.i + '.png' : null, det);
