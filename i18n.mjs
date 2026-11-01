@@ -15,7 +15,7 @@
  * Nomes dos Pokémon ficam em inglês em todos os idiomas (decisão do Jaime, 11/09). */
 export const IDIOMAS = { pt: 'Português', en: 'English', es: 'Español' };
 const LS = 'idioma';
-let atual = 'pt', exatas = new Map(), padroes = [], carregado = { pt: true };
+let atual = 'en', exatas = new Map(), padroes = [], carregado = { pt: true };
 const cache = new Map();                                                  // idioma → { exatas, padroes }
 
 export const idioma = () => atual;
@@ -23,7 +23,7 @@ export const ehPt = () => atual === 'pt';
 /** O que o navegador sugere, sem consultar nada guardado. */
 export function doNavegador(){
   const n = String((navigator.languages && navigator.languages[0]) || navigator.language || 'pt').toLowerCase();
-  return n.startsWith('es') ? 'es' : n.startsWith('en') ? 'en' : 'pt';
+  return n.startsWith('es') ? 'es' : 'en';
 }
 /** O idioma a usar nesta carga: URL > guardado no aparelho > navegador. */
 export function detectar(url = null){
@@ -83,7 +83,7 @@ export async function carregarDex(){ dex = await baixarDex(atual); return dex; }
 export async function carregar(l){
   if (!IDIOMAS[l]) l = 'pt';
   dex = dexCache.get(l) || {};
-  if (l === 'pt'){ atual = 'pt'; exatas = new Map(); padroes = []; document.documentElement.lang = 'pt-BR'; return atual; }
+  if (l === 'pt'){ atual = 'pt'; exatas = new Map(); padroes = []; document.documentElement.lang = 'pt'; return atual; }
   const d = await baixar(l);
   atual = l; exatas = d.exatas; padroes = d.padroes; carregado[l] = true;
   document.documentElement.lang = l;
