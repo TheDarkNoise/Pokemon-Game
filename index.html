@@ -92,23 +92,23 @@ html,body{height:100%;margin:0;overflow:hidden;background:#06080d;color:var(--te
 <div id="hud">
   <h1 id="titulo">Kanto</h1>
   <table>
-    <tr><td class="k">props no GLB</td><td id="h-inst">–</td></tr>
-    <tr><td class="k">malhas instanciadas</td><td id="h-malhas">–</td></tr>
-    <tr><td class="k">triângulos</td><td id="h-tris">–</td></tr>
-    <tr><td class="k">eixo X do GLB</td><td id="h-flip">–</td></tr>
-    <tr><td class="k">cursor (mundo)</td><td id="h-pos">–</td></tr>
+    <tr><td class="k">props in GLB</td><td id="h-inst">–</td></tr>
+    <tr><td class="k">instanced meshes</td><td id="h-malhas">–</td></tr>
+    <tr><td class="k">triangles</td><td id="h-tris">–</td></tr>
+    <tr><td class="k">GLB X axis</td><td id="h-flip">–</td></tr>
+    <tr><td class="k">cursor (world)</td><td id="h-pos">–</td></tr>
     <tr><td class="k">fps</td><td id="h-fps">–</td></tr>
     <tr><td class="k">gpu</td><td id="h-gpu" style="font-size:10px">–</td></tr>
   </table>
   <div class="teclas" id="teclas">
-    <div><b>W A S D</b> mover · <b>roda</b> / <b>+ −</b> zoom · <b>arrastar</b> pan · <b>Q E</b> girar · <b>R</b> gravar vídeo</div>
+    <div><b>W A S D</b> move · <b>wheel</b> / <b>+ −</b> zoom · <b>drag</b> pan · <b>Q E</b> rotate · <b>R</b> record video</div>
     <div style="margin-top:4px">
-      <span id="t-g"><b>G</b> grama <i></i></span> ·
-      <span id="t-a"><b>H</b> água <i></i></span> ·
+      <span id="t-g"><b>G</b> grass <i></i></span> ·
+      <span id="t-a"><b>H</b> water <i></i></span> ·
       <span id="t-n"><b>N</b> npcs <i></i></span> ·
-      <span id="t-t"><b>T</b> batalha <i></i></span> ·
-      <span id="t-p"><b>P</b> portas <i></i></span> ·
-      <span id="t-c"><b>C</b> áreas <i></i></span>
+      <span id="t-t"><b>T</b> battle <i></i></span> ·
+      <span id="t-p"><b>P</b> doors <i></i></span> ·
+      <span id="t-c"><b>C</b> areas <i></i></span>
     </div>
   </div>
 </div>
@@ -118,23 +118,23 @@ html,body{height:100%;margin:0;overflow:hidden;background:#06080d;color:var(--te
   <div id="skills">
     <button id="sk1" class="sk"></button><button id="sk2" class="sk"></button><button id="sk3" class="sk"></button><button id="sk4" class="sk"></button>
   </div>
-  <button id="bola-btn" class="sk bola" title="joga a bola no alvo desmaiado (F)"><b>F</b><div id="bola-icone"></div><em id="bola-nome">Pokébola</em><small id="bola-n">×10</small><span id="bola-tipo" title="trocar a bola (Shift+F)">⇄</span></button>
+  <button id="bola-btn" class="sk bola" title="throw a ball at the fainted target (F)"><b>F</b><div id="bola-icone"></div><em id="bola-nome">Poké Ball</em><small id="bola-n">×10</small><span id="bola-tipo" title="switch ball (Shift+F)">⇄</span></button>
   <div id="atalhos"></div>
-  <div class="ficha" id="f-alvo">sem alvo — clique num selvagem ou <b>Tab</b></div>
+  <div class="ficha" id="f-alvo">no target — click a wild Pokémon or press <b>Tab</b></div>
 </div>
 <div id="fala" hidden></div>
 <div id="turno" hidden></div>
 <div id="chat" hidden></div>
-<div id="missao" hidden><div id="missao-txt"></div><button type="button" id="missao-toggle" aria-expanded="true" title="recolher a missão"></button></div>
+<div id="missao" hidden><div id="missao-txt"></div><button type="button" id="missao-toggle" aria-expanded="true" title="collapse quest"></button></div>
 <div id="inicial" hidden></div>
 <div id="joy" hidden><div id="joy-knob"></div></div>
 <div id="cam-btns" hidden><button id="cam-esq" type="button">↺</button><button id="cam-dir" type="button">↻</button></div>
 <button id="menu-btn" type="button" hidden>☰</button>
 <button id="chat-btn" type="button" hidden>💬</button>   <!-- só a maquete do celular o posiciona ([abre:chat]); sem maquete fica escondido -->
 <div id="time-hud" hidden></div>
-<div id="menu-icones"><button type="button" data-j="pokemon" title="Pokémon"><i class="ic ic-pokebola"></i><b>Pokémon</b></button><button type="button" data-j="mochila" title="Mochila"><i class="ic ic-mochila"></i><b>Mochila</b></button><button type="button" data-j="missoes" title="Missões"><i class="ic ic-missoes"></i><b>Missões</b></button><button type="button" data-j="mapa" title="Mapa"><i class="ic ic-mapa"></i><b>Mapa</b></button><button type="button" data-j="pokedex" title="Pokédex"><i class="ic ic-pokedex"></i><b>Pokédex</b></button><button type="button" data-j="treinador" title="Treinador"><i class="ic ic-personagem"></i><b>Treinador</b></button><button type="button" data-j="loja" title="Loja"><i class="ic ic-loja"></i><b>Loja</b></button><button type="button" data-j="social" title="Social"><i class="ic ic-amigos"></i><b>Social</b></button><button type="button" data-j="batalha" title="Batalha"><i class="ic ic-batalha"></i><b>Batalha</b></button><button type="button" data-j="config" title="Config"><i class="ic ic-ajuda"></i><b>Config</b></button></div>
+<div id="menu-icones"><button type="button" data-j="pokemon" title="Pokémon"><i class="ic ic-pokebola"></i><b>Pokémon</b></button><button type="button" data-j="mochila" title="Bag"><i class="ic ic-mochila"></i><b>Bag</b></button><button type="button" data-j="missoes" title="Quests"><i class="ic ic-missoes"></i><b>Quests</b></button><button type="button" data-j="mapa" title="Map"><i class="ic ic-mapa"></i><b>Map</b></button><button type="button" data-j="pokedex" title="Pokédex"><i class="ic ic-pokedex"></i><b>Pokédex</b></button><button type="button" data-j="treinador" title="Trainer"><i class="ic ic-personagem"></i><b>Trainer</b></button><button type="button" data-j="loja" title="Shop"><i class="ic ic-loja"></i><b>Shop</b></button><button type="button" data-j="social" title="Social"><i class="ic ic-amigos"></i><b>Social</b></button><button type="button" data-j="batalha" title="Battle"><i class="ic ic-batalha"></i><b>Battle</b></button><button type="button" data-j="config" title="Settings"><i class="ic ic-ajuda"></i><b>Settings</b></button></div>
 <div id="boot"><div class="girando"></div></div>
-<div id="gire" hidden><div class="gire-icone">📱</div><b>Vire o celular</b><span>O jogo é na horizontal.</span><button type="button" id="gire-cheia" hidden>Tela cheia</button></div>   <!-- celular em pé: cobre o jogo até deitar (a HUD só existe deitada) -->
+<div id="gire" hidden><div class="gire-icone">📱</div><b>Rotate your phone</b><span>The game uses landscape mode.</span><button type="button" id="gire-cheia" hidden>Full screen</button></div>   <!-- celular em pé: cobre o jogo até deitar (a HUD só existe deitada) -->
 
 <script>
 /* MÓDULO DESENCONTRADO (19/09 — iPhone iOS 18.7 no Safari, 12:10 UTC: "Hud.marcarSobreBarra is not a function" e a TELA DE LOGIN
@@ -715,10 +715,10 @@ function remapearInteriorCompartilhado(){
   }
 }
 document.title = 'Pokemon 3D Base';                                    // era 'Kanto' / nome da cena (Jaime, 12/09: o título é o do jogo)
-$('titulo').textContent = cenaAtual ? cenaAtual.nome + ' · ' + NOME
+$('titulo').textContent = I18n.t(cenaAtual ? cenaAtual.nome + ' · ' + NOME
   : 'Kanto — ' + (dados.areas.length > 4
     ? dados.areas.length + ' áreas (' + Object.values(dados.nomes || {}).filter(n => /Cidade|Ilha/.test(n)).length + ' cidades)'
-    : dados.areas.map(a => dados.nomes?.[a] || NOMES_AREA[a] || ('área ' + a)).join(' + '));
+    : dados.areas.map(a => dados.nomes?.[a] || NOMES_AREA[a] || ('área ' + a)).join(' + ')));
 if (DEMO){
   $('titulo').textContent = 'Pallet & Rota 1 · demo';
   $('hud').querySelector('table').hidden = true;
@@ -2959,7 +2959,7 @@ async function montar(glb, { trocar = false } = {}){
     efeito('MountIn', m.peito, m.altura, { vidaMax: 1.6 });
     Som.tocar('skill/Wind1');
     flutuar(ash, (m.shiny ? '✨ ' : '') + (meio === 'agua' ? 'surfando no ' : 'montou no ') + m.nome, m.shiny ? '#8be9fd' : '#ffd23a');
-    if (ADM && m.voa) $('t-v').textContent = 'voo livre (adm): Espaço sobe · X desce · Shift turbo · sem barreira';
+    if (ADM && m.voa) $('t-v').textContent = I18n.t('voo livre (adm): Espaço sobe · X desce · Shift turbo · sem barreira');
   } catch (e){ console.warn('montaria:', e); }
   jogo.montando = false;
 }
@@ -3092,7 +3092,7 @@ function arrastavelDev(el, chave){
   const LS = 'janela.' + chave, interativo = t => t.closest('button, select, input, textarea, a');
   const encaixar = (x, y) => { const r = el.getBoundingClientRect(); x = Math.max(0, Math.min(innerWidth - Math.min(r.width || 40, innerWidth), x)); y = Math.max(0, Math.min(innerHeight - 24, y)); Object.assign(el.style, { left: x + 'px', top: y + 'px', right: 'auto', bottom: 'auto' }); };
   try { const p = JSON.parse(localStorage.getItem(LS) || 'null'); if (Array.isArray(p)) encaixar(p[0], p[1]); } catch {}
-  el.style.cursor = 'move'; el.style.touchAction = 'none'; el.title = 'Arraste pra mover · duplo clique volta pro lugar';
+  el.style.cursor = 'move'; el.style.touchAction = 'none'; el.title = I18n.t('Arraste pra mover · duplo clique volta pro lugar');
   el.addEventListener('pointerdown', ev => {
     if (ev.button !== 0 || interativo(ev.target)) return;
     const r = el.getBoundingClientRect(), dx = ev.clientX - r.left, dy = ev.clientY - r.top;
@@ -7750,9 +7750,9 @@ function pintarBarra(){
   setTexto($('f-pika-lv'), 'Lv' + p.lv + ' · ' + (jogo.montaria ? 'na Pokébola' : p.desmaiado > 0 ? 'desmaiado' : p.emBatalha ? 'em batalha' : 'seguindo'));
   for (let i = 0; i < 4; i++){
     const id = p.golpesIds[i], g = id && GOLPES[id], el = $('sk' + (i + 1));
-    if (!g){ if (!el.classList.contains('vazio')){ el.classList.add('vazio'); for (const f of [...el.children]) if (!f.dataset.fig) f.remove(); el.__pronto = false; el.__id = null; el.__ic = null; el.__txt = null; el.__pct = null; el.title = 'sem golpe'; } continue; } else if (el.classList.contains('vazio')) el.classList.remove('vazio');
+    if (!g){ if (!el.classList.contains('vazio')){ el.classList.add('vazio'); for (const f of [...el.children]) if (!f.dataset.fig) f.remove(); el.__pronto = false; el.__id = null; el.__ic = null; el.__txt = null; el.__pct = null; el.title = I18n.t('sem golpe'); } continue; } else if (el.classList.contains('vazio')) el.classList.remove('vazio');
     if (!el.__pronto){ el.insertAdjacentHTML('afterbegin', `<b>${i + 1}</b><em></em><s></s><i></i><small></small>`); el.__pronto = true; el.__em = el.querySelector(':scope > em'); el.__s = el.querySelector(':scope > s'); el.__i = el.querySelector(':scope > i'); el.__small = el.querySelector(':scope > small'); Hud.remontar($('skills')); }   // os <span data-fig> do Figma ficam; a peça remonta pra estilizar o miolo novo
-    if (el.__id !== id){ el.__id = id; el.__em.textContent = g.nome; el.__s.style.background = R.COR_TIPO?.[g.tipo] || '#556'; el.title = `${g.nome} · ${g.tipo} · poder ${g.poder} · recarga ${g.recarga}s`; Hud.encolher(el.__em); }
+    if (el.__id !== id){ el.__id = id; el.__em.textContent = g.nome; el.__s.style.background = R.COR_TIPO?.[g.tipo] || '#556'; el.title = I18n.t(`${g.nome} · ${g.tipo} · poder ${g.poder} · recarga ${g.recarga}s`); Hud.encolher(el.__em); }
     const ic = el.__ic || (el.__ic = el.querySelector('[data-var="tipo"]'));                       // Figma: ícone do tipo do golpe no slot (img/tipo)
     if (ic && ic.__tipo !== g.tipo){
       ic.__tipo = g.tipo; const srcTipo = './ui/figma/tipo/' + (TIPO_PT[g.tipo] || 'normal') + '.png';   /* 18/09 (rodada 32, Amanda: "a qualidade caiu depois do d6239fe0"): de volta aos PNGs de 692 px; o tamanho continua sendo a caixa do slot-tipo */
@@ -7815,7 +7815,7 @@ Object.assign(window, { jogo, chaoEm, livre, bloqueio, pisos, aguas, deslocar, r
 function alternarJogo(){
   if (!jogo.ash) return;
   jogo.ativo = !jogo.ativo;
-  $('t-v').textContent = jogo.ativo ? 'jogando: WASD anda, clique no chão vai até lá, botão direito arrasta' : 'câmera livre (V volta ao Ash)';
+  $('t-v').textContent = I18n.t(jogo.ativo ? 'jogando: WASD anda, clique no chão vai até lá, botão direito arrasta' : 'câmera livre (V volta ao Ash)');
 }
 function atualizarJogo(dt, entrada){
   const { ash, pika } = jogo;
