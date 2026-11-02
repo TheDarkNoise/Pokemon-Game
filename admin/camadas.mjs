@@ -18,7 +18,7 @@ const COR_TILE = { spawn: 'rgba(214,160,90,.5)' };
 export function criarCamadas(dep) {
   const { $, esc, api, toast, avisarJogo, canal, FLIPX, cam, w2t, t2w, redesenhar, dados, mapa, camadas, areaEm, nomeArea, aoMudar, mapas, trocarMapa } = dep;
   let ferramenta = 'zonas', sel = null, arraste = null, colocar = null, ref = null, pintando = false, hover = null, indice = null, avisouSemArea = false;
-  const pincel = { tipo: 'grass', modo: 'pintar', raio: 1 };
+  const pincel = { tipo: 'grama', modo: 'pintar', raio: 1 };
   const sujo = { npcs: false, treinadores: false, grass: false, agua: false, spawn: false }, glbSujos = new Set(), portasSujas = new Set();
   const marcar = k => { if (k) sujo[k] = true; aoMudar(); };
 
@@ -95,12 +95,12 @@ export function criarCamadas(dep) {
   // ── Tiles (pincel) ──────────────────────────────────────────────────────────
   const celula = (x, z) => Math.floor(x) + ',' + Math.floor(z);
   function cfgGrama(a) {                                   // o cfg mais comum da grass dessa área (o jogo original numera por área)
-    const n = {}; for (const t of dados().grass || []) if (t.a === a) n[t.cfg] = (n[t.cfg] || 0) + 1;
+    const n = {}; for (const t of dados().grama || []) if (t.a === a) n[t.cfg] = (n[t.cfg] || 0) + 1;
     const melhor = Object.entries(n).sort((p, q) => q[1] - p[1])[0];
     return melhor ? +melhor[0] : a * 100 + 1;
   }
   function tileNovo(x, z, a) {
-    if (pincel.tipo === 'grass') return { cfg: cfgGrama(a), tipo: 41, x, y: 0, z, a };
+    if (pincel.tipo === 'grama') return { cfg: cfgGrama(a), tipo: 41, x, y: 0, z, a };
     if (pincel.tipo === 'agua') return { tipo: 33, x, y: 0, z, a };
     return { x, z, y: 0, a };
   }
@@ -130,7 +130,7 @@ export function criarCamadas(dep) {
   // ── Desenho (chamado pelo desenhar() do admin) ─────────────────────────────
   function desenhar(ctx) {
     const d = dados(); if (!d) return;
-    if (camadas.floor && d.spawn?.length) {
+    if (camadas.piso && d.spawn?.length) {
       const tile = Math.max(1.2, cam.esc * 0.9); ctx.fillStyle = COR_TILE.spawn;
       for (const t of d.spawn) { const [x, y] = w2t(FLIPX * t.x, t.z); ctx.fillRect(x - tile / 2, y - tile / 2, tile, tile); }
     }
@@ -147,7 +147,7 @@ export function criarCamadas(dep) {
   function mousedown(px, py, e) {
     if (ferramenta === 'zonas' || !dados()) return false;
     if (ferramenta === 'pincel') {
-      if (e.shiftKey) return false;                                                  // Shift+arrastar = mover o mapa
+      if (e.shiftKey) return false;                                                  // Shift+drag = mover o mapa
       pintando = true; indice = null; avisouSemArea = false; aplicarPincel(px, py); return true;
     }
     if (colocar) { colocarPonto(px, py); return true; }
@@ -198,28 +198,28 @@ export function criarCamadas(dep) {
   function centralizar(o) { cam.x = FLIPX * o.x; cam.z = o.z; cam.esc = Math.max(cam.esc, 6); redesenhar(); }
 
   // ── Painel ──────────────────────────────────────────────────────────────────
-  const atualizarContagem = () => { const el = $('c-contagem'); if (el) { const d = dados() || {}; el.textContent = `${(d.grass || []).length} grass · ${(d.agua || []).length} water · ${(d.spawn || []).length} floor`; } };
+  const atualizarContagem = () => { const el = $('c-contagem'); if (el) { const d = dados() || {}; el.textContent = `${(d.grama || []).length} grass · ${(d.agua || []).length} water · ${(d.spawn || []).length} floor`; } };
   function atualizarPosicao() { if (!sel) return; const x = $('c-x'), z = $('c-z'); if (x && document.activeElement !== x) x.value = +(FLIPX * sel.obj.x).toFixed(2); if (z && document.activeElement !== z) z.value = +sel.obj.z.toFixed(2); }
   function renderPainel() {
     const el = $('c-painel'); if (!el) return;
     el.hidden = ferramenta === 'zonas';
     if (ferramenta === 'pincel') {
-      el.innerHTML = `<h3>Pincel</h3>
+      el.innerHTML = `<h3>Brush</h3>
         <div class="form">
-          <label class="inteira">O que pintar <select id="c-p-tipo">${Object.entries(TIPO_TILE).map(([k, r]) => `<option value="${k}"${k === pincel.tipo ? ' selected' : ''}>${r}</option>`).join('')}</select></label>
+          <label class="inteira">What to paint <select id="c-p-tipo">${Object.entries(TIPO_TILE).map(([k, r]) => `<option value="${k}"${k === pincel.tipo ? ' selected' : ''}>${r}</option>`).join('')}</select></label>
           <label>Action <select id="c-p-modo"><option value="pintar"${pincel.modo === 'pintar' ? ' selected' : ''}>Paint</option><option value="apagar"${pincel.modo === 'apagar' ? ' selected' : ''}>Erase</option></select></label>
           <label>Size <input type="range" id="c-p-raio" min="0" max="5" value="${pincel.raio}"></label>
         </div>
-        <div class="fraco" style="font-size:12px;margin-top:8px">Click and drag on the map. <b>Shift+arrastar</b> moves the map. O tile novo fica na área da caixa embaixo dele (fora de área não pinta). É onde os selvagens nascem: grass e floor pra Pokémon de terra, water pra quem tem "water" no habitat.</div>
+        <div class="fraco" style="font-size:12px;margin-top:8px">Click and drag on the map. <b>Shift+drag</b> moves the map. The new tile belongs to the area box beneath it (painting outside an area is not allowed). Wild Pokémon spawn here: grass and floor for land Pokémon, water for Pokémon with a water habitat.</div>
         <div class="fraco" id="c-contagem" style="margin-top:6px"></div>`;
-      $('c-p-tipo').onchange = e => { pincel.tipo = e.target.value; indice = null; if (pincel.tipo === 'spawn' && !camadas.floor) dep.ligarCamada('floor'); };
+      $('c-p-tipo').onchange = e => { pincel.tipo = e.target.value; indice = null; if (pincel.tipo === 'spawn' && !camadas.piso) dep.ligarCamada('piso'); };
       $('c-p-modo').onchange = e => { pincel.modo = e.target.value; redesenhar(); };
       $('c-p-raio').oninput = e => { pincel.raio = +e.target.value; redesenhar(); };
       atualizarContagem(); return;
     }
     if (ferramenta !== 'pontos') return;
     el.innerHTML = `<h3>Map points</h3>
-      <div class="acoes"><button id="c-add-npc" class="${colocar === 'npc' ? 'on' : ''}">＋ NPC</button><button id="c-add-tr" class="${colocar === 'treinador' ? 'on' : ''}">＋ Vaga de treinador</button></div>
+      <div class="acoes"><button id="c-add-npc" class="${colocar === 'npc' ? 'on' : ''}">＋ NPC</button><button id="c-add-tr" class="${colocar === 'treinador' ? 'on' : ''}">＋ Trainer slot</button></div>
       <div class="c-legenda"><span style="color:${COR.npc}">●</span> NPC <span style="color:${COR.npc}">○</span> sem cadastro (não aparece) <span style="color:${COR.porta}">■</span> porta <span style="color:${COR.chegada}">◆</span> chegada <span style="color:${COR.treinador}">▲</span> treinador <span style="color:${COR.treinador}">△</span> vaga sem treinador</div>
       <div id="c-sel" style="margin-top:10px">${sel ? '' : '<div class="fraco">Click a point to edit it; drag to move it. Ligue as camadas "npcs" e "treinadores" lá em cima.</div>'}</div>`;
     $('c-add-npc').onclick = () => { colocar = colocar === 'npc' ? null : 'npc'; dep.tela.classList.toggle('colocando', !!colocar); renderPainel(); if (colocar) toast('Click the map where the NPC should be.'); };
