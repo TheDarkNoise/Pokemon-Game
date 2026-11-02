@@ -25,7 +25,7 @@
  * mover na mão: a sobreposição está no docs/figma-desvios.md pra rodada 27.
  * Textos em pt passam pelo I18n.t (sem I18n, texto cru). */
 
-let H = null, P = null, M = null, I = null, AThe = {};
+let H = null, P = null, M = null, I = null, AO = {};
 let menus = null;                                                         // o que o menus.mjs devolve do ligarRaid: { aberto, repintar, fechar }
 let snap = { fase: 'nenhuma', n: 0, vagas: 10, eu: false }, chegouEm = 0;
 let CFG = { chefeNome: 'Mew', vagas: 10 };                                 // Fase 3 do painel: data/raid.json (o raid.mjs passa no instalar)
@@ -101,7 +101,7 @@ function criar(id){
 /* ============================================================ instalação */
 export function instalar({ Hud = null, Popup = null, Menus = null, I18n = null, ao = null, cfg = null } = {}){
   if (cfg) { CFG = { ...CFG, ...cfg }; if (snap.fase === 'nenhuma') snap.vagas = CFG.vagas; }
-  H = Hud || H; P = Popup || P; M = Menus || M; I = I18n || I; AThe = ao || AThe || {};
+  H = Hud || H; P = Popup || P; M = Menus || M; I = I18n || I; AO = ao || AO || {};
   if (!temDom()) return;
   estilo();
   if (!noBtn){
@@ -302,7 +302,7 @@ function pintarFila(){
   else escreverCabe(cont, T('waiting for players'), T('waiting…'));
 }
 /* ===== v2 (rodada 29): o card `alerta-raid` da maquete substitui o botão "!" e a placa da fila. The hud.mjs desenha a peça (oculta); aqui ela
-   ganha vida: arte por TIPThe do chefe (ref `alerta-raid [tipo:x]`), "LIVE"/"IN QUEUE", n/vagas, contagem, retrato do chefe e o pisca. */
+   ganha vida: arte por TIPO do chefe (ref `alerta-raid [tipo:x]`), "LIVE"/"IN QUEUE", n/vagas, contagem, retrato do chefe e o pisca. */
 function alertaV2(){ const el = temDom() ? document.getElementById('alerta-raid') : null; return (el && el.__figmaP?.v2) ? el : null; }
 function mmss(s){ s = Math.max(0, Math.floor(+s || 0)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
 function pintarAlerta(el){
