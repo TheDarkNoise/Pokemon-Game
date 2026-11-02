@@ -298,13 +298,13 @@ const DEMO = DEMO_FIXO || new URLSearchParams(location.search).get('demo') === '
 const FAIRY = !DEMO && new URLSearchParams(location.search).get('fairy') === '1';
 const Fairy = FAIRY ? await import('./inicio.mjs') : null;
 const CARDS_PARCEIRO = [
-  { glb: 'pm0025_00', nome: 'Pikachu',   tipo: 'Elétrico',         golpes: 'Thunder Shock · Thunderbolt' },
-  { glb: 'pm0001_00', nome: 'Bulbasaur', tipo: 'Planta · Veneno',  golpes: 'Tackle · Vine Whip' },
-  { glb: 'pm0447',    nome: 'Riolu',     tipo: 'Lutador',          golpes: 'Quick Attack · Swift' },
+  { glb: 'pm0025_00', nome: 'Pikachu',   tipo: "Electric",         golpes: 'Thunder Shock · Thunderbolt' },
+  { glb: 'pm0001_00', nome: 'Bulbasaur', tipo: "Grass · Poison",  golpes: 'Tackle · Vine Whip' },
+  { glb: 'pm0447',    nome: 'Riolu',     tipo: "Fighting",          golpes: 'Quick Attack · Swift' },
 ];
 const CARDS_MONTARIA = [
-  { glb: 'pm0250_00', nome: 'Ho-Oh',   tipo: 'voadora · passa por cima de tudo' },
-  { glb: 'pm0383_00', nome: 'Groudon', tipo: 'terrestre · pesado e rápido' },
+  { glb: 'pm0250_00', nome: 'Ho-Oh',   tipo: "flying · flies over everything" },
+  { glb: 'pm0383_00', nome: 'Groudon', tipo: "ground · heavy and fast" },
 ];
 const CSS_CARDS = `
 #cards{position:fixed;inset:0;z-index:12;display:grid;place-items:center;background:radial-gradient(1200px 700px at 50% 30%,#1a2440,#06080d 70%);overflow:auto}
@@ -332,12 +332,12 @@ function escolherCards(){
   return new Promise(resolve => {
     const css = document.createElement('style'); css.textContent = CSS_CARDS; document.head.appendChild(css);
     const ov = document.createElement('div'); ov.id = 'cards';
-    ov.innerHTML = '<div class="caixa"><h1>Pallet &amp; Rota 1</h1>'
-      + '<p class="sub">uma prévia do nosso Kanto em 3D — escolha quem vai te seguir e em quem você vai montar</p>'
-      + '<h2>Parceiro</h2><div class="fila" id="fila-parceiro"></div>'
-      + '<h2>Montaria <small>(tecla M dentro do jogo)</small></h2><div class="fila" id="fila-montaria"></div>'
-      + '<button id="jogar" type="button">Jogar ▶</button>'
-      + '<p class="dica"><b>W A S D</b> anda · <b>clique</b> no chão vai até lá · <b>1 2</b> golpes · <b>Tab</b> alvo · <b>M</b> monta · <b>F</b> joga a bola (Shift+F troca) · <b>Z</b> fala com NPC perto / interage com o parceiro (Shift+Z: próximo do time) · portas: entre no anel amarelo · <b>roda</b> zoom · <b>Q E</b> giram</p></div>';
+    ov.innerHTML = "<div class=\"caixa\"><h1>Pallet &amp; Route 1</h1>"
+      + "<p class=\"sub\">a preview of our Kanto in 3D — choose your partner and mount</p>"
+      + "<h2>Partner</h2><div class=\"fila\" id=\"fila-parceiro\"></div>"
+      + "<h2>Mount <small>(M key in game)</small></h2><div class=\"fila\" id=\"fila-montaria\"></div>"
+      + "<button id=\"jogar\" type=\"button\">Play ▶</button>"
+      + "<p class=\"dica\"><b>W A S D</b> to move · <b>click</b> the ground to walk there · <b>1 2</b> moves · <b>Tab</b> target · <b>M</b> mount · <b>F</b> throw a ball (Shift+F to switch) · <b>Z</b> talk to a nearby NPC / interact with your partner (Shift+Z: next party member) · doors: enter the yellow ring · <b>wheel</b> zoom · <b>Q E</b> rotate</p></div>";
     document.body.appendChild(ov);
     const cv = document.createElement('canvas'); cv.id = 'cards-tela'; document.body.appendChild(cv);
     const r2 = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: false });
@@ -723,7 +723,7 @@ if (DEMO){
   $('titulo').textContent = 'Pallet & Rota 1 · demo';
   $('hud').querySelector('table').hidden = true;
   const tl = $('teclas').children;
-  tl[0].innerHTML = '<b>W A S D</b> anda · <b>clique</b> no chão vai até lá · <b>roda</b> zoom · <b>Q E</b> giram a câmera';
+  tl[0].innerHTML = "<b>W A S D</b> to move · <b>click</b> the ground to walk there · <b>wheel</b> zoom · <b>Q E</b> rotate the camera";
   tl[1].hidden = true;
 }
 
@@ -3623,7 +3623,7 @@ if (JOGAR){
         cam: { get zoom(){ return zoom; }, set zoom(v){ zoom = v; }, get giro(){ return giro; }, set giro(v){ giro = v; } },
       })).catch(e => { console.warn('captura:', e); jogo.raidErro = String(e?.stack || e); });
     }
-    $('teclas').insertAdjacentHTML('beforeend', '<div style="margin-top:6px"><b>V</b> <span id="t-v">jogando: WASD anda, clique no chão vai até lá, botão direito arrasta</span></div>' + (DEMO ? '<div style="margin-top:4px"><b>M</b> monta / desmonta · <b>1 2</b> golpes · <b>Tab</b> alvo · <b>Esc</b> solta o alvo</div>' : '<div style="margin-top:4px"><b>M</b> monta / desmonta (o painel 🐉 escolhe a montaria) · <b>B</b> chama o chefão</div>') + '<div style="margin-top:6px" id="tam-box">tamanhos: <select id="tam-modo"><option value="proporcional">proporcionais (altura real comprimida)</option><option value="jogo">do Fairy (Pikachu 2,9×, Lugia 0,5×…)</option><option value="nativo">nativos (fofinhos)</option></select></div>');
+    $('teclas').insertAdjacentHTML('beforeend', "<div style=\"margin-top:6px\"><b>V</b> <span id=\"t-v\">playing: WASD to move, click the ground to walk there, right-drag to pan</span></div>" + (DEMO ? "<div style=\"margin-top:4px\"><b>M</b> mount / dismount · <b>1 2</b> moves · <b>Tab</b> target · <b>Esc</b> clear target</div>" : "<div style=\"margin-top:4px\"><b>M</b> mount / dismount (choose your mount in the 🐉 panel) · <b>B</b> summon the boss</div>") + "<div style=\"margin-top:6px\" id=\"tam-box\">sizes: <select id=\"tam-modo\"><option value=\"proporcional\">proportional (compressed real height)</option><option value=\"jogo\">Fairy sizes (Pikachu 2.9×, Lugia 0.5×…)</option><option value=\"nativo\">native (cute)</option></select></div>");
     $('tam-modo').value = jogo.tamanhos;
     $('tam-modo').addEventListener('change', e => { definirTamanhos(e.target.value); e.target.blur(); });
   } catch (e){ console.warn('sem personagens:', e); try { __boot.falha('sem personagens: ' + String(e?.stack || e).slice(0, 300)); } catch {} }   // 12/09: o jogador não nasceu — vai pro diagnóstico (antes só o console via, e o celular não tem console)
@@ -4547,7 +4547,7 @@ function atualizarSelvagens(dt){
     if (s.estado === 'desmaiado'){
       s.mix.update(dt); s.desmaio -= dt;
       const seg = Math.max(0, Math.ceil(s.desmaio));
-      if (s.rotulo && !s.raid && s.rotDesm !== seg){ s.rotDesm = seg; s.rotulo.innerHTML = `<span>${s.nome} desmaiado · <b>F</b> captura ${seg}s</span><i><b></b></i>`; s.rotHp = undefined; }
+      if (s.rotulo && !s.raid && s.rotDesm !== seg){ s.rotDesm = seg; s.rotulo.innerHTML = `<span>${s.nome} fainted · <b>F</b> catch ${seg}s</span><i><b></b></i>`; s.rotHp = undefined; }
       if (s.desmaio <= 0 && !s.rede){ s.rotDesm = undefined; if (s.rotulo) s.rotulo.innerHTML = `<span>${s.nome} Lv${s.lv}</span><i><b></b></i>`; morrer(s); }   // na rede, quem some é o servidor (`sumiu`)
       continue;
     }
@@ -5150,10 +5150,10 @@ function pintarAtalhos(forcar = false){
   const it = lerLS('itens', {}), partes = [];
   for (let i = 0; i < ATALHOS_N; i++){
     const b = jogo.atalhos[i], tecla = ATALHOS_TECLAS[i];
-    if (!b){ partes.push(`<button type="button" class="atalho vazio" data-i="${i}" title="atalho ${tecla}: clique pra escolher (poção, bola ou montaria)"><b>${tecla}</b><span>+</span></button>`); continue; }
+    if (!b){ partes.push(`<button type="button" class="atalho vazio" data-i="${i}" title="shortcut ${tecla}: click to choose (potion, ball or mount)"><b>${tecla}</b><span>+</span></button>`); continue; }
     const n = b.tipo === 'item' ? (b.bola ? (jogo.bolas?.[b.id] || 0) : (it[b.id] || 0)) : null;
     const on = (b.tipo === 'montaria' && jogo.montaria?.glb === b.glb) || (b.bola && String(jogo.bolaSel) === String(b.id));
-    partes.push(`<button type="button" class="atalho${n === 0 ? ' frio' : ''}${on ? ' on' : ''}" data-i="${i}" title="${escHtml(b.nome)} (${tecla}) · botão direito ou toque longo: trocar"><b>${tecla}</b><i style="background-image:url('${b.icone}')"></i><em>${escHtml(b.nome)}</em>${n > 1 ? `<small>×${n}</small>` : '<small></small>'}</button>`);
+    partes.push(`<button type="button" class="atalho${n === 0 ? ' frio' : ''}${on ? ' on' : ''}" data-i="${i}" title="${escHtml(I18n.t(b.nome))} (${tecla}) · right-click or touch and hold to change"><b>${tecla}</b><i style="background-image:url('${b.icone}')"></i><em>${escHtml(I18n.t(b.nome))}</em>${n > 1 ? `<small>×${n}</small>` : '<small></small>'}</button>`);
   }
   const html = partes.join(''); if (html === el.__html) return; el.__html = html; el.innerHTML = html; Hud.remontar(el);   // Figma: reaplica a barra prata nos botões novos
 }
@@ -5519,7 +5519,7 @@ function pintarTime(forcar = false){
     vals[i] = { k, pct: Math.round(k * 100), cor, hp, maxHp, alt };
     if (on && (forcar || !jogo.evoPronta || (jogo.quadroEvo = (jogo.quadroEvo || 0) + 1) % 30 === 0)) jogo.evoPronta = { v: evolucaoDe(p) };   // regras dos jogos (evolucao.mjs), reavaliadas a cada 30 quadros
     const evo = on && !jogo.evoluindo && !jogo.trocandoSeguidor ? jogo.evoPronta?.v : null;   // botão ✧ no canto do slot em campo: só quando alguma regra já vale
-    partes.push(`<div class="tcel"><button type="button" class="tslot${on ? ' on' : ''}${ko ? ' ko' : ''}${frio ? ' frio' : ''}${evo ? ' evo' : ''}" data-i="${i}" title="${escHtml(t.nome)} Lv${t.lv}${t.lv > tetoNivel() ? ' · 🔒 não obedece (teto Lv ' + tetoNivel() + ')' : t.lv >= tetoNivel() ? ' · no teto Lv ' + tetoNivel() + ' (XP guardada' + (t.expReserva > 0 ? ': ' + t.expReserva : '') + ')' : ''}${ko ? ' · desmaiado: clique usa um Reanimador da mochila' : on ? ' · em campo' : ' · clique pra trocar'} · arraste (ou segure, no toque) pra mudar a ordem · Alt+↑/↓" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><img src="${iconeMon(t.glb)}" alt="" draggable="false"><b class="tk">${i + 1}</b><small>${t.lv}</small><i><b style="width:${Math.round(k * 100)}%;background:${cor}"></b></i>${ko ? '<em>KO</em>' : ''}<u style="height:${alt}%"></u></button><div class="tcard"><b class="tc-nome">${escHtml(t.nome)}</b><small class="tc-lv">Lv ${t.lv}</small><b class="tc-lvn">${t.lv}</b><i class="tc-trilho"><b class="tc-fill" data-k="${k.toFixed(3)}" style="width:${Math.round(k * 100)}%;background:${cor}"></b></i><small class="tc-hp">${Math.round(hp)}/${maxHp}</small></div>${evo ? `<button type="button" class="tevo" data-arr-nao="1" title="evoluir → ${escHtml(evo.nome)}${evo.itemNome ? ' (usa ' + escHtml(evo.itemNome) + ')' : ''}">✧</button>` : ''}</div>`);
+    partes.push(`<div class="tcel"><button type="button" class="tslot${on ? ' on' : ''}${ko ? ' ko' : ''}${frio ? ' frio' : ''}${evo ? ' evo' : ''}" data-i="${i}" title="${escHtml(t.nome)} Lv${t.lv}${t.lv > tetoNivel() ? " · 🔒 disobeys (cap Lv " + tetoNivel() + ')' : t.lv >= tetoNivel() ? " · at the level cap Lv " + tetoNivel() + " (stored XP" + (t.expReserva > 0 ? ': ' + t.expReserva : '') + ')' : ''}${ko ? " · fainted: click to use a Revive from your bag" : on ? " · in the field" : " · click to switch"} · drag (or touch and hold) to reorder · Alt+↑/↓" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><img src="${iconeMon(t.glb)}" alt="" draggable="false"><b class="tk">${i + 1}</b><small>${t.lv}</small><i><b style="width:${Math.round(k * 100)}%;background:${cor}"></b></i>${ko ? '<em>KO</em>' : ''}<u style="height:${alt}%"></u></button><div class="tcard"><b class="tc-nome">${escHtml(t.nome)}</b><small class="tc-lv">Lv ${t.lv}</small><b class="tc-lvn">${t.lv}</b><i class="tc-trilho"><b class="tc-fill" data-k="${k.toFixed(3)}" style="width:${Math.round(k * 100)}%;background:${cor}"></b></i><small class="tc-hp">${Math.round(hp)}/${maxHp}</small></div>${evo ? `<button type="button" class="tevo" data-arr-nao="1" title="evolve → ${escHtml(evo.nome)}${evo.itemNome ? " (uses " + escHtml(I18n.t(evo.itemNome)) + ')' : ''}">✧</button>` : ''}</div>`);
   }
   const html = partes.join('');
   /* Assinatura SEM o que muda a cada quadro (HP, cor, recarga da troca): em batalha o HP muda todo quadro e refazer o innerHTML
@@ -6542,10 +6542,10 @@ async function rodarTorneio({ configurarSeguidor }){
     + '#tn-flash.golpe b{font-size:min(8vw,60px);color:#fff}#tn-flash.golpe span{color:#ffd23a}'
     + '#tn-sair{position:fixed;right:12px;top:10px;z-index:42;background:#0009;color:#fff;border:1px solid #fff6;border-radius:8px;padding:4px 10px;font:600 12px system-ui,sans-serif;cursor:pointer;opacity:.12}#tn-sair:hover{opacity:1}';
   document.head.appendChild(css);
-  const topo = document.createElement('div'); topo.id = 'tn-topo'; topo.innerHTML = '<b>🏆 TORNEIO DE <i>KANTO</i></b><span id="tn-rodada">FINAL · Liga Índigo</span>'; document.body.appendChild(topo);
+  const topo = document.createElement('div'); topo.id = 'tn-topo'; topo.innerHTML = "<b>🏆 TOURNAMENT OF <i>KANTO</i></b><span id=\"tn-rodada\">FINAL · Indigo League</span>"; document.body.appendChild(topo);
   const cards = document.createElement('div'); cards.id = 'tn-cards'; document.body.appendChild(cards);
   const flash = document.createElement('div'); flash.id = 'tn-flash'; document.body.appendChild(flash);
-  const sair = document.createElement('button'); sair.id = 'tn-sair'; sair.textContent = 'Sair ▸'; document.body.appendChild(sair);
+  const sair = document.createElement('button'); sair.id = 'tn-sair'; sair.textContent = "Exit ▸"; document.body.appendChild(sair);
   sair.onclick = terminarTorneio; window.addEventListener('keydown', e => { if (e.code === 'Escape') terminarTorneio(); });
   ash.pivo.visible = false; pika.pivo.visible = false; pika.recolhido = true; portaOcupado = true;
   const cx = 1.6, zS = 1.5, zN = -9.5;                                   // palco da abertura: eixo z no meio do Quarto do Campeão
@@ -6611,7 +6611,7 @@ async function rodarTorneio({ configurarSeguidor }){
     if (fim()) return; vezDe = P; pintar();
     const velho = atual(P);
     cam('troca');
-    mostrarFlash('TROCA!', P.nick + ' recolhe ' + nomeDex(P.time[P.i]), 1.6);
+    mostrarFlash("SWITCH!", P.nick + " recalls " + nomeDex(P.time[P.i]), 1.6);
     if (P.tr.acoes?.has('Attack')) tocarUma(P.tr, 'Attack');
     await esperarSeg(0.45);
     efeito('FX_Evolution2', velho.peito, velho.altura, { escala: 1.2 }); await esperarSeg(0.35); velho.pivo.visible = false;
@@ -6620,7 +6620,7 @@ async function rodarTorneio({ configurarSeguidor }){
     try { await bolaLancada(P.tr, novo.x, novo.z); } catch {}
     novo.pivo.visible = true; if (novo.acoes?.has('Appear')) tocarUma(novo, 'Appear');
     encarar(); pintar();
-    mostrarFlash('VAI, ' + nomeDex(P.time[1]).toUpperCase() + '!', P.nick, 1.3);
+    mostrarFlash("GO, " + nomeDex(P.time[1]).toUpperCase() + '!', P.nick, 1.3);
     cam('alvo', novo); await esperarSeg(1.4);
     cam('tras'); await esperarSeg(0.3);
   }
@@ -6629,9 +6629,9 @@ async function rodarTorneio({ configurarSeguidor }){
     cam('alvo', def); jogo.tremor = 0.7;
     if (def.acoes?.has('Dead')){ tocarUma(def, 'Dead'); def.travaAnim = 9e9; }
     else { tocarUma(def, 'Wound'); def.travaAnim = 9e9; mover(0.45, k => { def.pivo.rotation.x = -1.35 * k; def.pivo.position.y = def.y + 0.15 * k; }); }   // sem clipe de queda: tomba
-    await mostrarFlash('KO!', nomeDex(Q.time[Q.i]) + ' caiu', 1.5);
+    await mostrarFlash('KO!', nomeDex(Q.time[Q.i]) + " fainted", 1.5);
   }
-  const RODADAS = ['FINAL · Liga Índigo', 'FINAL · melhor de 3 · jogo 2', 'FINAL · jogo decisivo'];
+  const RODADAS = ["FINAL · Indigo League", "FINAL · best of 3 · game 2", "FINAL · deciding game"];
   let ciclo = 0;
   while (!fim()){
     ciclo++;
@@ -6649,7 +6649,7 @@ async function rodarTorneio({ configurarSeguidor }){
     await ataque(B, A, 'surf', 0.18, 0.4);
     await ataque(A, B, 'thunder', 0.5, 0.2);
     await ko(B, A);
-    cam('troca'); await mostrarFlash('🏆 CAMPEÃO', A.nick + ' vence a final', 3.4);
+    cam('troca'); await mostrarFlash("🏆 CHAMPION", A.nick + " wins the final", 3.4);
     await esperarSeg(1.6);
   }
 }
@@ -7217,10 +7217,10 @@ function escolherInicial(){
   caixa.hidden = false; jogo.ash.alvoX = null;
   const P = palcoIniciais(); P.abrir(); P.montar(gen);
   const pintar = () => {
-    caixa.innerHTML = `<div class="caixa"><button type="button" class="x" aria-label="fechar"></button><h2>${Dialogos.textoHtml('escolhaTitulo')}</h2><div class="sub">${Dialogos.textoHtml('escolhaSub')}</div>
+    caixa.innerHTML = `<div class="caixa"><button type="button" class="x" aria-label="close"></button><h2>${Dialogos.textoHtml('escolhaTitulo')}</h2><div class="sub">${Dialogos.textoHtml('escolhaSub')}</div>
       <div class="gens">${gens.map(g => `<button type="button" data-gen="${g}" class="${g === gen ? 'on' : ''}">GEN ${g}</button>`).join('')}</div>
       <div class="cartas">${INICIAIS[gen].map((o, i) => `<div class="carta ${i === sel ? 'on' : ''}" data-i="${i}"><div class="palco ${P.gen === gen && P.itens.some(it => it.i === i) ? 'pronto' : ''}" data-i="${i}"><div class="bola"></div></div><b>${o.nome}</b><small>Nº ${String(o.dex).padStart(3, '0')}</small><span>${o.tipos.map(tp => `<i style="background:${R.COR_TIPO?.[tp] || '#556'}">${tp}</i>`).join('')}</span></div>`).join('')}</div>
-      <div class="acoes"><button type="button" class="ok">${sel >= 0 ? 'Escolher ' + INICIAIS[gen][sel].nome : 'Escolher'}</button></div></div>`;
+      <div class="acoes"><button type="button" class="ok">${sel >= 0 ? "Choose " + INICIAIS[gen][sel].nome : "Choose"}</button></div></div>`;
     caixa.querySelector('.caixa').appendChild(P.canvas);                                   // o canvas 3D por cima da caixa (o innerHTML acima o tinha tirado)
     caixa.querySelectorAll('[data-gen]').forEach(b => b.onclick = () => { gen = b.dataset.gen; sel = -1; P.montar(gen); pintar(); });
     caixa.querySelectorAll('.carta').forEach(c => { c.onclick = () => { if (sel === +c.dataset.i) return; sel = +c.dataset.i; P.selecionar(sel); Som.tocar('ui/sound_click', { volume: 0.5 }); pintar(); }; P.arrastavel(c, +c.dataset.i); });
@@ -7766,7 +7766,7 @@ function pintarBarra(){
     if (el.__frio !== frio){ el.classList.toggle('frio', frio); el.__frio = frio; }
     const pct = rec > 0 ? Math.min(100, rec / (g.recarga || 1) * 100) : 0;
     if (el.__pct !== pct){ el.__i.style.height = pct + '%'; Hud.estado(el, 'cooldown', pct / 100); el.__pct = pct; }   // Figma: a sombra do estado [cooldown] desce junto
-    const txt = rec > 0 && p.hp > 0 ? rec.toFixed(1) : (m ? (semPp ? 'sem PP' : m.pp + '/' + m.ppMax) : '');
+    const txt = rec > 0 && p.hp > 0 ? rec.toFixed(1) : (m ? (semPp ? "no PP" : m.pp + '/' + m.ppMax) : '');
     if (el.__txt !== txt){ el.__small.textContent = txt; el.__txt = txt; }
   }
   const a = jogo.alvo;
@@ -7774,12 +7774,12 @@ function pintarBarra(){
      o TEXTO muda (a largura da barra saiu do template e vai por Hud.fill), senão a árvore montada seria destruída a
      cada ponto de dano. */
   const elAlvo = $('f-alvo');
-  const htmlAlvo = a ? `<b class="alvo-nome">${a.nome}</b> <span class="alvo-lv">Lv ${a.lv}</span> <span class="alvo-estado">${a.estado === 'desmaiado' ? `· desmaiado ${Math.max(0, Math.ceil(a.desmaio))}s · <b>F</b> captura` : [a.perfil, a.estado].filter(Boolean).map(x => '· ' + x).join(' ')}</span><i class="alvo-trilho"><b class="alvo-fill"></b></i>`
-                     : 'sem alvo — clique num selvagem ou <b>Tab</b>';
+  const htmlAlvo = a ? `<b class="alvo-nome">${a.nome}</b> <span class="alvo-lv">Lv ${a.lv}</span> <span class="alvo-estado">${a.estado === 'desmaiado' ? `· fainted ${Math.max(0, Math.ceil(a.desmaio))}s · <b>F</b> catch` : [a.perfil, a.estado].filter(Boolean).map(x => '· ' + I18n.t(x)).join(' ')}</span><i class="alvo-trilho"><b class="alvo-fill"></b></i>`
+                     : "no target — click a wild Pokémon or press <b>Tab</b>";
   if (elAlvo.__html !== htmlAlvo){ setHTML(elAlvo, htmlAlvo); Hud.remontar(elAlvo); }
   if (a) Hud.fill(elAlvo.querySelector('.alvo-fill'), a.hp / a.maxHp, corVida(a.hp / a.maxHp));
   const sel = jogo.bolaSel, nb = jogo.bolas?.[sel] || 0;
-  setTexto($('bola-nome'), BOLAS[sel]?.[0] || sel); setTexto($('bola-n'), '×' + nb);
+  setTexto($('bola-nome'), I18n.t(BOLAS[sel]?.[0] || sel)); setTexto($('bola-n'), '×' + nb);
   const bi = $('bola-icone'); if (bi && bi.__sel !== sel){ bi.__sel = sel; bi.classList.add('real'); bi.style.backgroundImage = "url('./ui/itens/ic_" + sel + ".png')"; }   // ícone real da bola (pacote Item)
   const bb = $('bola-btn'), semBola = nb <= 0; if (bb.__frio !== semBola){ bb.classList.toggle('frio', semBola); bb.__frio = semBola; }
   pintarAtalhos();
@@ -8449,9 +8449,9 @@ function pintarConvite(n){
   if (E){
     const insignias = (lerLS('insignias', []) || []).length, faltam = Math.max(0, 8 - insignias);
     const naCorrida = !!eliteEstado.corrida;
-    el.innerHTML = `<div class="tcab">⚔ <b>${escHtml(E.nome)}</b> · ${escHtml(E.titulo || 'Elite Four')} <span class="tmini">${escHtml(E.tipo || '')} · ${(E.time || []).length} Pokémon · ${E.ordem}ª de 5</span></div>
-      <div class="tmini" style="margin:4px 0">${faltam ? 'A Liga só abre com as 8 insígnias de Kanto (faltam <b>' + faltam + '</b>).' : naCorrida ? 'Você está no meio da corrida: <b>nada de cura</b> até o Campeão cair.' : 'As cinco lutas são uma corrida só: <b>não dá pra curar entre elas</b>, e perder recomeça do primeiro quarto.'}</div>
-      <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Desafiar</button><button type="button" class="tbt" id="t-nao">Agora não</button></div>`;
+    el.innerHTML = `<div class="tcab">⚔ <b>${escHtml(E.nome)}</b> · ${escHtml(I18n.t(E.titulo || 'Elite Four'))} <span class="tmini">${escHtml(I18n.t(E.tipo || ''))} · ${(E.time || []).length} Pokémon · ${E.ordem} of 5</span></div>
+      <div class="tmini" style="margin:4px 0">${faltam ? "The League requires all 8 Kanto badges (missing <b>" + faltam + '</b>).' : naCorrida ? "You are in the middle of the challenge: <b>no healing</b> until the Champion is defeated." : "All five battles form one challenge: <b>you cannot heal between them</b>, and losing restarts from the first room."}</div>
+      <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Challenge</button><button type="button" class="tbt" id="t-nao">Not now</button></div>`;
     el.hidden = false;
     $('t-sim').onclick = () => { Som.destravar(); iniciarTurno(n); };
     $('t-nao').onclick = () => { el.hidden = true; };
@@ -8459,17 +8459,17 @@ function pintarConvite(n){
   }
   if (g){                                                            // ginásio: cabeçalho próprio, cooldown e "tentar agora" pago
     const tem = (lerLS('insignias', []) || []).includes(g.insignia.id), esp = ginasioEspera(g), min = Math.ceil(esp / 60);
-    el.innerHTML = `<div class="tcab">🏟 <b>${g.nome}</b> · Líder ${g.lider} <span class="tmini">${g.tipo} · ${g.time.length} Pokémon · Lv ${g.time[0].lv}–${g.time[g.time.length - 1].lv}${tem ? ' · você já tem a ' + g.insignia.nome : ' · vale a ' + g.insignia.nome}</span></div>
-      ${esp ? `<div class="tmini" style="margin:4px 0">Você perdeu há pouco: o líder volta em <b>${min} min</b>. Tentar agora custa <b>${g.resetMoedas} Moedas</b>.</div>` : ''}
-      <div class="tlinha">${esp ? `<button type="button" class="tbt luta" id="t-pagar">💰 Tentar agora (${g.resetMoedas})</button>` : '<button type="button" class="tbt luta" id="t-sim">⚔ Desafiar</button>'}<button type="button" class="tbt" id="t-nao">Agora não</button></div>`;
+    el.innerHTML = `<div class="tcab">🏟 <b>${I18n.t(g.nome)}</b> · Leader ${I18n.t(g.lider)} <span class="tmini">${I18n.t(g.tipo)} · ${g.time.length} Pokémon · Lv ${g.time[0].lv}–${g.time[g.time.length - 1].lv}${tem ? " · you already have the " + I18n.t(g.insignia.nome) : " · reward: " + I18n.t(g.insignia.nome)}</span></div>
+      ${esp ? `<div class="tmini" style="margin:4px 0">You recently lost: the leader returns in <b>${min} min</b>. Trying now costs <b>${g.resetMoedas} Coins</b>.</div>` : ''}
+      <div class="tlinha">${esp ? `<button type="button" class="tbt luta" id="t-pagar">💰 Try now (${g.resetMoedas})</button>` : "<button type=\"button\" class=\"tbt luta\" id=\"t-sim\">⚔ Challenge</button>"}<button type="button" class="tbt" id="t-nao">Not now</button></div>`;
     el.hidden = false;
     $('t-sim')?.addEventListener('click', () => { Som.destravar(); iniciarTurno(n); });
     $('t-pagar')?.addEventListener('click', () => { const d = lerLS('dinheiro', 50000); if (d < g.resetMoedas){ flutuar(jogo.ash, 'sem Moedas suficientes', '#f58e8e'); return; } if (comConta()) bolsaOp('ginasioreset', { ginasio: g.insignia.id }); else gravarLS('dinheiro', d - g.resetMoedas); const cd = ginasioCd(); delete cd[g.numero]; gravarLS('ginasioCd', cd); Chat.sistema('Você pagou ' + g.resetMoedas + ' Moedas pra desafiar ' + g.lider + ' de novo.'); Som.destravar(); iniciarTurno(n); });
     $('t-nao').onclick = () => { el.hidden = true; };
     return;
   }
-  el.innerHTML = `<div class="tcab">⚔ <b>${n.treino.nome}</b> quer batalhar! <span class="tmini">${n.treino.time.length} Pokémon · turnos</span></div>
-    <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Batalhar</button><button type="button" class="tbt" id="t-nao">Agora não</button></div>`;
+  el.innerHTML = `<div class="tcab">⚔ <b>${I18n.t(n.treino.nome)}</b> wants to battle! <span class="tmini">${n.treino.time.length} Pokémon · turn-based</span></div>
+    <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Battle</button><button type="button" class="tbt" id="t-nao">Not now</button></div>`;
   el.hidden = false;
   $('t-sim').onclick = () => { Som.destravar(); iniciarTurno(n); };
   $('t-nao').onclick = () => { el.hidden = true; };
