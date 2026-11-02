@@ -935,7 +935,7 @@ function encherTreinador(pop){
     ins.forEach((b, i) => {
       const cel = Popup.grupo(pop, 'insignia-' + (i + 1)); if (!cel) return;
       const conquistada = tem.has(b.id);
-      Popup.texto(pop, 'insignia-nome', b.n.replace(/^medalha /i, ''), cel);
+      Popup.texto(pop, 'insignia-nome', b.n, cel);
       const ref = Popup.estadoRef(pop, cel, 'insignia', conquistada ? 'conquistada' : 'vazia');
       mioloInsignia(cel, ref, pop);                                        // v2 (18/09): a célula fica com o anel da cor dela; a referência pinta só o miolo
       const ic = porId[b.id]?.icone;
@@ -955,7 +955,7 @@ function encherTreinador(pop){
     Popup.texto(pop, 'col-kanto', r.pegosKanto + '/' + r.kantoAte + " caught (" + Math.round(r.pegosKanto / r.kantoAte * 100) + '%) · ' + r.vistosKanto + " seen");
     Popup.texto(pop, 'col-nacional', r.pegos + " caught · " + r.vistos + " seen");
     Popup.texto(pop, 'col-shinies', '✨ ' + r.shinies);
-    Popup.texto(pop, 'col-conhecimento', r.mestres + ' species' + (r.mestres === 1 ? '' : 's') + " at Master · " + r.estudadas + " at Studied+ · " + r.pontosTotal + " points");
+    Popup.texto(pop, 'col-conhecimento', r.mestres + ' species' + " at Master · " + r.estudadas + " at Studied+ · " + r.pontosTotal + " points");
     const slug = x => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     for (const g of pop.querySelectorAll('[data-fig^="conquista-"]')){
       const chave = g.dataset.fig.slice(10);
@@ -1044,16 +1044,19 @@ async function encherMapa(pop){
 }
 
 /* ---------------------------------------------------------------- Social (fase 2b, 06/09: amigos e mensagens diretas pela conta) */
+let soFalha = null;
 let abaSo = 'amigos', soDados = null, soBusca = '', soConversa = null, soMsgs = [], soAmigoMenu = null, soCarregando = false;
 const soLigado = () => ctx.conta?.estado?.().modo === 'conta';
 const soChamar = (metodo, caminho, corpo) => soLigado() ? ctx.conta.chamar(metodo, caminho, corpo) : Promise.resolve({ ok: false, erro: "Sign in to use friends and messages." });
 const tempoAtras = ms => { const s = Math.max(0, (Date.now() - ms) / 1000); return s < 90 ? "now" : s < 3600 ? Math.round(s / 60) + 'min' : s < 86400 ? Math.round(s / 3600) + 'h' : Math.round(s / 86400) + 'd'; };
 const retrato = dex => dex ? './ui/mon/pm' + String(dex).padStart(4, '0') + '.png' : null;
 async function soCarregar(){
-  if (!soLigado() || soCarregando) return; soCarregando = true;
+  if (!soLigado() || soCarregando || soFalha) return; soCarregando = true;
   const r = await soChamar('GET', '/social'); soCarregando = false;
-  if (r.ok){ soDados = r.dados; if (popSo && Popup.aberto(popSo) && aberta === 'social') encherSocial(popSo); }
-  else if (r.erro) Chat.sistema('Social: ' + r.erro);
+  if (r.ok) soDados = r.dados;
+  else if (r.status === 404 || r.status === 501) soFalha = 'Friends and direct messages are not available on this server yet.';
+  else if (r.erro) Chat.sistema('Social: ' + tr(r.erro));
+  if ((r.ok || soFalha) && popSo && Popup.aberto(popSo) && aberta === 'social') encherSocial(popSo);
 }
 async function soAbrirConversa(com){
   soConversa = com; abaSo = 'mensagens';
@@ -1182,7 +1185,7 @@ function encherSolicitacoes(pop){
   });
   let nota = sol.querySelector(':scope > .pf-nota');
   if (!nota){ nota = document.createElement('div'); nota.className = 'pf-nota'; Object.assign(nota.style, { position: 'absolute', left: '0', right: '0', top: '45%', textAlign: 'center', color: '#B8C2D9', font: '13px "Nunito Sans", system-ui, sans-serif', pointerEvents: 'none' }); sol.appendChild(nota); }
-  nota.textContent = P.length ? '' : 'No pending invitations.';
+  nota.textContent = soFalha ? tr(soFalha) : P.length ? '' : 'No pending invitations.';
 }
 function encherMensagens(pop, mens){
   const D = soDados; const conv = D?.conversas || [];
@@ -1200,14 +1203,16 @@ function encherMensagens(pop, mens){
     let caixa = log.querySelector(':scope > .pf-dm-log');
     if (!caixa){ caixa = document.createElement('div'); caixa.className = 'pf-dm-log'; Object.assign(caixa.style, { position: 'absolute', inset: '0', overflowY: 'auto', padding: '10px 12px', color: '#E6ECFF', font: '13px/1.45 "Nunito Sans", system-ui, sans-serif', pointerEvents: 'auto', userSelect: 'text' }); log.appendChild(caixa); log.style.pointerEvents = 'auto'; }
     const eu = D?.eu?.usuario, nick = D?.amigos.find(a => a.usuario === soConversa)?.nick || conv.find(x => x.com === soConversa)?.nick || soConversa;
-    if (!soConversa) caixa.innerHTML = '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Choose a conversation on the left, or click a friend and select "message".</div>';
+    if (!soConversa) caixa.innerHTML = '<div style="color:#B8C2D9;text-align:center;margin-top:40%">' + esc(tr(soFalha || 'Choose a conversation on the left, or click a friend and select "message".')) + '</div>';
     else caixa.innerHTML = soMsgs.length ? soMsgs.map(m => '<div><b style="color:' + (m.de === eu ? '#8ef58e' : '#F8C237') + '">' + esc(m.de === eu ? 'You' : nick) + '</b> <small style="color:#7f8db0">' + new Date(m.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</small><br>' + esc(m.texto) + '</div>').join('') : "<div style=\"color:#B8C2D9;text-align:center;margin-top:40%\">No messages yet. Say hello to " + esc(nick) + '.</div>';
     caixa.scrollTop = caixa.scrollHeight;
   }
   const inp = soInput(pop, 'conteudo-mensagens', 'campo-mensagem');
   if (inp){
     const nick = D?.amigos.find(a => a.usuario === soConversa)?.nick || conv.find(x => x.com === soConversa)?.nick;
-    inp.placeholder = soConversa ? "message to " + nick + '…' : "choose a conversation";
+    inp.disabled = !!soFalha;
+    inp.placeholder = soFalha ? tr('Messages unavailable') : soConversa ? "message to " + nick + '…' : "choose a conversation";
+    Popup.botao(pop, 'enviar', !soFalha);
     if (!inp.__enter){ inp.__enter = true; inp.addEventListener('keydown', ev => { if (ev.key === 'Enter'){ ev.preventDefault(); soAcao('enviar').catch(() => {}); } }); }
   }
 }
@@ -1245,7 +1250,17 @@ function encherSocial(pop){
   const D = soDados;
   const cels0 = () => pop.querySelectorAll('[data-fig="lista-amigos"] > [data-fig^="amigo-"]');
   if (!soLigado()){ Popup.texto(pop, 'amigos-contagem', "sign in to add friends"); for (const c of cels0()) c.style.display = 'none'; Popup.texto(pop, 'solicitacoes-qtd', ''); bolinhaPedidos(pop, 0); return; }
-  if (!D){ Popup.texto(pop, 'amigos-contagem', 'carregando…'); for (const c of cels0()) c.style.display = 'none'; bolinhaPedidos(pop, 0); soCarregar(); return; }
+  if (!D){
+    Popup.texto(pop, 'amigos-contagem', soFalha ? 'Unavailable on this server' : 'carregando…');
+    for (const c of cels0()) c.style.display = 'none'; bolinhaPedidos(pop, 0);
+    Popup.botao(pop, 'enviar-convite', !soFalha);
+    if (soFalha && lista){
+      let nota = lista.querySelector('.pf-social-aviso');
+      if (!nota){ nota = document.createElement('div'); nota.className = 'pf-social-aviso'; Object.assign(nota.style, { position: 'absolute', inset: '15% 10px auto', textAlign: 'center', color: '#B8C2D9', font: '16px Nunito Sans, system-ui, sans-serif' }); lista.appendChild(nota); }
+      nota.textContent = tr(soFalha);
+    }
+    if (!soFalha) soCarregar(); return;
+  }
   const amigos = D.amigos.filter(a => !soBusca || a.nick.toLowerCase().includes(soBusca) || a.usuario.includes(soBusca));
   Popup.texto(pop, 'amigos-contagem', D.amigos.length + (D.amigos.length === 1 ? ' amigo' : ' amigos') + ' · ' + D.amigos.filter(a => a.online).length + ' online');
   const cels = Popup.celulas(pop, 'lista-amigos', Math.max(amigos.length, 1), 'amigo');
@@ -1870,13 +1885,13 @@ function rSocial(corpo){
   if (aba === 'chat'){
     corpo.innerHTML = "<div class=\"chat-janela\"></div><div style=\"color:var(--muted);font-size:11px;margin-top:6px\">The HUD chat in a full window: Local shows everything tagged [G] [T] [H] [S]; /g /t /h /l switch channels</div>";
     Chat.montar(corpo.querySelector('.chat-janela'), { compacto: false });
-  } else if (aba === 'amigos') corpo.innerHTML = "<div class=\"vazio\">Friends list is empty. Adding friends, battle invitations and gifts will arrive with the server.</div>";
+  } else if (aba === 'amigos') corpo.innerHTML = "<div class=\"vazio\">Friends and direct messages are not available on this server yet.</div>";
   else corpo.innerHTML = '<div class="lista"><div class="linha" style="cursor:default"><span style="font-size:18px">✉️</span><span class="nome"><b>Welcome to Kanto</b><small>System · your journey begins in Pallet. Attached: 5 Poké Balls (already in your bag).</small></span></div></div>';
 }
 function rBatalha(corpo){
   const aba = abas([{ id: 'trein', nome: "Trainers" }, { id: 'pvp', nome: 'PvP' }, { id: 'rank', nome: 'Ranking' }]);
   if (aba === 'trein'){ const n = new Set((ctx.dados.treinadores || []).map(t => String(t.cfg))).size, venc = new Set([].concat(ctx.lerLS('treinadoresVencidos', []) || []).map(k => String(k).split('@')[0])).size; /* 17/09: por treinador (cfg), não por vaga — o mapa tem 1.984 vagas pra 166 treinadores e as contas do bug das vagas (genandrade) têm o mesmo treinador 2–4 vezes na lista */ corpo.innerHTML = `<div class="vazio">${n} trainers marked on this map · <b>${venc}</b> defeated.<br>Look for names marked <b style="color:#ffb1b1">⚔</b> along the routes and talk (Z) to challenge them — turn-based battles; gyms and badges will arrive later.</div>`; }
-  else corpo.innerHTML = '<div class="vazio">Requires a server. The window is available for positioning.</div>';
+  else corpo.innerHTML = '<div class="vazio">' + esc(tr(aba === 'pvp' ? 'PvP battles are not available in this version yet.' : 'Player rankings are not available on this server yet.')) + '</div>';
 }
 
 /* ------------------------------------------------------------------ Atalhos 5–8 (seletor) */
