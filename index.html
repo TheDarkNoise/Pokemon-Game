@@ -6900,7 +6900,7 @@ async function montarLiderGinasio(g, n){
   const chaoRef = jogo.ash ? (chaoEm(jogo.ash.x, jogo.ash.z) ?? 0) : 0;
   teleportar(e, flipX * n.x, n.z); if (INTERIOR && e.y < chaoRef - 0.3){ e.y = e.vy = chaoRef; e.pivo.position.y = chaoRef; }
   e.giro = -(n.face || 0) * Math.PI / 180; e.pivo.rotation.y = e.giro;
-  e.rotSprite = rotuloSprite((tem ? '🏅 ' : '⚔ ') + g.lider + ' · ' + g.nome, tem ? '#ffd23a' : '#ffb1b1', 2.6); e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
+  e.rotSprite = rotuloSprite((tem ? '🏅 ' : '⚔ ') + I18n.t(g.lider) + ' · ' + I18n.t(g.nome), tem ? '#ffd23a' : '#ffb1b1', 2.6); e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
   tocarAnim(e, 'Idle'); jogo.npcs.push(e);
 }
 /** Membro da ELITE FOUR no quarto dele: um treinador ⚔ como o líder de ginásio, com o time montado pelo SERVIDOR. */
@@ -6912,7 +6912,7 @@ async function montarMembroElite(M, n){
   const chaoRef = jogo.ash ? (chaoEm(jogo.ash.x, jogo.ash.z) ?? 0) : 0;
   teleportar(e, flipX * n.x, n.z); if (INTERIOR && e.y < chaoRef - 0.3){ e.y = e.vy = chaoRef; e.pivo.position.y = chaoRef; }
   e.giro = -(n.face || 0) * Math.PI / 180; e.pivo.rotation.y = e.giro;
-  e.rotSprite = rotuloSprite('⚔ ' + M.nome + ' · ' + (M.titulo || 'Elite Four'), M.campeao ? '#ffd23a' : '#ffb1b1', 2.8);
+  e.rotSprite = rotuloSprite('⚔ ' + I18n.t(M.nome) + ' · ' + I18n.t(M.titulo || 'Elite Four'), M.campeao ? '#ffd23a' : '#ffb1b1', 2.8);
   e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
   tocarAnim(e, 'Idle'); jogo.npcs.push(e);
 }
@@ -8410,7 +8410,7 @@ async function povoarTreinadores(){
         e.falas = venceu ? [info.vitoria[0] || Dialogos.texto('jaVenceu')] : info.fala;   // vencido: ele te parabeniza (a fala de consolo é pra quando VOCÊ perde)
         teleportar(e, tx, tz);                                            // tx/tz = a vaga, já tirada da água (16/09)
         e.giro = Math.random() * Math.PI * 2; e.pivo.rotation.y = e.giro;
-        e.rotSprite = rotuloSprite((venceu ? '✔ ' : '⚔ ') + info.nome, venceu ? '#9fb2d0' : '#ffb1b1', 2.4);
+        e.rotSprite = rotuloSprite((venceu ? '✔ ' : '⚔ ') + I18n.t(info.nome), venceu ? '#9fb2d0' : '#ffb1b1', 2.4);
         e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
         tocarAnim(e, 'Idle');
         jogo.npcs.push(e); jogo.treinadores.push(e);
@@ -8435,7 +8435,7 @@ function marcarTreinadorVencido(n){
   if (!treinadorVencido(n.cfg, v)){ v.push(n.spotKey || (n.cfg + '@' + Math.round(flipX * n.x) + ',' + Math.round(n.z))); gravarLS('treinadoresVencidos', v); }
   const info = n.treino || {};
   n.falas = [(info.vitoria || [])[0] || Dialogos.texto('jaVenceu')];
-  if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + (info.nome || n.nome || ''), '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+  if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.t(info.nome || n.nome || ''), '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
 }
 async function desafiarTreinador(n){
   if (jogo.turno) return;
@@ -8770,7 +8770,7 @@ function fimTurno(vitoria, op = {}){
       Chat.sistema('🏆 Você venceu ' + E.nome + ' e é o Campeão de Kanto! Os seus Pokémon obedecem até o Lv 100' + (r.soltou ? ' e a XP guardada pelo teto saiu (' + r.soltou + ' Pokémon)' : '') + '.' + (r.premio && r.premio.dinheiro ? ' +' + r.premio.dinheiro + ' Moedas' : ''));
       flutuar(jogo.ash, '🏆 Campeão de Kanto!', '#ffd23a');
       liberarReserva();
-      if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏆 ' + E.nome + ' · ex-Campeão', '#ffd23a', 2.8); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+      if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏆 ' + I18n.t(E.nome) + ' · ' + I18n.t('ex-Campeão'), '#ffd23a', 2.8); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     } else if (vitoria){
       /* o `dinheiro` do membro (data/elite.json) é pago pelo servidor na PRIMEIRA vez que aquele membro cai: sem dizer aqui,
          a bolsa engordava em silêncio e o jogador só via a diferença ao abrir a Mochila */
@@ -8796,7 +8796,7 @@ function fimTurno(vitoria, op = {}){
     if (!comConta() && !doServidor) gravarLS('dinheiro', lerLS('dinheiro', 50000) + ganho);
     const cd = ginasioCd(); delete cd[g.numero]; gravarLS('ginasioCd', cd);
     n.falas = [g.vitoria[0]];
-    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏅 ' + g.lider + ' · ' + g.nome, '#ffd23a', 2.6); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏅 ' + I18n.t(g.lider) + ' · ' + I18n.t(g.nome), '#ffd23a', 2.6); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     if (primeira){ Chat.sistema('🏅 Você venceu ' + g.lider + ' e ganhou a ' + g.insignia.nome + '! (' + ins.length + '/8 de Kanto · Pokémon obedecem até um nível maior) +' + ganho + ' Moedas'); flutuar(jogo.ash, '🏅 ' + g.insignia.nome + '!', '#ffd23a'); if (jogo.missoesOk) Missoes.evento({ tipo: 'insignia', id: g.insignia.id, numero: g.numero }); }
     else { Chat.sistema('🏆 Revanche vencida contra ' + g.lider + ': +' + ganho + ' Moedas.'); flutuar(jogo.ash, '+' + ganho + ' Moedas', '#ffd23a'); }
     mostrarFala(g.lider, g.vitoria, n);
@@ -8822,7 +8822,7 @@ function fimTurno(vitoria, op = {}){
     else if (comConta()) bolsaOp('treinador', { treinador: n.spotKey, dinheiro: g, venceu: true });
     else gravarLS('dinheiro', lerLS('dinheiro', 50000) + g);
     n.falas = [t.vitoria[0] || Dialogos.texto('jaVenceu')];
-    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + t.nome, '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.t(t.nome), '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     Chat.sistema('🏆 Você venceu ' + t.nome + ' e ganhou ' + g + ' Moedas!');
     flutuar(jogo.ash, '+' + g + ' Moedas', '#ffd23a');
     mostrarFala(t.nome, t.vitoria, n);
