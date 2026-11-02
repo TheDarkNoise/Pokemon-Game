@@ -1,5 +1,4 @@
 import http from 'node:http';
-import {pathToFileURL} from 'node:url';
 
 // One origin for the website, account API and multiplayer WebSocket.
 // Destinations are fixed locally: incoming URLs never select an upstream host.
@@ -57,9 +56,3 @@ export function createGateway({webPort=5300, gamePort=5190}={}) {
   return server;
 }
 
-if(process.argv[1] && import.meta.url===pathToFileURL(process.argv[1]).href) {
-  const server=createGateway();
-  server.listen(5301,'0.0.0.0',()=>console.log('PokeFablemmo gateway listening on port 5301'));
-  server.on('error',error=>{console.error(error.message);process.exitCode=1;});
-  for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{server.close(()=>process.exit(0));setTimeout(()=>process.exit(0),5000).unref();});
-}
