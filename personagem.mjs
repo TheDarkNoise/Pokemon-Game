@@ -19,6 +19,7 @@
  * vivo), nome e "Começar". Com a tela aberta, teclado e roda não chegam ao jogo (guarda em captura, registrada na carga
  * do módulo — antes do index e do menus.mjs).
  */
+import { t as tr } from './i18n.mjs';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
@@ -514,10 +515,10 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
   const root = document.createElement('div'); root.id = 'criar'; if (sobreJogo) root.classList.add('sobre-jogo');
   root.innerHTML = `<div class="caixa">${cancelavel ? '<button type="button" class="x" aria-label="fechar">✕</button>' : ''}<h2>Your trainer</h2>
     <div class="sub">choose your appearance and name${cancelavel ? '' : ' — you can change this later in Settings → ✎ Character'}</div>
-    <div class="sexos"><button type="button" data-sexo="menino">Menino</button><button type="button" data-sexo="menina">Menina</button></div>
+    <div class="sexos"><button type="button" data-sexo="menino">Boy</button><button type="button" data-sexo="menina">Girl</button></div>
     <div class="cartas"></div>
     <div class="cores" hidden></div>
-    <div class="nome"><label>nome <input type="text" maxlength="16" autocomplete="off" spellcheck="false" value="${esc(nomeSalvo)}"></label><small class="aviso-nome">shown above your head and in chat · 3 to 16 letters · must be unique</small></div>
+    <div class="nome"><label>name <input type="text" maxlength="16" autocomplete="off" spellcheck="false" value="${esc(nomeSalvo)}"></label><small class="aviso-nome">shown above your head and in chat · 3 to 16 letters · must be unique</small></div>
     <div class="acoes">${cancelavel ? '<button type="button" class="cancela">Cancel</button>' : ''}<button type="button" class="ok">${cancelavel ? 'Save' : 'Start ▶'}</button></div></div>`;
   document.body.appendChild(root);
   const caixa = root.querySelector('.caixa'), cartasEl = root.querySelector('.cartas'), coresEl = root.querySelector('.cores'), input = root.querySelector('.nome input');
@@ -532,7 +533,7 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
     if (!tinta){ coresEl.hidden = true; coresEl.innerHTML = ''; return; }
     const cores = coresPor[tinta], chaves = Object.keys(ROTULOS[tinta]);
     coresEl.hidden = false;
-    coresEl.innerHTML = `<div class="t">✎ cores — ${esc(skin.nome)}</div>` + chaves.map(k => `<label class="cor"><span>${esc(ROTULOS[tinta][k])}</span><input type="color" data-k="${k}" value="${cores[k]}"><span class="presets">${(PRESETS[k] || []).map(h => `<i data-k="${k}" data-h="${h}" style="background:${h}"></i>`).join('')}</span></label>`).join('')
+    coresEl.innerHTML = `<div class="t">✎ colors — ${esc(tr(skin.nome))}</div>` + chaves.map(k => `<label class="cor"><span>${esc(tr(ROTULOS[tinta][k]))}</span><input type="color" data-k="${k}" value="${cores[k]}"><span class="presets">${(PRESETS[k] || []).map(h => `<i data-k="${k}" data-h="${h}" style="background:${h}"></i>`).join('')}</span></label>`).join('')
       + '<button type="button" class="aleatorio">🎲 random</button><button type="button" class="padrao">game default</button>';
     const aplicar = () => { coresEl.querySelectorAll('input[type=color]').forEach(i => cores[i.dataset.k] = i.value); P.repintar(skin.id, tinta, cores); };
     coresEl.querySelectorAll('input[type=color]').forEach(i => i.oninput = aplicar);
@@ -550,7 +551,7 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
     const lista = skinsDaCriacao(sexo);                                  // painel: quem aparece na criação
     root.querySelectorAll('.sexos button').forEach(b => b.classList.toggle('on', b.dataset.sexo === sexo));
     cartasEl.classList.toggle('c5', lista.length >= 5);
-    cartasEl.innerHTML = lista.map(s => `<div class="carta ${s.id === skin.id ? 'on' : ''}" data-id="${s.id}"><div class="palco ${P.itens.get(s.id)?.pronto ? 'pronto' : ''}" data-id="${s.id}"></div><b>${esc(s.nome)}</b><small>${esc(s.desc)}</small></div>`).join('');
+    cartasEl.innerHTML = lista.map(s => `<div class="carta ${s.id === skin.id ? 'on' : ''}" data-id="${s.id}"><div class="palco ${P.itens.get(s.id)?.pronto ? 'pronto' : ''}" data-id="${s.id}"></div><b>${esc(tr(s.nome))}</b><small>${esc(tr(s.desc))}</small></div>`).join('');
     cartasEl.querySelectorAll('.carta').forEach(c => { c.onclick = () => { if (skin.id !== c.dataset.id) selecionar(c.dataset.id); }; P.arrastavel(c, c.dataset.id); });
     for (const s of lista) P.montar(s).catch(e => console.warn('personagem:', s.glb, e));
   };
@@ -566,7 +567,7 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
   let resolver = null;
   const promessa = new Promise(res => { resolver = res; });
   let ocupado = false;
-  const avisoNome = root.querySelector('.aviso-nome'), dizerNome = t => { if (avisoNome) avisoNome.textContent = t; };
+  const avisoNome = root.querySelector('.aviso-nome'), dizerNome = t => { if (avisoNome) avisoNome.textContent = tr(t); };
   const confirmar = async () => {
     if (fechado || ocupado) return;
     const nome = (input.value.trim() || contaUsuario() || skin.nome).slice(0, 16);

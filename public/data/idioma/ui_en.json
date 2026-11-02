@@ -356,5 +356,11 @@
   "sem golpe": "no move",
   "jogando: WASD anda, clique no chão vai até lá, botão direito arrasta": "playing: WASD moves, click the ground to walk there, right-drag to rotate",
   "câmera livre (V volta ao Ash)": "free camera (V returns to Ash)",
-  "{x0} · {x1} · poder {x2} · recarga {x3}s": "{x0} · {x1} · power {x2} · cooldown {x3}s"
+  "{x0} · {x1} · poder {x2} · recarga {x3}s": "{x0} · {x1} · power {x2} · cooldown {x3}s",
+  "Chat: Local (seu mapa + tudo), Global, Trade, Help. Comandos: /g /t /h /l. Com o servidor no ar, os outros jogadores leem.": "Chat: Local (your map + all channels), Global, Trade, Help. Commands: /g /t /h /l. Other players can read messages when the server is online.",
+  "Enter pra falar… /g /t /h /l": "Enter to chat… /g /t /h /l",
+  "Entre com uma conta pra usar isto.": "Sign in to use this.",
+  "Indo pra raid do {x0}…": "Joining the {x0} raid…",
+  "✨ O seu {x0} is SHINY!": "✨ Your {x0} is SHINY!",
+  "O {x0} entrou no seu time (ou na caixa, se o time estiver cheio).": "{x0} joined your party (or storage, if your party is full)."
 }
