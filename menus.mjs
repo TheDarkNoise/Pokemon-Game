@@ -3,11 +3,11 @@ import * as I18n from './i18n.mjs';                                     // etapa
 /* Menus do jogo — casca DOM, sem servidor (menus.css).
  *
  * Um botão Menu (☰ na HUD, ou Esc) abre a grade; cada item abre UMA janela por vez:
- *   pokemon (time + caixa, ficha com stats/golpes/evolução, Follow), mochila (itens por tipo, bolas
+ *   pokemon (time + caixa, ficha com stats/golpes/evolução, Seguir), mochila (itens por tipo, bolas
  *   selecionáveis, remédios), missoes (as 12 do capítulo em pt + passos), mapa (áreas do mapa, você),
  *   pokedex (visto/capturado por geração), treinador (nome, dinheiro, insígnias da Gen 1, tempo),
  *   loja (Pokémart do NPC 2150101 do dump, preços em Moeda), social (chat local, amigos, correio),
- *   batalha (PvP/ranking = coming soon; treinadores do mapa), config (som, qualidade, tamanhos,
+ *   batalha (PvP/ranking = em breve; treinadores do mapa), config (som, qualidade, tamanhos,
  *   depuração, Montar a HUD, galeria do Fairy, apagar progresso).
  * Dados: data/menus_dados.json (ItemConfig/ShopNpcData/BadgeConfig/quests do dump, em pt).
  * Estado em localStorage: itens, dinheiro, caixa, dex, tempo (o resto já existia: time, bolas…).
@@ -26,7 +26,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const semBr = s => String(s || '').replace(/<br\s*\/?>/gi, ' ');        // descrição do dump traz <br> escrito: no Figma o texto é puro (v2, rodada 28)
 const CAT_CURTA = { 'Itens transportados': 'Transportado', 'Máquina Técnica': 'MT', 'Chamando a Pedra': 'Pedra', 'Edifícios do Habitat': 'Habitat', 'Materiais do Habitat': 'Habitat', 'Comida do Habitat': 'Habitat', 'Sementes do Habitat': 'Habitat' };
-const catCurta = s => tr(CAT_CURTA[s] || s);                                  // o selo de categoria do detalhe dthe item (v2) é [max:12]
+const catCurta = s => tr(CAT_CURTA[s] || s);                                  // o selo de categoria do detalhe do item (v2) é [max:12]
 export const JANELAS = {
   pokemon:   { titulo: 'Pokémon', icone: 'pokebola', tecla: 'KeyP', sub: 'time e caixa' },
   mochila:   { titulo: 'Bag', icone: 'mochila', tecla: 'KeyI', sub: 'items and balls' },
@@ -34,7 +34,7 @@ export const JANELAS = {
   mapa:      { titulo: 'Map', icone: 'mapa', tecla: 'KeyK', sub: 'Kanto' },
   pokedex:   { titulo: 'Pokédex', icone: 'pokedex', tecla: 'KeyX', sub: 'seen and caught' },
   treinador: { titulo: 'Trainer', icone: 'personagem', tecla: 'KeyU', sub: 'badges, money' },
-  loja:      { titulo: 'Shop', icone: 'loja', sub: 'coming soon', breve: true },   // PREMIUM (GDD §7.5: doação → Medalhão trocável, cosméticos) — só "coming soon" até o servidor; o Pokémart é outra janela
+  loja:      { titulo: 'Shop', icone: 'loja', sub: 'coming soon', breve: true },   // PREMIUM (GDD §7.5: doação → Medalhão trocável, cosméticos) — só "em breve" até o servidor; o Pokémart é outra janela
   mercado:   { titulo: 'Pokémart', icone: 'loja', sub: 'items for Coins', oculto: true },  // só pelo vendedor da loja da cidade (NPC papel 'loja'): não fica no menu
   social:    { titulo: 'Social', icone: 'amigos', sub: 'chat, friends, mail', breve: true },
   batalha:   { titulo: 'Battle', icone: 'batalha', sub: 'PvP, ranking', breve: true },
@@ -56,7 +56,7 @@ export function instalar(c){
   document.body.appendChild(j);
   addEventListener('keydown', tecla, true);
   document.addEventListener('hud:abrir', ev => abrirRecurso(String(ev.detail || '')));   // rodada 29: atalhos Eventos/Loja e ícones sem janela do HUD v2
-  if (PREVIA_URL){ let n = 0; const tenta = () => { if (ctx.jogo?.hudLayout?.popups){ previa(true); return; } if (++n < 80) setTeamout(tenta, 500); }; setTeamout(tenta, 500); }   // rodada 30: ?previa=1 abre a paleta assim que o layout v2 estiver montado
+  if (PREVIA_URL){ let n = 0; const tenta = () => { if (ctx.jogo?.hudLayout?.popups){ previa(true); return; } if (++n < 80) setTimeout(tenta, 500); }; setTimeout(tenta, 500); }   // rodada 30: ?previa=1 abre a paleta assim que o layout v2 estiver montado
   setInterval(() => { if (ctx?.jogo?.ativo) ctx.gravarLS('tempo', (ctx.lerLS('tempo', 0) || 0) + 10); }, 10000);   // tempo de jogo, em segundos
 }
 async function dados(){
@@ -142,9 +142,9 @@ function tecla(e){
   if (e.code === 'Escape' && popPrevia && Popup.aberto(popPrevia)){ fecharPrevia(); e.preventDefault(); e.stopImmediatePropagation(); return; }   // pop-up da prévia do adm (rodada 30)
   if (e.code === 'F7' && !e.repeat && ctx?.gm?.()){ previa(); e.preventDefault(); return; }   // rodada 30: paleta da prévia do adm
   if (e.code === 'Escape' && popEb && Popup.aberto(popEb)){ Popup.fechar(popEb); e.preventDefault(); e.stopImmediatePropagation(); return; }   // banner "Em breve" (v2)
-  if (popIn && Popup.aberto(popIn)){ if (e.code === 'Escape'){ Popup.fechar(popIn); e.preventDefault(); } e.stopImmediatePropagation(); return; }   // escolha do inicial (v2, 18/09): Esc closes sem escolher; as outras teclas não chegam ao jogo
+  if (popIn && Popup.aberto(popIn)){ if (e.code === 'Escape'){ Popup.fechar(popIn); e.preventDefault(); } e.stopImmediatePropagation(); return; }   // escolha do inicial (v2, 18/09): Esc fecha sem escolher; as outras teclas não chegam ao jogo
   /* "Para qual evolução?" (20/09): a caixa fica esperando uma resposta, então ela segura o teclado inteiro — Esc responde
-     "Not now" e nenhuma outra tecla abre janela nem chega no jogo atrás dela. Tem de vir ANTES do Escape genérico daqui:
+     "Agora não" e nenhuma outra tecla abre janela nem chega no jogo atrás dela. Tem de vir ANTES do Escape genérico daqui:
      este `tecla` é capture no window e é o primeiro a ver a tecla. */
   if (escolhaEvo){ if (e.code === 'Escape'){ escolhaEvo(null); e.preventDefault(); } e.stopImmediatePropagation(); return; }
   if (e.code === 'Escape'){ if (aberta || grade){ if (aberta) fechar(); else fecharGrade(); } else if (ctx.jogo?.alvo) return; else alternarGrade(); e.preventDefault(); e.stopImmediatePropagation(); return; }   // com alvo: o jogo limpa o alvo primeiro
@@ -170,8 +170,8 @@ let confirmarAprender = null;                                           // pop-u
 const chaveDe = e => (e?.uid != null ? 'u:' + e.uid : e.glb + '|' + e.lv + '|' + e.nome);
 const mesmoRegistro = (x, e) => (e?.uid != null ? String(x?.uid) === String(e.uid) : !!x && x.glb === e.glb && x.lv === e.lv && x.nome === e.nome);   /* 19/09: pelo uid primeiro — dois da mesma espécie e nível */   // `uid` da posse (servidor, 06/09): dois da mesma espécie e nível deixam de se confundir
 function botaoSoltar(chave, n, seguindo){
-  if (seguindo) return `<button type="button" class="btn" data-arr-nao="1" disabled title="switch partner before releasing">Release</button>`;
-  if (n <= 1) return `<button type="button" class="btn" data-arr-nao="1" disabled title="this is your only Pokémon">Release</button>`;
+  if (seguindo) return `<button type="button" class="btn" data-arr-nao="1" disabled title="switch partner before releasing">Soltar</button>`;
+  if (n <= 1) return `<button type="button" class="btn" data-arr-nao="1" disabled title="this is your only Pokémon">Soltar</button>`;
   return confirmarSoltar === chave
     ? `<button type="button" class="btn perigo" data-arr-nao="1" data-soltar="${esc(chave)}" title="cannot be undone">✔ Release permanently</button><button type="button" class="btn" data-arr-nao="1" data-soltar-nao="1">✖ Cancel</button>`
     : `<button type="button" class="btn" data-arr-nao="1" data-soltar-pede="${esc(chave)}" title="releases the Pokémon (asks for confirmation)">Release</button>`;
@@ -186,7 +186,7 @@ async function soltar(chave, origem){
   if (ok && ok.ok === false){ Chat.sistema('Release: ' + (ok.erro || 'the server refused') + '.'); render(); return; }
   const [foi] = lista.splice(k, 1);
   if (origem === 'caixa') ctx.gravarLS('caixa', lista);
-  else { ctx.gravarLS('time', lista); ctx.pintarTeam?.(true); ctx.atualizarSeguidorPainel?.(); }
+  else { ctx.gravarLS('time', lista); ctx.pintarTime?.(true); ctx.atualizarSeguidorPainel?.(); }
   ctx.flutuar?.(ctx.jogo.ash, 'Adeus, ' + foi.nome + '! 👋', '#8ecbff');
   selPokemon = 0; render();
 }
@@ -199,7 +199,7 @@ function timeAtual(){
   const p = ctx.jogo.semParceiro ? null : ctx.jogo.pika, lista = [];   // 13/09: sem inicial escolhido, o `pika` é só o modelo provisório (Pikachu escondido) — não pode aparecer na aba Pokémon
   /* 19/09 (lexlaine, thread 1550646404534509568, "dois poke iguais com o mesmo lvl"): o registro de quem está em campo era achado
      por espécie+nível e TODOS os que batiam saíam da lista — com dois Gyarados Lv 38, um deles seguindo, o outro sumia da janela
-     (5/6 in team). Agora sai só o registro do próprio parceiro (pelo uid; sem uid, o 1º que bate), e a linha dele herda uid, shiny
+     (5/6 no time). Agora sai só o registro do próprio parceiro (pelo uid; sem uid, o 1º que bate), e a linha dele herda uid, shiny
      e sexo do registro (o ✨ sumia quando o shiny estava em campo, thesyvel). */
   const time = ctx.jogo.time || [];
   let k = -1;
@@ -219,7 +219,7 @@ function fichaHtml(e){
   const golpes = movs.map(g => `<div class="linha" style="cursor:default"><span class="nome"><b>${esc(g.nome)}</b><small>poder ${g.poder ?? '—'} · recarga ${g.recarga ?? '—'}s${g.ppMax != null ? ' · PP ' + g.pp + '/' + g.ppMax : ''}</small></span>${tipoHtml(g.tipo)}</div>`).join('');
   const novo = e.aprender?.[0] ? (ctx.golpe?.(e.aprender[0]) || null) : null;
   const aprender = novo ? `<div class="evo-linha" style="margin-top:6px"><b>✧ wants to learn ${esc(novo.nome)}</b> <small>${esc(novo.tipo || '')} · power ${novo.poder ?? '—'} · PP ${ctx.Ind?.ppDe?.(novo.id) ?? '?'}</small><div style="margin-top:4px;font-size:12px">forget: ${movs.map((g, i) => `<button type="button" class="btn" data-aprender="${i}">${esc(g.nome)}</button>`).join(' ')} <button type="button" class="btn" data-aprender="-1">don't learn</button></div></div>` : '';
-  // regras dos jogos originais (evolucao.mjs): cada evolução com o que falta / ✔ ready
+  // regras dos jogos originais (evolucao.mjs): cada evolução com o que falta / ✔ pronto
   const ops = ctx.opcoesEvolucao?.(e) || [];
   const evo = ops.length ? ops.map(o => `<div class="evo-linha"><b>→ ${esc(o.nome)}</b> <small>${esc(o.regra.texto)}</small><br>${!o.glb ? '<span class="falta">' + esc(tr('coming soon')) + '</span>' : o.pode ? '<span class="ok">✔ ready' + (o.itemNome ? ' (uses ' + esc(o.itemNome) + ')' : '') + '</span>' : '<span class="falta">' + esc(o.falta) + '</span>'}</div>`).join('') : 'does not evolve';
   const prox = ctx.expPara?.(e.dex, lv + 1), xp = (e.exp != null && prox ? `XP ${e.exp}/${prox}` : '') + (e.expReserva > 0 ? ' · ' + e.expReserva + ' XP guardada' : '');
@@ -230,13 +230,13 @@ function fichaHtml(e){
     <div class="k" style="margin-top:8px;color:var(--muted);font-size:11px">golpes</div><div class="lista">${golpes || '<small>—</small>'}</div>${aprender}${reaprenderHtml(e)}
     <div style="margin-top:8px;font-size:12px">${evo}</div></div>`;
 }
-/* ------------------------------------------------------------------ Storage: arrastar entre o time e a caixa (20/09)
+/* ------------------------------------------------------------------ Caixa: arrastar entre o time e a caixa (20/09)
    Pedido do Jaime: "o cara poder arrastar e trocar o time (quando não está em batalha), tipo re-ordenar. Hoje o
    usuário precisa fazer gambiarra e jogar todos pra dentro da caixa e retirar na ordem que quer."
    O servidor já aceitava a ordem nova (intenção `arranjo` → servidor/posse.mjs aplicarArranjo, que recebe o TIME e
    a CAIXA inteiros); faltava a mão. As duas listas ficam lado a lado — arrastar dentro do time reordena, arrastar
    de um lado pro outro move, e com o time cheio a casa escolhida TROCA com quem vem da caixa.
-   O caminho antigo continua de pé: "Move to team" aqui e "Send to storage" na aba Team. As setas ↑ ↓ e o
+   O caminho antigo continua de pé: "Trazer para o time" aqui e "Enviar para a caixa" na aba Time. As setas ↑ ↓ e o
    botão "→ caixa" fazem o mesmo sem arrastar (teclado e mouse), que é o caminho de quem não consegue arrastar. */
 /** Qual casa do time está em campo (a mesma conta do timeAtual, pelo uid primeiro). */
 function indiceEmCampo(){
@@ -252,9 +252,9 @@ function linhaPk(e, marca, botoes, preso){
   const pct = e.maxHp ? Math.round(100 * ((e.hp == null ? e.maxHp : e.hp) / e.maxHp)) : 100;
   return `<div class="linha"${preso ? ' data-arr-preso="1"' : ''}><span class="nome"><b>${e.shiny ? '✨ ' : ''}${esc(e.nome)}${marca}</b><small>Lv ${e.lv} · Nº ${String(e.dex).padStart(3, '0')}</small><div class="hp"><b style="width:${pct}%"></b></div></span>${botoes}</div>`;
 }
-function rStorage(corpo){
+function rCaixa(corpo){
   const time = ctx.jogo.time || [], caixa = ctx.lerLS('caixa', []) || [], emCampo = indiceEmCampo();
-  const setas = (i, preso) => `<span class="arr-mini"><button type="button" class="btn" data-arr-nao="1" data-sobe="${i}" title="${esc(tr('move up one slot'))}">↑</button><button type="button" class="btn" data-arr-nao="1" data-desce="${i}" title="${esc(tr('move down one slot'))}">↓</button><button type="button" class="btn" data-arr-nao="1" ${preso ? `disabled title="${esc(tr(i === emCampo ? 'switch partner first' : 'this is your only Pokémon'))}"` : `data-guardar="${i}" title="${esc(tr('send to storage'))}"`}>→ ${esc(tr('caixa'))}</button></span>`;
+  const setas = (i, preso) => `<span class="arr-mini"><button type="button" class="btn" data-arr-nao="1" data-sobe="${i}" title="${esc(tr('move up one slot'))}">↑</button><button type="button" class="btn" data-arr-nao="1" data-desce="${i}" title="${esc(tr('move down one slot'))}">↓</button><button type="button" class="btn" data-arr-nao="1" ${preso ? `disabled title="${esc(tr(i === emCampo ? 'switch partner first' : 'this is your only Pokémon'))}"` : `data-guardar="${i}" title="${esc(tr('send to storage'))}"`}>→ ${esc(tr('storage'))}</button></span>`;
   const linhasT = time.map((e, i) => { const preso = i === emCampo || time.length <= 1;
     return linhaPk(e, i === emCampo ? ' <small>· ' + esc(tr('em campo')) + '</small>' : (e.hp === 0 ? ' <small style="color:#f58e8e">· ' + esc(tr('desmaiado')) + '</small>' : ''), setas(i, preso), preso); }).join('');
   const linhasC = caixa.map((e, i) => linhaPk(e, '', `<button type="button" class="btn" data-arr-nao="1" data-trazer="${i}" ${time.length >= 6 ? `disabled title="${esc(tr('o time está cheio — arraste pra cima de um do time pra trocar'))}"` : ''}>${esc(tr('Move to team'))}</button>${botaoSoltar(chaveDe(e), 2, false)}`, false)).join('');
@@ -264,7 +264,7 @@ function rStorage(corpo){
       <div class="lista" id="arr-time">${linhasT || `<div class="vazio">${esc(tr('No Pokémon in team.'))}</div>`}</div></div>
     <div class="arr-col"><div class="arr-titulo">${esc(tr('Storage'))} <small>${caixa.length}</small></div>
       <div class="arr-dica">${esc(tr('drag one from here to the team (if full, it swaps with the slot you drop onto)'))}</div>
-      <div class="lista" id="arr-caixa">${linhasC || `<div class="vazio">${esc(tr('A caixa está vazia. "Send to storage", na aba Team, guarda um Pokémon aqui.'))}</div>`}</div></div></div>`;
+      <div class="lista" id="arr-caixa">${linhasC || `<div class="vazio">${esc(tr('Storage is empty. "Send to storage" on the Team tab stores a Pokémon here.'))}</div>`}</div></div></div>`;
   const cT = corpo.querySelector('#arr-time'), cC = corpo.querySelector('#arr-caixa');
   cT.querySelectorAll('.linha').forEach((n, i) => { n.__arrItem = time[i]; });
   cC.querySelectorAll('.linha').forEach((n, i) => { n.__arrItem = caixa[i]; });
@@ -281,21 +281,21 @@ function rStorage(corpo){
 }
 
 function rPokemon(corpo){
-  const aba = abas([{ id: 'time', nome: 'Team' }, { id: 'caixa', nome: 'Storage' }]);
-  if (aba === 'caixa'){ rStorage(corpo); return; }
+  const aba = abas([{ id: 'time', nome: 'Time' }, { id: 'caixa', nome: 'Caixa' }]);
+  if (aba === 'caixa'){ rCaixa(corpo); return; }
   const lista = timeAtual();
   if (!lista.length){ corpo.innerHTML = '<div class="vazio">Sem Pokémon ainda — escolha o inicial no laboratório do Oak.</div>'; return; }
   if (selPokemon >= lista.length) selPokemon = 0;
   const e = lista[selPokemon];
   corpo.innerHTML = `<div class="dois"><div class="lista">${lista.map((p, i) => `<div class="linha ${i === selPokemon ? 'on' : ''}" data-i="${i}"><span class="nome"><b>${p.shiny ? '✨ ' : ''}${esc(p.nome)}${p.sexo === 'm' ? ' <small class="sexo m">♂</small>' : p.sexo === 'f' ? ' <small class="sexo f">♀</small>' : ''}${p.seguindo ? ' <small>· seguindo</small>' : ''}${p.hp === 0 ? ' <small style="color:#f58e8e">· fainted</small>' : ''}</b><small>Lv ${p.lv} · Nº ${String(p.dex).padStart(3, '0')}</small><div class="hp"><b style="width:${p.maxHp ? Math.round(100 * p.hp / p.maxHp) : 100}%"></b></div></span>${(ctx.porDex.get(p.dex)?.types || []).map(tipoHtml).join('')}</div>`).join('')}${'<div class="linha vazia"></div>'.repeat(Math.max(0, 6 - lista.length))}
-    <div style="color:var(--muted);font-size:11px;margin-top:6px">${lista.length}/6 in team</div></div>
+    <div style="color:var(--muted);font-size:11px;margin-top:6px">${lista.length}/6 no time</div></div>
     <div>${fichaHtml(e)}<div class="acoes">${e.seguindo ? (() => { const todas = ctx.opcoesEvolucao?.(e) || [], ops = todas.filter(o => o.glb), prontas = ops.filter(o => o.pode), breve = !ops.length && todas.find(o => !o.glb); return prontas.length ? prontas.map(o => `<button type="button" class="btn ouro" data-evo="${ops.indexOf(o)}" title="${esc(o.regra.texto)}">✧ Evolve → ${esc(o.nome)}${o.itemNome ? ' (uses ' + esc(o.itemNome) + ')' : ''}</button>`).join('') : `<button type="button" class="btn ouro" disabled title="${esc(ops[0]?.falta || (breve ? breve.nome + ': ' + tr('coming soon') : tr('does not evolve')))}">✧ Evolve${ops[0] ? ' — ' + esc(ops[0].falta) : breve ? ' — ' + esc(breve.nome) + ' (' + esc(tr('coming soon')) + ')' : ''}</button>`; })() : `<button type="button" class="btn ouro" id="p-seguir">Follow</button><button type="button" class="btn" id="p-caixa">Send to storage</button>`}${botaoSoltar(chaveDe(e), lista.length, !!e.seguindo)}${e.hp === 0 ? (() => { const r = ctx.reanimadorNaMochila?.(); return `<button type="button" class="btn ouro" id="p-reanimar" ${r ? '' : 'disabled'} title="${r ? 'usa ' + esc(r.nome) : 'buy a Revive at the Poké Mart'}">💊 ${r ? esc(r.nome) + ' (' + r.n + ')' : 'Revive — none in bag'}</button>`; })() : ''}</div></div></div>`;
   corpo.querySelectorAll('[data-evo]').forEach(b => b.onclick = () => { const ops = (ctx.opcoesEvolucao?.(e) || []).filter(o => o.glb); fechar(); ctx.evoluir?.(ops[+b.dataset.evo]); });
   corpo.querySelector('#p-reanimar')?.addEventListener('click', () => { ctx.reanimarMembro?.(e); render(); });
   corpo.querySelectorAll('[data-i]').forEach(l => l.onclick = () => { selPokemon = +l.dataset.i; render(); });
   corpo.querySelector('#p-seguir')?.addEventListener('click', async () => { await ctx.seguir?.(e); selPokemon = 0; render(); });
   corpo.querySelectorAll('[data-aprender]').forEach(b => b.onclick = () => { ctx.aprenderGolpe?.(e, e.aprender[0], +b.dataset.aprender); render(); });
-  corpo.querySelectorAll('[data-reaprender-id]').forEach(b => b.onclick = () => { ctx.reaprender?.(e, b.dataset.reaprenderId); render(); });   // 18/09: Relearn na janela antiga
+  corpo.querySelectorAll('[data-reaprender-id]').forEach(b => b.onclick = () => { ctx.reaprender?.(e, b.dataset.reaprenderId); render(); });   // 18/09: Reaprender na janela antiga
   ligarSoltar(corpo, 'time');
   corpo.querySelector('#p-caixa')?.addEventListener('click', () => { const t = ctx.jogo.time || []; const k = t.findIndex(x => mesmoRegistro(x, e)); if (k < 0) return; const [saiu] = t.splice(k, 1); ctx.gravarLS('time', t); const cx = ctx.lerLS('caixa', []); cx.push(saiu); ctx.gravarLS('caixa', cx); ctx.atualizarSeguidorPainel?.(); selPokemon = 0; render(); });
 }
@@ -313,7 +313,7 @@ export function escolherEvolucao(e, ops){
     /* A CAIXA PRENDE A TELA (revisão de 20/09). A primeira versão era um retângulo solto no meio da tela: o teclado ficava
        travado (DIALOGOS), mas o MOUSE não — dava pra clicar na grade do time atrás dela e trocar de parceiro com a pergunta
        aberta; a resposta chegava depois e evoluía QUEM ENTROU EM CAMPO. Agora ela vem dentro de um fundo que cobre tudo e
-       engole o clique, e Esc responde "Not now". */
+       engole o clique, e Esc responde "Agora não". */
     const fundo = document.createElement('div'); fundo.className = 'ev-escolha';
     Object.assign(fundo.style, { position: 'fixed', inset: '0', zIndex: '700', background: 'rgba(4,8,18,.55)',
       display: 'grid', placeItems: 'center', padding: '16px' });
@@ -361,7 +361,7 @@ function defPopup(nome){
 function popupPk(){
   if (popPk) return popPk;
   const def = defPopup('pokemon');
-  if (new URLSearchParams(location.search).get('popup') === '0') return null;   // ?popup=0 volta pra janela antiga (e é por onde se chega na Storage)
+  if (new URLSearchParams(location.search).get('popup') === '0') return null;   // ?popup=0 volta pra janela antiga (e é por onde se chega na Caixa)
   if (!def) return null;                                                 // sem maquete (celular em pé): janela antiga
   popPk = Popup.montar(def, {
     item: i => { selPokemon = i; confirmarSoltar = null; confirmarAprender = null; reaprenderAberto = false; render(); },
@@ -376,7 +376,7 @@ function popupPk(){
   }
   const evoEl = popPk.querySelector('[data-fig="ficha"] [data-txt="evolucao"]');
   if (evoEl) evoEl.addEventListener('click', ev => { ev.stopPropagation(); acaoPokemon('nao-aprender'); });
-  montarRelearn(popPk);                                                // 18/09: botão "↻ Relearn" + lista (nós sintéticos por cima dos cards de golpe)
+  montarReaprender(popPk);                                                // 18/09: botão "↻ Reaprender" + lista (nós sintéticos por cima dos cards de golpe)
   return popPk;
 }
 /** Nome pt do tipo (a tabela de cores do Figma usa os mesmos nomes de ui/tipo/). */
@@ -386,16 +386,16 @@ const TIPO_FIG = { Normal: 'normal', Fire: 'fogo', Water: 'agua', Grass: 'planta
 const iconeMonU = dex => './ui/mon/pm' + String(dex).padStart(4, '0') + '.png';
 
 /* REAPRENDER (18/09, xkuuhaaku "move relearner", dv_dasmerces "tem como reaprender um golpe?"): a maquete da Amanda não tem lugar próprio,
-   então um botão sintético "↻ Relearn (N)" entra na linha do rótulo "Golpes", encostado à direita dos cards, e abre uma lista (nó
-   sintético por cima dos 4 cards) com os golpes do learnset até o nível atual que o Pokémon não tem. Choose um vira a pendência da
-   linha "✧ wants to learn X — clique no golpe que vai esquecer" (com vaga livre entra na hora). Vale pro PC e pro celular deitado, padrão
-   e v2 (as caixas são lidas dos nós da maquete); a janela antiga (?popup=0, celular em pé) tem o bloco "↻ Relearn move" na ficha. */
+   então um botão sintético "↻ Reaprender (N)" entra na linha do rótulo "Golpes", encostado à direita dos cards, e abre uma lista (nó
+   sintético por cima dos 4 cards) com os golpes do learnset até o nível atual que o Pokémon não tem. Escolher um vira a pendência da
+   linha "✧ quer aprender X — clique no golpe que vai esquecer" (com vaga livre entra na hora). Vale pro PC e pro celular deitado, padrão
+   e v2 (as caixas são lidas dos nós da maquete); a janela antiga (?popup=0, celular em pé) tem o bloco "↻ Reaprender golpe" na ficha. */
 let reaprenderAberto = false;
 function reaprenderHtml(e){                                              // janela antiga
-  const lista = ctx.golpesRelearn?.(e) || []; if (!lista.length) return '';
-  return `<details class="reaprender" style="margin-top:6px"><summary data-reaprender="1" style="cursor:pointer;font-size:12px">↻ ${esc(tr('Relearn move'))} (${lista.length})</summary><div style="margin-top:4px;font-size:12px">${lista.map(g => `<button type="button" class="btn" data-reaprender-id="${esc(g.id)}" title="Lv ${g.lv} · ${esc(g.tipo || '')} · power ${g.poder ?? '—'}">${esc(g.nome)} <small>Lv ${g.lv}</small></button>`).join(' ')}</div></details>`;
+  const lista = ctx.golpesReaprender?.(e) || []; if (!lista.length) return '';
+  return `<details class="reaprender" style="margin-top:6px"><summary data-reaprender="1" style="cursor:pointer;font-size:12px">↻ ${esc(tr('Relearn move'))} (${lista.length})</summary><div style="margin-top:4px;font-size:12px">${lista.map(g => `<button type="button" class="btn" data-reaprender-id="${esc(g.id)}" title="Lv ${g.lv} · ${esc(g.tipo || '')} · poder ${g.poder ?? '—'}">${esc(g.nome)} <small>Lv ${g.lv}</small></button>`).join(' ')}</div></details>`;
 }
-function montarRelearn(pop){
+function montarReaprender(pop){
   const f = Popup.grupo(pop, 'ficha'); if (!f || f.querySelector('.gp-reaprender-btn')) return;
   const px = v => parseFloat(v) || 0;
   const cards = [1, 2, 3, 4].map(i => Popup.grupo(pop, 'golpe-' + i)).filter(Boolean); if (!cards.length) return;
@@ -419,9 +419,9 @@ function montarRelearn(pop){
   });
   f.appendChild(b); f.appendChild(l);
 }
-function atualizarRelearn(pop, e){
+function atualizarReaprender(pop, e){
   const b = pop.querySelector('.gp-reaprender-btn'), l = pop.querySelector('.gp-reaprender-lista'); if (!b || !l) return;
-  const lista = e ? (ctx.golpesRelearn?.(e) || []) : [];
+  const lista = e ? (ctx.golpesReaprender?.(e) || []) : [];
   if (!lista.length) reaprenderAberto = false;
   b.style.display = lista.length ? 'block' : 'none';
   b.textContent = '↻ ' + tr('Relearn') + ((parseFloat(b.style.width) || 0) < 120 ? '' : ' (' + lista.length + ')');
@@ -430,7 +430,7 @@ function atualizarRelearn(pop, e){
   if (!reaprenderAberto) return;
   const btn = 'display:inline-block;margin:3px 4px 3px 0;padding:3px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font:inherit;cursor:pointer';
   l.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><b>↻ ' + esc(tr('Relearn')) + '</b><small style="opacity:.8;margin:0 6px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(tr('click the move you want back')) + '</small><button type="button" data-reaprender-fechar="1" style="' + btn + ';margin:0;padding:1px 7px">✕</button></div>'
-    + lista.map(g => '<button type="button" data-reaprender-id="' + esc(g.id) + '" style="' + btn + '" title="Lv ' + g.lv + ' · ' + esc(g.tipo || '') + ' · power ' + (g.poder ?? '—') + '">' + esc(g.nome) + ' <small style="opacity:.75">Lv ' + g.lv + '</small></button>').join('');
+    + lista.map(g => '<button type="button" data-reaprender-id="' + esc(g.id) + '" style="' + btn + '" title="Lv ' + g.lv + ' · ' + esc(g.tipo || '') + ' · poder ' + (g.poder ?? '—') + '">' + esc(g.nome) + ' <small style="opacity:.75">Lv ' + g.lv + '</small></button>').join('');
 }
 function acaoPokemon(nome){
   const lista = timeAtual(), e = lista[selPokemon]; if (!e) return;
@@ -482,7 +482,7 @@ function encherPokemon(pop){
     Popup.texto(pop, 'item-status', p.seguindo ? 'Following' : p.hp === 0 ? 'Fainted' : '', it);
     Popup.texto(pop, 'item-nivel', 'Lv ' + p.lv + ' · Nº ' + String(p.dex).padStart(3, '0'), it);
     Popup.badge(pop, 'item-tipo', tipo && TIPO_FIG[tipo], tipo && (S.types.length > 1 ? S.types.join(' · ') : tipo), it);   // 14/09 (l.neto): os dois tipos no mesmo selo (ícone/cor do primeiro)
-    alinharTiposDoTeam(pop, it, (S?.types || []).length);                // 18/09: 1 tipo na ponta direita, 2 tipos lado a lado, em toda linha
+    alinharTiposDoTime(pop, it, (S?.types || []).length);                // 18/09: 1 tipo na ponta direita, 2 tipos lado a lado, em toda linha
     iconesTipo(pop, it, S?.types || []);                                 // v2 (17/09): ícone(s) do tipo no cartão do time
     Popup.imagem(pop, 'pokemon', iconeMonU(p.dex), it);
     const hpI = p.hp ?? p.maxHp ?? 0;                                      // 17/09 (auditoria): registro sem `hp` (captura/inicial sem conta) = HP cheio, como o HUD do time (`t.hp ?? t.maxHp`); aqui saía "0/189" com a barra vazia
@@ -508,7 +508,7 @@ function encherFichaPokemon(pop, e, lista){
     Popup.imagem(pop, 'pokemon', null, f);
     for (let i = 0; i < 4; i++){ Popup.golpeVazio(pop, i, true); const no = Popup.grupo(pop, 'golpe-' + (i + 1)); if (no){ no.style.pointerEvents = ''; no.style.cursor = ''; } }
     Popup.botao(pop, 'evoluir', false, '✦ Evoluir'); Popup.botao(pop, 'soltar', false, 'Soltar');
-    atualizarRelearn(pop, null);
+    atualizarReaprender(pop, null);
     return;
   }
   const lv = e.lv || 5, bs = S.bs || [45, 45, 45, 45, 45, 45];
@@ -558,23 +558,23 @@ function encherFichaPokemon(pop, e, lista){
   const todasEvo = ctx.opcoesEvolucao?.(e) || [], ops = todasEvo.filter(o => o.glb);
   const pronta = ops.find(o => o.pode);
   /* EVOLUÇÃO SEM MODELO (17/09, Fulana no feedback: "a Chikorita não pode evoluir"): a regra da série existe (Bayleef no Lv 16), mas o
-     modelo da evolução não foi exportado — o filtro por `glb` deixava a lista vazia e a ficha dizia "does not evolve", que parece regra do
+     modelo da evolução não foi exportado — o filtro por `glb` deixava a lista vazia e a ficha dizia "não evolui", que parece regra do
      jogo. São 39 espécies com modelo sem NENHUMA evolução exportada: os 24 iniciais de fora de Kanto (Chikorita, Cyndaquil, Totodile…),
      Golbat, Onix, Scyther, Chansey, Porygon, Magneton, Rhydon, Seadra, Electabuzz, Magmar, Lickitung, Tangela, Primeape, Shinx e Riolu. */
   const emBreve = ops.length ? null : todasEvo.find(o => !o.glb);
   const prontas = ops.filter(o => o.pode);                               // 20/09: TODAS as que já dão, não só a primeira (Eevee)
   const evoEl = Popup.texto(pop, 'evolucao', novo
-    ? '✧ wants to learn ' + novo.nome + ' — clique no golpe que vai esquecer, ou aqui pra não aprender'
+    ? '✧ quer aprender ' + novo.nome + ' — clique no golpe que vai esquecer, ou aqui pra não aprender'
     : prontas.length > 1
       ? '→ pode evoluir para ' + prontas.map(o => o.nome).join(', ') + ' — clique em Evoluir e escolha'
       : ops.length
         ? '→ ' + ops[0].nome + ': ' + ops[0].regra.texto + (pronta ? '' : ' - ' + (ops[0].falta || 'ainda não'))
-        : emBreve ? '→ ' + emBreve.nome + ': ' + emBreve.regra.texto + ' (coming soon)' : 'does not evolve', f);
+        : emBreve ? '→ ' + emBreve.nome + ': ' + emBreve.regra.texto + ' (em breve)' : 'does not evolve', f);
   if (evoEl){ evoEl.style.pointerEvents = novo ? 'auto' : ''; evoEl.style.cursor = novo ? 'pointer' : ''; }
   Popup.botao(pop, 'evoluir', !!pronta && !!e.seguindo, prontas.length > 1 ? '✦ Evoluir (' + prontas.length + ' formas)' : pronta ? '✦ Evoluir → ' + pronta.nome : '✦ Evoluir');
   const podeSoltar = !e.seguindo && lista.length > 1;
-  Popup.botao(pop, 'soltar', podeSoltar, confirmarSoltar === chaveDe(e) ? '✔ Release permanently' : 'Soltar');
-  atualizarRelearn(pop, e);                                           // 18/09: botão/lista do Relearn pro Pokémon selecionado
+  Popup.botao(pop, 'soltar', podeSoltar, confirmarSoltar === chaveDe(e) ? '✔ Soltar de vez' : 'Soltar');
+  atualizarReaprender(pop, e);                                           // 18/09: botão/lista do Reaprender pro Pokémon selecionado
 }
 
 /* ------------------------------------------------------------------ Mochila */
@@ -590,11 +590,11 @@ function rMochila(corpo){
   const lista = ordem.filter(t => tiposPresentes.has(t)).map(t => ({ id: String(t), nome: tr(D.tipos[t] || ('tipo ' + t)) }));
   const aba = abas(lista.length ? lista : [{ id: '7', nome: 'Pokébola' }]);
   const itens = Object.entries(q).filter(([id]) => String(D.itens[id]?.t) === aba && q[id] > 0);
-  const av = avisoMo && Date.now() < avisoMo.ate ? avisoMo : null;         // 17/09: o motivo/resultado do "Use no parceiro" aparece aqui, não atrás da janela
+  const av = avisoMo && Date.now() < avisoMo.ate ? avisoMo : null;         // 17/09: o motivo/resultado do "Usar no parceiro" aparece aqui, não atrás da janela
   const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))}</div>`
     + (av ? `<div class="aviso-uso" style="margin:-2px 0 8px;font-size:13px;font-weight:700;color:${av.ok ? '#8ef58e' : '#ffd23a'}">${esc(tr(av.texto))}</div>` : '');
   if (!itens.length){ corpo.innerHTML = cab + '<div class="vazio">Nada aqui ainda. O Pokémart da cidade (fale com o vendedor) vende bolas e remédios; itens de missão chegam com as recompensas.</div>'; return; }
-  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || tr(D.tipos[it.t] || '')))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Use no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Use no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Use no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
+  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || tr(D.tipos[it.t] || '')))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Usar no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Usar no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Usar no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-bola]').forEach(b => b.onclick = () => { ctx.jogo.bolaSel = b.dataset.bola; ctx.gravarLS('bolaSel', ctx.jogo.bolaSel); render(); });
   corpo.querySelectorAll('[data-evoitem]').forEach(b => b.onclick = () => { fechar(); ctx.usarItemEvolucao?.(b.dataset.evoitem); });
   corpo.querySelectorAll('[data-usar]').forEach(b => b.onclick = () => { const id = b.dataset.usar; ctx.usarItem?.(id, D.itens[id]?.n || '', (txt, ok) => avisarMo(id, txt, ok)); render(); });   // a cura em si vive no index (usarItem), igual à dos atalhos; o aviso volta pra janela (17/09)
@@ -602,30 +602,30 @@ function rMochila(corpo){
 }
 
 /* ============================================================ pop-up Mochila (maquete do Figma, rodada 7)
-   Grade de 18 células que rola, busca por nome, 6 categorias na lateral, Use e a lixeira (com confirmação).
-   As categorias da maquete não existem no jogo: o inventário vem do dump indexado pelo `t` dthe item. Este é o de/para
+   Grade de 18 células que rola, busca por nome, 6 categorias na lateral, Usar e a lixeira (com confirmação).
+   As categorias da maquete não existem no jogo: o inventário vem do dump indexado pelo `t` do item. Este é o de/para
    que escolhi (está no relatório pra ela): todos = tudo; pokebolas = 7; medicina = 9 (Recuperação); tm = 4 (Máquina
    Técnica); chave = 3 (Itens transportados, que são os de missão); customizacao = 11 (traje) + 12 (montaria). */
 let popMo = null, catMo = 'todos', buscaMo = '', selMo = 0, confirmarDescarte = null;
 const CATS_MO = { todos: null, pokebolas: [7], medicina: [9], tm: [4], chave: [3], customizacao: [11, 12] };
-/* O que "Use" faz no jogo hoje: Pokébola vira a bola escolhida, item de Recuperação (t=9: poções, Reanimador) cura, pedra
+/* O que "Usar" faz no jogo hoje: Pokébola vira a bola escolhida, item de Recuperação (t=9: poções, Reanimador) cura, pedra
    evolui. TM, traje, montaria e item de missão NÃO têm uso pela mochila ainda — o botão fica desligado (antes o `usarItem`
-   tratava tudo como poção e consumia the item). Descartar não vale pra item de missão (t=3) nem pra bola (mora em `bolas`). */
-const podeUseMo = a => a.it.t === 7 || a.it.t === 9 || !!ctx.ehItemDeEvolucao?.(a.id);
-/* POR QUE NÃO USOU (17/09, Marcolino no #alpha-testers: "clico e não vai" na Poção): o Use chama o `usarItem` do index, que só cura
+   tratava tudo como poção e consumia o item). Descartar não vale pra item de missão (t=3) nem pra bola (mora em `bolas`). */
+const podeUsarMo = a => a.it.t === 7 || a.it.t === 9 || !!ctx.ehItemDeEvolucao?.(a.id);
+/* POR QUE NÃO USOU (17/09, Marcolino no #alpha-testers: "clico e não vai" na Poção): o Usar chama o `usarItem` do index, que só cura
    o Pokémon EM CAMPO e avisava flutuando em cima dele — atrás da janela (e sem aviso nenhum quando não era a vez na batalha). Agora o
    motivo (HP cheio, desmaiado, sem Pokémon, acabou) e o resultado ("recuperou 20 HP") ficam 4 s DENTRO da Mochila: na linha de dica do
-   painel dthe item (v2 do PC), ao lado do Use (Figma padrão) ou no vão entre a busca e as moedas (v2 do celular, que não tem botão). */
+   painel do item (v2 do PC), ao lado do Usar (Figma padrão) ou no vão entre a busca e as moedas (v2 do celular, que não tem botão). */
 /* Item de evolução que VAI evoluir o parceiro agora (a mesma conta do `usarItemEvolucao` do index). Só esse pede confirmação no toque
-   duplo: evoluir cannot be undone, e dois toques rápidos numa pedra (pra ler a descrição, ou num celular lento) evoluíam na hora. */
+   duplo: evoluir não tem volta, e dois toques rápidos numa pedra (pra ler a descrição, ou num celular lento) evoluíam na hora. */
 const evoluiAgoraMo = a => a.it.t !== 7 && a.it.t !== 9 && !!ctx.ehItemDeEvolucao?.(a.id)
   && (ctx.opcoesEvolucao?.(ctx.jogo?.pika) || []).some(o => o.pode && o.glb && String(o.consome) === String(a.id));
 let avisoMo = null;                                                        // { id, texto, ok, ate, confirmaEvo }
 function avisarMo(id, texto, ok = false){
   avisoMo = { id: String(id), texto, ok: !!ok, ate: Date.now() + 4000 };
-  clearTeamout(avisarMo.t); avisarMo.t = setTeamout(() => { avisoMo = null; if (aberta === 'mochila') render(); }, 4100);
+  clearTimeout(avisarMo.t); avisarMo.t = setTimeout(() => { avisoMo = null; if (aberta === 'mochila') render(); }, 4100);
 }
-/** Linha do aviso nas maquetes sem painel de detalhe: à esquerda do Use ou, sem botão, entre a busca e as moedas. `av` = { texto, ok, dica } ou null. */
+/** Linha do aviso nas maquetes sem painel de detalhe: à esquerda do Usar ou, sem botão, entre a busca e as moedas. `av` = { texto, ok, dica } ou null. */
 function linhaAvisoMo(pop, av){
   let el = pop.querySelector(':scope > [data-txt="aviso-uso"]');
   if (!el){
@@ -676,7 +676,7 @@ function acaoMochila(nome){
   if (!alvo) return;
   if (nome === 'usar'){
     confirmarDescarte = null;
-    if (!podeUseMo(alvo)){ avisarMo(alvo.id, 'this item cannot be used from the Bag'); render(); return; }   // só chega aqui pelo toque duplo (o botão fica desligado)
+    if (!podeUsarMo(alvo)){ avisarMo(alvo.id, 'this item cannot be used from the Bag'); render(); return; }   // só chega aqui pelo toque duplo (o botão fica desligado)
     if (alvo.it.t === 7){ ctx.jogo.bolaSel = alvo.id; ctx.gravarLS('bolaSel', alvo.id); render(); return; }   // Pokébola: vira a bola escolhida
     if (ctx.ehItemDeEvolucao?.(alvo.id)){
       if (!evoluiAgoraMo(alvo)){ avisarMo(alvo.id, (alvo.it.n || 'this item') + ' has no effect on ' + (ctx.jogo?.pika?.nome || 'your Pokémon')); render(); return; }   // revisão (17/09): o aviso fica na janela (antes ela fechava e o aviso flutuava atrás)
@@ -714,15 +714,15 @@ function encherMochila(pop){
     pop.addEventListener('click', ev => {
       const c = ev.target?.closest?.('[data-fig^="item-"]'); if (!c || !pop.contains(c)) return;
       const n = +c.dataset.fig.split('-').pop(); if (!n) return;
-      /* TOQUE DUPLO USA (17/09): a maquete v2 promete "Clique duas vezes para usar" e o v2 do celular nem tem botão Use — lá a poção
-         não tinha como ser usada pela Mochila. Vale nos dois visuais (o Use continua). */
+      /* TOQUE DUPLO USA (17/09): a maquete v2 promete "Clique duas vezes para usar" e o v2 do celular nem tem botão Usar — lá a poção
+         não tinha como ser usada pela Mochila. Vale nos dois visuais (o Usar continua). */
       const agora = Date.now(), duplo = selMo === n - 1 && agora - (pop.__toqueMo || 0) < 450;
       pop.__toqueMo = duplo ? 0 : agora;
       selMo = n - 1; confirmarDescarte = null;
       if (!duplo){ render(); return; }
-      const e2 = itensMochila()[n - 1];                                   // revisão (17/09): pedra que evolui pede confirmação — o Use segue direto
+      const e2 = itensMochila()[n - 1];                                   // revisão (17/09): pedra que evolui pede confirmação — o Usar segue direto
       if (e2 && evoluiAgoraMo(e2) && !(avisoMo?.confirmaEvo && avisoMo.id === String(e2.id) && Date.now() < avisoMo.ate)){
-        avisarMo(e2.id, 'Evoluir cannot be undone: faça de novo pra usar ' + (e2.it.n || 'the item')); avisoMo.confirmaEvo = true; render(); return;
+        avisarMo(e2.id, 'Evolution cannot be undone: do it again to use ' + (e2.it.n || 'the item')); avisoMo.confirmaEvo = true; render(); return;
       }
       acaoMochila('usar');
     });
@@ -734,7 +734,7 @@ function encherMochila(pop){
     pop.addEventListener('mouseover', ev => mostrarDica(ev.target));
     pop.addEventListener('mouseout', ev => { if (!pop.contains(ev.relatedTarget)) mostrarDica(null); });
     pop.addEventListener('touchstart', ev => mostrarDica(ev.target), { passive: true });
-    pop.addEventListener('touchend', () => setTeamout(() => mostrarDica(null), 2000), { passive: true });
+    pop.addEventListener('touchend', () => setTimeout(() => mostrarDica(null), 2000), { passive: true });
     pop.__ligouItens = true;
   }
   celulas.forEach((c, i) => {
@@ -748,8 +748,8 @@ function encherMochila(pop){
   });
   Popup.selecionar(pop, selMo + 1, 'item', 'item');
   const alvo = lista[selMo];
-  const av = avisoMo && Date.now() < avisoMo.ate && (alvo?.id === avisoMo.id || !lista.some(x => x.id === avisoMo.id)) ? avisoMo : null;   // the item gasto até o fim sai da lista: o aviso fica
-  const det = Popup.grupo(pop, 'detalhe-item');                          // v2 (rodada 27): painel dthe item escolhido (nome, categoria, quantidade, descrição, dica, foto)
+  const av = avisoMo && Date.now() < avisoMo.ate && (alvo?.id === avisoMo.id || !lista.some(x => x.id === avisoMo.id)) ? avisoMo : null;   // o item gasto até o fim sai da lista: o aviso fica
+  const det = Popup.grupo(pop, 'detalhe-item');                          // v2 (rodada 27): painel do item escolhido (nome, categoria, quantidade, descrição, dica, foto)
   if (det){
     Popup.texto(pop, 'item-nome', alvo ? tr(alvo.it.n || '') : '', det);
     Popup.texto(pop, 'item-categoria', alvo ? catCurta(D.tipos?.[alvo.it.t] || '') : '', det);
@@ -757,15 +757,15 @@ function encherMochila(pop){
     Popup.texto(pop, 'item-descricao', alvo ? tr(semBr(alvo.it.d)) : '', det);
     const dica = Popup.no(pop, 'item-dica', det);
     if (dica && dica.dataset.corBase == null) dica.dataset.corBase = dica.style.color;
-    if (av){ Popup.texto(pop, 'item-dica', av.texto, det); if (dica) dica.style.color = av.ok ? '#8EF58E' : '#FFD23A'; }   // 17/09: motivo/resultado do Use
-    else { if (alvo && podeUseMo(alvo)) Popup.rotulo(pop, 'item-dica', det); else Popup.texto(pop, 'item-dica', '', det); if (dica) dica.style.color = dica.dataset.corBase; }
+    if (av){ Popup.texto(pop, 'item-dica', av.texto, det); if (dica) dica.style.color = av.ok ? '#8EF58E' : '#FFD23A'; }   // 17/09: motivo/resultado do Usar
+    else { if (alvo && podeUsarMo(alvo)) Popup.rotulo(pop, 'item-dica', det); else Popup.texto(pop, 'item-dica', '', det); if (dica) dica.style.color = dica.dataset.corBase; }
     Popup.imagem(pop, 'item', alvo && alvo.it.i ? './ui/itens/' + alvo.it.i + '.png' : null, det);
-  } else linhaAvisoMo(pop, av || (alvo && podeUseMo(alvo) && !pop.querySelector(':scope > [data-tag="acao"][data-tagval="usar"]') ? { texto: 'Toque duas vezes nthe item pra usar', dica: true } : null));
+  } else linhaAvisoMo(pop, av || (alvo && podeUsarMo(alvo) && !pop.querySelector(':scope > [data-tag="acao"][data-tagval="usar"]') ? { texto: 'Double-click the item to use', dica: true } : null));
   const bola = alvo && alvo.it.t === 7;
-  Popup.botao(pop, 'usar', !!alvo && podeUseMo(alvo), bola ? 'Choose' : 'Use');
+  Popup.botao(pop, 'usar', !!alvo && podeUsarMo(alvo), bola ? 'Choose' : 'Use');
   Popup.botao(pop, 'descartar', !!alvo && podeDescartarMo(alvo));
   const lix = pop.querySelector('[data-tagval="descartar"]');
-  if (lix) lix.title = alvo && confirmarDescarte === alvo.id ? 'click again to discard permanently' : 'descartar the item escolhido';
+  if (lix) lix.title = alvo && confirmarDescarte === alvo.id ? 'click again to discard permanently' : 'discard the selected item';
 }
 
 
@@ -781,7 +781,7 @@ function bolinhas(grupo, n, cheia = '#2FAE47', vazia = '#39424E'){
   [...grupo.querySelectorAll('[data-fig="bolinha"]')].forEach((b, i) => { b.style.backgroundColor = i < n ? cheia : vazia; });
 }
 /* ÍCONE DO TIPO NO v2 (17/09, auditoria dos placeholders): a pílula da rodada 29 é `slot-tipo > img/tipo` (ui/figma/tipo/<tipo>.png). O Popup.badge só pinta a
-   pílula antiga (ret + texto): no v2 as caixas do ícone ficavam vazias in team, na ficha, nos golpes e na Pokédex. `tipo-N` sem tipo some (Pokémon de um tipo
+   pílula antiga (ret + texto): no v2 as caixas do ícone ficavam vazias no time, na ficha, nos golpes e na Pokédex. `tipo-N` sem tipo some (Pokémon de um tipo
    só no slot que a maquete desenhou com dois); card sem `tipo-N` (golpe) usa o `slot-tipo` direto.
    18/09 (teste da Amanda no site): NUNCA escreve o nome do tipo — a maquete v2 só tem a bolinha (o `txt/ficha-tipo` da rodada 30 recebia "Electric" e saiu na
    31); e a bolinha usa a caixa do `slot-tipo`, não a do `img/tipo` (encaixarBolinha). */
@@ -799,9 +799,9 @@ function iconesTipo(pop, raiz, tipos){
    bolinha fora da coluna das outras, e um de dois tipos numa linha de um só perdia o 2º tipo. Agora toda linha usa a geometria de uma linha de
    dois tipos da maquete e as bolinhas encostam na ponta direita: 1 tipo = na ponta; 2 tipos = tipo-1 ao lado, tipo-2 na ponta. A linha que não
    tem o encaixe do 2º tipo ganha uma cópia do de outra linha. */
-function alinharTiposDoTeam(pop, it, n){
+function alinharTiposDoTime(pop, it, n){
   const g1 = it.querySelector(':scope > [data-fig="tipo-1"]'); if (!g1 || !n) return;
-  const G = pop.__tiposTeam || (pop.__tiposTeam = (() => {
+  const G = pop.__tiposTime || (pop.__tiposTime = (() => {
     for (const r of pop.querySelectorAll('[data-fig^="item-time-"]')){
       const a = r.querySelector(':scope > [data-fig="tipo-1"]'), b = r.querySelector(':scope > [data-fig="tipo-2"]');
       if (a && b) return { x1: a.style.left, x2: b.style.left, molde: b };
@@ -1201,7 +1201,7 @@ function encherMensagens(pop, mens){
     if (!caixa){ caixa = document.createElement('div'); caixa.className = 'pf-dm-log'; Object.assign(caixa.style, { position: 'absolute', inset: '0', overflowY: 'auto', padding: '10px 12px', color: '#E6ECFF', font: '13px/1.45 "Nunito Sans", system-ui, sans-serif', pointerEvents: 'auto', userSelect: 'text' }); log.appendChild(caixa); log.style.pointerEvents = 'auto'; }
     const eu = D?.eu?.usuario, nick = D?.amigos.find(a => a.usuario === soConversa)?.nick || conv.find(x => x.com === soConversa)?.nick || soConversa;
     if (!soConversa) caixa.innerHTML = '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Escolha uma conversa ao lado, ou clique num amigo e peça "mensagem".</div>';
-    else caixa.innerHTML = soMsgs.length ? soMsgs.map(m => '<div><b style="color:' + (m.de === eu ? '#8ef58e' : '#F8C237') + '">' + esc(m.de === eu ? 'Você' : nick) + '</b> <small style="color:#7f8db0">' + new Date(m.hora).toLocaleTeamString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</small><br>' + esc(m.texto) + '</div>').join('') : '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Sem mensagens ainda. Diga oi pra ' + esc(nick) + '.</div>';
+    else caixa.innerHTML = soMsgs.length ? soMsgs.map(m => '<div><b style="color:' + (m.de === eu ? '#8ef58e' : '#F8C237') + '">' + esc(m.de === eu ? 'Você' : nick) + '</b> <small style="color:#7f8db0">' + new Date(m.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</small><br>' + esc(m.texto) + '</div>').join('') : '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Sem mensagens ainda. Diga oi pra ' + esc(nick) + '.</div>';
     caixa.scrollTop = caixa.scrollHeight;
   }
   const inp = soInput(pop, 'conteudo-mensagens', 'campo-mensagem');
@@ -1580,7 +1580,7 @@ function rMapa(corpo){
     const d = dexEstado();
     const linha = e => { const st = d[e.dex]; const visto = st === 'visto' || st === 'pego';
       return `<div class="m-poke ${visto ? '' : 'sombra'}"><img src="./ui/mon/pm${String(e.dex).padStart(4, '0')}.png" loading="lazy"><b>${visto ? esc(e.nome) : '???'}</b>${e.agua ? '<small>💧</small>' : ''}${st === 'pego' ? '<small class="pego">✔ pego</small>' : ''}</div>`; };
-    alvo.innerHTML = `<div class="ficha"><h3>${esc(nome)}</h3>${lista.length ? `<div style="color:var(--muted);font-size:11px;margin:4px 0 8px">${proprios.length ? 'Pokémon desta área' : 'Pokémon comuns da região'} — de perto eles entram na Pokédex</div><div class="m-grade">${lista.map(linha).join('')}</div>` : '<div class="vazio" style="padding:14px 6px">No wild Pokémon here.</div>'}</div>`;
+    alvo.innerHTML = `<div class="ficha"><h3>${esc(nome)}</h3>${lista.length ? `<div style="color:var(--muted);font-size:11px;margin:4px 0 8px">${proprios.length ? 'Pokémon desta área' : 'Pokémon comuns da região'} — de perto eles entram na Pokédex</div><div class="m-grade">${lista.map(linha).join('')}</div>` : '<div class="vazio" style="padding:14px 6px">Sem Pokémon selvagens aqui.</div>'}</div>`;
   };
   cv.onclick = ev => {
     const r = cv.getBoundingClientRect();
@@ -1710,19 +1710,19 @@ async function mostrarModeloDex(glb, conhecido){
     else obj.traverse(o => { if (o.isMesh){ const m = new THREE.MeshBasicMaterial({ color: 0x0b0f1a }); m.__silhueta = true; o.material = m; } });
     const mixer = new THREE.AnimationMixer(obj);
     const idle = g.animations.find(c => /^idle$/i.test(c.name)) || g.animations[0];
-    /* Storage da pose ANIMADA (precise = aplica o skinning): a caixa de descanso (bind pose) deixa aves
+    /* Caixa da pose ANIMADA (precise = aplica o skinning): a caixa de descanso (bind pose) deixa aves
        e flutuantes no ar — o Pidgey "flutuava". Amostra o Idle em 4 instantes e apoia pelo ponto
        mais baixo; centro x/z do primeiro instante. */
     const acao = idle ? mixer.clipAction(idle) : null; if (acao) acao.play();
     const cx = new THREE.Box3(); let minY = Infinity, centro = null, tam = null;
     const dur = idle?.duration || 1;
     for (const k of [0, 0.25, 0.5, 0.75]){
-      if (acao){ mixer.setTeam(k * dur); } obj.updateMatrixWorld(true);
+      if (acao){ mixer.setTime(k * dur); } obj.updateMatrixWorld(true);
       const bx = new THREE.Box3().setFromObject(obj, true);
       if (!centro){ centro = bx.getCenter(new THREE.Vector3()); tam = bx.getSize(new THREE.Vector3()); cx.copy(bx); }
       minY = Math.min(minY, bx.min.y);
     }
-    if (acao) mixer.setTeam(0);
+    if (acao) mixer.setTime(0);
     const esc = 1 / Math.max(tam.y, tam.x * 0.9, tam.z * 0.9, 1e-3);
     const grupo = new THREE.Group(); obj.position.set(-centro.x, -minY, -centro.z); grupo.add(obj); grupo.scale.setScalar(esc);
     v.cena.add(grupo); v.grupos.push(grupo); v.mixers.push(mixer);
@@ -1795,7 +1795,7 @@ async function mostrarDex(){
   const faltaLista = K && nv < 5 ? K.falta(selDex).slice(0, 4) : [];
   const golpesMostrar = nv >= 4 ? golpes : golpes.filter(([, id]) => vistoGolpe.has(id));
   const trava = (n, txt) => `<td class="oculto">🔒 nível ${n} (${nomesNivel[n]})${txt ? ' · ' + txt : ''}</td>`;
-  const golpeHtml = ([lv, id]) => { const g = G[id]; return g ? `<div><span class="lv">${lv}</span><b>${esc(g[0])}</b>${tipoHtml(g[1])}<small>${catMap[g[2]] || ''} · power ${g[3] || '—'} · PP ${g[4] || '—'}</small></div>` : ''; };
+  const golpeHtml = ([lv, id]) => { const g = G[id]; return g ? `<div><span class="lv">${lv}</span><b>${esc(g[0])}</b>${tipoHtml(g[1])}<small>${catMap[g[2]] || ''} · poder ${g[3] || '—'} · PP ${g[4] || '—'}</small></div>` : ''; };
   f.innerHTML = `<h3>${nv >= 1 ? esc(S?.name) : '?????'} <small style="color:var(--muted)">Nº ${String(selDex).padStart(3, '0')} · ${st === 'pego' ? 'capturado' : st ? 'visto' : 'desconhecido'}</small></h3>
     <div class="dex-nivel"><span class="pts" title="${rv ? rv.pontos + ' pontos de conhecimento' : ''}">${'●'.repeat(nv)}${'○'.repeat(5 - nv)}</span> <b>${nomesNivel[nv]}</b>${rv && rv.proximo != null ? ` <small>${rv.pontos}/${rv.proximo} pra ${nomesNivel[nv + 1]}</small>` : nv >= 5 ? ' <small>✨ você sabe tudo sobre a espécie</small>' : ''}${faltaLista.length ? `<div class="dex-falta">pra subir: ${faltaLista.map(esc).join(' · ')}</div>` : ''}</div>
     <div class="dex-visor"></div>
@@ -1859,9 +1859,9 @@ function rLoja(corpo){
 
 /* ------------------------------------------------------------------ Loja Premium (GDD §7.5)
    Doação com recompensa (Medalhão de Membro trocável, cosméticos). Sem servidor não existe compra —
-   e o Jaime pediu pra NÃO listar o que vai ter: só "coming soon". O Pokémart (itens) é a janela 'mercado'. */
+   e o Jaime pediu pra NÃO listar o que vai ter: só "em breve". O Pokémart (itens) é a janela 'mercado'. */
 function rPremium(corpo){
-  corpo.innerHTML = '<div class="vazio">Loja premium — coming soon, junto com o servidor online.</div>';
+  corpo.innerHTML = '<div class="vazio">Loja premium — em breve, junto com o servidor online.</div>';
 }
 
 /* ------------------------------------------------------------------ Social / Batalha */
@@ -1904,7 +1904,7 @@ function rAtalho(corpo){
 }
 
 /* ===================================================== RAID AO VIVO (banner da Amanda, rodada 26 — 14/09)
-   O banner é um pop-up como os outros (Esc closes, o jogador não anda, um pop-up por vez), mas quem sabe da raid é o
+   O banner é um pop-up como os outros (Esc fecha, o jogador não anda, um pop-up por vez), mas quem sabe da raid é o
    `raid_ui.mjs`: ele se liga aqui com `ligarRaid({ encher, acao, simples, mudou, def })` e recebe de volta como abrir,
    repintar e fechar. Sem maquete (celular em pé, `?popup=0`, layout sem `raid`) cai na janela antiga com o `simples`. */
 let popRd = null, raidApi = null, raidEraAberta = false;
@@ -1976,18 +1976,18 @@ const paradaDoK = (id, k) => { const n = PARADAS[id].ops.length; return Math.max
 
 /* O que ainda não existe no jogo. Fica APAGADO e a dica diz por quê — e some daqui assim que a opção nascer de verdade. */
 const CF_FALTA = {
-  'nomes-jogadores': 'coming soon', 'dano-flutuante': 'coming soon', 'ocultar-lotado': 'coming soon',
-  'confirmar-importante': 'coming soon', 'reduzir-animacoes': 'coming soon', 'daltonismo': 'coming soon',
+  'nomes-jogadores': 'em breve', 'dano-flutuante': 'em breve', 'ocultar-lotado': 'em breve',
+  'confirmar-importante': 'em breve', 'reduzir-animacoes': 'em breve', 'daltonismo': 'em breve',
   /* Controles: remapear tecla ainda não existe, e o joystick do celular não é ajustável. */
   'remapear-mover': 'trocar a tecla ainda não dá', 'remapear-correr': 'trocar a tecla ainda não dá',
   'remapear-interagir': 'trocar a tecla ainda não dá', 'remapear-mochila': 'trocar a tecla ainda não dá',
   'remapear-mapa': 'trocar a tecla ainda não dá', 'remapear-chat': 'trocar a tecla ainda não dá',
   'remapear-atalhos': 'trocar a tecla ainda não dá',
-  'lado-joystick': 'coming soon', 'tamanho-joystick': 'coming soon', 'tamanho-botoes': 'coming soon', 'vibracao': 'coming soon',   // rodada 25: coluna Celular
+  'lado-joystick': 'em breve', 'tamanho-joystick': 'em breve', 'tamanho-botoes': 'em breve', 'vibracao': 'em breve',   // rodada 25: coluna Celular
   /* Social: privacidade precisa do servidor. */
-  'quem-mensagem': 'precisa do servidor — coming soon', 'quem-convida': 'precisa do servidor — coming soon',
-  'status-online': 'precisa do servidor — coming soon', 'fonte-chat': 'o chat já se redimensiona pelo canto ◢',
-  'filtro-chat': 'coming soon — hoje quem cuida é a moderação (/aviso, /mudo)',
+  'quem-mensagem': 'precisa do servidor — em breve', 'quem-convida': 'precisa do servidor — em breve',
+  'status-online': 'precisa do servidor — em breve', 'fonte-chat': 'o chat já se redimensiona pelo canto ◢',
+  'filtro-chat': 'em breve — hoje quem cuida é a moderação (/aviso, /mudo)',
 };
 function popupCf(){
   if (popCf) return popCf;
@@ -2073,7 +2073,7 @@ function cfAcao(nome, el){
 const cfDiagTexto = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'indisponível'; };
 async function cfCopiarDiag(){
   const tx = cfDiagTexto();
-  try { await navigator.clipboard.writeText(tx); Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiado!'); setTeamout(() => Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiar'), 2000); }
+  try { await navigator.clipboard.writeText(tx); Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiado!'); setTimeout(() => Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiar'), 2000); }
   catch { Chat.sistema('Não deu pra copiar sozinho — o texto está aí na caixa, dá pra selecionar.'); }
 }
 /** Apagar progresso: com conta, é o personagem que some (a conta fica); sem conta, é o `apagarTudo` de sempre. */
@@ -2129,7 +2129,7 @@ function cfDialogoRelato(){
   document.body.appendChild(d); DIALOGOS.add(d);
   const area = d.querySelector('textarea'), av = d.querySelector('.cf-relato-av');
   area.addEventListener('keydown', e => e.stopPropagation());               // as teclas do jogo (I, K, M…) não podem agir enquanto escreve
-  setTeamout(() => area.focus(), 50);
+  setTimeout(() => area.focus(), 50);
   d.querySelector('.nao').onclick = () => d.remove();
   d.querySelector('.ok').onclick = async () => {
     const texto = area.value.trim(); if (!texto){ av.textContent = tr('Conte o que aconteceu antes de mandar.'); return; }
@@ -2237,7 +2237,7 @@ export function estouPreso(){
         const min = /(\d+)\s*min/.exec(r.erro || '')?.[1];
         if (r.status === 429 && min) msg = tr('Você usou o "Estou preso" há pouco. Espere {n} min antes de usar de novo.', { n: min });
         else if (r.status === 400) msg = tr('O relato não passou nas regras: pelo menos 50 caracteres e 5 palavras, sem enchimento.');
-        else if (r.status === 409) msg = tr('Not now dá: você está numa batalha ou na luta da raid.');
+        else if (r.status === 409) msg = tr('Agora não dá: você está numa batalha ou na luta da raid.');
       }
       erroServ = msg; atualizar(); return;
     }
@@ -2258,7 +2258,7 @@ export function estouPreso(){
     if (foi === false) Chat.sistema('O jogo já estava trocando de lugar. Se continuar preso, recarregue a página.');
   };
   atualizar();
-  setTeamout(() => area.focus(), 50);
+  setTimeout(() => area.focus(), 50);
 }
 /* A maquete não trouxe diálogo de SENHA (só o de apagar), e a rota do servidor existe desde 07/09 sem tela nenhuma.
    Este aqui é DOM simples com a paleta dela — pedido de arte pra rodada 25 anotado no figma-desvios.md. */
@@ -2328,8 +2328,8 @@ export function abrirEmBreve(recurso){
 let popIn = null;
 /** O layout carregado tem a maquete desse pop-up nesta orientação? (o index decide entre a caixa antiga e a da Amanda) */
 export function temPopup(nome){ return !!defPopup(nome); }
-/** `lista` = os iniciais ({ dex, nome, glb, tipos }); `palco` = palcoIniciais() do index; `aoChoose(o, i)` registra; `semEscolha()` avisa que falta escolher. */
-export function abrirInicial({ lista, palco = null, aoChoose = null, semEscolha = null } = {}){
+/** `lista` = os iniciais ({ dex, nome, glb, tipos }); `palco` = palcoIniciais() do index; `aoEscolher(o, i)` registra; `semEscolha()` avisa que falta escolher. */
+export function abrirInicial({ lista, palco = null, aoEscolher = null, semEscolha = null } = {}){
   const def = defPopup('inicial'); if (!def || !lista?.length) return false;
   if (popIn && Popup.aberto(popIn)) return true;
   if (popIn){ popIn.remove(); popIn = null; }                             // monta de novo a cada abertura: são poucos nós e as chamadas de volta ficam frescas
@@ -2337,11 +2337,11 @@ export function abrirInicial({ lista, palco = null, aoChoose = null, semEscolha 
   const P = palco;
   const pintar = () => {
     ops.forEach((op, i) => { for (const m of op.querySelectorAll(':scope > [data-sobre="selecionado"]')) m.style.display = i === sel ? 'block' : 'none'; });
-    Popup.botao(popIn, 'escolher-inicial', true, sel >= 0 ? 'Choose ' + lista[sel].nome : 'Choose');   // idioma: "Choose {x}" no ui_<l>.json
+    Popup.botao(popIn, 'escolher-inicial', true, sel >= 0 ? 'Escolher ' + lista[sel].nome : 'Escolher');   // idioma: "Escolher {x}" no ui_<l>.json
   };
   popIn = Popup.montar(def, {
     escolhe: (x, el) => { const i = ops.indexOf(el); if (i < 0 || i === sel || !lista[i]) return; sel = i; P?.selecionar?.(sel); ctx.Som?.tocar?.('ui/sound_click', { volume: 0.5 }); pintar(); },
-    acao: a => { if (a !== 'escolher-inicial') return; if (sel < 0){ semEscolha?.(); return; } const o = lista[sel], i = sel; Popup.fechar(popIn); aoChoose?.(o, i); },
+    acao: a => { if (a !== 'escolher-inicial') return; if (sel < 0){ semEscolha?.(); return; } const o = lista[sel], i = sel; Popup.fechar(popIn); aoEscolher?.(o, i); },
     fechar: () => { P?.fechar?.(); },
   });
   ops = [1, 2, 3].map(n => popIn.querySelector('[data-fig="opcao-' + n + '"]')).filter(Boolean);
@@ -2405,7 +2405,7 @@ export function previa(on = null){
     + '<div class="sec">Maquete, com os exemplos da Amanda</div><div class="bts" data-sec="maquete"></div>'
     + '<div class="sec">Janelas do jogo</div><div class="bts" data-sec="janela"></div>'
     + '<div class="sec">Banner "Em breve" por recurso</div><div class="bts" data-sec="breve"></div>'
-    + '<small>' + ori + ' · nada é gravado · Esc closes o pop-up, F7 a paleta</small>';
+    + '<small>' + ori + ' · nada é gravado · Esc fecha o pop-up, F7 a paleta</small>';
   const bt = (sec, rotulo, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = rotulo; b.onclick = fn; p.querySelector('[data-sec="' + sec + '"]').appendChild(b); };
   for (const n of maquete) bt('maquete', n, () => abrirPrevia(n));
   for (const n of janelas) bt('janela', n, () => { fecharPrevia(); abrir(n); });
@@ -2420,7 +2420,7 @@ export function previa(on = null){
    com 46 itens de exemplo do dump: ícones de ui/itens/, quantidades variadas e todas as categorias das abas (Pokébolas 8, Medicina 15, MT 6,
    Chave 10, Customização 2 e 5 pedras que só aparecem em Todos). O preenchimento segue os passos do encherMochila — abas por CATS_MO, busca,
    Popup.celulas, anel de selecionado pelo Popup.selecionar, painel detalhe-item no PC, linha de dica no celular, dica ao passar o mouse — mas
-   a lista é esta, fixa: o inventário de verdade (`itens`, `bolas`, dinheiro, conta) não é lido nem gravado, e Use, Descartar e o toque duplo
+   a lista é esta, fixa: o inventário de verdade (`itens`, `bolas`, dinheiro, conta) não é lido nem gravado, e Usar, Descartar e o toque duplo
    só avisam no chat. Em Todos a lista rola nos dois (6 linhas de 8 no PC, 23 de 2 no celular). Esc e o X fecham (é o `popPrevia`). */
 const MOCHILA_PREVIA = [[1001, 25], [1002, 12], [1003, 6], [1004, 1], [1005, 30], [1006, 3], [1007, 5], [1008, 4],
   [2001, 15], [2002, 8], [2003, 4], [2004, 2], [2005, 1], [2006, 6], [2007, 3], [2008, 2], [2009, 3], [2010, 4], [2011, 1], [2012, 5], [2013, 1], [2017, 9], [2035, 12],
@@ -2460,10 +2460,10 @@ async function abrirPreviaMochila(){
         Popup.texto(pop, 'item-categoria', alvo ? catCurta(D.tipos?.[alvo.it.t] || '') : '', det);
         Popup.texto(pop, 'item-qtd', alvo ? tr('Você tem {n}').replace('{n}', alvo.n) : '', det);
         Popup.texto(pop, 'item-descricao', alvo ? tr(semBr(alvo.it.d)) : '', det);
-        if (alvo && podeUseMo(alvo)) Popup.rotulo(pop, 'item-dica', det); else Popup.texto(pop, 'item-dica', '', det);
+        if (alvo && podeUsarMo(alvo)) Popup.rotulo(pop, 'item-dica', det); else Popup.texto(pop, 'item-dica', '', det);
         Popup.imagem(pop, 'item', alvo && alvo.it.i ? './ui/itens/' + alvo.it.i + '.png' : null, det);
-      } else linhaAvisoMo(pop, alvo && podeUseMo(alvo) && !pop.querySelector(':scope > [data-tag="acao"][data-tagval="usar"]') ? { texto: 'Toque duas vezes nthe item pra usar', dica: true } : null);
-      Popup.botao(pop, 'usar', !!alvo && podeUseMo(alvo), alvo && alvo.it.t === 7 ? 'Choose' : 'Use');
+      } else linhaAvisoMo(pop, alvo && podeUsarMo(alvo) && !pop.querySelector(':scope > [data-tag="acao"][data-tagval="usar"]') ? { texto: 'Double-click the item to use', dica: true } : null);
+      Popup.botao(pop, 'usar', !!alvo && podeUsarMo(alvo), alvo && alvo.it.t === 7 ? 'Escolher' : 'Usar');
       Popup.botao(pop, 'descartar', !!alvo && podeDescartarMo(alvo));
     };
     pop = popsPrevia['mochila-cheia'] = Popup.montar(def, {
@@ -2473,7 +2473,7 @@ async function abrirPreviaMochila(){
       fechar: () => { if (popPrevia === pop) popPrevia = null; },
     });
     pop.id = 'pf-previa-mochila';                                          /* o id da Mochila de verdade (pf-popup-mochila) é o que o tools/figma_conferir.mjs procura */
-    pop.addEventListener('click', ev => {                                  /* clique escolhe a célula (anel de selecionado); o 2º rápido seria o Use */
+    pop.addEventListener('click', ev => {                                  /* clique escolhe a célula (anel de selecionado); o 2º rápido seria o Usar */
       const c = ev.target?.closest?.('[data-fig^="item-"]'); if (!c || !pop.contains(c)) return;
       const n = +c.dataset.fig.split('-').pop(); if (!n) return;
       const agora = Date.now(), duplo = st.sel === n - 1 && agora - (pop.__toqueMo || 0) < 450;
@@ -2487,7 +2487,7 @@ async function abrirPreviaMochila(){
     pop.addEventListener('mouseover', ev => dica(ev.target));
     pop.addEventListener('mouseout', ev => { if (!pop.contains(ev.relatedTarget)) dica(null); });
     pop.addEventListener('touchstart', ev => dica(ev.target), { passive: true });
-    pop.addEventListener('touchend', () => setTeamout(() => dica(null), 2000), { passive: true });
+    pop.addEventListener('touchend', () => setTimeout(() => dica(null), 2000), { passive: true });
     pop.__encher = encher;
   }
   popPrevia = pop; Popup.abrir(pop); pop.__encher();                      /* depois do abrir: o Popup.celulas mede a grade pelo offsetTop (escondido dá 0) */
@@ -2764,7 +2764,7 @@ function rConfig(corpo){
   const doisCliques = (btn, rotulo, acao) => {
     if (!btn) return; let armado = false;
     btn.onclick = async () => {
-      if (!armado){ armado = true; btn.textContent = 'Tem certeza? Clique de novo'; setTeamout(() => { if (armado){ armado = false; btn.textContent = rotulo; } }, 5000); return; }
+      if (!armado){ armado = true; btn.textContent = 'Tem certeza? Clique de novo'; setTimeout(() => { if (armado){ armado = false; btn.textContent = rotulo; } }, 5000); return; }
       armado = false; btn.disabled = true; btn.textContent = 'apagando…';
       const r = await acao();
       btn.disabled = false; btn.textContent = rotulo;
@@ -2789,7 +2789,7 @@ function rConfig(corpo){
      (`atalhos`), que esta cópia não tem — 27/10: sem o fetch (só dava 404), os botões ficam escondidos como já ficavam sem a lista. */
   for (const sel of ['#c-hud', '#c-galeria', '#c-bancada']){ const b = corpo.querySelector(sel); if (b) b.style.display = 'none'; }
   const ap = corpo.querySelector('#c-apagar');
-  ap.onclick = () => { if (!confirmarApagar){ confirmarApagar = true; ap.textContent = 'Tem certeza? Clique de novo'; setTeamout(() => { confirmarApagar = false; ap.textContent = 'Apagar progresso'; }, 4000); return; } apagarTudo(); };   // Jaime (31/08): reinicia TUDO (missões, Centro, abertura, personagem…) pra testar do zero; só preferências do aparelho ficam
+  ap.onclick = () => { if (!confirmarApagar){ confirmarApagar = true; ap.textContent = 'Tem certeza? Clique de novo'; setTimeout(() => { confirmarApagar = false; ap.textContent = 'Apagar progresso'; }, 4000); return; } apagarTudo(); };   // Jaime (31/08): reinicia TUDO (missões, Centro, abertura, personagem…) pra testar do zero; só preferências do aparelho ficam
 }
 /** Apagar progresso = conta nova: limpa localStorage/sessionStorage inteiros, menos o layout da HUD e preferências de
     aparelho (hud.*, volume, tamanhos), e recarrega numa URL limpa (sem mapa/chegada/intro): criação de personagem →
