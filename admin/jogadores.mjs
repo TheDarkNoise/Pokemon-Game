@@ -37,7 +37,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
         <span class="bola" style="background:${j.online ? '#3ecf8e' : '#3a4256'}" title="${j.online ? 'online' : 'offline'}"></span>
         <span style="flex:1;min-width:0"><b>${esc(j.nome || j.usuario)}</b> <span class="fraco">${esc(j.usuario)}</span>
           ${j.online ? `<br><small class="fraco">${esc(j.online.mapa)} · x ${j.online.x} z ${j.online.z}</small>` : ''}</span>
-        ${j.gm ? '<span class="selo gm">GM</span>' : ''}${j.bannedAte ? '<span class="selo ban">banned</span>' : ''}${j.mutedAte ? '<span class="selo muted">muted</span>' : ''}
+        ${j.gm ? '<span class="selo gm">GM</span>' : ''}${j.banidoAte ? '<span class="selo ban">banned</span>' : ''}${j.mudoAte ? '<span class="selo mudo">muted</span>' : ''}
       </button>`).join('')
       + (r.visitantes.length ? `<div class="fraco" style="margin-top:8px;font-size:12px">No account: ${r.visitantes.map(v => esc(v.usuario) + ' (' + esc(v.online.mapa) + ')').join(', ')}</div>` : '')
       || '<span class="fraco">Nobody found.</span>';
@@ -66,12 +66,12 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
   function renderFicha() {
     const c = det.conta, s = det.save;
     const status = [c.online ? `🟢 online in <b>${esc(c.online.mapa)}</b> (x ${c.online.x}, z ${c.online.z})` : '⚪ offline',
-      c.bannedAte ? `⛔ banned ${c.bannedAte === -1 ? 'forever' : 'until ' + dataHora(c.bannedAte)}${c.banMotivo ? ' — ' + esc(c.banMotivo) : ''}` : '',
-      c.mutedAte ? `🔇 silenciado until ${dataHora(c.mutedAte)}` : ''].filter(Boolean).join(' · ');
+      c.banidoAte ? `⛔ banned ${c.banidoAte === -1 ? 'forever' : 'until ' + dataHora(c.banidoAte)}${c.banMotivo ? ' — ' + esc(c.banMotivo) : ''}` : '',
+      c.mudoAte ? `🔇 muted until ${dataHora(c.mudoAte)}` : ''].filter(Boolean).join(' · ');
     $('j-ficha').innerHTML = `
       <div class="topo-edit"><h2>${esc(c.nome || c.usuario)} <span class="fraco" style="font-size:14px">${esc(c.usuario)}</span></h2>
         <button id="j-atualizar">Refresh</button>
-        ${c.online ? '<button id="j-ir" title="Leva o SEU personagem until ele (o jogo precisa estar aberto em outra aba, no mesmo mapa)">Ir until lá no jogo</button><button id="j-message">Send message</button><button id="j-kick" class="perigo">Disconnect</button>' : ''}</div>
+        ${c.online ? '<button id="j-ir" title="Moves YOUR character to them (the game must be open in another tab on the same map)">Go there in game</button><button id="j-recado">Send message</button><button id="j-kick" class="perigo">Disconnect</button>' : ''}</div>
       <div class="fraco">${status}</div>
       <div class="j-grade">
         <div class="caixa"><h3>Account</h3>
@@ -86,12 +86,12 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
         <div class="caixa"><h3>Moderation</h3>
           <div class="form">
             <label class="inteira">Reason (shown to player) <input type="text" id="j-motivo" maxlength="120" placeholder="optional"></label>
-            <label>Mute for <select id="j-muted-min"><option value="5">5 min</option><option value="30">30 min</option><option value="60">1 hour</option><option value="1440">1 day</option></select></label>
+            <label>Mute for <select id="j-mudo-min"><option value="5">5 min</option><option value="30">30 min</option><option value="60">1 hour</option><option value="1440">1 day</option></select></label>
             <label>Ban for <select id="j-ban-min"><option value="60">1 hour</option><option value="1440">1 day</option><option value="10080">7 days</option><option value="43200">30 days</option><option value="-1">forever</option></select></label>
           </div>
           <div class="acoes" style="margin-top:10px">
-            ${c.mutedAte ? '<button id="j-desmutar">Unmute</button>' : '<button id="j-muted">Mute</button>'}
-            ${c.bannedAte ? '<button id="j-perdoar">Remove ban</button>' : '<button id="j-banir" class="perigo">Ban</button>'}
+            ${c.mudoAte ? '<button id="j-desmutar">Unmute</button>' : '<button id="j-mudo">Mute</button>'}
+            ${c.banidoAte ? '<button id="j-perdoar">Remove ban</button>' : '<button id="j-banir" class="perigo">Ban</button>'}
           </div>
           <div class="acoes" style="margin-top:8px" title="O mesmo que /tp nome cidade no chat: online, a cena dele recarrega lá; offline, nasce lá na próxima entrada">
             <select id="j-levar-cidade">${CIDADES.map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select><button id="j-levar">Move to Pokémon Center</button>
@@ -131,11 +131,11 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
     const d = e.depois || {};
     if (e.acao === 'bolsa') return 'money ' + (e.antes?.money ?? '—') + ' → ' + (d.money ?? '—');
     if (e.acao === 'time') return (e.antes?.time?.length ?? 0) + '+' + (e.antes?.caixa?.length ?? 0) + ' → ' + (d.time?.length ?? 0) + '+' + (d.caixa?.length ?? 0) + ' (team+storage)';
-    if (e.acao === 'gave pokemon') return (d.nome || '#' + d.dex) + ' Nv ' + d.lv + (d.shiny ? ' ✨' : '') + ' → ' + d.lugar;
+    if (e.acao === 'deu pokemon') return (d.nome || '#' + d.dex) + ' Nv ' + d.lv + (d.shiny ? ' ✨' : '') + ' → ' + d.lugar;
     if (e.acao === 'cargo') return (d.gm ? 'GM' : 'no GM') + (d.cargo ? ' · ' + d.cargo : '');
-    if (e.acao === 'banir') return (d.bannedAte === -1 ? 'forever' : 'until ' + dataHora(d.bannedAte)) + (d.motivo ? ' — ' + d.motivo : '');
-    if (e.acao === 'silenciar') return 'until ' + dataHora(d.mutedAte) + (d.motivo ? ' — ' + d.motivo : '');
-    if (e.acao === 'message') return '"' + (d.texto || '') + '"';
+    if (e.acao === 'banir') return (d.banidoAte === -1 ? 'forever' : 'until ' + dataHora(d.banidoAte)) + (d.motivo ? ' — ' + d.motivo : '');
+    if (e.acao === 'silenciar') return 'until ' + dataHora(d.mudoAte) + (d.motivo ? ' — ' + d.motivo : '');
+    if (e.acao === 'recado') return '"' + (d.texto || '') + '"';
     if (/^(levar|tp|puxar|ir até)/.test(e.acao)) return (d.nome ? d.nome + ' · ' : '') + d.mapa + ' (' + d.x + ', ' + d.z + ')';   // Fase 3 (também os do chat)
     if (/^aviso/.test(e.acao)) return '"' + (d.texto || '') + '"';
     return '';
@@ -143,7 +143,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
 
   function renderTime() {
     const linha = (p, onde, i) => `<tr data-onde="${onde}" data-i="${i}">
-      <td><b>${esc(p.nome || '#' + p.dex)}</b> <span class="fraco">${String(p.dex).padStart(4, '0')}</span>${p.starter ? ' <span class="selo">starter</span>' : ''}</td>
+      <td><b>${esc(p.nome || '#' + p.dex)}</b> <span class="fraco">${String(p.dex).padStart(4, '0')}</span>${p.inicial ? ' <span class="selo">starter</span>' : ''}</td>
       <td><input type="number" class="lv" min="1" max="100" value="${p.lv || 1}"></td>
       <td><label class="chk"><input type="checkbox" class="shiny" ${p.shiny ? 'checked' : ''}> ✨</label></td>
       <td><select class="nat">${NATUREZAS.map(n => `<option${n === p.natureza ? ' selected' : ''}>${n}</option>`).join('')}</select></td>
@@ -177,7 +177,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
     const mexeuBag = () => { sujoBag = true; $('j-sujo-bolsa').hidden = false; };
     $('j-atualizar').onclick = () => abrir(sel);
     if ($('j-ir')) $('j-ir').onclick = () => { const o = det.conta.online; canal.postMessage({ t: 'tp', x: o.x, z: o.z, mapa: o.mapa }); toast('Request sent to your game (if it is open on map ' + o.mapa + ').'); };
-    if ($('j-message')) $('j-message').onclick = () => { const texto = prompt('Message to player (shown in their chat as a GM message):'); if (texto?.trim()) acao('moderar', { acao: 'message', texto }, 'Message sent.'); };
+    if ($('j-recado')) $('j-recado').onclick = () => { const texto = prompt('Message to player (shown in their chat as a GM message):'); if (texto?.trim()) acao('moderar', { acao: 'recado', texto }, 'Message sent.'); };
     if ($('j-kick')) $('j-kick').onclick = () => { if (confirm('Disconnect ' + det.conta.usuario + ' now? (they can log in again)')) acao('moderar', { acao: 'desconectar', motivo: $('j-motivo').value }, 'Disconnected.'); };
     $('j-cargo-ok').onclick = () => acao('cargo', { gm: $('j-gm').checked, cargo: $('j-cargo').value || null }, 'Role saved.');
     $('j-codigo').onclick = async () => {
@@ -187,7 +187,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
       $('j-codigo-caixa').innerHTML = `<div class="j-codigo">Code: <code>${esc(r.codigo)}</code> <button id="j-copiar">Copy</button><div class="fraco" style="font-size:12px">Give this to the player: they use it in "Forgot password" with username <b>${esc(sel)}</b>. It is only shown now.</div></div>`;
       $('j-copiar').onclick = () => navigator.clipboard?.writeText(r.codigo).then(() => toast('Copied.'), () => toast('Could not copy.', true));
     };
-    if ($('j-muted')) $('j-muted').onclick = () => acao('moderar', { acao: 'muted', minutos: +$('j-muted-min').value, motivo: $('j-motivo').value }, 'Silenciado.');
+    if ($('j-mudo')) $('j-mudo').onclick = () => acao('moderar', { acao: 'mudo', minutos: +$('j-mudo-min').value, motivo: $('j-motivo').value }, 'Muted.');
     if ($('j-desmutar')) $('j-desmutar').onclick = () => acao('moderar', { acao: 'desmutar' }, 'Player can speak again.');
     if ($('j-banir')) $('j-banir').onclick = () => {
       const min = +$('j-ban-min').value, txt = min === -1 ? 'forever' : $('j-ban-min').selectedOptions[0].textContent;
