@@ -65,19 +65,19 @@ async function trocarModelo(id) {
   const { materiais = {} } = await recurso('materiais');
   if (alvo.id !== id) return;
   const lista = (materiais[alvo.mat] || []).filter(m => !prefixo || m.endsWith('/' + prefixo));
-  if (!lista.length) { info(`Nenhum modelo desta cópia usa o material <b>${esc(alvo.mat)}</b> — confira as cores no mapa da máscara abaixo.`); return; }
+  if (!lista.length) { info(`No model in this copy uses material <b>${esc(alvo.mat)}</b> — check the colors in the mask map below.`); return; }
   alvo.modelo = lista[0];
   palco.hidden = false; palco.dataset.id = alvo.modelo;
   info('carregando ' + esc(alvo.modelo) + '…');
   const glb = alvo.modelo.startsWith('pc/') ? alvo.modelo.slice(3) : '../' + alvo.modelo;   // o palco busca em cenario/pc/
   let it;
   try { it = await P.montar({ id: alvo.modelo, glb, nome: alvo.modelo }); }
-  catch { if (alvo.id === id) { palco.hidden = true; info(`⚠ Não deu pra abrir <code>cenario/${esc(alvo.modelo)}.glb</code>.`, true); } return; }
+  catch { if (alvo.id === id) { palco.hidden = true; info(`⚠ Could not open <code>cenario/${esc(alvo.modelo)}.glb</code>.`, true); } return; }
   if (alvo.id !== id || !it?.pronto) return;
   alvo.it = it;
   await Tinta.aplicarTinta(it.obj, alvo.modelo.split('/')[1]);           // as outras partes com a cor de fábrica (inclusive as "<modelo>:<material>")
   P.selecionar(alvo.modelo); palco.classList.add('pronto');
-  info(`Modelo <b>${esc(alvo.modelo)}</b>${lista.length > 1 ? ` (o material também aparece em ${lista.length - 1} outro${lista.length > 2 ? 's' : ''}: ${esc(lista.slice(1, 4).join(', '))}${lista.length > 4 ? '…' : ''})` : ''} — a parte deste material está com a cor em edição. Arraste pra girar.`);
+  info(`Modelo <b>${esc(alvo.modelo)}</b>${lista.length > 1 ? ` (the material also appears in ${lista.length - 1} outro${lista.length > 2 ? 's' : ''}: ${esc(lista.slice(1, 4).join(', '))}${lista.length > 4 ? '…' : ''})` : ''} — this material uses the color being edited. Drag to rotate.`);
   repintar();
 }
 function repintar() {
@@ -93,12 +93,12 @@ async function desenharMapa(r) {
   const cor = k => (Array.isArray(r?.[k]) ? r[k] : [0, 0, 0]).map(n => Math.max(0, n));
   const R = Array.isArray(r?.ColorR) ? r.ColorR : [1, 1, 1], G = cor('ColorG'), B = cor('ColorB'), K = cor('ColorBlack');
   c.clearRect(0, 0, cv.width, cv.height);
-  if (r?.isMask) { txt.textContent = 'Não pinta: a textura do modelo já vem colorida.'; return; }
-  if (!r?.mask) { c.fillStyle = corHex(R); c.fillRect(0, 0, cv.width, cv.height); txt.textContent = 'Sem máscara: a peça inteira fica no tom do canal R.'; return; }
+  if (r?.isMask) { txt.textContent = 'No recoloring: the model texture is already colored.'; return; }
+  if (!r?.mask) { c.fillStyle = corHex(R); c.fillRect(0, 0, cv.width, cv.height); txt.textContent = 'No mask: the entire piece uses the R channel hue.'; return; }
   const { mascaras = [] } = await recurso('mascaras');
   const img = mascaras.includes(r.mask) ? await imagem('/cenario/npc/mask/' + encodeURIComponent(r.mask)) : null;
   if (reg !== r) return;
-  if (!img) { txt.innerHTML = `⚠ A máscara <code>${esc(r.mask)}</code> não existe nesta cópia (cenario/npc/mask) — no jogo a peça fica só no tom do canal R.`; c.fillStyle = corHex(R); c.fillRect(0, 0, cv.width, cv.height); return; }
+  if (!img) { txt.innerHTML = `⚠ Mask <code>${esc(r.mask)}</code> is missing from this copy (cenario/npc/mask) — the piece only uses the R channel hue in the game.`; c.fillStyle = corHex(R); c.fillRect(0, 0, cv.width, cv.height); return; }
   c.drawImage(img, 0, 0, cv.width, cv.height);
   const px = c.getImageData(0, 0, cv.width, cv.height), d = px.data;
   for (let i = 0; i < d.length; i += 4) {
@@ -107,5 +107,5 @@ async function desenharMapa(r) {
     d[i + 3] = 255;
   }
   c.putImageData(px, 0, 0);
-  txt.innerHTML = `Mapa da máscara <code>${esc(r.mask)}</code> com as cores acima: onde a máscara é vermelha pinta R, verde G, azul B, e o resto (preto) a cor Preto.`;
+  txt.innerHTML = `Mask map <code>${esc(r.mask)}</code> with the colors above: red mask areas use R, green use G, blue use B, and the rest (black) uses the Black color.`;
 }

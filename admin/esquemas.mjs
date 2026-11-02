@@ -86,7 +86,7 @@ export const ESQUEMAS = {
       { k: 'maxBallsNoAr', rotulo: 'Balls in the air at once', tipo: 'num', min: 1, max: 20, int: true, ajuda: 'Padrão 4.' },
       { k: 'trocaCd', rotulo: 'Pokémon switch cooldown (s)', tipo: 'num', min: 0, max: 120, int: true, ajuda: 'Padrão 6.' },
       { k: 'chefeLv', rotulo: 'Test boss level (?chefe)', tipo: 'num', min: 1, max: 100, int: true, ajuda: 'Padrão 70.' },
-      { k: 'nivelArea', rotulo: 'Wild Pokémon level by area', tipo: 'json', validar: faixaNivel, ajuda: 'Easier to edit in Habitats by Area (each area's level is shown beside its species). Areas not listed here use the code default. Example: { "1201": [2, 5] }' },
+      { k: 'nivelArea', rotulo: 'Wild Pokémon level by area', tipo: 'json', validar: faixaNivel, ajuda: 'Easier to edit in Habitats by Area (each area’s level is shown beside its species). Areas not listed here use the code default. Example: { "1201": [2, 5] }' },
       // as bolas (`bolas`) têm tela própria (esquema `bolas`, abaixo); aqui elas só passam direto
     ],
   },

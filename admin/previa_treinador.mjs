@@ -45,7 +45,7 @@ export async function atualizar(r) {
   let it;
   const caminho = glb.includes('/') ? glb : 'npc/' + glb;              // NPCs (npcs_glb) já vêm com a pasta: npc/… ou mon/…
   try { it = await montar({ id: glb, glb: '../' + caminho, nome: glb }); }
-  catch { if (atual === glb) { P.descartar(glb); info.classList.add('aviso'); info.innerHTML = `⚠ Modelo não encontrado: <code>cenario/${esc(caminho)}.glb</code>. No jogo ele não aparece.`; } return; }
+  catch { if (atual === glb) { P.descartar(glb); info.classList.add('aviso'); info.innerHTML = `⚠ Model not found: <code>cenario/${esc(caminho)}.glb</code>. It will not appear in the game.`; } return; }
   if (atual !== glb || !it?.pronto) return;
   await Tinta.aplicarTinta(it.obj, glb);
   P.selecionar(glb); palco.classList.add('pronto');

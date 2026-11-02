@@ -46,7 +46,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
 
   // ── Ficha ────────────────────────────────────────────────────────────────────
   async function abrir(u) {
-    if ((sujoBag || sujoTime) && u !== sel && !confirm('There are unsaved changes to this player's bag/team. Discard them?')) return;
+    if ((sujoBag || sujoTime) && u !== sel && !confirm('There are unsaved changes to this player’s bag/team. Discard them?')) return;
     const [r] = await Promise.all([api('/admin/jogador?u=' + encodeURIComponent(u)), referencia()]);
     if (!r.ok) { toast(r.erro || 'Failed to open.', true); return; }
     sel = u; aplicar(r); renderLista();

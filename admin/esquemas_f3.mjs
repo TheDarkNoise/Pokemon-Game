@@ -78,7 +78,7 @@ export const ESQUEMAS_F3 = {
   },
   traducoes: {
     titulo: 'Traduções (EN/ES)', arquivo: 'traducoes', forma: 'lista', id: 'pt', recarga: 'vivo',
-    descricao: 'The game source text is Portuguese and is translated live into the player's English/Spanish language. Each row contains the exact Portuguese source text and its translation. {x} matches any segment (for example: "Você chegou em {x}." → "You arrived in {x}."). These entries override the dictionaries in data/idioma/. An open game applies changes immediately.',
+    descricao: 'The game source text is Portuguese and is translated live into the player’s English/Spanish language. Each row contains the exact Portuguese source text and its translation. {x} matches any segment (for example: "Você chegou em {x}." → "You arrived in {x}."). These entries override the dictionaries in data/idioma/. An open game applies changes immediately.',
     validar: traducaoCasa,
     campos: [
       { k: 'pt', rotulo: 'Português (como aparece no jogo)', tipo: 'texto', max: 400, col: true, obrigatorio: true, area: true },
