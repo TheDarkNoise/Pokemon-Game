@@ -5,12 +5,12 @@
 import { instalarDados } from '/admin/dados.mjs';
 import { instalarJogadores } from '/admin/jogadores.mjs';
 import { instalarEventos } from '/admin/eventos.mjs';   // Fase 3: eventos ao vivo, aviso global, manutenção
-import { instalarConteudo } from '/admin/conteudo.mjs'; // Fase 2: telas Missões, Espécies, Evoluções, Learnset
+import { instalarConteudo } from '/admin/conteudo.mjs'; // Fase 2: telas Missões, Speciess, Evoluções, Learnset
 import { criarCamadas } from '/admin/camadas.mjs';
 const DICAS = {   // o rodapé do Editor de Mapa muda com a ferramenta
-  zonas: 'roda: zoom · arrastar: mover · clique numa área pra editar (arraste o miolo/as bordas) · arraste o centro/borda da zona',
-  pontos: 'roda: zoom · arrastar o vazio: mover · clique num ponto pra editar, arraste pra mudar de lugar',
-  pincel: 'roda: zoom · clique e arraste: pinta/apaga · Shift+arrastar: mover o mapa',
+  zonas: 'wheel: zoom · drag: pan · click an area to edit (drag its center/edges) · drag the zone center/edge',
+  pontos: 'wheel: zoom · drag empty space: pan · click a point to edit, drag to move it',
+  pincel: 'wheel: zoom · click and drag: paint/erase · Shift+drag: pan map',
 };
 
 const BASE = location.protocol === 'https:' ? location.origin + '/servidor' : 'http://' + location.hostname + ':5190';
@@ -66,16 +66,16 @@ function resolverEspecie(txt) {
 let eu = null;
 let mapas = [];
 let mapaAtual = 'kanto';
-let dadosMapa = null;     // { caixas, grama, agua, nomes, areas }
+let dadosMapa = null;     // { boxes, grama, agua, nomes, areas }
 let zonas = [];           // todas as zonas (todos os mapas)
 let zonaSel = null;
-let sujoZonas = false;
+let sujoZones = false;
 let habitats = { areas: {}, generico: [] };
 let sujoHab = false;
 const cam = { x: 0, z: 0, esc: 3 };
-let enquadrado = false;   // o mapa só enquadra quando o canvas tem tamanho de verdade (evita o fit num canvas 0/minúsculo no boot)
-let jogadorPos = null;    // { x, z, mapa } quando o jogo responde
-// Áreas (caixas do mapa): o nome que o JOGO mostra vem 1º do data/cenas.json e só depois do `nomes` do mapa (nomeAreaCena)
+let enquadrado = false;   // o map só enquadra quando o canvas tem tamanho de verdade (evita o fit num canvas 0/minúsculo no boot)
+let jogadorPos = null;    // { x, z, map } quando o jogo responde
+// Áreas (caixas do mapa): o nome que o JOGO mostra vem 1º do data/cenas.json e só depois do `nomes` do map (nomeAreaCena)
 let caixaSel = null;      // caixa selecionada (objeto de dadosMapa.caixas)
 let sujoAreas = false, tilesMudados = false;
 const nomesMudados = new Set();   // ids de área renomeados/criados (só esses vão pro servidor)
@@ -83,17 +83,17 @@ let areasOriginais = new Set();   // ids que já existiam no arquivo (o ID dessa
 let nomesCena = {};       // id → nome no cenas.json
 let idsUsados = new Set();// todo id de área de todas as cenas (id novo não pode herdar habitat de área de outro mapa)
 let desenhandoArea = false, rascunho = null;
-let foto = null;          // fundo "minimapa" do mapa atual ({ img, x0, z0, esc, w, h, fonte, mapa })
+let foto = null;          // fundo "minimapa" do map atual ({ img, x0, z0, esc, w, h, fonte, map })
 const nomeArea = a => nomesCena[a] || dadosMapa?.nomes?.[a] || ('Área ' + a);
 
 const CORES = ['#ff5d5d', '#4da3ff', '#3ecf8e', '#ffcf3a', '#c678dd', '#ff9d4d', '#56d4dd', '#f06292'];
-const corZona = z => CORES[(z.__i ?? 0) % CORES.length];
+const corZone = z => CORES[(z.__i ?? 0) % CORES.length];
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
 async function iniciar() {
   const quem = await api('/admin/eu');
   if (quem.status === 401 || !token) { mostrarLogin(); return; }
-  if (!quem.gm) { mostrarLogin('A conta "' + (quem.usuario || '') + '" não é GM.'); return; }
+  if (!quem.gm) { mostrarLogin('Account "' + (quem.usuario || '') + '" is not a GM.'); return; }
   eu = quem;
   $('login').hidden = true; $('app').hidden = false;
   $('eu-nome').textContent = quem.nome || quem.usuario;
@@ -111,8 +111,8 @@ $('f-login').addEventListener('submit', async e => {
   e.preventDefault();
   $('l-msg').textContent = '';
   const r = await api('/conta/entrar', 'POST', { usuario: $('l-usuario').value, senha: $('l-senha').value });
-  if (!r.ok) { $('l-msg').textContent = r.erro || 'Falha no login.'; return; }
-  if (!r.gm) { $('l-msg').textContent = 'Essa conta não é GM.'; return; }
+  if (!r.ok) { $('l-msg').textContent = r.erro || 'Login failed.'; return; }
+  if (!r.gm) { $('l-msg').textContent = 'This account is not a GM.'; return; }
   token = r.token; try { localStorage.setItem('conta.token', token); } catch {}
   iniciar();
 });
@@ -132,7 +132,7 @@ async function carregarTudo() {
 
 // ╔═══════════════════════════════ EDITOR DE MAPA ═══════════════════════════════╗
 const tela = $('m-tela'), cv = $('m-canvas'), ctx = cv.getContext('2d');
-const camadas = { minimapa: true, caixas: true, grama: true, agua: true, piso: true, zonas: true, npcs: false, treinadores: false };
+const camadas = { minimapa: true, boxes: true, grama: true, agua: true, piso: true, zonas: true, npcs: false, treinadores: false };
 let Camadas = null;   // admin/camadas.mjs (pontos e pincel) — criado no ligarUI, depois do login
 
 async function carregarCenas() {
@@ -141,7 +141,7 @@ async function carregarCenas() {
   for (const c of ce?.cenas || []) for (const a of c.areas || []) { idsUsados.add(+a.id); if (!(a.id in nomesCena)) nomesCena[a.id] = a.nome; }
 }
 async function trocarMapa(nome, semPerguntar = false) {
-  if (!semPerguntar && (sujoAreas || Camadas?.sujo()) && nome !== mapaAtual && !confirm('Este mapa tem alterações não salvas (áreas/camadas). Trocar de mapa e descartar?')) { $('m-mapa').value = mapaAtual; return; }
+  if (!semPerguntar && (sujoAreas || Camadas?.sujo()) && nome !== mapaAtual && !confirm('This map has unsaved changes (areas/layers). Switch maps and discard them?')) { $('m-mapa').value = mapaAtual; return; }
   Camadas?.reset();
   mapaAtual = nome;
   $('m-mapa').value = nome;
@@ -151,7 +151,7 @@ async function trocarMapa(nome, semPerguntar = false) {
   for (const a of areasOriginais) idsUsados.add(a);
   ajustarCanvas();
   if (cv.clientWidth > 50) { fitMapa(); enquadrado = true; } else enquadrado = false;   // sem tamanho ainda: enquadra quando crescer (ResizeObserver)
-  renderListaZonas(); renderListaAreas(); Camadas?.atualizarContagem();
+  renderListaZones(); renderListaAreas(); Camadas?.atualizarContagem();
   desenhar();
   carregarFoto(nome);
 }
@@ -160,12 +160,12 @@ async function carregarFoto(nome) {
   $('m-foto').textContent = 'fundo: gerando a foto de cima…';
   const { fotoDoMapa } = await import('/admin/foto_mapa.mjs');   // o Three só carrega quando precisa
   const f = await fotoDoMapa(nome, dadosMapa);
-  if (nome !== mapaAtual) return;                                   // trocou de mapa no meio
+  if (nome !== mapaAtual) return;                                   // trocou de map no meio
   foto = f ? { ...f, mapa: nome } : null;
   $('m-foto').textContent = f ? 'fundo: ' + f.fonte : 'fundo: sem cenário pra fotografar';
   desenhar();
 }
-function zonasDoMapa() { return zonas.filter(z => z.mapa === mapaAtual); }
+function zonasDoMapa() { return zonas.filter(z => z.map === mapaAtual); }
 
 function fitMapa() {
   const cxs = (dadosMapa?.caixas || []).map(c => ({ x: FLIPX * c.x, z: c.z, sx: c.sx, sz: c.sz }));
@@ -189,17 +189,17 @@ function desenhar() {
   if (!cv.clientWidth) return;
   ctx.clearRect(0, 0, W(), H());
   ctx.fillStyle = '#0a0d12'; ctx.fillRect(0, 0, W(), H());
-  if (!dadosMapa) { ctx.fillStyle = '#8b93a7'; ctx.font = '14px system-ui'; ctx.fillText('carregando mapa…', 16, 28); return; }
+  if (!dadosMapa) { ctx.fillStyle = '#8b93a7'; ctx.font = '14px system-ui'; ctx.fillText('loading map…', 16, 28); return; }
 
-  // fundo: a foto de cima do mapa (a mesma do minimapa do jogo, ou gerada do GLB)
-  const comFoto = camadas.minimapa && foto && foto.mapa === mapaAtual;
+  // fundo: a foto de cima do map (a mesma do minimap do jogo, ou gerada do GLB)
+  const comFoto = camadas.minimap && foto && foto.map === mapaAtual;
   if (comFoto) {
     const [px, py] = w2t(foto.x0, foto.z0);
     ctx.imageSmoothingEnabled = cam.esc < foto.esc * 2;
     ctx.drawImage(foto.img, px, py, foto.w / foto.esc * cam.esc, foto.h / foto.esc * cam.esc);
     ctx.imageSmoothingEnabled = true;
   }
-  // caixas de área
+  // boxes de área
   if (camadas.caixas) {
     for (const c of dadosMapa.caixas || []) {
       const r = rectTela(c), sel = c === caixaSel, mesmaArea = caixaSel && c.a === caixaSel.a;
@@ -208,7 +208,7 @@ function desenhar() {
       ctx.lineWidth = sel ? 2 : 1; ctx.strokeStyle = sel ? '#ffcf3a' : mesmaArea ? 'rgba(255,207,58,.6)' : comFoto ? 'rgba(235,240,255,.55)' : 'rgba(120,140,180,.35)';
       ctx.setLineDash(!areasOriginais.has(c.a) ? [6, 4] : []); ctx.strokeRect(r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0); ctx.setLineDash([]);
     }
-    if (cam.esc > 0.9) for (const c of dadosMapa.caixas || []) {   // rótulos por cima de todas as caixas (pílula escura: legível em cima da foto)
+    if (cam.esc > 0.9) for (const c of dadosMapa.caixas || []) {   // rótulos por cima de todas as boxes (pílula escura: legível em cima da foto)
       const r = rectTela(c), txt = nomeArea(c.a), sel = c === caixaSel;
       ctx.font = (sel ? 'bold ' : '') + '11px system-ui';
       const tw = ctx.measureText(txt).width + 10, cx = (r.x0 + r.x1) / 2;
@@ -233,7 +233,7 @@ function desenhar() {
 
   // zonas
   if (camadas.zonas) for (const z of zonasDoMapa()) {
-    const [px, py] = w2t(z.x, z.z), r = z.raio * cam.esc, cor = corZona(z), sel = z === zonaSel;
+    const [px, py] = w2t(z.x, z.z), r = z.raio * cam.esc, cor = corZone(z), sel = z === zonaSel;
     ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2);
     ctx.fillStyle = cor + (z.ativa === false ? '14' : '28'); ctx.fill();
     ctx.lineWidth = sel ? 2.5 : 1.5; ctx.strokeStyle = cor + (z.ativa === false ? '66' : 'ff'); ctx.setLineDash(z.ativa === false ? [5, 4] : []); ctx.stroke(); ctx.setLineDash([]);
@@ -246,7 +246,7 @@ function desenhar() {
   }
   Camadas?.desenhar(ctx);   // piso de caverna, pontos (NPCs/portas/treinadores) e o pincel
   // jogador
-  if (jogadorPos && jogadorPos.mapa === mapaAtual) {
+  if (jogadorPos && jogadorPos.map === mapaAtual) {
     const [px, py] = w2t(jogadorPos.x, jogadorPos.z);
     ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fillStyle = '#ffcf3a'; ctx.fill(); ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.stroke();
     ctx.fillStyle = '#ffcf3a'; ctx.font = '11px system-ui'; ctx.textAlign = 'center'; ctx.fillText('você', px, py - 9); ctx.textAlign = 'left';
@@ -285,7 +285,7 @@ function caixaNoPonto(px, py) {
   return melhor;
 }
 const CURSOR_BORDA = { '-1,-1': 'nwse-resize', '1,1': 'nwse-resize', '1,-1': 'nesw-resize', '-1,1': 'nesw-resize', '-1,0': 'ew-resize', '1,0': 'ew-resize', '0,-1': 'ns-resize', '0,1': 'ns-resize' };
-function pontoZona(px, py) {   // qual elemento está sob o cursor
+function pontoZone(px, py) {   // qual elemento está sob o cursor
   for (const z of zonasDoMapa()) {
     const [zx, zy] = w2t(z.x, z.z), r = z.raio * cam.esc;
     if (z === zonaSel && Math.hypot(px - (zx + r), py - zy) <= 8) return { z, tipo: 'raio' };
@@ -298,7 +298,7 @@ tela.addEventListener('mousedown', e => {
   if (e.button !== 0) return;
   if (colocando) {
     const [wx, wz] = t2w(px, py);
-    criarZona(wx, wz); colocando = false; tela.classList.remove('colocando'); $('m-nova').classList.remove('on');
+    criarZone(wx, wz); colocando = false; tela.classList.remove('colocando'); $('m-nova').classList.remove('on');
     return;
   }
   if (desenhandoArea) {
@@ -307,8 +307,8 @@ tela.addEventListener('mousedown', e => {
     return;
   }
   if (Camadas?.mousedown(px, py, e)) return;   // ferramenta Pontos/Pincel: o clique é dela
-  const alvo = pontoZona(px, py);
-  if (alvo) { selecionarZona(alvo.z); arraste = { tipo: alvo.tipo }; return; }
+  const alvo = pontoZone(px, py);
+  if (alvo) { selecionarZone(alvo.z); arraste = { tipo: alvo.tipo }; return; }
   const ac = alvoCaixa(px, py);
   if (ac) {
     const [wx, wz] = t2w(px, py);
@@ -323,12 +323,12 @@ window.addEventListener('mousemove', e => {
   if (dentro) { const [wx, wz] = t2w(px, py); $('m-leitura').textContent = `x ${wx.toFixed(1)}   z ${wz.toFixed(1)}`; }
   if (!arraste && Camadas?.mousemove(px, py, e)) return;
   if (!arraste) {   // cursor diz o que o arraste vai fazer
-    if (dentro) { const ac = colocando || desenhandoArea || pontoZona(px, py) ? null : alvoCaixa(px, py); tela.style.cursor = !ac ? '' : ac.tipo === 'mover' ? 'move' : CURSOR_BORDA[ac.nx + ',' + ac.ny]; }
+    if (dentro) { const ac = colocando || desenhandoArea || pontoZone(px, py) ? null : alvoCaixa(px, py); tela.style.cursor = !ac ? '' : ac.tipo === 'mover' ? 'move' : CURSOR_BORDA[ac.nx + ',' + ac.ny]; }
     return;
   }
   if (arraste.tipo === 'pan') { cam.x = arraste.cx - (e.clientX - arraste.sx) / cam.esc; cam.z = arraste.cz - (e.clientY - arraste.sy) / cam.esc; desenhar(); }
-  else if (arraste.tipo === 'centro' && zonaSel) { const [wx, wz] = t2w(px, py); zonaSel.x = +wx.toFixed(2); zonaSel.z = +wz.toFixed(2); marcarSujo(); atualizarCamposZona(); desenhar(); }
-  else if (arraste.tipo === 'raio' && zonaSel) { const [wx, wz] = t2w(px, py); zonaSel.raio = +Math.max(1, Math.hypot(wx - zonaSel.x, wz - zonaSel.z)).toFixed(1); marcarSujo(); atualizarCamposZona(); desenhar(); }
+  else if (arraste.tipo === 'centro' && zonaSel) { const [wx, wz] = t2w(px, py); zonaSel.x = +wx.toFixed(2); zonaSel.z = +wz.toFixed(2); marcarSujo(); atualizarCamposZone(); desenhar(); }
+  else if (arraste.tipo === 'raio' && zonaSel) { const [wx, wz] = t2w(px, py); zonaSel.raio = +Math.max(1, Math.hypot(wx - zonaSel.x, wz - zonaSel.z)).toFixed(1); marcarSujo(); atualizarCamposZone(); desenhar(); }
   else if (arraste.tipo === 'nova') { const [wx, wz] = t2w(px, py); rascunho.x1 = snap(wx); rascunho.z1 = snap(wz); desenhar(); }
   else if ((arraste.tipo === 'mover' || arraste.tipo === 'borda') && caixaSel) {
     if (!arraste.mexeu && Math.hypot(e.clientX - arraste.sx, e.clientY - arraste.sy) < 3) return;   // clique não mexe na caixa
@@ -369,20 +369,20 @@ tela.addEventListener('wheel', e => {
 }, { passive: false });
 
 // ── CRUD de zonas ─────────────────────────────────────────────────────────────
-function novaZonaBase(x, z) {
-  return { id: 'z' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), mapa: mapaAtual, nome: 'Zona ' + (zonasDoMapa().length + 1),
+function novaZoneBase(x, z) {
+  return { id: 'z' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), mapa: mapaAtual, nome: 'Zone ' + (zonasDoMapa().length + 1),
     x: +x.toFixed(2), z: +z.toFixed(2), raio: 12, especies: [], lvMin: 3, lvMax: 6, max: 4, intervalo: 8, shiny: 0, ativa: true, __i: zonas.length };
 }
-function criarZona(x, z) { const nz = novaZonaBase(x, z); zonas.push(nz); marcarSujo(); renderListaZonas(); selecionarZona(nz); desenhar(); }
-function selecionarZona(z) { zonaSel = z; if (z && caixaSel) { caixaSel = null; abrirEditorArea(); renderListaAreas(); } renderListaZonas(); abrirEditorZona(); desenhar(); }
-function marcarSujo() { sujoZonas = true; atualizarSujoMapa(); }
-function atualizarSujoMapa() { $('m-sujo').hidden = !(sujoZonas || sujoAreas || Camadas?.sujo()); }
+function criarZone(x, z) { const nz = novaZoneBase(x, z); zonas.push(nz); marcarSujo(); renderListaZones(); selecionarZone(nz); desenhar(); }
+function selecionarZone(z) { zonaSel = z; if (z && caixaSel) { caixaSel = null; abrirEditorArea(); renderListaAreas(); } renderListaZones(); abrirEditorZone(); desenhar(); }
+function marcarSujo() { sujoZones = true; atualizarSujoMapa(); }
+function atualizarSujoMapa() { $('m-sujo').hidden = !(sujoZones || sujoAreas || Camadas?.sujo()); }
 
-// ── Áreas: caixas com nome ────────────────────────────────────────────────────
+// ── Áreas: boxes com nome ────────────────────────────────────────────────────
 function marcarSujoAreas() { sujoAreas = true; atualizarSujoMapa(); }
 function selecionarCaixa(c) {
   caixaSel = c || null;
-  if (c && zonaSel) { zonaSel = null; abrirEditorZona(); renderListaZonas(); }
+  if (c && zonaSel) { zonaSel = null; abrirEditorZone(); renderListaZones(); }
   abrirEditorArea(); renderListaAreas(); desenhar();
 }
 function renderListaAreas() {
@@ -394,7 +394,7 @@ function renderListaAreas() {
   const nCaixas = {}; for (const c of cxs) nCaixas[c.a] = (nCaixas[c.a] || 0) + 1;
   $('a-lista').innerHTML = itens.map(({ c, nome }) => `<button data-i="${cxs.indexOf(c)}" class="${c === caixaSel ? 'atual' : ''}">
     <span style="flex:1">${esc(nome)}${areasOriginais.has(c.a) ? '' : ' <span class="novo">nova</span>'}</span>
-    <span class="fraco">${c.a}${nCaixas[c.a] > 1 ? ' · ' + nCaixas[c.a] + ' caixas' : ''}</span></button>`).join('') || '<span class="fraco">Nenhuma área.</span>';
+    <span class="fraco">${c.a}${nCaixas[c.a] > 1 ? ' · ' + nCaixas[c.a] + ' boxes' : ''}</span></button>`).join('') || '<span class="fraco">Nenhuma área.</span>';
   for (const b of $('a-lista').querySelectorAll('button')) b.onclick = () => { const c = cxs[+b.dataset.i]; selecionarCaixa(c); centrarEm(c); };
 }
 function centrarEm(c) {
@@ -417,7 +417,7 @@ function atualizarCamposArea() {
   $('a-id-ajuda').textContent = nova ? 'Área nova: dá pra escolher o ID antes de salvar.' : 'ID fixo (habitats, nível dos selvagens e a Pokédex apontam pra ele).';
   for (const [id, v] of [['a-x', FLIPX * c.x], ['a-z', c.z], ['a-sx', c.sx], ['a-sz', c.sz]]) if (document.activeElement !== $(id)) $(id).value = +v.toFixed(2);
   const fora = tilesDentro(c);
-  $('a-info').innerHTML = (irmas > 1 ? `Esta área tem <b>${irmas} caixas</b> (formato em L etc.). ` : '') +
+  $('a-info').innerHTML = (irmas > 1 ? `Esta área tem <b>${irmas} boxes</b> (formato em L etc.). ` : '') +
     `Dentro desta caixa: <b>${fora.dentro}</b> tiles de grama/água` + (fora.grama.length + fora.agua.length ? `, <b>${fora.grama.length + fora.agua.length}</b> deles ainda de outra área.` : '.');
   $('a-puxar').disabled = !(fora.grama.length + fora.agua.length);
   $('a-del').textContent = irmas > 1 ? 'Excluir esta caixa' : 'Excluir área';
@@ -441,7 +441,7 @@ function entrarModoArea() {
   if (!camadas.caixas) { camadas.caixas = true; const i = $('m-camadas').querySelector('[data-cam="caixas"]'); if (i) i.checked = true; }
   colocando = false; tela.classList.remove('colocando'); $('m-nova').classList.remove('on');
   desenhandoArea = true; tela.classList.add('colocando'); tela.style.cursor = ''; $('m-nova-area').classList.add('on');
-  toast('Arraste um retângulo no mapa pra criar a área (Esc cancela).');
+  toast('Arraste um retângulo no map pra criar a área (Esc cancela).');
 }
 function sairDoModoArea() { desenhandoArea = false; tela.classList.remove('colocando'); $('m-nova-area').classList.remove('on'); }
 function criarArea(r) {
@@ -479,10 +479,10 @@ function puxarTiles() {
 }
 function trocarIdArea(novo) {
   const c = caixaSel; if (!c || areasOriginais.has(c.a)) return;
-  if (!Number.isInteger(novo) || novo < 1 || novo > 99999999) { toast('ID precisa ser um número inteiro.', true); return false; }
+  if (!Number.isInteger(novo) || novo < 1 || novo > 99999999) { toast('ID must be an integer.', true); return false; }
   if (novo === c.a) return true;
-  if ((dadosMapa.caixas || []).some(k => k.a === novo)) { toast('Já existe uma área ' + novo + ' neste mapa.', true); return false; }
-  if (idsUsados.has(novo) && !confirm('O ID ' + novo + ' já é usado por uma área de outro mapa (ela tem habitat/nível próprios). Usar mesmo assim?')) return false;
+  if ((dadosMapa.caixas || []).some(k => k.a === novo)) { toast('Area ' + novo + ' already exists on this map.', true); return false; }
+  if (idsUsados.has(novo) && !confirm('O ID ' + novo + ' is already used by an area on another map (with its own habitat/level). Use it anyway?')) return false;
   const velho = c.a, nome = dadosMapa.nomes[velho];
   for (const k of dadosMapa.caixas) if (k.a === velho) k.a = novo;
   for (const lista of [dadosMapa.grama || [], dadosMapa.agua || []]) for (const t of lista) if (t.a === velho) { t.a = novo; tilesMudados = true; }
@@ -493,72 +493,72 @@ function trocarIdArea(novo) {
 }
 async function salvarAreas() {
   const nomes = {}; for (const a of nomesMudados) if (dadosMapa.nomes?.[a]) nomes[a] = dadosMapa.nomes[a];
-  const corpo = { mapa: mapaAtual, caixas: dadosMapa.caixas, nomes };
+  const corpo = { mapa: mapaAtual, boxes: dadosMapa.caixas, nomes };
   if (tilesMudados) corpo.tilesArea = { grama: (dadosMapa.grama || []).map(t => t.a), agua: (dadosMapa.agua || []).map(t => t.a) };
   const r = await api('/admin/mapa-areas', 'POST', corpo);
-  if (!r.ok) { toast(r.erro || 'Falha ao salvar as áreas.', true); return false; }
+  if (!r.ok) { toast(r.erro || 'Failed to save areas.', true); return false; }
   for (const a of nomesMudados) nomesCena[a] = dadosMapa.nomes[a];   // o servidor gravou o nome nos dois lugares
   areasOriginais = new Set(dadosMapa.caixas.map(c => c.a));
   sujoAreas = false; tilesMudados = false; nomesMudados.clear(); atualizarSujoMapa();
-  toast(`Áreas salvas: ${r.areas} áreas, ${r.caixas} caixas` + (r.novas ? ` · ${r.novas} nova(s)` : '') + (r.removidas ? ` · ${r.removidas} removida(s)` : '') + '.');
+  toast(`Areas saved: ${r.areas} areas, ${r.caixas} boxes` + (r.novas ? ` · ${r.novas} new` : '') + (r.removidas ? ` · ${r.removidas} removed` : '') + '.');
   avisarJogo(mapaAtual, true);
   renderListaAreas(); atualizarCamposArea(); renderHabitats(); desenhar();
   return true;
 }
 async function salvarMapa() {
-  if (!sujoZonas && !sujoAreas && !Camadas?.sujo()) { toast('Nada pra salvar.'); return; }
+  if (!sujoZones && !sujoAreas && !Camadas?.sujo()) { toast('Nothing to save.'); return; }
   /* camadas ANTES das áreas: o "Puxar grama" das áreas manda os tiles por posição na lista, e o pincel muda a lista — gravando
      a lista nova primeiro, as posições que as áreas mandam batem com o arquivo */
   if (Camadas?.sujo() && !await Camadas.salvar()) return;
   if (sujoAreas) await salvarAreas();
-  if (sujoZonas) await salvarZonas();
+  if (sujoZones) await salvarZones();
 }
 
-function renderListaZonas() {
+function renderListaZones() {
   const lista = zonasDoMapa();
   $('m-qtd').textContent = '(' + lista.length + ')';
   $('m-ajuda').hidden = lista.length > 0;
   $('m-lista').innerHTML = lista.map(z => `<button data-id="${z.id}" class="${z === zonaSel ? 'atual' : ''}">
-    <span class="bola" style="background:${corZona(z)}"></span>
+    <span class="bola" style="background:${corZone(z)}"></span>
     <span style="flex:1">${esc(z.nome)}</span>
-    <span class="fraco">${z.especies.length} esp · r${z.raio}</span>${z.ativa === false ? ' <span class="fraco">(off)</span>' : ''}</button>`).join('');
-  for (const b of $('m-lista').querySelectorAll('button')) b.onclick = () => selecionarZona(lista.find(z => z.id === b.dataset.id));
+    <span class="fraco">${z.especies.length} species · r${z.raio}</span>${z.ativa === false ? ' <span class="fraco">(off)</span>' : ''}</button>`).join('');
+  for (const b of $('m-lista').querySelectorAll('button')) b.onclick = () => selecionarZone(lista.find(z => z.id === b.dataset.id));
 }
-function abrirEditorZona() {
+function abrirEditorZone() {
   $('m-edit').hidden = !zonaSel;
   if (!zonaSel) return;
-  atualizarCamposZona();
-  renderEspeciesZona();
+  atualizarCamposZone();
+  renderEspeciesZone();
 }
-function atualizarCamposZona() {
+function atualizarCamposZone() {
   const z = zonaSel; if (!z) return;
-  $('e-cor').style.background = corZona(z);
-  $('e-titulo').textContent = z.nome || 'Zona';
+  $('e-cor').style.background = corZone(z);
+  $('e-titulo').textContent = z.nome || 'Zone';
   $('e-nome').value = z.nome; $('e-raio').value = z.raio; $('e-raio-r').value = Math.min(80, z.raio);
   $('e-max').value = z.max; $('e-intervalo').value = z.intervalo; $('e-lvmin').value = z.lvMin; $('e-lvmax').value = z.lvMax;
   $('e-shiny').value = +(z.shiny * 100).toFixed(2); $('e-ativa').checked = z.ativa !== false;
-  $('e-pos').textContent = `centro: x ${z.x}  z ${z.z}  ·  mapa ${z.mapa}`;
+  $('e-pos').textContent = `center: x ${z.x}  z ${z.z}  ·  map ${z.mapa}`;
 }
-function renderEspeciesZona() {
+function renderEspeciesZone() {
   const z = zonaSel;
   $('e-especies').innerHTML = tabelaEspecies(z.especies, false);
-  ligarTabelaEspecies($('e-especies'), z.especies, () => { renderListaZonas(); marcarSujo(); });
+  ligarTabelaEspecies($('e-especies'), z.especies, () => { renderListaZones(); marcarSujo(); });
 }
 // campos do editor
-function campoZona(id, prop, transform = v => v) {
-  $(id).addEventListener('input', () => { if (!zonaSel) return; zonaSel[prop] = transform($(id).value); marcarSujo(); if (prop === 'nome') { $('e-titulo').textContent = zonaSel.nome; renderListaZonas(); } if (prop === 'raio' || prop === 'ativa') renderListaZonas(); desenhar(); });
+function campoZone(id, prop, transform = v => v) {
+  $(id).addEventListener('input', () => { if (!zonaSel) return; zonaSel[prop] = transform($(id).value); marcarSujo(); if (prop === 'nome') { $('e-titulo').textContent = zonaSel.nome; renderListaZones(); } if (prop === 'raio' || prop === 'ativa') renderListaZones(); desenhar(); });
 }
 
 // ── Tabela de espécies (compartilhada entre zona e habitat) ───────────────────
 function tabelaEspecies(lista, comAgua) {
   const linhas = lista.map((e, i) => `<tr data-i="${i}">
-    <td>${esc(e.nome || nomeDe(e.dex))} <span class="fraco">${String(e.dex).padStart(4, '0')}</span>${GLB_DEX[e.dex] ? '' : ' <span class="sem-modelo">sem modelo</span>'}</td>
+    <td>${esc(e.nome || nomeDe(e.dex))} <span class="fraco">${String(e.dex).padStart(4, '0')}</span>${GLB_DEX[e.dex] ? '' : ' <span class="sem-modelo">no model</span>'}</td>
     <td><input type="number" class="peso" min="1" max="1000" value="${e.peso || 100}"></td>
     <td class="pct">${pct(lista, i)}</td>
     ${comAgua ? `<td><label class="chk"><input type="checkbox" class="agua" ${e.agua ? 'checked' : ''}></label></td>` : ''}
-    <td><button class="rem perigo" title="Remover">✕</button></td></tr>`).join('');
-  return `<table class="esp"><thead><tr><th>Espécie</th><th>Peso</th><th>%</th>${comAgua ? '<th>Água</th>' : ''}<th></th></tr></thead><tbody>${linhas}</tbody></table>
-    <div class="add-esp"><input type="text" list="dl-especies" class="add-input" placeholder="adicionar espécie (nome ou nº)…"><button class="add-btn">Adicionar</button></div>`;
+    <td><button class="rem perigo" title="Remove">✕</button></td></tr>`).join('');
+  return `<table class="esp"><thead><tr><th>Species</th><th>Weight</th><th>%</th>${comAgua ? '<th>Water</th>' : ''}<th></th></tr></thead><tbody>${linhas}</tbody></table>
+    <div class="add-esp"><input type="text" list="dl-especies" class="add-input" placeholder="add species (name or no.)…"><button class="add-btn">Add</button></div>`;
 }
 function pct(lista, i) { const soma = lista.reduce((a, e) => a + (e.peso || 100), 0) || 1; return Math.round((lista[i].peso || 100) / soma * 100) + '%'; }
 function ligarTabelaEspecies(cont, lista, aoMudar) {
@@ -570,26 +570,26 @@ function ligarTabelaEspecies(cont, lista, aoMudar) {
     tr.querySelector('.rem')?.addEventListener('click', () => { lista.splice(i, 1); refazer(); });
   });
   const input = cont.querySelector('.add-input'), btn = cont.querySelector('.add-btn');
-  const add = () => { const e = resolverEspecie(input.value); if (!e) { toast('Espécie não encontrada ou sem modelo.', true); return; } if (lista.some(x => x.dex === e.dex)) { toast('Essa espécie já está na lista.', true); return; } lista.push(e); input.value = ''; refazer(); };
+  const add = () => { const e = resolverEspecie(input.value); if (!e) { toast('Species não encontrada ou no model.', true); return; } if (lista.some(x => x.dex === e.dex)) { toast('That species is already in the list.', true); return; } lista.push(e); input.value = ''; refazer(); };
   btn?.addEventListener('click', add);
   input?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
 }
 
-// ── Botões do editor de mapa ──────────────────────────────────────────────────
+// ── Botões do editor de map ──────────────────────────────────────────────────
 function ligarUI() {
   $('m-mapa').addEventListener('change', e => trocarMapa(e.target.value));
-  $('m-nova').addEventListener('click', () => { colocando = !colocando; tela.classList.toggle('colocando', colocando); $('m-nova').classList.toggle('on', colocando); if (colocando) toast('Clique no mapa pra colocar o centro da zona.'); });
-  $('m-aqui').addEventListener('click', () => pedirPos(pos => { if (pos.mapa !== mapaAtual) trocarMapa(pos.mapa).then(() => criarZona(pos.x, pos.z)); else criarZona(pos.x, pos.z); }));
-  $('m-eu').addEventListener('click', () => pedirPos(pos => { if (pos.mapa !== mapaAtual) trocarMapa(pos.mapa); cam.x = pos.x; cam.z = pos.z; desenhar(); }));
+  $('m-nova').addEventListener('click', () => { colocando = !colocando; tela.classList.toggle('colocando', colocando); $('m-nova').classList.toggle('on', colocando); if (colocando) toast('Clique no map pra colocar o centro da zona.'); });
+  $('m-aqui').addEventListener('click', () => pedirPos(pos => { if (pos.map !== mapaAtual) trocarMapa(pos.mapa).then(() => criarZone(pos.x, pos.z)); else criarZone(pos.x, pos.z); }));
+  $('m-eu').addEventListener('click', () => pedirPos(pos => { if (pos.map !== mapaAtual) trocarMapa(pos.mapa); cam.x = pos.x; cam.z = pos.z; desenhar(); }));
   $('m-salvar').addEventListener('click', salvarMapa);
   $('m-recarregar').addEventListener('click', async () => {
-    if ((sujoZonas || sujoAreas || Camadas?.sujo()) && !confirm('Descartar as alterações não salvas (zonas, áreas e camadas)?')) return;
+    if ((sujoZones || sujoAreas || Camadas?.sujo()) && !confirm('Discard unsaved changes (zones, areas, and layers)?')) return;
     Camadas?.reset();
-    const lz = await api('/admin/zonas'); zonas = (lz.zonas || []).map((z, i) => ({ ...z, __i: i })); zonaSel = null; sujoZonas = false; $('m-edit').hidden = true; renderListaZonas();
-    sujoAreas = false; await carregarCenas(); const cam0 = { ...cam }; await trocarMapa(mapaAtual); Object.assign(cam, cam0); desenhar();   // relê o mapa sem perder o enquadramento
+    const lz = await api('/admin/zonas'); zonas = (lz.zonas || []).map((z, i) => ({ ...z, __i: i })); zonaSel = null; sujoZones = false; $('m-edit').hidden = true; renderListaZones();
+    sujoAreas = false; await carregarCenas(); const cam0 = { ...cam }; await trocarMapa(mapaAtual); Object.assign(cam, cam0); desenhar();   // relê o map sem perder o enquadramento
   });
   $('m-nova-area').addEventListener('click', () => { if (desenhandoArea) { sairDoModoArea(); return; } entrarModoArea(); });
-  // camadas do mapa (Fase 1): pontos e pincel — avisarJogo/canal ficam no fim do arquivo, por isso o embrulho em função
+  // camadas do map (Fase 1): pontos e pincel — avisarJogo/canal ficam no fim do arquivo, por isso o embrulho em função
   Camadas = criarCamadas({ $, esc, api, toast, FLIPX, cam, w2t, t2w, camadas, nomeArea, areaEm, tela,
     avisarJogo: (...a) => avisarJogo(...a), canal: { postMessage: m => canal.postMessage(m) },
     redesenhar: desenhar, dados: () => dadosMapa, mapa: () => mapaAtual, mapas: () => mapas, trocarMapa, aoMudar: atualizarSujoMapa,
@@ -610,7 +610,7 @@ function ligarUI() {
     porRectMundo(c, { x0: x - sx / 2, x1: x + sx / 2, z0: z - sz / 2, z1: z + sz / 2 }); marcarSujoAreas(); atualizarCamposArea(); desenhar();
   });
   $('a-centro').addEventListener('click', () => { if (caixaSel) centrarEm(caixaSel); });
-  $('a-tp').addEventListener('click', () => { if (caixaSel) { canal.postMessage({ t: 'tp', x: FLIPX * caixaSel.x, z: caixaSel.z, mapa: mapaAtual }); toast('Pedido enviado ao jogo (se estiver aberto).'); } });
+  $('a-tp').addEventListener('click', () => { if (caixaSel) { canal.postMessage({ t: 'tp', x: FLIPX * caixaSel.x, z: caixaSel.z, mapa: mapaAtual }); toast('Request sent to the game (if it is open).'); } });
   $('a-dup').addEventListener('click', adicionarCaixa);
   $('a-del').addEventListener('click', excluirCaixa);
   $('a-puxar').addEventListener('click', puxarTiles);
@@ -618,19 +618,19 @@ function ligarUI() {
   $('m-camadas').innerHTML = Object.keys(camadas).map(k => `<label class="chk"><input type="checkbox" data-cam="${k}"${camadas[k] ? ' checked' : ''}> ${k}</label>`).join('');
   $('m-camadas').querySelectorAll('input').forEach(i => i.addEventListener('change', () => { camadas[i.dataset.cam] = i.checked; desenhar(); }));
   // campos da zona
-  campoZona('e-nome', 'nome', v => v.slice(0, 60));
-  campoZona('e-max', 'max', v => Math.min(30, Math.max(1, +v || 1)));
-  campoZona('e-intervalo', 'intervalo', v => Math.min(600, Math.max(1, +v || 8)));
-  campoZona('e-lvmin', 'lvMin', v => Math.min(100, Math.max(1, +v || 1)));
-  campoZona('e-lvmax', 'lvMax', v => Math.min(100, Math.max(1, +v || 1)));
-  campoZona('e-shiny', 'shiny', v => Math.min(1, Math.max(0, (+v || 0) / 100)));
-  $('e-raio').addEventListener('input', e => { if (!zonaSel) return; zonaSel.raio = Math.min(200, Math.max(1, +e.target.value || 10)); $('e-raio-r').value = Math.min(80, zonaSel.raio); marcarSujo(); renderListaZonas(); desenhar(); });
-  $('e-raio-r').addEventListener('input', e => { if (!zonaSel) return; zonaSel.raio = +e.target.value; $('e-raio').value = zonaSel.raio; marcarSujo(); renderListaZonas(); desenhar(); });
-  $('e-ativa').addEventListener('change', e => { if (!zonaSel) return; zonaSel.ativa = e.target.checked; marcarSujo(); renderListaZonas(); desenhar(); });
+  campoZone('e-nome', 'nome', v => v.slice(0, 60));
+  campoZone('e-max', 'max', v => Math.min(30, Math.max(1, +v || 1)));
+  campoZone('e-intervalo', 'intervalo', v => Math.min(600, Math.max(1, +v || 8)));
+  campoZone('e-lvmin', 'lvMin', v => Math.min(100, Math.max(1, +v || 1)));
+  campoZone('e-lvmax', 'lvMax', v => Math.min(100, Math.max(1, +v || 1)));
+  campoZone('e-shiny', 'shiny', v => Math.min(1, Math.max(0, (+v || 0) / 100)));
+  $('e-raio').addEventListener('input', e => { if (!zonaSel) return; zonaSel.raio = Math.min(200, Math.max(1, +e.target.value || 10)); $('e-raio-r').value = Math.min(80, zonaSel.raio); marcarSujo(); renderListaZones(); desenhar(); });
+  $('e-raio-r').addEventListener('input', e => { if (!zonaSel) return; zonaSel.raio = +e.target.value; $('e-raio').value = zonaSel.raio; marcarSujo(); renderListaZones(); desenhar(); });
+  $('e-ativa').addEventListener('change', e => { if (!zonaSel) return; zonaSel.ativa = e.target.checked; marcarSujo(); renderListaZones(); desenhar(); });
   $('e-centro').addEventListener('click', () => { if (zonaSel) { cam.x = zonaSel.x; cam.z = zonaSel.z; desenhar(); } });
-  $('e-tp').addEventListener('click', () => { if (zonaSel) canal.postMessage({ t: 'tp', x: zonaSel.x, z: zonaSel.z, mapa: zonaSel.mapa }); toast('Pedido enviado ao jogo (se estiver aberto).'); });
-  $('e-dup').addEventListener('click', () => { if (!zonaSel) return; const c = JSON.parse(JSON.stringify(zonaSel)); c.id = 'z' + Date.now().toString(36); c.nome += ' (cópia)'; c.x += 3; c.__i = zonas.length; c.especies = JSON.parse(JSON.stringify(zonaSel.especies)); zonas.push(c); marcarSujo(); renderListaZonas(); selecionarZona(c); desenhar(); });
-  $('e-del').addEventListener('click', () => { if (!zonaSel) return; if (!confirm('Excluir a zona "' + zonaSel.nome + '"?')) return; zonas = zonas.filter(z => z !== zonaSel); zonaSel = null; marcarSujo(); $('m-edit').hidden = true; renderListaZonas(); desenhar(); });
+  $('e-tp').addEventListener('click', () => { if (zonaSel) canal.postMessage({ t: 'tp', x: zonaSel.x, z: zonaSel.z, mapa: zonaSel.map }); toast('Request sent to the game (if it is open).'); });
+  $('e-dup').addEventListener('click', () => { if (!zonaSel) return; const c = JSON.parse(JSON.stringify(zonaSel)); c.id = 'z' + Date.now().toString(36); c.nome += ' (copy)'; c.x += 3; c.__i = zonas.length; c.especies = JSON.parse(JSON.stringify(zonaSel.especies)); zonas.push(c); marcarSujo(); renderListaZones(); selecionarZone(c); desenhar(); });
+  $('e-del').addEventListener('click', () => { if (!zonaSel) return; if (!confirm('Delete zone "' + zonaSel.nome + '"?')) return; zonas = zonas.filter(z => z !== zonaSel); zonaSel = null; marcarSujo(); $('m-edit').hidden = true; renderListaZones(); desenhar(); });
   // navegação de vistas
   for (const b of document.querySelectorAll('#lado button')) b.addEventListener('click', () => trocarVista(b.dataset.vista, b));
   // habitats
@@ -639,7 +639,7 @@ function ligarUI() {
   $('h-nivel-ok').addEventListener('click', salvarNivel);
   // redimensiona
   new ResizeObserver(() => { ajustarCanvas(); if (!enquadrado && cv.clientWidth > 50 && dadosMapa) { fitMapa(); enquadrado = true; } desenhar(); }).observe(tela);
-  window.addEventListener('beforeunload', e => { if (sujoZonas || sujoHab || sujoAreas) { e.preventDefault(); e.returnValue = ''; } });
+  window.addEventListener('beforeunload', e => { if (sujoZones || sujoHab || sujoAreas) { e.preventDefault(); e.returnValue = ''; } });
 }
 function trocarVista(nome, btn) {
   for (const b of document.querySelectorAll('#lado button')) b.classList.toggle('atual', b === btn);
@@ -647,18 +647,18 @@ function trocarVista(nome, btn) {
   if (nome === 'mapa') { ajustarCanvas(); desenhar(); }
 }
 
-async function salvarZonas() {
+async function salvarZones() {
   const r = await api('/admin/zonas', 'POST', { zonas: zonas.map(({ __i, ...z }) => z) });
-  if (!r.ok) { toast(r.erro || 'Falha ao salvar.', true); return; }
-  sujoZonas = false; atualizarSujoMapa();
-  toast('Zonas salvas (' + r.total + ')' + (r.descartadas ? ' · ' + r.descartadas + ' descartada(s)' : '') + '.');
+  if (!r.ok) { toast(r.erro || 'Failed to save.', true); return; }
+  sujoZones = false; atualizarSujoMapa();
+  toast('Zones salvas (' + r.total + ')' + (r.descartadas ? ' · ' + r.descartadas + ' discarded' : '') + '.');
   avisarJogo('zonas_spawn');
 }
 
 // ╔═══════════════════════════════ HABITATS ═════════════════════════════════════╗
 let areaSel = null;
 function listaAreas() {
-  // as áreas com habitat + TODAS as do mapa aberto (área nova aparece aqui pra ganhar espécies); nome = o que o jogo mostra
+  // as áreas com habitat + TODAS as do map aberto (área nova aparece aqui pra ganhar espécies); nome = o que o jogo mostra
   const ids = new Set([...Object.keys(habitats.areas), ...(dadosMapa?.areas || []).map(String)]);
   const arr = [...ids].map(id => ({ id, nome: nomeArea(id), qtd: (habitats.areas[id] || []).length }));
   arr.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
@@ -666,7 +666,7 @@ function listaAreas() {
 }
 function renderHabitats() {
   const filtro = ($('h-busca').value || '').toLowerCase();
-  const arr = [{ id: '__gen', nome: '★ Genérico (qualquer grama)', qtd: habitats.generico.length }, ...listaAreas()]
+  const arr = [{ id: '__gen', nome: '★ Generic (any grass)', qtd: habitats.generico.length }, ...listaAreas()]
     .filter(a => !filtro || a.nome.toLowerCase().includes(filtro) || a.id.includes(filtro));
   $('h-areas').innerHTML = arr.map(a => `<button data-id="${a.id}" class="${a.id === areaSel ? 'atual' : ''}"><span>${esc(a.nome)}</span><span class="fraco">${a.qtd}</span></button>`).join('');
   for (const b of $('h-areas').querySelectorAll('button')) b.onclick = () => selecionarArea(b.dataset.id);
@@ -675,35 +675,35 @@ function renderHabitats() {
    tabela NIVEL_AREA do código; área fora dela nasce em 3–6). Lê fresco a cada área (outra tela pode ter salvo o config). */
 async function mostrarNivel(id) {
   $('h-nivel').hidden = !id; if (!id) return;
-  $('h-lvmin').value = $('h-lvmax').value = ''; $('h-nivel-info').textContent = 'carregando…';
+  $('h-lvmin').value = $('h-lvmax').value = ''; $('h-nivel-info').textContent = 'loading…';
   const r = await api('/admin/dados/config_jogo');
   if (areaSel !== id) return;
   const f = r.dados?.nivelArea?.[id];
   if (f) { $('h-lvmin').value = f[0]; $('h-lvmax').value = f[1]; }
-  $('h-nivel-info').textContent = f ? '' : 'sem faixa: nasce no nível 3 a 6';
+  $('h-nivel-info').textContent = f ? '' : 'no range: spawns at level 3–6';
 }
 async function salvarNivel() {
   const id = areaSel; if (!id || id === '__gen') return;
   const a = $('h-lvmin').value.trim(), b = $('h-lvmax').value.trim();
   const r = await api('/admin/dados/config_jogo');
-  if (!r.ok) { toast(r.erro || 'Falha ao ler a configuração.', true); return; }
+  if (!r.ok) { toast(r.erro || 'Failed to read configuration.', true); return; }
   const cfg = r.dados || {}, nivel = { ...(cfg.nivelArea || {}) };
   if (a === '' && b === '') delete nivel[id];
   else {
     const min = Number(a), max = Number(b);
-    if (!Number.isInteger(min) || !Number.isInteger(max) || min < 1 || max > 100 || min > max) { toast('Use dois níveis inteiros de 1 a 100, mínimo ≤ máximo.', true); return; }
+    if (!Number.isInteger(min) || !Number.isInteger(max) || min < 1 || max > 100 || min > max) { toast('Use two integer levels from 1 to 100, minimum ≤ maximum.', true); return; }
     nivel[id] = [min, max];
   }
   const s = await api('/admin/dados/config_jogo', 'POST', { dados: { ...cfg, nivelArea: nivel } });
-  if (!s.ok) { toast(s.erro || 'Falha ao salvar o nível.', true); return; }
-  toast('Nível da área ' + id + (nivel[id] ? ': ' + nivel[id].join(' a ') : ' voltou ao padrão') + '.');
+  if (!s.ok) { toast(s.erro || 'Failed to save level.', true); return; }
+  toast('Area level ' + id + (nivel[id] ? ': ' + nivel[id].join(' a ') : ' returned to default') + '.');
   avisarJogo('config_jogo'); mostrarNivel(id);
 }
 function selecionarArea(id) {
   areaSel = id; renderHabitats();
   const gen = id === '__gen';
   const lista = gen ? habitats.generico : (habitats.areas[id] ||= []);
-  const nome = gen ? 'Genérico' : nomeArea(id);
+  const nome = gen ? 'Generic' : nomeArea(id);
   $('h-titulo').textContent = nome + (gen ? '' : '  —  ' + id);
   mostrarNivel(gen ? null : id);
   const cont = $('h-especies'); cont.dataset.agua = '1';
@@ -712,9 +712,9 @@ function selecionarArea(id) {
 }
 async function salvarHabitats() {
   const r = await api('/admin/habitats', 'POST', { areas: habitats.areas, generico: habitats.generico });
-  if (!r.ok) { toast(r.erro || 'Falha ao salvar.', true); return; }
+  if (!r.ok) { toast(r.erro || 'Failed to save.', true); return; }
   sujoHab = false; $('h-sujo').hidden = true;
-  toast('Habitats salvos (' + r.areas + ' áreas).');
+  toast('Habitats saved (' + r.areas + ' areas).');
   avisarJogo('habitats');
 }
 
@@ -725,11 +725,11 @@ const avisarJogo = (arquivo, cenario = false) => canal.postMessage({ t: 'dados-m
 let pedidoPos = null;
 canal.addEventListener('message', ev => {
   const m = ev.data || {};
-  if (m.t === 'pos') { jogadorPos = { x: m.x, z: m.z, mapa: m.mapa }; desenhar(); if (pedidoPos) { pedidoPos(jogadorPos); pedidoPos = null; } }
+  if (m.t === 'pos') { jogadorPos = { x: m.x, z: m.z, mapa: m.map }; desenhar(); if (pedidoPos) { pedidoPos(jogadorPos); pedidoPos = null; } }
 });
 function pedirPos(cb) {
   pedidoPos = cb; canal.postMessage({ t: 'onde' });
-  setTimeout(() => { if (pedidoPos) { pedidoPos = null; toast('O jogo não respondeu. Abra-o em outra aba (localhost:5300).', true); } }, 1200);
+  setTimeout(() => { if (pedidoPos) { pedidoPos = null; toast('The game did not respond. Open it in another tab (localhost:5300).', true); } }, 1200);
 }
 
 iniciar();
