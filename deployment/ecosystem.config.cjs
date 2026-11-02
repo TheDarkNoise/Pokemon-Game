@@ -1,0 +1,9 @@
+module.exports={apps:[{
+  name:'pokefablemmo-gateway',
+  script:'gateway.mjs',
+  cwd:__dirname,
+  interpreter:process.execPath,
+  autorestart:true,
+  max_memory_restart:'128M',
+  time:true,
+}]};

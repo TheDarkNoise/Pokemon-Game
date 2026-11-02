@@ -1,6 +1,6 @@
 {
- "name": "Pokemon 3D Base",
- "short_name": "Pokemon 3D Base",
+ "name": "PokeFablemmo",
+ "short_name": "PokeFablemmo",
  "start_url": "./",
  "display": "standalone",
  "orientation": "landscape",
