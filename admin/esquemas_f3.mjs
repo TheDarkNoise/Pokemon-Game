@@ -43,7 +43,7 @@ const faixasFixas = ks => v => {
 export const ESQUEMAS_F3 = {
   npc_tintas: {
     titulo: 'Cores de NPC', arquivo: 'npc_tintas', forma: 'mapa', idValido: /^[\w][\w .:()-]{0,79}$/, idAjuda: 'o nome do material do modelo (ex.: fc2013_00_nursejoy_hair_col) ou "<modelo>:<material>"',
-    descricao: 'A cor de fábrica de cada parte dos NPCs, roupas e mochilas: a textura é quase branca e a cor vem daqui, pelos canais R/G/B/preto da máscara. A prévia mostra o modelo (quando existe nesta cópia) com a edição.',
+    descricao: 'Factory color for each part of NPCs, outfits, and backpacks: the texture is nearly white and color comes from these R/G/B/black mask channels. The preview shows the model (when available in this copy) with the edit.',
     previa: '/admin/previa_tinta.mjs',
     campos: [
       { k: 'ColorR', rotulo: 'Canal vermelho da máscara (R)', tipo: 'json', col: true, validar: corRGBA, resumo: corHex, ajuda: 'Sem máscara, é o tom da peça inteira.' },
@@ -54,7 +54,7 @@ export const ESQUEMAS_F3 = {
       { k: 'isMask', rotulo: 'Tinta', tipo: 'opcao', opcoes: [{ v: 0, rotulo: 'Pinta (normal)' }, { v: 1, rotulo: 'Não pinta (a textura já vem colorida)' }] },
       { k: 'neutralizar', rotulo: 'Recolorir textura já pintada (avançado)', tipo: 'json', validar: canaisNeutros,
         ajuda: 'Canais da máscara cuja cor original é trocada pelo cinza antes de pintar — pra recolorir um cabelo que já veio pintado. Ex.: ["G"].' },
-      { k: 'ganho', rotulo: 'Brilho do cinza (com "Recolorir")', tipo: 'num', min: 0.5, max: 4, ajuda: 'Padrão 1,6.' },
+      { k: 'ganho', rotulo: 'Gray brightness (with "Recolor")', tipo: 'num', min: 0.5, max: 4, ajuda: 'Default 1.6.' },
     ],
   },
   // as falas dos NPCs (npcs_glb.json) são a tela "NPCs (quem é quem)" da Fase 1; a Fase 3 só faz o jogo aberto aplicá-las na hora
@@ -62,7 +62,7 @@ export const ESQUEMAS_F3 = {
     titulo: 'Diálogos do jogo', arquivo: 'dialogos', forma: 'objeto', recarga: 'vivo',
     descricao: 'Falas que antes ficavam fixas no código (portão de Pallet, Professor Oak, escolha do inicial, abertura). Vazio = o texto original. {nome} = o nome do Pokémon. O jogo aberto aplica na hora.',
     campos: [
-      { k: 'oakNome', rotulo: 'Nome do professor nas falas', tipo: 'texto', max: 40, ajuda: 'Original: Professor Samuel.' },
+      { k: 'oakNome', rotulo: 'Professor name in dialogue', tipo: 'texto', max: 40, ajuda: 'Original: Professor Samuel.' },
       { k: 'portao', rotulo: 'Assistente no portão de Pallet (sem Pokémon)', tipo: 'linhas', validar: linhasCurtas(6) },
       { k: 'portaoBalao', rotulo: 'Balão quando o assistente está longe', tipo: 'texto', max: 120 },
       { k: 'portaoChat', rotulo: 'Linha no chat (portão)', tipo: 'texto', max: 200 },
@@ -78,7 +78,7 @@ export const ESQUEMAS_F3 = {
   },
   traducoes: {
     titulo: 'Traduções (EN/ES)', arquivo: 'traducoes', forma: 'lista', id: 'pt', recarga: 'vivo',
-    descricao: 'O jogo é escrito em português e traduz na hora pro inglês/espanhol do jogador. Cada linha: o texto em português exatamente como aparece e a tradução. {x} casa com qualquer trecho (ex.: "Você chegou em {x}." → "You arrived in {x}."). Estas vencem os dicionários de data/idioma/. O jogo aberto aplica na hora.',
+    descricao: 'The game source text is Portuguese and is translated live into the player's English/Spanish language. Each row contains the exact Portuguese source text and its translation. {x} matches any segment (for example: "Você chegou em {x}." → "You arrived in {x}."). These entries override the dictionaries in data/idioma/. An open game applies changes immediately.',
     validar: traducaoCasa,
     campos: [
       { k: 'pt', rotulo: 'Português (como aparece no jogo)', tipo: 'texto', max: 400, col: true, obrigatorio: true, area: true },
@@ -92,9 +92,9 @@ export const ESQUEMAS_F3 = {
     descricao: 'A faixa que toca em cada área de Kanto, em cada interior (cena) e nas batalhas. Faixa = arquivo em som/ sem o .ogg. A prévia lista as áreas com o nome e toca a faixa; o jogo aberto troca na hora.',
     previa: '/admin/previa_musica.mjs',
     campos: [
-      { k: 'areas', rotulo: 'Áreas (id → faixa)', tipo: 'json', validar: mapaDeFaixas, ajuda: 'Área fora da lista usa a padrão de área.' },
-      { k: 'cenas', rotulo: 'Interiores (cena → faixa)', tipo: 'json', validar: mapaDeFaixas, ajuda: 'Cena fora da lista usa a padrão de interior.' },
-      { k: 'padrao', rotulo: 'Padrão', tipo: 'json', validar: faixasFixas(['area', 'interior']), ajuda: '{ "area": "bg/…", "interior": "bg/…" }' },
+      { k: 'areas', rotulo: 'Areas (id → track)', tipo: 'json', validar: mapaDeFaixas, ajuda: 'Areas not listed use the default area track.' },
+      { k: 'cenas', rotulo: 'Interiors (scene → track)', tipo: 'json', validar: mapaDeFaixas, ajuda: 'Scenes not listed use the default interior track.' },
+      { k: 'padrao', rotulo: 'Default', tipo: 'json', validar: faixasFixas(['area', 'interior']), ajuda: '{ "area": "bg/…", "interior": "bg/…" }' },
       { k: 'batalha', rotulo: 'Batalhas', tipo: 'json', validar: faixasFixas(['treinador', 'ginasio', 'elite']), ajuda: '{ "treinador": "bg/…", "ginasio": "bg/…", "elite": "bg/…" }' },
       { k: 'login', rotulo: 'Tela de login', tipo: 'texto', max: 64, validar: faixaOk },
     ],
@@ -107,11 +107,11 @@ export const ESQUEMAS_F3 = {
     campos: [
       { k: 'arena', rotulo: 'Cena da arena', tipo: 'texto', max: 12, validar: s => /^\d{3,9}$/.test(s) ? null : 'o id da cena (só números)', ajuda: 'Original: 4120009 (Quarto da Lorelei).' },
       { k: 'vagas', rotulo: 'Vagas na fila', tipo: 'num', min: 1, max: 50, int: true, ajuda: 'Original: 10.' },
-      { k: 'chefeNome', rotulo: 'Nome do chefe', tipo: 'texto', max: 30, ajuda: 'Original: Mew.' },
+      { k: 'chefeNome', rotulo: 'Boss name', tipo: 'texto', max: 30, ajuda: 'Original: Mew.' },
       { k: 'chefeDex', rotulo: 'Espécie do chefe (nº)', tipo: 'num', min: 1, max: 2000, int: true, ajuda: 'Original: 151.' },
       { k: 'chefeGlb', rotulo: 'Modelo do chefe', tipo: 'texto', max: 30, validar: s => /^pm\d{4}(_\d{2})?$/.test(s) ? null : 'ex.: pm0151_00', ajuda: 'cenario/mon/<modelo>.glb. Original: pm0151_00.' },
-      { k: 'chefeNivel', rotulo: 'Nível do chefe', tipo: 'num', min: 1, max: 100, int: true, ajuda: 'Original: 70.' },
-      { k: 'chefeHp', rotulo: 'Vida do chefe', tipo: 'num', min: 0, max: 10000000, int: true, ajuda: '0 = automática (pelo nº de jogadores). /raid hp N muda só naquela raid.' },
+      { k: 'chefeNivel', rotulo: 'Boss level', tipo: 'num', min: 1, max: 100, int: true, ajuda: 'Original: 70.' },
+      { k: 'chefeHp', rotulo: 'Boss HP', tipo: 'num', min: 0, max: 10000000, int: true, ajuda: '0 = automatic (based on player count). /raid hp N changes only that raid.' },
       { k: 'chefeDano', rotulo: 'Dano do chefe (×)', tipo: 'num', min: 0, max: 10, ajuda: '1 = normal. /raid dano F muda só naquela raid.' },
       { k: 'taxaShiny', rotulo: 'Shiny do prêmio (1 em N)', tipo: 'num', min: 1, max: 1000000, int: true, ajuda: '/raid shiny N muda só naquela raid.' },
       { k: 'premio', rotulo: 'Prêmio', tipo: 'opcao', opcoes: [{ v: 'mew', rotulo: 'O chefe (entra no time)' }, { v: 'sem-mew', rotulo: 'Só itens (sem o chefe)' }] },
