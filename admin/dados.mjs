@@ -1,4 +1,4 @@
-/* Painel admin — "Arquivos de dados" (editor genérico guiado por esquema) e "Histórico / Desfazer". Fase 0.
+/* Painel admin — "Arquivos de dados" (editor genérico guiado por esquema) e "History / Undo". Fase 0.
  * Tabela e formulário saem de admin/esquemas.mjs — os mesmos esquemas que o servidor usa pra validar, então o erro aparece no
  * campo antes de salvar e o servidor recusa o mesmo que a tela recusa. Registrar um arquivo novo = escrever um esquema. */
 import { ESQUEMAS, validarCampo, validarColecao } from '/admin/esquemas.mjs';
@@ -42,9 +42,9 @@ export function instalarDados({ api, toast, avisarJogo }) {
     for (const b of $('d-lista').querySelectorAll('button')) b.onclick = () => { const t = ESQUEMAS[b.dataset.nome].tela; if (t) document.querySelector(`#lado button[data-vista="${t}"]`)?.click(); else abrir(b.dataset.nome); };
   }
   async function abrir(nome) {
-    if (sujo && !confirm('Há alterações não salvas. Descartar?')) return;
+    if (sujo && !confirm('Há alterações não salvas. Discard?')) return;
     const [r] = await Promise.all([api('/admin/dados/' + nome), ESQUEMAS[nome]?.usaItens ? carregarItens() : null]);
-    if (!r.ok) { toast(r.erro || 'Falha ao carregar.', true); return; }
+    if (!r.ok) { toast(r.erro || 'Failed to load.', true); return; }
     nomeAtual = nome; esq = ESQUEMAS[nome]; dados = copia(r.dados); sel = null; sujo = false; filtro = '';
     renderLista(); render();
   }
@@ -58,12 +58,12 @@ export function instalarDados({ api, toast, avisarJogo }) {
     $('d-edit').innerHTML = `
       <div class="topo-edit"><h2>${esc(esq.titulo)}</h2>${total}
         <span class="sujo" id="d-sujo" ${sujo ? '' : 'hidden'}>● não salvo</span>
-        <button id="d-descartar">Descartar</button><button class="prim" id="d-salvar">Salvar</button></div>
+        <button id="d-descartar">Discard</button><button class="prim" id="d-salvar">Save</button></div>
       <div class="fraco">${esc(esq.descricao || '')} Arquivo: <code>public/data/${esc(esq.arquivo)}.json${esq.caminho ? ' → ' + esc(esq.caminho) : ''}</code>.
         ${esq.recarga === 'vivo' ? 'O jogo aplica na hora.' : 'Depois de salvar, recarregue o jogo (Ctrl+Shift+R).'}</div>
       <div id="d-corpo"></div>`;
     $('d-salvar').onclick = salvar;
-    $('d-descartar').onclick = () => { if (!sujo || confirm('Descartar as alterações?')) { sujo = false; abrir(nomeAtual); } };
+    $('d-descartar').onclick = () => { if (!sujo || confirm('Discard as alterações?')) { sujo = false; abrir(nomeAtual); } };
     if (esq.forma === 'objeto') {
       const caixa = document.createElement('div'); caixa.className = 'caixa'; $('d-corpo').append(caixa);
       const prev = esq.previa ? previaDe(esq.previa) : null;                      // Fase 3: prévia também no arquivo-objeto (músicas, raid)
@@ -82,7 +82,7 @@ export function instalarDados({ api, toast, avisarJogo }) {
     });
     const corpo = $('d-corpo'), rolagem = corpo.querySelector('.rolagem')?.scrollTop || 0;   // clicar numa linha refaz a tabela: sem isto ela voltava pro topo
     corpo.innerHTML = `
-      <div class="topo-edit"><input type="search" id="d-busca" placeholder="filtrar…" value="${esc(filtro)}" style="flex:1"><button id="d-novo">＋ Novo</button></div>
+      <div class="topo-edit"><input type="search" id="d-busca" placeholder="filter…" value="${esc(filtro)}" style="flex:1"><button id="d-novo">＋ New</button></div>
       <div class="grade">
         <div class="rolagem"><table class="dados"><thead><tr>${esq.forma === 'mapa' ? '<th>ID</th>' : ''}${cols.map(c => `<th>${esc(c.rotulo)}</th>`).join('')}</tr></thead>
           <tbody>${lista.slice(0, MAX_LINHAS).map(id => `<tr data-id="${esc(id)}" class="${String(id) === String(sel) ? 'atual' : ''}">${esq.forma === 'mapa' ? `<td>${esc(id)}</td>` : ''}${cols.map(c => `<td>${esc(cel(c, id))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
@@ -96,7 +96,7 @@ export function instalarDados({ api, toast, avisarJogo }) {
     for (const tr of corpo.querySelectorAll('tbody tr')) tr.onclick = () => { sel = esq.forma === 'mapa' ? tr.dataset.id : +tr.dataset.id; renderTabela(); };
     if (sel != null && reg(sel)) {
       const f = $('d-form');
-      f.innerHTML = `<div class="topo-edit"><h3 style="margin:0;margin-right:auto">${esq.forma === 'mapa' ? 'ID ' + esc(sel) : 'Linha ' + (sel + 1)}</h3><button id="d-dup">Duplicar</button><button class="perigo" id="d-del">Excluir</button></div>`;
+      f.innerHTML = `<div class="topo-edit"><h3 style="margin:0;margin-right:auto">${esq.forma === 'mapa' ? 'ID ' + esc(sel) : 'Row ' + (sel + 1)}</h3><button id="d-dup">Duplicate</button><button class="perigo" id="d-del">Delete</button></div>`;
       const caixa = document.createElement('div'); f.append(caixa);
       const r = reg(sel), prev = esq.previa ? previaDe(esq.previa) : null;
       (esq.registroLista ? formularioLista : formulario)(caixa, r, () => { atualizarLinha(sel); prev?.then(m => m?.atualizar(r)); });
@@ -216,7 +216,7 @@ export function instalarDados({ api, toast, avisarJogo }) {
   const proximoId = () => { const ns = dados.map(r => +r[esq.id]).filter(Number.isFinite); return ns.length ? Math.max(...ns) + 1 : 1; };
   function novo() {
     if (esq.forma === 'mapa') {
-      const id = prompt('ID do novo registro (' + (esq.idAjuda || 'letras, números, _ ou -') + '):'); if (!id) return;
+      const id = prompt('ID for the new record (' + (esq.idAjuda || 'letters, numbers, _ or -') + '):'); if (!id) return;
       if (!(esq.idValido || /^[\w-]{1,40}$/).test(id)) { toast('ID inválido' + (esq.idAjuda ? ': ' + esq.idAjuda : '') + '.', true); return; }
       if (dados[id]) { toast('Esse ID já existe.', true); return; }
       dados[id] = esq.registroLista ? [] : {}; sel = id;
@@ -240,7 +240,7 @@ export function instalarDados({ api, toast, avisarJogo }) {
     marcar(); renderTabela();
   }
   function excluir() {
-    if (sel == null || !confirm('Excluir este registro?')) return;
+    if (sel == null || !confirm('Delete este registro?')) return;
     if (esq.forma === 'mapa') delete dados[sel]; else dados.splice(sel, 1);
     sel = null; marcar(); renderTabela();
   }
@@ -249,36 +249,36 @@ export function instalarDados({ api, toast, avisarJogo }) {
     const v = validarColecao(esq, dados);
     if (!v.ok) { toast(v.erro, true); return; }
     const r = await api('/admin/dados/' + nomeAtual, 'POST', { dados });
-    if (!r.ok) { toast(r.erro || 'Falha ao salvar.', true); return; }
+    if (!r.ok) { toast(r.erro || 'Failed to save.', true); return; }
     sujo = false; const s = $('d-sujo'); if (s) s.hidden = true;
     toast(`${esq.titulo}: salvo (${r.total} registro(s)).`);
     avisarJogo(esq.arquivo);
   }
 
-  // ── Histórico / Desfazer ─────────────────────────────────────────────────────
+  // ── History / Undo ─────────────────────────────────────────────────────
   async function renderHistorico() {
     const cont = $('v-historico');
     cont.innerHTML = '<div class="caixa fraco">carregando…</div>';
     const r = await api('/admin/backups');
-    if (!r.ok) { cont.innerHTML = `<div class="caixa">${esc(r.erro || 'Falha ao listar.')}</div>`; return; }
+    if (!r.ok) { cont.innerHTML = `<div class="caixa">${esc(r.erro || 'Failed to list.')}</div>`; return; }
     const chaves = Object.keys(r.arquivos).sort();
     cont.innerHTML = `
-      <div class="topo-edit"><h2>Histórico / Desfazer</h2><button id="h-atualizar">Atualizar</button></div>
+      <div class="topo-edit"><h2>History / Undo</h2><button id="h-atualizar">Refresh</button></div>
       <div class="fraco">Cada vez que o painel salva, a versão anterior fica guardada aqui (30 por arquivo; 8 por GLB de cenário).
-        Restaurar volta o arquivo àquela versão, e a versão atual também é guardada — dá pra desfazer o desfazer.</div>
-      ${chaves.length ? '' : '<div class="caixa fraco">Nenhum backup ainda.</div>'}
+        Restore returns the file to that version, and the current version is also saved — so the restore itself can be undone.</div>
+      ${chaves.length ? '' : '<div class="caixa fraco">No backups yet.</div>'}
       ${chaves.map(k => `<div class="caixa" data-arquivo="${esc(k)}"><h3>${esc(k)} <span class="fraco">(${r.arquivos[k].length})</span></h3>
         <table class="dados backups"><thead><tr><th>Versão de</th><th>Tamanho</th><th></th></tr></thead><tbody>
-        ${r.arquivos[k].map(b => `<tr><td>${esc(new Date(b.data).toLocaleString('pt-BR'))}</td><td>${tamanho(b.bytes)}</td><td><button data-nome="${esc(b.nome)}" data-quando="${esc(new Date(b.data).toLocaleString('pt-BR'))}">Restaurar</button></td></tr>`).join('')}
+        ${r.arquivos[k].map(b => `<tr><td>${esc(new Date(b.data).toLocaleString('pt-BR'))}</td><td>${tamanho(b.bytes)}</td><td><button data-nome="${esc(b.nome)}" data-quando="${esc(new Date(b.data).toLocaleString('pt-BR'))}">Restore</button></td></tr>`).join('')}
         </tbody></table></div>`).join('')}`;
     $('h-atualizar').onclick = renderHistorico;
     for (const b of cont.querySelectorAll('button[data-nome]')) b.onclick = () => restaurar(b.dataset.nome, b.closest('[data-arquivo]').dataset.arquivo, b.dataset.quando);
   }
   async function restaurar(nome, arquivo, quando) {
-    if (!confirm(`Restaurar ${arquivo} para a versão de ${quando}?\nA versão atual vai pro histórico (dá pra voltar).`)) return;
+    if (!confirm(`Restore ${arquivo} para a versão de ${quando}?\nA versão atual vai pro histórico (dá pra voltar).`)) return;
     const r = await api('/admin/backups/restaurar', 'POST', { nome });
-    if (!r.ok) { toast(r.erro || 'Falha ao restaurar.', true); return; }
-    toast(`${arquivo} restaurado.` + (['zonas_spawn', 'habitats'].includes(r.arquivo) ? ' Recarregue esta página pra ver nas telas de Mapa/Habitats.' : ''));
+    if (!r.ok) { toast(r.erro || 'Failed to restore.', true); return; }
+    toast(`${arquivo} restored.` + (['zonas_spawn', 'habitats'].includes(r.arquivo) ? ' Reload this page to see the changes in Map/Habitats.' : ''));
     avisarJogo(r.arquivo, r.tipo === 'glb');
     if (nomeAtual && ESQUEMAS[nomeAtual]?.arquivo === r.arquivo) { sujo = false; abrir(nomeAtual); }
     renderHistorico();
