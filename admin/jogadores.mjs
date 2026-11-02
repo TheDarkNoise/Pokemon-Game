@@ -6,7 +6,7 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '
 const dataHora = ms => new Date(ms).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 const NATUREZAS = ['Hardy', 'Lonely', 'Brave', 'Adamant', 'Naughty', 'Bold', 'Docile', 'Relaxed', 'Impish', 'Lax', 'Timid', 'Hasty', 'Serious',
   'Jolly', 'Naive', 'Modest', 'Mild', 'Quiet', 'Bashful', 'Rash', 'Calm', 'Gentle', 'Sassy', 'Careful', 'Quirky'];
-const IVS = [['hp', 'HP'], ['atk', 'Atq'], ['def', 'Def'], ['spa', 'AtE'], ['spd', 'DfE'], ['vel', 'Vel']];
+const IVS = [['hp', 'HP'], ['atk', "Atk"], ['def', 'Def'], ['spa', "Sp. Atk"], ['spd', "Sp. Def"], ['vel', "Speed"]];
 const ivsDe = p => Array.isArray(p?.ivs) ? p.ivs : IVS.map(([k]) => +p?.ivs?.[k] || 0);   // o jogo grava lista de 6; objeto {hp…} é o formato antigo do servidor
 // Fase 3: destinos do "Levar" (as chaves são as do /tp do chat — servidor_moderacao.mjs CIDADES)
 const CIDADES = [['pallet', 'Pallet (laboratory)'], ['viridian', 'Viridian'], ['pewter', 'Pewter'], ['cerulean', 'Cerulean'], ['vermilion', 'Vermilion'],
@@ -14,7 +14,7 @@ const CIDADES = [['pallet', 'Pallet (laboratory)'], ['viridian', 'Viridian'], ['
 
 /** `canal` = BroadcastChannel do painel (pra levar o seu personagem until o jogador); `resolverEspecie` vem do admin.mjs. */
 export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
-  let sel = null, det = null, ref = null, edTime = null, sujoBag = false, sujoTime = false;
+  let sel = null, det = null, ref = null, edTime = null, sujoBolsa = false, sujoTime = false;
 
   async function referencia() {
     if (ref) return ref;
@@ -46,13 +46,13 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
 
   // ── Ficha ────────────────────────────────────────────────────────────────────
   async function abrir(u) {
-    if ((sujoBag || sujoTime) && u !== sel && !confirm('There are unsaved changes to this player’s bag/team. Discard them?')) return;
+    if ((sujoBolsa || sujoTime) && u !== sel && !confirm('There are unsaved changes to this player’s bag/team. Discard them?')) return;
     const [r] = await Promise.all([api('/admin/jogador?u=' + encodeURIComponent(u)), referencia()]);
     if (!r.ok) { toast(r.erro || 'Failed to open.', true); return; }
     sel = u; aplicar(r); renderLista();
   }
   function aplicar(r) {                                                   // resposta do servidor (abrir ou depois de qualquer ação)
-    det = r; sujoBag = sujoTime = false;
+    det = r; sujoBolsa = sujoTime = false;
     edTime = { time: (r.save.time || []).map(p => ({ ...p })), caixa: (r.save.caixa || []).map(p => ({ ...p })) };
     renderFicha();
   }
@@ -93,14 +93,14 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
             ${c.mudoAte ? '<button id="j-desmutar">Unmute</button>' : '<button id="j-mudo">Mute</button>'}
             ${c.banidoAte ? '<button id="j-perdoar">Remove ban</button>' : '<button id="j-banir" class="perigo">Ban</button>'}
           </div>
-          <div class="acoes" style="margin-top:8px" title="O mesmo que /tp nome cidade no chat: online, a cena dele recarrega lá; offline, nasce lá na próxima entrada">
+          <div class="acoes" style="margin-top:8px" title="Same as /tp name city in chat: online players reload there; offline players spawn there at next login">
             <select id="j-levar-cidade">${CIDADES.map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select><button id="j-levar">Move to Pokémon Center</button>
           </div>
-          <div class="fraco" style="font-size:11px;margin-top:6px">In game chat (GM): /ver /muted /kick /banir /perdoar /tp /ir /puxar /aviso — have the same effect as these buttons.</div>
+          <div class="fraco" style="font-size:11px;margin-top:6px">In game chat (GM): /ver /mudo /kick /banir /perdoar /tp /ir /puxar /aviso — have the same effect as these buttons.</div>
         </div>
         <div class="caixa j-larga"><h3>Bag <span class="sujo" id="j-sujo-bolsa" hidden>● unsaved</span></h3>
           <div class="form">
-            <label>Money <input type="number" id="j-dinheiro" min="0" step="1" value="${s.money ?? ''}" placeholder="game default"></label>
+            <label>Money <input type="number" id="j-dinheiro" min="0" step="1" value="${s.dinheiro ?? ''}" placeholder="game default"></label>
           </div>
           <h4>Poké Balls</h4>
           <div class="j-bolas">${ref.bolas.map(b => `<label>${esc(b.nome)} <input type="number" min="0" max="999999" data-bola="${b.id}" value="${s.bolas?.[b.id] || 0}"></label>`).join('')}</div>
@@ -129,7 +129,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
   const linhaItem = (id, q) => `<tr data-item="${esc(id)}"><td>${esc(nomeItem(id))} <span class="fraco">${esc(id)}</span></td><td><input type="number" min="0" max="999999" value="${q}"></td><td><button class="perigo rem" title="Remove">✕</button></td></tr>`;
   function resumoLog(e) {
     const d = e.depois || {};
-    if (e.acao === 'bolsa') return 'money ' + (e.antes?.money ?? '—') + ' → ' + (d.money ?? '—');
+    if (e.acao === 'bolsa') return 'money ' + (e.antes?.dinheiro ?? '—') + ' → ' + (d.dinheiro ?? '—');
     if (e.acao === 'time') return (e.antes?.time?.length ?? 0) + '+' + (e.antes?.caixa?.length ?? 0) + ' → ' + (d.time?.length ?? 0) + '+' + (d.caixa?.length ?? 0) + ' (team+storage)';
     if (e.acao === 'deu pokemon') return (d.nome || '#' + d.dex) + ' Nv ' + d.lv + (d.shiny ? ' ✨' : '') + ' → ' + d.lugar;
     if (e.acao === 'cargo') return (d.gm ? 'GM' : 'no GM') + (d.cargo ? ' · ' + d.cargo : '');
@@ -174,7 +174,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
   }
 
   function ligarFicha() {
-    const mexeuBag = () => { sujoBag = true; $('j-sujo-bolsa').hidden = false; };
+    const mexeuBolsa = () => { sujoBolsa = true; $('j-sujo-bolsa').hidden = false; };
     $('j-atualizar').onclick = () => abrir(sel);
     if ($('j-ir')) $('j-ir').onclick = () => { const o = det.conta.online; canal.postMessage({ t: 'tp', x: o.x, z: o.z, mapa: o.mapa }); toast('Request sent to your game (if it is open on map ' + o.mapa + ').'); };
     if ($('j-recado')) $('j-recado').onclick = () => { const texto = prompt('Message to player (shown in their chat as a GM message):'); if (texto?.trim()) acao('moderar', { acao: 'recado', texto }, 'Message sent.'); };
@@ -191,52 +191,52 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
     if ($('j-desmutar')) $('j-desmutar').onclick = () => acao('moderar', { acao: 'desmutar' }, 'Player can speak again.');
     if ($('j-banir')) $('j-banir').onclick = () => {
       const min = +$('j-ban-min').value, txt = min === -1 ? 'forever' : $('j-ban-min').selectedOptions[0].textContent;
-      if (confirm(`Ban ${det.conta.usuario} por ${txt}? Ele é desconectado e não consegue entrar until lá.`)) acao('moderar', { acao: 'banir', minutos: min, motivo: $('j-motivo').value }, 'Banned.');
+      if (confirm(`Ban ${det.conta.usuario} for ${txt}? They are disconnected and cannot sign in until the ban expires.`)) acao('moderar', { acao: 'banir', minutos: min, motivo: $('j-motivo').value }, 'Banned.');
     };
     if ($('j-perdoar')) $('j-perdoar').onclick = () => acao('moderar', { acao: 'perdoar' }, 'Ban removed.');
     $('j-levar').onclick = () => {                                       // Fase 3: o mesmo do /tp nome cidade
       const cid = $('j-levar-cidade').value, nome = $('j-levar-cidade').selectedOptions[0].textContent;
-      if (confirm(`Move ${det.conta.usuario} to ${nome}?` + (det.conta.online ? ' Their scene reloads now.' : ' They will spawn there next login.'))) acao('moderar', { acao: 'levar', cidade: cid }, 'Levado to ' + nome + '.');
+      if (confirm(`Move ${det.conta.usuario} to ${nome}?` + (det.conta.online ? ' Their scene reloads now.' : ' They will spawn there next login.'))) acao('moderar', { acao: 'levar', cidade: cid }, "Moved to " + nome + '.');
     };
     // bolsa
-    $('j-dinheiro').oninput = mexeuBag;
-    for (const i of document.querySelectorAll('#j-ficha [data-bola], #j-ficha [data-ins]')) i.addEventListener(i.type === 'checkbox' ? 'change' : 'input', mexeuBag);
-    const ligarItems = () => {
+    $('j-dinheiro').oninput = mexeuBolsa;
+    for (const i of document.querySelectorAll('#j-ficha [data-bola], #j-ficha [data-ins]')) i.addEventListener(i.type === 'checkbox' ? 'change' : 'input', mexeuBolsa);
+    const ligarItens = () => {
       for (const tr of $('j-itens').querySelectorAll('tr')) {
-        tr.querySelector('input').oninput = mexeuBag;
-        tr.querySelector('.rem').onclick = () => { tr.remove(); mexeuBag(); };
+        tr.querySelector('input').oninput = mexeuBolsa;
+        tr.querySelector('.rem').onclick = () => { tr.remove(); mexeuBolsa(); };
       }
     };
-    ligarItems();
+    ligarItens();
     const addItem = () => {
       const v = $('j-item-add').value.trim(), id = (v.match(/^(\d+)/) || [])[1] || Object.keys(ref.itens).find(k => ref.itens[k].n.toLowerCase() === v.toLowerCase());
       if (!id || !ref.itens[id]) { toast('Item not found.', true); return; }
-      if (ref.itens[id].t === 7) { toast('Pokébola entra na lista de Poké Balls acima.', true); return; }
+      if (ref.itens[id].t === 7) { toast("Poké Balls belong in the Poké Balls list above.", true); return; }
       const tr = $('j-itens').querySelector(`tr[data-item="${id}"]`);
       if (tr) { const inp = tr.querySelector('input'); inp.value = +inp.value + 1; }
       else $('j-itens').insertAdjacentHTML('beforeend', linhaItem(id, 1));
-      $('j-item-add').value = ''; ligarItems(); mexeuBag();
+      $('j-item-add').value = ''; ligarItens(); mexeuBolsa();
     };
     $('j-item-ok').onclick = addItem;
     $('j-item-add').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addItem(); } };
     $('j-bolsa-ok').onclick = () => {
       const corpo = { bolas: {}, itens: {}, insignias: [] }, din = $('j-dinheiro').value.trim();
-      if (din !== '') corpo.money = Number(din);
+      if (din !== '') corpo.dinheiro = Number(din);
       for (const i of document.querySelectorAll('#j-ficha [data-bola]')) if (+i.value > 0) corpo.bolas[i.dataset.bola] = Number(i.value);
       for (const tr of $('j-itens').querySelectorAll('tr')) { const q = Number(tr.querySelector('input').value); if (q > 0) corpo.itens[tr.dataset.item] = q; }
       for (const i of document.querySelectorAll('#j-ficha [data-ins]:checked')) corpo.insignias.push(+i.dataset.ins);
-      acao('bolsa', corpo, 'Bag salva' + (det.conta.online ? ' — já chegou no jogo dele.' : '.'));
+      acao('bolsa', corpo, "Bag saved" + (det.conta.online ? " — already applied in the player’s game." : '.'));
     };
     // time
     $('j-time-ok').onclick = () => {
       const enx = p => ({ uid: p.uid, lv: p.lv, shiny: !!p.shiny, natureza: p.natureza, ivs: p.ivs });
-      acao('time', { time: edTime.time.map(enx), caixa: edTime.caixa.map(enx) }, 'Time salvo' + (det.conta.online ? ' — já chegou no jogo dele.' : '.'));
+      acao('time', { time: edTime.time.map(enx), caixa: edTime.caixa.map(enx) }, "Party saved" + (det.conta.online ? " — already applied in the player’s game." : '.'));
     };
     $('j-dar-ok').onclick = () => {
       const e = resolverEspecie($('j-dar-esp').value);
-      if (!e) { toast('Espécie não encontrada ou sem modelo.', true); return; }
-      if (sujoTime && !confirm('Give o Pokémon agora descarta as mudanças não salvas no time. Continuar?')) return;
-      acao('pokemon', { dex: e.dex, glb: e.glb.replace(/\.glb$/, ''), nome: e.nome, lv: +$('j-dar-lv').value, shiny: $('j-dar-shiny').checked }, e.nome + ' entregue.');
+      if (!e) { toast("Species not found or no model available.", true); return; }
+      if (sujoTime && !confirm("Giving a Pokémon now discards unsaved party changes. Continue?")) return;
+      acao('pokemon', { dex: e.dex, glb: e.glb.replace(/\.glb$/, ''), nome: e.nome, lv: +$('j-dar-lv').value, shiny: $('j-dar-shiny').checked }, e.nome + " delivered.");
     };
   }
 
@@ -246,5 +246,5 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
   $('j-recarregar').addEventListener('click', renderLista);
   for (const b of document.querySelectorAll('#lado button[data-vista="jogadores"]')) b.addEventListener('click', () => { referencia(); renderLista(); });
   setInterval(() => { if (!$('v-jogadores').hidden) renderLista(); }, 15000);   // quem entrou/saiu, sem precisar clicar
-  addEventListener('beforeunload', e => { if (sujoBag || sujoTime) { e.preventDefault(); e.returnValue = ''; } });
+  addEventListener('beforeunload', e => { if (sujoBolsa || sujoTime) { e.preventDefault(); e.returnValue = ''; } });
 }

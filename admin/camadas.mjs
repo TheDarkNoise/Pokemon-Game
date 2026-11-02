@@ -12,14 +12,15 @@ import { ESQUEMAS, validarCampo } from '/admin/esquemas.mjs';
 
 const CFG_NPC_NOVO = 9100001;   // NPC criado no painel: faixa 91xxxxx (none cfg de 7 dígitos do jogo começa com 9)
 const COR = { npc: '#4ff0e0', placa: '#c9c9ff', porta: '#ffd23a', chegada: '#ff9d4d', treinador: '#ff5fd0' };
-const TIPO_TILE = { grass: 'Grama (encontros)', agua: 'Água (pesca/surf)', spawn: 'Piso de caverna (encontros)' };
+const TIPO_TILE = { grama: "Grass (encounters)", agua: "Water (fishing/surf)", spawn: "Cave floor (encounters)" };
+const ROTULO_PAPEL = { cura: 'Heal', loja: 'Shop', caixa: 'Storage' };
 const COR_TILE = { spawn: 'rgba(214,160,90,.5)' };
 
 export function criarCamadas(dep) {
   const { $, esc, api, toast, avisarJogo, canal, FLIPX, cam, w2t, t2w, redesenhar, dados, mapa, camadas, areaEm, nomeArea, aoMudar, mapas, trocarMapa } = dep;
   let ferramenta = 'zonas', sel = null, arraste = null, colocar = null, ref = null, pintando = false, hover = null, indice = null, avisouSemArea = false;
   const pincel = { tipo: 'grama', modo: 'pintar', raio: 1 };
-  const sujo = { npcs: false, treinadores: false, grass: false, agua: false, spawn: false }, glbSujos = new Set(), portasSujas = new Set();
+  const sujo = { npcs: false, treinadores: false, grama: false, agua: false, spawn: false }, glbSujos = new Set(), portasSujas = new Set();
   const marcar = k => { if (k) sujo[k] = true; aoMudar(); };
 
   async function carregarRef() {
@@ -85,10 +86,10 @@ export function criarCamadas(dep) {
     return ref?.npcs[o.cfg]?.nome || '';
   }
   function destinoTexto(n, curto) {
-    if (!n) return 'sem saída';
-    const dest = ref?.portas[n]; if (!dest) return 'cfg ' + n + ' (não existe)';
-    const area = dest.a ? nomeArea(dest.a) : '', cena = ref.cenas[dest.c] || 'cena ' + dest.c;
-    return curto ? (area && !/^Área \d/.test(area) ? area : cena) : `${cena}${area ? ' · ' + area : ''} (chegada ${n})`;
+    if (!n) return "no exit";
+    const dest = ref?.portas[n]; if (!dest) return 'cfg ' + n + " (not found)";
+    const area = dest.a ? nomeArea(dest.a) : '', cena = ref.cenas[dest.c] || "scene " + dest.c;
+    return curto ? (area && !/^Área \d/.test(area) ? area : cena) : `${cena}${area ? ' · ' + area : ''} (arrival ${n})`;
   }
   const arquivoDaCena = c => { const nome = +c === 1000001 ? 'kanto' : String(c); return mapas().includes(nome) ? nome : null; };
 
@@ -116,7 +117,7 @@ export function criarCamadas(dep) {
       if (pincel.modo === 'pintar') {
         if (indice.mapa.has(k)) continue;
         const x = cx + dx + 0.5, z = cz + dz + 0.5, a = areaEm(FLIPX * x, z);
-        if (a == null) { if (!avisouSemArea) { toast('Fora de qualquer área: pinte dentro de uma caixa de área (o tile precisa de uma).', true); avisouSemArea = true; } continue; }
+        if (a == null) { if (!avisouSemArea) { toast("Outside all areas: paint inside an area box (each tile requires one).", true); avisouSemArea = true; } continue; }
         const t = tileNovo(x, z, a); lista.push(t); indice.mapa.set(k, t); mudou = true;
       } else {
         const t = indice.mapa.get(k); if (!t) continue;
@@ -220,8 +221,8 @@ export function criarCamadas(dep) {
     if (ferramenta !== 'pontos') return;
     el.innerHTML = `<h3>Map points</h3>
       <div class="acoes"><button id="c-add-npc" class="${colocar === 'npc' ? 'on' : ''}">＋ NPC</button><button id="c-add-tr" class="${colocar === 'treinador' ? 'on' : ''}">＋ Trainer slot</button></div>
-      <div class="c-legenda"><span style="color:${COR.npc}">●</span> NPC <span style="color:${COR.npc}">○</span> sem cadastro (não aparece) <span style="color:${COR.porta}">■</span> porta <span style="color:${COR.chegada}">◆</span> chegada <span style="color:${COR.treinador}">▲</span> treinador <span style="color:${COR.treinador}">△</span> vaga sem treinador</div>
-      <div id="c-sel" style="margin-top:10px">${sel ? '' : '<div class="fraco">Click a point to edit it; drag to move it. Ligue as camadas "npcs" e "treinadores" lá em cima.</div>'}</div>`;
+      <div class="c-legenda"><span style="color:${COR.npc}">●</span> NPC <span style="color:${COR.npc}">○</span> unregistered (hidden) <span style="color:${COR.porta}">■</span> door <span style="color:${COR.chegada}">◆</span> arrival <span style="color:${COR.treinador}">▲</span> trainer <span style="color:${COR.treinador}">△</span> empty trainer slot</div>
+      <div id="c-sel" style="margin-top:10px">${sel ? '' : "<div class=\"fraco\">Click a point to edit it; drag to move it. Enable the NPC and trainer layers above.</div>"}</div>`;
     $('c-add-npc').onclick = () => { colocar = colocar === 'npc' ? null : 'npc'; dep.tela.classList.toggle('colocando', !!colocar); renderPainel(); if (colocar) toast('Click the map where the NPC should be.'); };
     $('c-add-tr').onclick = () => { colocar = colocar === 'treinador' ? null : 'treinador'; dep.tela.classList.toggle('colocando', !!colocar); renderPainel(); if (colocar) toast('Click the map where the trainer slot should be.'); };
     if (sel) renderSel();
@@ -232,33 +233,33 @@ export function criarCamadas(dep) {
     let html = '';
     if (lista === 'treinadores') {
       const t = ref.treinadores[o.cfg];
-      html = `<h4>Vaga de treinador</h4><div class="form">
-        <label class="inteira">Treinador (cfg) <input type="number" id="c-cfg" list="dl-c-treinadores" value="${o.cfg}"></label>
-        <div class="inteira ${t ? 'fraco' : 'aviso-c'}" id="c-cfg-info">${t ? esc(t.nome) + ' — time: ' + esc((t.time || []).map(p => '#' + p.dex + ' Nv' + p.lv).join(', ')) : 'No Trainer NPC data: nobody will spawn in this slot.'}</div>
+      html = `<h4>Trainer slot</h4><div class="form">
+        <label class="inteira">Trainer (cfg) <input type="number" id="c-cfg" list="dl-c-treinadores" value="${o.cfg}"></label>
+        <div class="inteira ${t ? 'fraco' : 'aviso-c'}" id="c-cfg-info">${t ? esc(t.nome) + " — party: " + esc((t.time || []).map(p => '#' + p.dex + " Lv" + p.lv).join(', ')) : 'No Trainer NPC data: nobody will spawn in this slot.'}</div>
         ${campoNum('c-x', 'X', +(FLIPX * o.x).toFixed(2), 'step="0.5"')}${campoNum('c-z', 'Z', +o.z.toFixed(2), 'step="0.5"')}</div>`;
     } else if (tipo === 'porta' || tipo === 'chegada') {
       const p = ref.portas[o.cfg];
-      html = `<h4>${tipo === 'porta' ? 'Porta' : 'Chegada'} <span class="fraco">cfg ${o.cfg}</span></h4><div class="form">
+      html = `<h4>${tipo === 'porta' ? "Door" : "Arrival"} <span class="fraco">cfg ${o.cfg}</span></h4><div class="form">
         <label class="inteira">Type <select id="c-pt-t"><option value="6"${p.t === 6 ? ' selected' : ''}>Door (leads to…)</option><option value="7"${p.t === 7 ? ' selected' : ''}>Arrival (spawn point on entry)</option></select></label>
-        ${p.t === 6 ? `<label class="inteira">Destino (cfg da chegada) <input type="number" id="c-pt-n" min="0" value="${p.n ?? 0}"></label>
-        <div class="inteira fraco" id="c-pt-info">${esc(destinoTexto(p.n))}</div>` : `<div class="inteira fraco">Portas que chegam aqui: ${Object.entries(ref.portas).filter(([, q]) => q.t === 6 && q.n === o.cfg).map(([c]) => c).join(', ') || 'nonea'}.</div>`}
+        ${p.t === 6 ? `<label class="inteira">Destination (arrival cfg) <input type="number" id="c-pt-n" min="0" value="${p.n ?? 0}"></label>
+        <div class="inteira fraco" id="c-pt-info">${esc(destinoTexto(p.n))}</div>` : `<div class="inteira fraco">Doors arriving here: ${Object.entries(ref.portas).filter(([, q]) => q.t === 6 && q.n === o.cfg).map(([c]) => c).join(', ') || "none"}.</div>`}
         ${campoNum('c-x', 'X', +(FLIPX * o.x).toFixed(2), 'step="0.5"')}${campoNum('c-z', 'Z', +o.z.toFixed(2), 'step="0.5"')}</div>
-        ${p.t === 6 && p.n ? '<div class="acoes" style="margin-top:8px"><button id="c-pt-ir">Ir até o destino</button></div>' : ''}`;
+        ${p.t === 6 && p.n ? "<div class=\"acoes\" style=\"margin-top:8px\"><button id=\"c-pt-ir\">Go to destination</button></div>" : ''}`;
     } else {
       const n = ref.npcs[o.cfg];
       html = `<h4>${n ? esc(n.nome || (n.placa ? 'Sign' : 'NPC')) : 'Unregistered NPC'} <span class="fraco">cfg ${o.cfg}</span></h4><div class="form">
-        <label class="inteira">Quem é (cfg) <input type="number" id="c-cfg" list="dl-c-npcs" value="${o.cfg}"></label>
+        <label class="inteira">NPC identity (cfg) <input type="number" id="c-cfg" list="dl-c-npcs" value="${o.cfg}"></label>
         <label class="inteira">Direction (°) <div class="raio"><input type="range" id="c-face" min="0" max="359" value="${Math.round(o.face || 0)}"><input type="number" id="c-face-n" min="0" max="359" value="${Math.round(o.face || 0)}"></div></label>
         ${campoNum('c-x', 'X', +(FLIPX * o.x).toFixed(2), 'step="0.5"')}${campoNum('c-z', 'Z', +o.z.toFixed(2), 'step="0.5"')}
         ${n ? `<label class="inteira">Name <input type="text" id="c-nome" maxlength="60" value="${esc(n.nome || '')}"></label>
-        ${n.placa ? '' : `<label class="inteira">Modelo <input type="text" id="c-glb" value="${esc(n.glb || '')}" placeholder="npc/fc1004_00"><span class="erro-campo" id="c-glb-erro"></span></label>`}
-        <label class="inteira">Falas (uma por linha) <textarea id="c-falas" rows="4">${esc((n.falas || []).join('\n'))}</textarea></label>
-        <label class="inteira">Role <select id="c-papel"><option value="">none</option>${['cura', 'loja', 'caixa'].map(v => `<option${n.papel === v ? ' selected' : ''}>${v}</option>`).join('')}</select></label>`
+        ${n.placa ? '' : `<label class="inteira">Model <input type="text" id="c-glb" value="${esc(n.glb || '')}" placeholder="npc/fc1004_00"><span class="erro-campo" id="c-glb-erro"></span></label>`}
+        <label class="inteira">Dialogue (one line each) <textarea id="c-falas" rows="4">${esc((n.falas || []).join('\n'))}</textarea></label>
+        <label class="inteira">Role <select id="c-papel"><option value="">none</option>${['cura', 'loja', 'caixa'].map(v => `<option value="${v}"${n.papel === v ? ' selected' : ''}>${ROTULO_PAPEL[v]}</option>`).join('')}</select></label>`
         : '<div class="inteira aviso-c">No NPC record: this point will not appear in game.</div><div class="inteira"><button id="c-cadastrar">Register this NPC</button></div>'}
         </div>
-        ${n ? '<div class="fraco" style="font-size:11px;margin-top:4px">Name, modelo e falas valem pra TODOS os pontos com este cfg.</div>' : ''}`;
+        ${n ? "<div class=\"fraco\" style=\"font-size:11px;margin-top:4px\">Name, model and dialogue apply to ALL points with this cfg.</div>" : ''}`;
     }
-    html += `<div class="acoes" style="margin-top:10px"><button id="c-centro">Center</button><button id="c-tp" title="Leva o seu personagem até o ponto (jogo aberto em outra aba, no mesmo mapa)">Go there in game</button>
+    html += `<div class="acoes" style="margin-top:10px"><button id="c-centro">Center</button><button id="c-tp" title="Moves your character to this point (game open in another tab on the same map)">Go there in game</button>
       <button id="c-dup">Duplicate</button><button id="c-del" class="perigo">Delete</button></div>`;
     cont.innerHTML = html;
     ligarSel(lista, o, tipo, d);
@@ -268,10 +269,10 @@ export function criarCamadas(dep) {
     const pos = () => { const x = Number($('c-x').value), z = Number($('c-z').value); if (!Number.isFinite(x) || !Number.isFinite(z)) return; o.x = +(FLIPX * x).toFixed(2); o.z = +z.toFixed(2); const a = areaEm(x, z); if (a != null) o.a = a; marcar(lista); redesenhar(); };
     $('c-x').oninput = pos; $('c-z').oninput = pos;
     $('c-centro').onclick = () => centralizar(o);
-    $('c-tp').onclick = () => { canal.postMessage({ t: 'tp', x: FLIPX * o.x, z: o.z, mapa: mapa() }); toast('Pedido enviado ao jogo (se estiver aberto neste mapa).'); };
+    $('c-tp').onclick = () => { canal.postMessage({ t: 'tp', x: FLIPX * o.x, z: o.z, mapa: mapa() }); toast("Request sent to the game (if it is open on this map)."); };
     $('c-dup').onclick = () => { const c = { ...o, x: +(o.x + FLIPX * 1.5).toFixed(2) }; d[lista].push(c); marcar(lista); selecionar({ lista, obj: c }); };
     $('c-del').onclick = () => {
-      if (!confirm('Delete este ponto do mapa?' + (tipo === 'porta' ? ' (a porta deixa de existir neste lugar)' : ''))) return;
+      if (!confirm("Delete this point from the map?" + (tipo === 'porta' ? " (the door will no longer exist at this location)" : ''))) return;
       d[lista].splice(d[lista].indexOf(o), 1); sel = null; marcar(lista); renderPainel(); redesenhar();
     };
     if ($('c-cfg')) $('c-cfg').oninput = e => {
@@ -299,10 +300,10 @@ export function criarCamadas(dep) {
     if ($('c-pt-n')) $('c-pt-n').oninput = e => { const v = Number(e.target.value); if (!Number.isInteger(v) || v < 0) return; ref.portas[o.cfg].n = v; portasSujas.add(o.cfg); marcar(); $('c-pt-info').textContent = destinoTexto(v); redesenhar(); };
     if ($('c-pt-ir')) $('c-pt-ir').onclick = async () => {
       const p = ref.portas[o.cfg], dest = ref.portas[p.n], arq = dest && arquivoDaCena(dest.c);
-      if (!arq) { toast('O destino fica numa cena sem mapa aqui (' + destinoTexto(p.n) + ').', true); return; }
-      if (arq !== mapa()) { if (sujo_() && !confirm('Há alterações não salvas neste mapa. Ir mesmo assim (elas se perdem)?')) return; await trocarMapa(arq, true); }
+      if (!arq) { toast("The destination is in a scene without a map here (" + destinoTexto(p.n) + ').', true); return; }
+      if (arq !== mapa()) { if (sujo_() && !confirm("This map has unsaved changes. Leave anyway and discard them?")) return; await trocarMapa(arq, true); }
       const alvo = (dados().npcs || []).find(q => q.cfg === p.n);
-      if (alvo) { selecionar({ lista: 'npcs', obj: alvo }); centralizar(alvo); } else toast('A chegada ' + p.n + ' não está neste mapa.', true);
+      if (alvo) { selecionar({ lista: 'npcs', obj: alvo }); centralizar(alvo); } else toast("Arrival " + p.n + " is not on this map.", true);
     };
   }
 
@@ -310,11 +311,11 @@ export function criarCamadas(dep) {
   const sujo_ = () => Object.values(sujo).some(Boolean) || glbSujos.size > 0 || portasSujas.size > 0;
   async function salvarArquivo(nome, chaves, fonte) {
     const r = await api('/admin/dados/' + nome);
-    if (!r.ok) { toast(r.erro || 'Falha ao ler ' + nome + '.', true); return false; }
+    if (!r.ok) { toast(r.erro || "Failed to read " + nome + '.', true); return false; }
     const tudo = r.dados || {};
     for (const k of chaves) { if (fonte[k]) tudo[k] = fonte[k]; else delete tudo[k]; }
     const s = await api('/admin/dados/' + nome, 'POST', { dados: tudo });
-    if (!s.ok) { toast(ESQUEMAS[nome].titulo + ': ' + (s.erro || 'falha ao salvar'), true); return false; }
+    if (!s.ok) { toast(ESQUEMAS[nome].titulo + ': ' + (s.erro || "failed to save"), true); return false; }
     return true;
   }
   async function salvar() {
@@ -322,14 +323,14 @@ export function criarCamadas(dep) {
     for (const k of Object.keys(sujo)) if (sujo[k]) corpo[k] = d[k] || [];
     if (Object.keys(corpo).length > 1) {
       const r = await api('/admin/mapa-camadas', 'POST', corpo);
-      if (!r.ok) { toast(r.erro || 'Falha ao salvar as camadas.', true); return false; }
+      if (!r.ok) { toast(r.erro || "Failed to save layers.", true); return false; }
     }
     if (glbSujos.size && !await salvarArquivo('npcs', [...glbSujos], ref.npcs)) return false;
     if (portasSujas.size && !await salvarArquivo('portas', [...portasSujas], ref.portas)) return false;
-    const partes = [...Object.keys(sujo).filter(k => sujo[k]), glbSujos.size ? glbSujos.size + ' cadastro(s) de NPC' : '', portasSujas.size ? portasSujas.size + ' porta(s)' : ''].filter(Boolean);
+    const partes = [...Object.keys(sujo).filter(k => sujo[k]), glbSujos.size ? glbSujos.size + " NPC record(s)" : '', portasSujas.size ? portasSujas.size + " door(s)" : ''].filter(Boolean);
     for (const k of Object.keys(sujo)) sujo[k] = false;
     glbSujos.clear(); portasSujas.clear(); aoMudar();
-    toast('Camadas salvas: ' + partes.join(', ') + '.');
+    toast("Layers saved: " + partes.join(', ') + '.');
     avisarJogo(mapa(), true);
     return true;
   }
