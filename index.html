@@ -509,7 +509,7 @@ function bootErroCarga(e, texto = 'O mapa não terminou de baixar. Toque em Tent
   bt.textContent = I18n.t('Tentar de novo');
   bt.addEventListener('click', () => { bt.disabled = true; bootErroNaTela = false; bootErroEspera = null; bootCaixa = null; b.textContent = ''; b.style.zIndex = ''; resolve(); }, { once: true });
   const det = document.createElement('div'); det.style.cssText = 'margin-top:12px;font-size:10px;color:#4c566e;word-break:break-all';
-  const feito = e?.recebido && e?.total ? ' · ' + (e.recebido / 1048576).toFixed(1) + '/' + (e.total / 1048576).toFixed(1) + ' MB já baixados' : '';
+  const feito = e?.recebido && e?.total ? ' · ' + (e.recebido / 1048576).toFixed(1) + '/' + (e.total / 1048576).toFixed(1) + ' ' + I18n.t('MB já baixados') : '';
   det.textContent = String(e?.url || e?.message || e || '').slice(0, 120) + feito;
   raiz.append(t1, t2, bt, det); b.appendChild(raiz);
   });
