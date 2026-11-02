@@ -260,7 +260,7 @@ function rCaixa(corpo){
   const linhasC = caixa.map((e, i) => linhaPk(e, '', `<button type="button" class="btn" data-arr-nao="1" data-trazer="${i}" ${time.length >= 6 ? `disabled title="${esc(tr('the party is full — drag onto a party member to swap'))}"` : ''}>${esc(tr('Move to team'))}</button>${botaoSoltar(chaveDe(e), 2, false)}`, false)).join('');
   corpo.innerHTML = `<div class="dois arr-dois">
     <div class="arr-col"><div class="arr-titulo">${esc(tr('Team'))} <small>${time.length}/6</small></div>
-      <div class="arr-dica">${esc(tr('arraste pra mudar a ordem — no celular, segure o dedo pra pegar'))}</div>
+      <div class="arr-dica">${esc(tr("drag to reorder — on mobile, touch and hold to pick up"))}</div>
       <div class="lista" id="arr-time">${linhasT || `<div class="vazio">${esc(tr('No Pokémon in team.'))}</div>`}</div></div>
     <div class="arr-col"><div class="arr-titulo">${esc(tr('Storage'))} <small>${caixa.length}</small></div>
       <div class="arr-dica">${esc(tr('drag one from here to the team (if full, it swaps with the slot you drop onto)'))}</div>
@@ -281,14 +281,14 @@ function rCaixa(corpo){
 }
 
 function rPokemon(corpo){
-  const aba = abas([{ id: 'time', nome: 'Time' }, { id: 'caixa', nome: 'Caixa' }]);
+  const aba = abas([{ id: 'time', nome: "Party" }, { id: 'caixa', nome: "Storage" }]);
   if (aba === 'caixa'){ rCaixa(corpo); return; }
   const lista = timeAtual();
   if (!lista.length){ corpo.innerHTML = '<div class="vazio">No Pokémon yet — choose a starter at Oak’s lab.</div>'; return; }
   if (selPokemon >= lista.length) selPokemon = 0;
   const e = lista[selPokemon];
-  corpo.innerHTML = `<div class="dois"><div class="lista">${lista.map((p, i) => `<div class="linha ${i === selPokemon ? 'on' : ''}" data-i="${i}"><span class="nome"><b>${p.shiny ? '✨ ' : ''}${esc(p.nome)}${p.sexo === 'm' ? ' <small class="sexo m">♂</small>' : p.sexo === 'f' ? ' <small class="sexo f">♀</small>' : ''}${p.seguindo ? ' <small>· seguindo</small>' : ''}${p.hp === 0 ? ' <small style="color:#f58e8e">· fainted</small>' : ''}</b><small>Lv ${p.lv} · Nº ${String(p.dex).padStart(3, '0')}</small><div class="hp"><b style="width:${p.maxHp ? Math.round(100 * p.hp / p.maxHp) : 100}%"></b></div></span>${(ctx.porDex.get(p.dex)?.types || []).map(tipoHtml).join('')}</div>`).join('')}${'<div class="linha vazia"></div>'.repeat(Math.max(0, 6 - lista.length))}
-    <div style="color:var(--muted);font-size:11px;margin-top:6px">${lista.length}/6 no time</div></div>
+  corpo.innerHTML = `<div class="dois"><div class="lista">${lista.map((p, i) => `<div class="linha ${i === selPokemon ? 'on' : ''}" data-i="${i}"><span class="nome"><b>${p.shiny ? '✨ ' : ''}${esc(p.nome)}${p.sexo === 'm' ? ' <small class="sexo m">♂</small>' : p.sexo === 'f' ? ' <small class="sexo f">♀</small>' : ''}${p.seguindo ? " <small>· following</small>" : ''}${p.hp === 0 ? ' <small style="color:#f58e8e">· fainted</small>' : ''}</b><small>Lv ${p.lv} · Nº ${String(p.dex).padStart(3, '0')}</small><div class="hp"><b style="width:${p.maxHp ? Math.round(100 * p.hp / p.maxHp) : 100}%"></b></div></span>${(ctx.porDex.get(p.dex)?.types || []).map(tipoHtml).join('')}</div>`).join('')}${'<div class="linha vazia"></div>'.repeat(Math.max(0, 6 - lista.length))}
+    <div style="color:var(--muted);font-size:11px;margin-top:6px">${lista.length}/6 in party</div></div>
     <div>${fichaHtml(e)}<div class="acoes">${e.seguindo ? (() => { const todas = ctx.opcoesEvolucao?.(e) || [], ops = todas.filter(o => o.glb), prontas = ops.filter(o => o.pode), breve = !ops.length && todas.find(o => !o.glb); return prontas.length ? prontas.map(o => `<button type="button" class="btn ouro" data-evo="${ops.indexOf(o)}" title="${esc(o.regra.texto)}">✧ Evolve → ${esc(o.nome)}${o.itemNome ? ' (uses ' + esc(o.itemNome) + ')' : ''}</button>`).join('') : `<button type="button" class="btn ouro" disabled title="${esc(ops[0]?.falta || (breve ? breve.nome + ': ' + tr('coming soon') : tr('does not evolve')))}">✧ Evolve${ops[0] ? ' — ' + esc(ops[0].falta) : breve ? ' — ' + esc(breve.nome) + ' (' + esc(tr('coming soon')) + ')' : ''}</button>`; })() : `<button type="button" class="btn ouro" id="p-seguir">Follow</button><button type="button" class="btn" id="p-caixa">Send to storage</button>`}${botaoSoltar(chaveDe(e), lista.length, !!e.seguindo)}${e.hp === 0 ? (() => { const r = ctx.reanimadorNaMochila?.(); return `<button type="button" class="btn ouro" id="p-reanimar" ${r ? '' : 'disabled'} title="${r ? 'usa ' + esc(r.nome) : 'buy a Revive at the Poké Mart'}">💊 ${r ? esc(r.nome) + ' (' + r.n + ')' : 'Revive — none in bag'}</button>`; })() : ''}</div></div></div>`;
   corpo.querySelectorAll('[data-evo]').forEach(b => b.onclick = () => { const ops = (ctx.opcoesEvolucao?.(e) || []).filter(o => o.glb); fechar(); ctx.evoluir?.(ops[+b.dataset.evo]); });
   corpo.querySelector('#p-reanimar')?.addEventListener('click', () => { ctx.reanimarMembro?.(e); render(); });
@@ -594,7 +594,7 @@ function rMochila(corpo){
   const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))}</div>`
     + (av ? `<div class="aviso-uso" style="margin:-2px 0 8px;font-size:13px;font-weight:700;color:${av.ok ? '#8ef58e' : '#ffd23a'}">${esc(tr(av.texto))}</div>` : '');
   if (!itens.length){ corpo.innerHTML = cab + '<div class="vazio">Nothing here yet. The town Poké Mart sells balls and medicine (talk to the clerk); quest items come from rewards.</div>'; return; }
-  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || tr(D.tipos[it.t] || '')))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Usar no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Usar no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Usar no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
+  corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || tr(D.tipos[it.t] || '')))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Use with F</button><button type="button" class="btn" data-atalho="${id}" title="pins to the first free shortcut (5–8)">⚡ Shortcut</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Use on partner</button><button type="button" class="btn" data-atalho="${id}" title="pins to the first free shortcut (5–8)">⚡ Shortcut</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolves your partner if its evolution requires this item">✧ Use on partner</button>` : ''}</div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-bola]').forEach(b => b.onclick = () => { ctx.jogo.bolaSel = b.dataset.bola; ctx.gravarLS('bolaSel', ctx.jogo.bolaSel); render(); });
   corpo.querySelectorAll('[data-evoitem]').forEach(b => b.onclick = () => { fechar(); ctx.usarItemEvolucao?.(b.dataset.evoitem); });
   corpo.querySelectorAll('[data-usar]').forEach(b => b.onclick = () => { const id = b.dataset.usar; ctx.usarItem?.(id, D.itens[id]?.n || '', (txt, ok) => avisarMo(id, txt, ok)); render(); });   // a cura em si vive no index (usarItem), igual à dos atalhos; o aviso volta pra janela (17/09)
@@ -955,7 +955,7 @@ function encherTreinador(pop){
     Popup.texto(pop, 'col-kanto', r.pegosKanto + '/' + r.kantoAte + ' capturados (' + Math.round(r.pegosKanto / r.kantoAte * 100) + '%) · ' + r.vistosKanto + ' vistos');
     Popup.texto(pop, 'col-nacional', r.pegos + ' capturados · ' + r.vistos + ' vistos');
     Popup.texto(pop, 'col-shinies', '✨ ' + r.shinies);
-    Popup.texto(pop, 'col-conhecimento', r.mestres + ' species' + (r.mestres === 1 ? '' : 's') + ' em Mestre · ' + r.estudadas + ' em Estudado+ · ' + r.pontosTotal + ' pontos');
+    Popup.texto(pop, 'col-conhecimento', r.mestres + ' species' + (r.mestres === 1 ? '' : 's') + " at Master · " + r.estudadas + " at Studied+ · " + r.pontosTotal + " points");
     const slug = x => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     for (const g of pop.querySelectorAll('[data-fig^="conquista-"]')){
       const chave = g.dataset.fig.slice(10);
@@ -1046,8 +1046,8 @@ async function encherMapa(pop){
 /* ---------------------------------------------------------------- Social (fase 2b, 06/09: amigos e mensagens diretas pela conta) */
 let abaSo = 'amigos', soDados = null, soBusca = '', soConversa = null, soMsgs = [], soAmigoMenu = null, soCarregando = false;
 const soLigado = () => ctx.conta?.estado?.().modo === 'conta';
-const soChamar = (metodo, caminho, corpo) => soLigado() ? ctx.conta.chamar(metodo, caminho, corpo) : Promise.resolve({ ok: false, erro: 'Entre com uma conta pra ter amigos e mensagens.' });
-const tempoAtras = ms => { const s = Math.max(0, (Date.now() - ms) / 1000); return s < 90 ? 'agora' : s < 3600 ? Math.round(s / 60) + 'min' : s < 86400 ? Math.round(s / 3600) + 'h' : Math.round(s / 86400) + 'd'; };
+const soChamar = (metodo, caminho, corpo) => soLigado() ? ctx.conta.chamar(metodo, caminho, corpo) : Promise.resolve({ ok: false, erro: "Sign in to use friends and messages." });
+const tempoAtras = ms => { const s = Math.max(0, (Date.now() - ms) / 1000); return s < 90 ? "now" : s < 3600 ? Math.round(s / 60) + 'min' : s < 86400 ? Math.round(s / 3600) + 'h' : Math.round(s / 86400) + 'd'; };
 const retrato = dex => dex ? './ui/mon/pm' + String(dex).padStart(4, '0') + '.png' : null;
 async function soCarregar(){
   if (!soLigado() || soCarregando) return; soCarregando = true;
@@ -1092,7 +1092,7 @@ async function soAcao(nome, el){
     const inp = soInput(pop, 'dialogo-convite', 'campo-nome'); const para = (inp?.value || '').trim();
     if (!para){ Chat.sistema('Digite o nome exato do treinador.'); return; }
     const r = await soChamar('POST', '/social/pedido', { para });
-    if (r.ok){ Chat.sistema(r.dados.amigos ? '🤝 You and ' + r.dados.nick + ' are now friends.' : '📨 Convite enviado pra ' + r.dados.nick + '.'); if (inp) inp.value = ''; Popup.mostrarExtra(pop, 'dialogo-convite', false); soCarregar(); }
+    if (r.ok){ Chat.sistema(r.dados.amigos ? '🤝 You and ' + r.dados.nick + ' are now friends.' : "📨 Invitation sent to " + r.dados.nick + '.'); if (inp) inp.value = ''; Popup.mostrarExtra(pop, 'dialogo-convite', false); soCarregar(); }
     else Chat.sistema('Convite: ' + r.erro);
   } else if (nome === 'aceitar' || nome === 'recusar'){
     const de = el?.closest?.('[data-fig^="solicitacao-"]')?.__de; if (!de) return;
@@ -1144,7 +1144,7 @@ async function pegarRanking(caminho, comToken = false){
 /** /ranking no chat: top 5 de cada lista. */
 export async function mostrarRanking(){
   const R = await pegarRanking('/ranking');
-  if (!R){ Chat.sistema('Ranking: sem servidor no ar.'); return false; }
+  if (!R){ Chat.sistema("Rankings: server unavailable."); return false; }
   Chat.sistema('🏆 Ranking de colecionadores (' + R.total + ' treinador' + (R.total === 1 ? '' : 'es') + '):');
   for (const [chave, nome] of Object.entries(NOMES_RANKING)){
     const l = (R.listas?.[chave] || []).slice(0, 5);
@@ -1201,13 +1201,13 @@ function encherMensagens(pop, mens){
     if (!caixa){ caixa = document.createElement('div'); caixa.className = 'pf-dm-log'; Object.assign(caixa.style, { position: 'absolute', inset: '0', overflowY: 'auto', padding: '10px 12px', color: '#E6ECFF', font: '13px/1.45 "Nunito Sans", system-ui, sans-serif', pointerEvents: 'auto', userSelect: 'text' }); log.appendChild(caixa); log.style.pointerEvents = 'auto'; }
     const eu = D?.eu?.usuario, nick = D?.amigos.find(a => a.usuario === soConversa)?.nick || conv.find(x => x.com === soConversa)?.nick || soConversa;
     if (!soConversa) caixa.innerHTML = '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Choose a conversation on the left, or click a friend and select "message".</div>';
-    else caixa.innerHTML = soMsgs.length ? soMsgs.map(m => '<div><b style="color:' + (m.de === eu ? '#8ef58e' : '#F8C237') + '">' + esc(m.de === eu ? 'You' : nick) + '</b> <small style="color:#7f8db0">' + new Date(m.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</small><br>' + esc(m.texto) + '</div>').join('') : '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Sem mensagens ainda. Diga oi pra ' + esc(nick) + '.</div>';
+    else caixa.innerHTML = soMsgs.length ? soMsgs.map(m => '<div><b style="color:' + (m.de === eu ? '#8ef58e' : '#F8C237') + '">' + esc(m.de === eu ? 'You' : nick) + '</b> <small style="color:#7f8db0">' + new Date(m.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</small><br>' + esc(m.texto) + '</div>').join('') : "<div style=\"color:#B8C2D9;text-align:center;margin-top:40%\">No messages yet. Say hello to " + esc(nick) + '.</div>';
     caixa.scrollTop = caixa.scrollHeight;
   }
   const inp = soInput(pop, 'conteudo-mensagens', 'campo-mensagem');
   if (inp){
     const nick = D?.amigos.find(a => a.usuario === soConversa)?.nick || conv.find(x => x.com === soConversa)?.nick;
-    inp.placeholder = soConversa ? 'mensagem pra ' + nick + '…' : 'escolha uma conversa';
+    inp.placeholder = soConversa ? "message to " + nick + '…' : "choose a conversation";
     if (!inp.__enter){ inp.__enter = true; inp.addEventListener('keydown', ev => { if (ev.key === 'Enter'){ ev.preventDefault(); soAcao('enviar').catch(() => {}); } }); }
   }
 }
@@ -1244,7 +1244,7 @@ function encherSocial(pop){
   // amigos
   const D = soDados;
   const cels0 = () => pop.querySelectorAll('[data-fig="lista-amigos"] > [data-fig^="amigo-"]');
-  if (!soLigado()){ Popup.texto(pop, 'amigos-contagem', 'entre com uma conta pra ter amigos'); for (const c of cels0()) c.style.display = 'none'; Popup.texto(pop, 'solicitacoes-qtd', ''); bolinhaPedidos(pop, 0); return; }
+  if (!soLigado()){ Popup.texto(pop, 'amigos-contagem', "sign in to add friends"); for (const c of cels0()) c.style.display = 'none'; Popup.texto(pop, 'solicitacoes-qtd', ''); bolinhaPedidos(pop, 0); return; }
   if (!D){ Popup.texto(pop, 'amigos-contagem', 'carregando…'); for (const c of cels0()) c.style.display = 'none'; bolinhaPedidos(pop, 0); soCarregar(); return; }
   const amigos = D.amigos.filter(a => !soBusca || a.nick.toLowerCase().includes(soBusca) || a.usuario.includes(soBusca));
   Popup.texto(pop, 'amigos-contagem', D.amigos.length + (D.amigos.length === 1 ? ' amigo' : ' amigos') + ' · ' + D.amigos.filter(a => a.online).length + ' online');
@@ -1260,7 +1260,7 @@ function encherSocial(pop){
   if (!amigos.length && lista){
     let vazio = lista.querySelector(':scope > .pf-nota');
     if (!vazio){ vazio = document.createElement('div'); vazio.className = 'pf-nota'; Object.assign(vazio.style, { position: 'absolute', left: '0', right: '0', top: '40%', textAlign: 'center', color: '#B8C2D9', font: '13px "Nunito Sans", system-ui, sans-serif', pointerEvents: 'none' }); lista.appendChild(vazio); }
-    vazio.textContent = D.amigos.length ? 'No one with that name.' : 'Sem amigos ainda. "Adicionar amigo" pede o nome exato do treinador.'; vazio.style.display = 'block';
+    vazio.textContent = D.amigos.length ? 'No one with that name.' : "No friends yet. \"Add friend\" requires the trainer’s exact name."; vazio.style.display = 'block';
   } else { const vazio = lista?.querySelector(':scope > .pf-nota'); if (vazio) vazio.style.display = 'none'; }
   // solicitações (contador no botão; o diálogo é preenchido quando abre)
   const n = D.pedidos.length;
@@ -1397,9 +1397,9 @@ function rMissoes(corpo){
   const passoTxt = (p, i) => { const n = p.n || 0; const c = i === idx && n > 1 ? ' ' + Math.min(prog, n) + '/' + n : ''; return esc(p.texto) + c + (p.onde ? ' <small style="color:var(--muted)">(' + esc(p.onde) + ')</small>' : ''); };
   const atual = ativa ? `<div class="missao-atual"><small style="color:var(--muted)">Chapter ${ativa.capitulo} · ${esc(ativa.capNome)}</small><br><b>${esc(ativa.nome)}</b><br><span style="font-size:12px">${esc(ativa.des)}</span>
       <div style="margin-top:8px;font-size:13px;line-height:1.5">${ativa.passos.map((p, i) => `<div>${i < idx ? '✔' : i === idx ? '▶' : '○'} ${passoTxt(p, i)}</div>`).join('')}</div>
-      <div style="margin-top:6px;font-size:12px;color:var(--muted)">recompensa: ${rec(ativa.recompensa)}</div></div>`
+      <div style="margin-top:6px;font-size:12px;color:var(--muted)">reward: ${rec(ativa.recompensa)}</div></div>`
     : '<div class="missao-atual"><b>You have completed everything available for now.</b><br><span style="font-size:12px">More chapters will arrive in future versions.</span></div>';
-  corpo.innerHTML = atual + caps.map(c => { const feitas = c.missoes.filter(m => m.estado === 'feita').length, aberta = c.missoes.some(m => m.estado === 'ativa'); return `<details ${aberta ? 'open' : ''} style="margin-top:8px"><summary style="cursor:pointer;color:${feitas === c.missoes.length ? 'var(--muted)' : '#ffe07a'}">${feitas === c.missoes.length ? '✅' : aberta ? '▶️' : '🔒'} Chapter ${c.id} — ${esc(c.nome)} <small style="color:var(--muted)">${feitas}/${c.missoes.length}</small></summary><div class="lista">${c.missoes.map(m => `<div class="linha" style="cursor:default;${m.estado === 'travada' ? 'opacity:.55' : ''}"><span style="font-size:16px">${m.estado === 'feita' ? '✅' : m.estado === 'ativa' ? '▶️' : '🔒'}</span><span class="nome"><b>${esc(m.nome)}</b><small>${esc(m.des)} · recompensa: ${rec(m.recompensa)}</small></span></div>`).join('')}</div></details>`; }).join('');
+  corpo.innerHTML = atual + caps.map(c => { const feitas = c.missoes.filter(m => m.estado === 'feita').length, aberta = c.missoes.some(m => m.estado === 'ativa'); return `<details ${aberta ? 'open' : ''} style="margin-top:8px"><summary style="cursor:pointer;color:${feitas === c.missoes.length ? 'var(--muted)' : '#ffe07a'}">${feitas === c.missoes.length ? '✅' : aberta ? '▶️' : '🔒'} Chapter ${c.id} — ${esc(c.nome)} <small style="color:var(--muted)">${feitas}/${c.missoes.length}</small></summary><div class="lista">${c.missoes.map(m => `<div class="linha" style="cursor:default;${m.estado === 'travada' ? 'opacity:.55' : ''}"><span style="font-size:16px">${m.estado === 'feita' ? '✅' : m.estado === 'ativa' ? '▶️' : '🔒'}</span><span class="nome"><b>${esc(m.nome)}</b><small>${esc(m.des)} · reward: ${rec(m.recompensa)}</small></span></div>`).join('')}</div></details>`; }).join('');
 }
 
 /* ============================================================ pop-up Missões (maquete do Figma, rodada 10)
@@ -1485,7 +1485,7 @@ function encherMissoes(pop){
     Popup.texto(pop, 'objetivo', (p2.texto || '') + cont, g);
     Popup.texto(pop, 'objetivo-local', p2.onde ? '(' + p2.onde + ')' : '', g);
   }
-  Popup.texto(pop, 'recompensa', ativa ? 'Recompensa: ' + textoRecompensaMi(ativa.recompensa) : '');
+  Popup.texto(pop, 'recompensa', ativa ? "Reward: " + textoRecompensaMi(ativa.recompensa) : '');
   // ---- lista de capítulos (altura variável)
   const caps = M.capitulos();
   if (ativa && ativa.capitulo !== capAtivoVisto){ capAtivoVisto = ativa.capitulo; capAberto = ativa.capitulo; }   // abre o ativo UMA vez (e quando muda); depois o jogador manda — antes, fechar o ativo reabria no mesmo render
@@ -1522,7 +1522,7 @@ function encherMissoes(pop){
       if (ic2){ const url = iconeEstado(pop, 'missao', estM, 'objetivo-estado', ic2); ic2.style.backgroundImage = url ? 'url(' + url + ')' : 'none'; }
       const nomeEl = Popup.texto(pop, 'missao-nome', m.nome, el);
       if (nomeEl) nomeEl.style.color = estM === 'bloqueada' ? '#B8C2D9' : '#FFFFFF';
-      Popup.texto(pop, 'missao-resumo', (m.des || '') + ' · recompensa: ' + textoRecompensaMi(m.recompensa), el);
+      Popup.texto(pop, 'missao-resumo', (m.des || '') + " · reward: " + textoRecompensaMi(m.recompensa), el);
     });
     y += Math.max(0, (c.missoes.length - 1) * G.passoMis + G.hMis) + G.depois;
   });
@@ -1534,7 +1534,7 @@ let mapaRuas = null, mapaHabitats = null, mapaSel = null;
 function rMapa(corpo){
   abas([{ id: 'kanto', nome: 'Kanto' }]);
   const dd = ctx.dados, caixas = (dd.caixas || []).filter(c => c.sx > 0 && c.sz > 0);
-  if (caixas.length < 2){ corpo.innerHTML = '<div class="vazio">Sem mapa nesta cena (interior). Saia pra rua pra ver Kanto.</div>'; return; }
+  if (caixas.length < 2){ corpo.innerHTML = "<div class=\"vazio\">No map in this interior. Go outside to see Kanto.</div>"; return; }
   corpo.innerHTML = `<div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1 1 560px;min-width:340px"><canvas class="mapa" width="1280" height="960" style="width:100%;border-radius:12px;cursor:pointer"></canvas><div id="m-legenda" style="color:var(--muted);font-size:12px;margin-top:6px">click an area to see its Pokémon</div></div><div id="m-card" style="flex:1 1 240px;min-width:230px"></div></div>`;
   const cv = corpo.querySelector('canvas'), c = cv.getContext('2d');
   const fx = ctx.flipX();
@@ -1730,7 +1730,7 @@ async function mostrarModeloDex(glb, conhecido){
   };
   montar(false); const temShiny = montar(true);
   v.giro = 0.6;
-  temShiny.then(n => { const r = $('dex-rotulo-shiny'); if (r && selDexGlb === glb) r.innerHTML = n ? '✨ Shiny' : '✨ Shiny <small style="color:var(--muted)">(sem textura shiny exportada — igual ao normal)</small>'; });
+  temShiny.then(n => { const r = $('dex-rotulo-shiny'); if (r && selDexGlb === glb) r.innerHTML = n ? '✨ Shiny' : "✨ Shiny <small style=\"color:var(--muted)\">(no shiny texture exported — looks the same as normal)</small>"; });
   return true;
 }
 /** Fraquezas/resistências pela tabela de tipos do jogo (regras.mjs). */
@@ -1765,7 +1765,7 @@ function rPokedex(corpo){
   const vistos = todos.filter(s => d[s.n]).length, pegos = todos.filter(s => d[s.n] === 'pego').length;
   if (!sp.some(s => s.n === selDex)) selDex = (sp.find(s => d[s.n]) || sp[0])?.n || null;
   corpo.innerHTML = `<div class="dois dex-dois"><div><div class="dex-topo"><input id="dex-busca" placeholder="search by name or number…" value="${esc(dexBusca)}" autocomplete="off"><span>👁 ${vistos} · ★ ${pegos} / ${todos.length}</span></div>
-    ${(() => { const K = ctx.conhecimento; if (!K) return ''; const r = K.resumo(); return `<div class="dex-colec"><b>Colecionador</b> Kanto ${r.pegosKanto}/${r.kantoAte} capturados (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} vistos · ✨ ${r.shinies} shiny · 📖 ${r.mestres} mestre${r.mestres === 1 ? '' : 's'}${r.tituloAtual ? ` · 🏅 ${esc(r.tituloAtual)}` : ''}</div>`; })()}
+    ${(() => { const K = ctx.conhecimento; if (!K) return ''; const r = K.resumo(); return `<div class="dex-colec"><b>Collector</b> Kanto ${r.pegosKanto}/${r.kantoAte} caught (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} seen · ✨ ${r.shinies} shiny · 📖 ${r.mestres} mestre${r.mestres === 1 ? '' : 's'}${r.tituloAtual ? ` · 🏅 ${esc(r.tituloAtual)}` : ''}</div>`; })()}
     <div class="dex-lista">${sp.map(s => `<div class="dex ${d[s.n] === 'pego' ? 'pego' : d[s.n] ? 'visto' : ''} ${s.n === selDex ? 'on' : ''}" data-n="${s.n}"><span class="num">${String(s.n).padStart(3, '0')}</span><span class="nm">${d[s.n] ? esc(s.name) : '?????'}</span><span class="tp">${d[s.n] ? (s.types || []).map(tipoHtml).join('') : ''}</span>${(() => { const n = ctx.conhecimento?.nivel(s.n) ?? (d[s.n] === 'pego' ? 2 : d[s.n] ? 1 : 0); return n ? `<span class="pego-ic" title="conhecimento ${n}/5">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span>` : ''; })()}</div>`).join('') || '<div class="vazio">no matching name in this generation</div>'}</div></div><div class="ficha dex-ficha" id="dex-ficha"></div></div>`;
   const busca = corpo.querySelector('#dex-busca');
   busca.addEventListener('input', () => { dexBusca = busca.value; const pos = busca.selectionStart; render(); const b2 = $('j-corpo').querySelector('#dex-busca'); b2?.focus(); try { b2?.setSelectionRange(pos, pos); } catch {} });
@@ -1784,38 +1784,38 @@ async function mostrarDex(){
   const cadeia = conhecido && S ? cadeiaEvolucao(selDex) : [];
   const golpes = (X.g || []).slice().sort((p, q) => p[0] - q[0]);
   const noMapa = (ctx.jogo.selvagens || []).filter(s => s.dex === selDex && s.estado !== 'morto').length;
-  const onde = (() => { const h = ctx.habitats; if (!h) return []; const out = []; for (const [area, lista] of Object.entries(h.areas || {})) if (lista.some(e => e.dex === selDex)) out.push(ctx.nomeArea?.(+area) || ctx.dados?.nomes?.[area] || ('area ' + area)); if ((h.generico || []).some(e => e.dex === selDex)) out.push('grama de qualquer rota'); return out; })();
-  const catMap = { 1: 'physical', 2: 'especial', 3: 'status' };
+  const onde = (() => { const h = ctx.habitats; if (!h) return []; const out = []; for (const [area, lista] of Object.entries(h.areas || {})) if (lista.some(e => e.dex === selDex)) out.push(ctx.nomeArea?.(+area) || ctx.dados?.nomes?.[area] || ('area ' + area)); if ((h.generico || []).some(e => e.dex === selDex)) out.push("grass on any route"); return out; })();
+  const catMap = { 1: 'physical', 2: "special", 3: 'status' };
   /* Pokédex de conhecimento: cada nível revela mais (1 tipos/onde · 2 stats, altura/peso, evolução, fraquezas · 3 taxa de
      captura, habilidades · 4 gênero, learnset completo, habilidade oculta · 5 Mestre). Sem o módulo: visto = 1, pego = 2. */
   const K = ctx.conhecimento, rv = K ? K.revela(selDex) : null;
   const nv = rv ? rv.nivel : (st === 'pego' ? 2 : st ? 1 : 0);
-  const nomesNivel = ['desconhecido', 'Avistado', 'Registrado', 'Estudado', 'Especialista', 'Mestre'];
+  const nomesNivel = ["unknown", "Sighted", "Registered", "Studied", "Expert", "Master"];
   const vistoGolpe = new Set(K?.registro(selDex)?.gl || []);
   const faltaLista = K && nv < 5 ? K.falta(selDex).slice(0, 4) : [];
   const golpesMostrar = nv >= 4 ? golpes : golpes.filter(([, id]) => vistoGolpe.has(id));
   const trava = (n, txt) => `<td class="oculto">🔒 level ${n} (${nomesNivel[n]})${txt ? ' · ' + txt : ''}</td>`;
   const golpeHtml = ([lv, id]) => { const g = G[id]; return g ? `<div><span class="lv">${lv}</span><b>${esc(g[0])}</b>${tipoHtml(g[1])}<small>${catMap[g[2]] || ''} · power ${g[3] || '—'} · PP ${g[4] || '—'}</small></div>` : ''; };
-  f.innerHTML = `<h3>${nv >= 1 ? esc(S?.name) : '?????'} <small style="color:var(--muted)">Nº ${String(selDex).padStart(3, '0')} · ${st === 'pego' ? 'capturado' : st ? 'visto' : 'desconhecido'}</small></h3>
-    <div class="dex-nivel"><span class="pts" title="${rv ? rv.pontos + ' pontos de conhecimento' : ''}">${'●'.repeat(nv)}${'○'.repeat(5 - nv)}</span> <b>${nomesNivel[nv]}</b>${rv && rv.proximo != null ? ` <small>${rv.pontos}/${rv.proximo} pra ${nomesNivel[nv + 1]}</small>` : nv >= 5 ? ' <small>✨ you know everything about this species</small>' : ''}${faltaLista.length ? `<div class="dex-falta">pra subir: ${faltaLista.map(esc).join(' · ')}</div>` : ''}</div>
+  f.innerHTML = `<h3>${nv >= 1 ? esc(S?.name) : '?????'} <small style="color:var(--muted)">Nº ${String(selDex).padStart(3, '0')} · ${st === 'pego' ? "caught" : st ? "seen" : "unknown"}</small></h3>
+    <div class="dex-nivel"><span class="pts" title="${rv ? rv.pontos + " knowledge points" : ''}">${'●'.repeat(nv)}${'○'.repeat(5 - nv)}</span> <b>${nomesNivel[nv]}</b>${rv && rv.proximo != null ? ` <small>${rv.pontos}/${rv.proximo} to ${nomesNivel[nv + 1]}</small>` : nv >= 5 ? ' <small>✨ you know everything about this species</small>' : ''}${faltaLista.length ? `<div class="dex-falta">to advance: ${faltaLista.map(esc).join(' · ')}</div>` : ''}</div>
     <div class="dex-visor"></div>
     <div class="dex-rotulos"><span>Normal</span><span id="dex-rotulo-shiny">✨ Shiny</span></div>
-    <div style="color:var(--muted);font-size:11px;text-align:center">${glb ? 'arraste pra girar os dois' : 'sem modelo 3D exportado ainda'}</div>
+    <div style="color:var(--muted);font-size:11px;text-align:center">${glb ? "drag to rotate both" : "no exported 3D model yet"}</div>
     ${nv >= 1 ? `
     <div>${(S?.types || []).map(tipoHtml).join('')}</div>
     ${(I18n.descricaoDex(selDex) || X.d) && nv >= 2 ? `<p class="dex-des">${esc(I18n.descricaoDex(selDex) || X.d)}</p>` : ''}
     <table class="stats dex-tab">
-      <tr><td>altura / peso</td>${nv >= 2 ? `<td>${alt ? alt.toFixed(1) + ' m' : '—'} · ${peso ? peso + ' kg' : '—'}</td>` : trava(2, 'capture um')}</tr>
-      ${X.h?.length ? `<tr><td>habilidades</td>${nv >= 3 ? `<td>${X.h.map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(oculta: ${esc(X.ho)})</small>` : ' <small class="oculto">(oculta: 🔒 level 4)</small>') : ''}</td>` : trava(3)}</tr>` : ''}
+      <tr><td>height / weight</td>${nv >= 2 ? `<td>${alt ? alt.toFixed(1) + ' m' : '—'} · ${peso ? peso + ' kg' : '—'}</td>` : trava(2, "catch one")}</tr>
+      ${X.h?.length ? `<tr><td>abilities</td>${nv >= 3 ? `<td>${X.h.map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(hidden: ${esc(X.ho)})</small>` : " <small class=\"oculto\">(hidden: 🔒 level 4)</small>") : ''}</td>` : trava(3)}</tr>` : ''}
       ${X.m != null ? `<tr><td>gender</td>${nv >= 4 ? `<td>${X.m < 0 ? 'genderless' : `♂ ${X.m}% · ♀ ${X.f}%`}</td>` : trava(4)}</tr>` : ''}
-      <tr><td>taxa de captura</td>${nv >= 3 ? `<td>${S?.rate ?? X.c ?? '—'} · ${(chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1)}% at full HP with a Poké Ball (fainted: ${(chanceCaptura((S?.rate ?? 45) * 3) * 100).toFixed(0)}%)</td>` : trava(3, 'enfrente e capture mais')}</tr>
-      <tr><td>onde encontrar</td><td>${onde.length ? onde.map(esc).join(', ') : 'not found in the wild (trade/event only)'}${noMapa ? ` · <b>${noMapa} neste mapa agora</b>` : ''}</td></tr>
+      <tr><td>catch rate</td>${nv >= 3 ? `<td>${S?.rate ?? X.c ?? '—'} · ${(chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1)}% at full HP with a Poké Ball (fainted: ${(chanceCaptura((S?.rate ?? 45) * 3) * 100).toFixed(0)}%)</td>` : trava(3, "battle and catch more")}</tr>
+      <tr><td>where to find</td><td>${onde.length ? onde.map(esc).join(', ') : 'not found in the wild (trade/event only)'}${noMapa ? ` · <b>${noMapa} on this map now</b>` : ''}</td></tr>
     </table>
     ${nv >= 2 ? `<div class="dex-stats">${bs.map((b, i) => `<span><small>${nomes[i]}</small>${b}</span>`).join('')}<span><small>total</small>${S?.bst || bs.reduce((x, y) => x + y, 0)}</span></div>
-    <div class="dex-secao">evolution</div><div class="dex-cadeia">${cadeia.map(({ s, prof }) => `<span class="${s.n === selDex ? 'on' : ''}" data-n="${s.n}" style="margin-left:${prof * 14}px">${prof ? '▸ ' : ''}${esc(s.name)}${(() => { const pre = cadeia.find(c => (c.s.evo || []).some(e => e.to === s.name)); const e = pre?.s.evo.find(e => e.to === s.name); return e ? ` <small>${e.lvl ? 'Nv. ' + e.lvl : ''}${e.cond ? ' ' + esc(e.cond) : ''}</small>` : ''; })()}</span>`).join('')}</div>
-    <div class="dex-secao">fraco contra ${fr.fraco.length}</div><div>${fr.fraco.map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m}</span>`).join('') || '—'}</div>
-    <div class="dex-secao">resiste a ${fr.resiste.length + fr.imune.length}</div><div>${[...fr.resiste, ...fr.imune].map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m === 0 ? '0' : m === 0.25 ? '¼' : '½'}</span>`).join('') || '—'}</div>` : '<div class="dex-secao oculto">🔒 stats, evolution and weaknesses unlock at level 2 (Registered): catch one</div>'}
-    ${golpes.length ? (golpesMostrar.length ? `<div class="dex-secao">moves by level${nv < 4 ? ` <small>(${golpesMostrar.length}/${golpes.length} vistos · o learnset completo unlocks at level 4)</small>` : ''}</div><div class="dex-golpes">${golpesMostrar.map(golpeHtml).join('')}</div>` : `<div class="dex-secao oculto">🔒 moves: watch the species use moves in battle (${golpes.length} in the learnset; complete at level 4)</div>`) : ''}`
+    <div class="dex-secao">evolution</div><div class="dex-cadeia">${cadeia.map(({ s, prof }) => `<span class="${s.n === selDex ? 'on' : ''}" data-n="${s.n}" style="margin-left:${prof * 14}px">${prof ? '▸ ' : ''}${esc(s.name)}${(() => { const pre = cadeia.find(c => (c.s.evo || []).some(e => e.to === s.name)); const e = pre?.s.evo.find(e => e.to === s.name); return e ? ` <small>${e.lvl ? "Lv. " + e.lvl : ''}${e.cond ? ' ' + esc(e.cond) : ''}</small>` : ''; })()}</span>`).join('')}</div>
+    <div class="dex-secao">weak against ${fr.fraco.length}</div><div>${fr.fraco.map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m}</span>`).join('') || '—'}</div>
+    <div class="dex-secao">resists ${fr.resiste.length + fr.imune.length}</div><div>${[...fr.resiste, ...fr.imune].map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m === 0 ? '0' : m === 0.25 ? '¼' : '½'}</span>`).join('') || '—'}</div>` : '<div class="dex-secao oculto">🔒 stats, evolution and weaknesses unlock at level 2 (Registered): catch one</div>'}
+    ${golpes.length ? (golpesMostrar.length ? `<div class="dex-secao">moves by level${nv < 4 ? ` <small>(${golpesMostrar.length}/${golpes.length} seen · the full learnset unlocks at level 4)</small>` : ''}</div><div class="dex-golpes">${golpesMostrar.map(golpeHtml).join('')}</div>` : `<div class="dex-secao oculto">🔒 moves: watch the species use moves in battle (${golpes.length} in the learnset; complete at level 4)</div>`) : ''}`
     : '<div style="color:var(--muted);font-size:12px;margin-top:8px">Encounter this Pokémon to open its entry.</div>'}`;
   f.querySelector('.dex-visor').appendChild(v.canvas);
   f.querySelectorAll('.dex-cadeia [data-n]').forEach(e => e.onclick = () => { selDex = +e.dataset.n; render(); });
@@ -1828,19 +1828,19 @@ window.__dex = { get view(){ return dexView; }, mostrar: mostrarDex };
 
 /* ------------------------------------------------------------------ Treinador */
 function rTreinador(corpo){
-  abas([{ id: 'ficha', nome: 'Ficha' }]);
+  abas([{ id: 'ficha', nome: "Profile" }]);
   const t = ctx.lerLS('tempo', 0), h = Math.floor(t / 3600), mi = Math.floor((t % 3600) / 60);
   const d = dexEstado(); const pegos = Object.values(d).filter(v => v === 'pego').length, vistos = Object.keys(d).length;
   const ins = (D.insignias || []).filter(b => b.gen === 1); const tem = new Set(ctx.lerLS('insignias', []));
-  corpo.innerHTML = `<div class="dois"><div class="ficha"><h3>${esc(ctx.nome || 'Ash')}</h3><table class="stats"><tr><td>dinheiro</td><td>${dinheiro().toLocaleString('pt-BR')} ${esc(D.moedas?.[1] || '')}</td></tr><tr><td>tempo de jogo</td><td>${h}h ${String(mi).padStart(2, '0')}m</td></tr><tr><td>time</td><td>${timeAtual().length}/6 · caixa ${ctx.lerLS('caixa', []).length}</td></tr><tr><td>pokédex</td><td>${vistos} vistos · ${pegos} caught</td></tr><tr><td>badges</td><td>${tem.size}/8</td></tr><tr><td>personagem</td><td>${esc(ctx.personagemNome?.() || 'Ash')}</td></tr><tr><td>inicial</td><td>${esc(ctx.lerLS('inicial', null)?.nome || '—')}</td></tr></table></div>
+  corpo.innerHTML = `<div class="dois"><div class="ficha"><h3>${esc(ctx.nome || 'Ash')}</h3><table class="stats"><tr><td>money</td><td>${dinheiro().toLocaleString('pt-BR')} ${esc(D.moedas?.[1] || '')}</td></tr><tr><td>play time</td><td>${h}h ${String(mi).padStart(2, '0')}m</td></tr><tr><td>party</td><td>${timeAtual().length}/6 · storage ${ctx.lerLS('caixa', []).length}</td></tr><tr><td>pokédex</td><td>${vistos} seen · ${pegos} caught</td></tr><tr><td>badges</td><td>${tem.size}/8</td></tr><tr><td>character</td><td>${esc(ctx.personagemNome?.() || 'Ash')}</td></tr><tr><td>starter</td><td>${esc(ctx.lerLS('inicial', null)?.nome || '—')}</td></tr></table></div>
     <div class="ficha"><h3>Kanto badges</h3><div class="insignias">${ins.map(b => `<div class="insignia ${tem.has(b.id) ? 'tem' : ''}" title="${esc(b.n)}">${esc(b.n.replace(/^medalha /i, ''))}</div>`).join('')}</div><div style="margin-top:6px;font-size:12px">Obey up to <b style="color:#ffe07a">Lv ${tetoObed()}</b> <small style="color:var(--muted)">· above that, they sometimes ignore commands; each badge raises the limit by 10</small></div><small style="color:var(--muted)">the 8 gyms will arrive with trainer battles</small></div></div>`;
   if (ctx.conhecimento){                                               // Pokédex de conhecimento: placar do colecionador e títulos
     const r = ctx.conhecimento.resumo(), ts = ctx.conhecimento.listaTitulos();
-    corpo.insertAdjacentHTML('beforeend', `<div class="ficha" style="margin-top:8px"><h3>Colecionador${r.tituloAtual ? ` <small style="color:var(--gold,#f4aa35)">🏅 ${esc(r.tituloAtual)}</small>` : ''}</h3>
-      <table class="stats"><tr><td>Kanto</td><td>${r.pegosKanto}/${r.kantoAte} capturados (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} vistos</td></tr>
-      <tr><td>nacional</td><td>${r.pegos} capturados · ${r.vistos} vistos</td></tr>
+    corpo.insertAdjacentHTML('beforeend', `<div class="ficha" style="margin-top:8px"><h3>Collector${r.tituloAtual ? ` <small style="color:var(--gold,#f4aa35)">🏅 ${esc(r.tituloAtual)}</small>` : ''}</h3>
+      <table class="stats"><tr><td>Kanto</td><td>${r.pegosKanto}/${r.kantoAte} caught (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} seen</td></tr>
+      <tr><td>national</td><td>${r.pegos} caught · ${r.vistos} seen</td></tr>
       <tr><td>shinies caught</td><td>✨ ${r.shinies}</td></tr>
-      <tr><td>conhecimento</td><td>${r.mestres} espécie${r.mestres === 1 ? '' : 's'} em Mestre · ${r.estudadas} em Estudado+ · ${r.pontosTotal} pontos</td></tr></table>
+      <tr><td>knowledge</td><td>${r.mestres} species${r.mestres === 1 ? '' : ""} at Master · ${r.estudadas} at Studied+ · ${r.pontosTotal} points</td></tr></table>
       <div class="titulos">${ts.map(x => `<div class="titulo ${x.tem ? 'tem' : ''}" title="${esc(x.desc)}">${x.tem ? '🏅' : '○'} ${esc(x.nome)} <small>${esc(x.desc)}</small></div>`).join('')}</div>
       <div style="color:var(--muted);font-size:11px;margin-top:6px">player rankings will arrive with the server; shiny odds are the same for everyone (1/4,096), without exception.</div></div>`);
   }
@@ -1849,11 +1849,11 @@ function rTreinador(corpo){
 /* ------------------------------------------------------------------ Loja */
 function rLoja(corpo){
   const lojas = D.lojas || {};
-  const nomeLoja = id => { if (id === '2150101') return 'Pokémart'; const m = String(id).match(/^215(\d\d)01$/); const nm = m && ctx.nomeArea?.(+('15' + m[1])); return nm ? nm.replace(/^Loja (de )?da Cidade /, '').replace(/^Loja da Cidade /, '') : 'Loja ' + String(id).slice(-4); };
+  const nomeLoja = id => { if (id === '2150101') return 'Pokémart'; const m = String(id).match(/^215(\d\d)01$/); const nm = m && ctx.nomeArea?.(+('15' + m[1])); return nm ? nm.replace(/^Loja (de )?da Cidade /, '').replace(/^Loja da Cidade /, '') : "Shop " + String(id).slice(-4); };
   const aba = (abaAtual && lojas[abaAtual]) ? abaAtual : '2150101';   // SÓ a loja deste vendedor: as abas "Loja 1107/1501/4103/4401" (outras lojas do dump) não fazem sentido no Pokémart (Jaime, 31/08)
   abas([{ id: aba, nome: nomeLoja(aba) }]);                              // uma aba só, com o nome da loja (e limpa abas da janela anterior)
   const lista = lojas[aba] || [];
-  corpo.innerHTML = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))} · original game prices</div><div class="grade-itens">${lista.map(l => { const it = D.itens[l.item]; if (!it) return ''; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">${l.preco.toLocaleString('pt-BR')}</span><b>${esc(tr(it.n))}${l.n > 1 ? ' ×' + l.n : ''}</b><small>${esc(tr(it.d || D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-comprar="${l.item}" data-preco="${l.preco}" data-n="${l.n}" ${dinheiro() < l.preco ? 'disabled' : ''}>Comprar</button></div></div>`; }).join('')}</div>`;
+  corpo.innerHTML = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))} · original game prices</div><div class="grade-itens">${lista.map(l => { const it = D.itens[l.item]; if (!it) return ''; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">${l.preco.toLocaleString('pt-BR')}</span><b>${esc(tr(it.n))}${l.n > 1 ? ' ×' + l.n : ''}</b><small>${esc(tr(it.d || D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-comprar="${l.item}" data-preco="${l.preco}" data-n="${l.n}" ${dinheiro() < l.preco ? 'disabled' : ''}>Buy</button></div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-comprar]').forEach(b => b.onclick = () => { const id = b.dataset.comprar, preco = +b.dataset.preco, n = +b.dataset.n || 1; if (dinheiro() < preco) return; if (ctx.comConta?.()) ctx.bolsaOp('comprar', { loja: aba, item: +id }).then(() => render()); else if (D.itens[id]?.t === 7){ ctx.jogo.bolas[id] = (ctx.jogo.bolas[id] || 0) + n; ctx.gravarLS('bolas', ctx.jogo.bolas); } else { const it = itensLS(); it[id] = (it[id] || 0) + n; ctx.gravarLS('itens', it); } if (!ctx.comConta?.()){ setDinheiro(dinheiro() - preco); ctx.Som?.tocar?.('ui/sound_itemget', { volume: .7, prio: true }); } render(); });
 }
 
@@ -1861,21 +1861,21 @@ function rLoja(corpo){
    Doação com recompensa (Medalhão de Membro trocável, cosméticos). Sem servidor não existe compra —
    e o Jaime pediu pra NÃO listar o que vai ter: só "em breve". O Pokémart (itens) é a janela 'mercado'. */
 function rPremium(corpo){
-  corpo.innerHTML = '<div class="vazio">Loja premium — em breve, junto com o servidor online.</div>';
+  corpo.innerHTML = "<div class=\"vazio\">Premium shop — coming soon with the online server.</div>";
 }
 
 /* ------------------------------------------------------------------ Social / Batalha */
 function rSocial(corpo){
-  const aba = abas([{ id: 'chat', nome: 'Chat' }, { id: 'amigos', nome: 'Amigos' }, { id: 'correio', nome: 'Correio' }]);
+  const aba = abas([{ id: 'chat', nome: 'Chat' }, { id: 'amigos', nome: "Friends" }, { id: 'correio', nome: "Mail" }]);
   if (aba === 'chat'){
-    corpo.innerHTML = '<div class="chat-janela"></div><div style="color:var(--muted);font-size:11px;margin-top:6px">o mesmo chat da HUD, em tela cheia: Local mostra tudo com etiqueta [G] [T] [H] [S]; /g /t /h /l mudam o canal</div>';
+    corpo.innerHTML = "<div class=\"chat-janela\"></div><div style=\"color:var(--muted);font-size:11px;margin-top:6px\">The HUD chat in a full window: Local shows everything tagged [G] [T] [H] [S]; /g /t /h /l switch channels</div>";
     Chat.montar(corpo.querySelector('.chat-janela'), { compacto: false });
-  } else if (aba === 'amigos') corpo.innerHTML = '<div class="vazio">Lista de amigos vazia. Adicionar, convidar pra batalha e presentear entram com o servidor.</div>';
+  } else if (aba === 'amigos') corpo.innerHTML = "<div class=\"vazio\">Friends list is empty. Adding friends, battle invitations and gifts will arrive with the server.</div>";
   else corpo.innerHTML = '<div class="lista"><div class="linha" style="cursor:default"><span style="font-size:18px">✉️</span><span class="nome"><b>Welcome to Kanto</b><small>System · your journey begins in Pallet. Attached: 5 Poké Balls (already in your bag).</small></span></div></div>';
 }
 function rBatalha(corpo){
-  const aba = abas([{ id: 'trein', nome: 'Treinadores' }, { id: 'pvp', nome: 'PvP' }, { id: 'rank', nome: 'Ranking' }]);
-  if (aba === 'trein'){ const n = new Set((ctx.dados.treinadores || []).map(t => String(t.cfg))).size, venc = new Set([].concat(ctx.lerLS('treinadoresVencidos', []) || []).map(k => String(k).split('@')[0])).size; /* 17/09: por treinador (cfg), não por vaga — o mapa tem 1.984 vagas pra 166 treinadores e as contas do bug das vagas (genandrade) têm o mesmo treinador 2–4 vezes na lista */ corpo.innerHTML = `<div class="vazio">${n} treinadores marcados neste mapa · <b>${venc}</b> defeated.<br>Look for names marked <b style="color:#ffb1b1">⚔</b> along the routes and talk (Z) to challenge them — turn-based battles; gyms and badges will arrive later.</div>`; }
+  const aba = abas([{ id: 'trein', nome: "Trainers" }, { id: 'pvp', nome: 'PvP' }, { id: 'rank', nome: 'Ranking' }]);
+  if (aba === 'trein'){ const n = new Set((ctx.dados.treinadores || []).map(t => String(t.cfg))).size, venc = new Set([].concat(ctx.lerLS('treinadoresVencidos', []) || []).map(k => String(k).split('@')[0])).size; /* 17/09: por treinador (cfg), não por vaga — o mapa tem 1.984 vagas pra 166 treinadores e as contas do bug das vagas (genandrade) têm o mesmo treinador 2–4 vezes na lista */ corpo.innerHTML = `<div class="vazio">${n} trainers marked on this map · <b>${venc}</b> defeated.<br>Look for names marked <b style="color:#ffb1b1">⚔</b> along the routes and talk (Z) to challenge them — turn-based battles; gyms and badges will arrive later.</div>`; }
   else corpo.innerHTML = '<div class="vazio">Requires a server. The window is available for positioning.</div>';
 }
 
@@ -1887,20 +1887,20 @@ export function repintar(){ try { if (aberta) render(); } catch {} }
 export function abrirAtalho(i){ slotAtalho = i; abaAtual = null; return abrir('atalho'); }
 function rAtalho(corpo){
   const tecla = (ctx.teclasAtalho || ['5', '6', '7', '8'])[slotAtalho] || '?', atual = (ctx.atalhos?.() || [])[slotAtalho];
-  $('j-titulo').innerHTML = `<i class="ic ic-mochila" style="display:inline-block;width:26px;height:26px;vertical-align:middle;margin-right:6px"></i>Atalho ${tecla}`;
-  const aba = abas([{ id: 'itens', nome: 'Itens' }, { id: 'montarias', nome: 'Montarias' }]);
-  const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">tecla <b style="color:#ffe07a">${tecla}</b> ou toque no slot usa; ${atual ? 'hoje: <b>' + esc(atual.nome) + '</b>' : 'slot vazio'}</div>`;
+  $('j-titulo').innerHTML = `<i class="ic ic-mochila" style="display:inline-block;width:26px;height:26px;vertical-align:middle;margin-right:6px"></i>Shortcut ${tecla}`;
+  const aba = abas([{ id: 'itens', nome: "Items" }, { id: 'montarias', nome: "Mounts" }]);
+  const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">key <b style="color:#ffe07a">${tecla}</b> or tap the slot to use it; ${atual ? "current: <b>" + esc(atual.nome) + '</b>' : "empty slot"}</div>`;
   const prender = (b) => { ctx.definirAtalho?.(slotAtalho, b); fechar(); };
   if (aba === 'itens'){
     const q = quantidades(); const lista = Object.entries(q).filter(([id, n]) => n > 0 && [7, 9].includes(D.itens[id]?.t));
-    corpo.innerHTML = cab + (lista.length ? `<div class="grade-itens">${lista.map(([id, n]) => { const it = D.itens[id]; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}</b><small>${esc(tr(D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-item="${id}">Prender no ${tecla}</button></div></div>`; }).join('')}</div>` : '<div class="vazio">Nothing to pin: potions and balls appear here when they are in your bag (Shop).</div>');
+    corpo.innerHTML = cab + (lista.length ? `<div class="grade-itens">${lista.map(([id, n]) => { const it = D.itens[id]; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}</b><small>${esc(tr(D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-item="${id}">Pin to ${tecla}</button></div></div>`; }).join('')}</div>` : '<div class="vazio">Nothing to pin: potions and balls appear here when they are in your bag (Shop).</div>');
     corpo.querySelectorAll('[data-item]').forEach(b => b.onclick = () => { const it = D.itens[b.dataset.item]; prender({ tipo: 'item', id: +b.dataset.item, nome: it.n, icone: './ui/itens/' + it.i + '.png', bola: it.t === 7 }); });
   } else {
     const lista = ctx.montarias?.() || [];
-    corpo.innerHTML = cab + `<div class="grade-itens">${lista.map(m => { const dex = ctx.dexDoGlb(m.glb); return `<div class="item"><i class="ic-item" style="background-image:url('./ui/mon/pm${String(dex).padStart(4, '0')}.png')"></i><b>${esc(m.nome)}</b><small>${m.voa ? 'voadora · passa por cima de tudo' : 'terrestre'}</small><div class="acoes"><button type="button" class="btn ouro" data-monta="${m.glb}">Prender no ${tecla}</button></div></div>`; }).join('')}</div>`;
+    corpo.innerHTML = cab + `<div class="grade-itens">${lista.map(m => { const dex = ctx.dexDoGlb(m.glb); return `<div class="item"><i class="ic-item" style="background-image:url('./ui/mon/pm${String(dex).padStart(4, '0')}.png')"></i><b>${esc(m.nome)}</b><small>${m.voa ? "flying · flies over everything" : 'terrestre'}</small><div class="acoes"><button type="button" class="btn ouro" data-monta="${m.glb}">Pin to ${tecla}</button></div></div>`; }).join('')}</div>`;
     corpo.querySelectorAll('[data-monta]').forEach(b => b.onclick = () => { const m = lista.find(x => x.glb === b.dataset.monta); const dex = ctx.dexDoGlb(m.glb); prender({ tipo: 'montaria', glb: m.glb, nome: m.nome, icone: './ui/mon/pm' + String(dex).padStart(4, '0') + '.png' }); });
   }
-  if (atual) corpo.insertAdjacentHTML('beforeend', '<div class="acoes" style="margin-top:12px"><button type="button" class="btn" id="a-limpar">Esvaziar o atalho</button></div>'), corpo.querySelector('#a-limpar').onclick = () => prender(null);
+  if (atual) corpo.insertAdjacentHTML('beforeend', "<div class=\"acoes\" style=\"margin-top:12px\"><button type=\"button\" class=\"btn\" id=\"a-limpar\">Clear shortcut</button></div>"), corpo.querySelector('#a-limpar').onclick = () => prender(null);
 }
 
 /* ===================================================== RAID AO VIVO (banner da Amanda, rodada 26 — 14/09)
@@ -2073,7 +2073,7 @@ function cfAcao(nome, el){
 const cfDiagTexto = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'unavailable'; };
 async function cfCopiarDiag(){
   const tx = cfDiagTexto();
-  try { await navigator.clipboard.writeText(tx); Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiado!'); setTimeout(() => Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiar'), 2000); }
+  try { await navigator.clipboard.writeText(tx); Popup.botao(popCf, 'copiar-diagnostico', true, "Copied!"); setTimeout(() => Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiar'), 2000); }
   catch { Chat.sistema('Could not copy automatically — you can select the text in the box.'); }
 }
 /** Apagar progresso: com conta, é o personagem que some (a conta fica); sem conta, é o `apagarTudo` de sempre. */
@@ -2115,7 +2115,7 @@ function cfDialogoRelato(){
   Object.assign(d.style, { position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', width: 'min(480px, 92%)',
     background: '#0F1A2E', border: '2px solid #F8C237', borderRadius: '16px', padding: '18px', zIndex: '600',
     font: '700 13px "Nunito Sans", system-ui, sans-serif', color: '#B8C2D9', display: 'grid', gap: '8px' });
-  d.innerHTML = '<div style="font:800 18px \'Baloo 2\', system-ui;color:#F8C237;text-align:center">Mandar pra equipe</div>'
+  d.innerHTML = "<div style=\"font:800 18px 'Baloo 2', system-ui;color:#F8C237;text-align:center\">Send to the team</div>"
     + '<div style="text-align:center">Describe what happened. Device diagnostics will be included.</div>'
     + '<textarea rows="4" maxlength="1000" placeholder="o que aconteceu?"></textarea>'
     + '<div class="cf-relato-av" style="min-height:16px;color:#f58e8e;text-align:center"></div>'
@@ -2142,7 +2142,7 @@ function cfDialogoRelato(){
     av.style.color = '#B8C2D9'; av.textContent = tr('enviando…');
     const r = await ctx.conta.chamar('POST', '/conta/relato', { texto, diag, contexto });
     if (!r.ok){ av.style.color = '#f58e8e'; av.textContent = tr(r.erro || 'failed'); return; }
-    d.remove(); Chat.sistema('Relato enviado pra equipe. Obrigado!');
+    d.remove(); Chat.sistema("Report sent to the team. Thank you!");
   };
 }
 /* ESTOU PRESO (15/09, alfa): quem travou em parede/escada/caverna ESCREVE o relato antes (≥ 50 caracteres, ≥ 5 palavras, sem enchimento —
@@ -2207,7 +2207,7 @@ export function estouPreso(){
     const R = regrasPreso(area.value), b = bloqueio();
     cont.textContent = Math.min(R.n, 9999) + '/' + PRESO.minimo; cont.style.color = R.n >= PRESO.minimo ? '#8fe08f' : '#f58e8e';
     const falta = PRESO.minimo - R.n;
-    dica.textContent = R.ok ? tr('Pronto pra enviar.') : R.motivo === 'curto' ? (R.n ? tr('Faltam {n} caracteres.', { n: falta }) : '') : tr(DICAS[R.motivo]);
+    dica.textContent = R.ok ? tr("Ready to send.") : R.motivo === 'curto' ? (R.n ? tr('Faltam {n} caracteres.', { n: falta }) : '') : tr(DICAS[R.motivo]);
     dica.style.color = R.ok ? '#8fe08f' : '#B8C2D9';
     if (!enviando){ av.style.color = '#f58e8e'; av.textContent = b || erroServ; }
     const pode = R.ok && !b && !enviando && !semSuporte;
@@ -2618,11 +2618,11 @@ function encherCfSom(pop){
 function encherCfConta(pop){
   const c = ctx.conta?.estado?.() || {}, comConta = c.modo === 'conta';
   Popup.texto(pop, 'jogador-nome', ctx.nome || '—');
-  Popup.texto(pop, 'email', comConta ? (cfEmail || 'sem e-mail no cadastro') : '— (jogando sem conta)');
+  Popup.texto(pop, 'email', comConta ? (cfEmail || "no email registered") : "— (playing without an account)");
   if (comConta && cfEmail === null) cfBuscarEmail();
   Popup.botao(pop, 'logout', comConta, 'Sair da conta');
   Popup.botao(pop, 'trocar-senha', comConta, 'Trocar senha');
-  Popup.botao(pop, 'diagnostico-chat', true, 'Mandar pra equipe');        // RELATOS (11/09): era "Mandar pro chat" (só escrevia no chat local)
+  Popup.botao(pop, 'diagnostico-chat', true, "Send to the team");        // RELATOS (11/09): era "Mandar pro chat" (só escrevia no chat local)
   cfBotaoPreso(pop);                                                       // ESTOU PRESO (15/09): logo abaixo de Copiar / Mandar pra equipe
   Popup.desligarGrupo(pop, 'btn-sair', comConta, 'you are playing without an account');
   Popup.desligarGrupo(pop, 'btn-trocar-senha', comConta, 'you are playing without an account');
@@ -2709,7 +2709,7 @@ function encherCfSocial(pop){
   Popup.seletor(pop, 'seletor-fonte-chat', 'Normal');
 }
 function rConfig(corpo){
-  abas([{ id: 'geral', nome: 'Geral' }]);
+  abas([{ id: 'geral', nome: "General" }]);
   const p = new URLSearchParams(location.search);
   const vol = ctx.lerLS('volume', 100);
   corpo.innerHTML = `<div class="config">
@@ -2732,14 +2732,14 @@ function rConfig(corpo){
     <details style="margin-top:10px"><summary style="cursor:pointer;color:#ffe07a">Device diagnostics — open and copy if something turns black or looks wrong</summary><pre id="c-diag" style="white-space:pre-wrap;font-size:11px;color:var(--muted);max-height:260px;overflow:auto;background:#0b1020;padding:8px;border-radius:8px;margin:6px 0"></pre><button type="button" class="btn" id="c-diag-copiar">copy</button> <button type="button" class="btn" id="c-diag-chat">send to chat</button></details></div>`;
   const diag = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'unavailable'; };
   const preDiag = corpo.querySelector('#c-diag'); preDiag.textContent = diag();
-  corpo.querySelector('#c-diag-copiar').onclick = async () => { const tx = diag(); preDiag.textContent = tx; try { await navigator.clipboard.writeText(tx); corpo.querySelector('#c-diag-copiar').textContent = 'copiado!'; } catch { const r = document.createRange(); r.selectNodeContents(preDiag); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } };
+  corpo.querySelector('#c-diag-copiar').onclick = async () => { const tx = diag(); preDiag.textContent = tx; try { await navigator.clipboard.writeText(tx); corpo.querySelector('#c-diag-copiar').textContent = "copied!"; } catch { const r = document.createRange(); r.selectNodeContents(preDiag); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } };
   corpo.querySelector('#c-preso').onclick = () => estouPreso();           // ESTOU PRESO (15/09): o mesmo diálogo da aba Conta do pop-up
   corpo.querySelector('#c-diag-chat').onclick = () => { const d = ctx.diagnostico?.(); if (d) Chat.sistema('diag: ' + [d.gpu, 'webgl2 ' + d.webgl2, d.qualidade, d.tela, 'tex ' + d.maxTextura, 'highp ' + d.highpFrag, 'erros ' + d.erros.join(' ; ')].join(' · ')); };
   corpo.querySelector('#c-qual').value = p.get('qualidade') || ''; corpo.querySelector('#c-tam').value = ctx.jogo.tamanhos || 'proporcional'; corpo.querySelector('#c-dens').value = p.get('densidade') || '';
   const cDbg = corpo.querySelector('#c-dbg'); if (cDbg) cDbg.checked = !!ctx.depuracao?.();   // 08/09: só existe pra GM — sem este guarda, ABRIR as Configurações quebrava pro jogador comum
   corpo.querySelector('#c-nome').onchange = async ev => {                 // nome único (08/09): quem decide é o servidor
     const campo = ev.target, av = corpo.querySelector('#c-nome-aviso');
-    campo.disabled = true; av.textContent = 'conferindo…'; av.style.color = '#98a4c0';
+    campo.disabled = true; av.textContent = "checking…"; av.style.color = '#98a4c0';
     const r = await ctx.renomear?.(campo.value);
     campo.disabled = false; campo.value = ctx.nome;
     if (r && !r.ok){ av.textContent = r.erro; av.style.color = '#f58e8e'; }
@@ -2751,7 +2751,7 @@ function rConfig(corpo){
   corpo.querySelector('#c-dens').onchange = ev => recarregar('densidade', ev.target.value);
   corpo.querySelector('#c-tam').onchange = ev => ctx.definirTamanhos?.(ev.target.value);
   const cUi = corpo.querySelector('#c-ui'), cUiv = corpo.querySelector('#c-uiv');   // tamanho da interface (05/09): muda ao vivo; a HUD não passa do que cabe na tela
-  const dicaUi = () => { cUiv.textContent = 'nesta tela: HUD ' + Math.round(Hud.escalaAtual() * 100) + '% · janelas ' + (ctx.MOBILE ? 'tela cheia' : Math.round(Popup.escalaPopup() * 100) + '%'); };
+  const dicaUi = () => { cUiv.textContent = "on this screen: HUD " + Math.round(Hud.escalaAtual() * 100) + "% · windows " + (ctx.MOBILE ? "full screen" : Math.round(Popup.escalaPopup() * 100) + '%'); };
   cUi.value = Hud.tamanhoUI(); dicaUi();
   cUi.onchange = ev => { Hud.definirTamanho(ev.target.value); dicaUi(); };
   corpo.querySelector('#c-missao-lugar').onclick = () => Hud.zerarMover();   // painel de missão de volta ao lugar da maquete
@@ -2765,18 +2765,18 @@ function rConfig(corpo){
     if (!btn) return; let armado = false;
     btn.onclick = async () => {
       if (!armado){ armado = true; btn.textContent = 'Are you sure? Click again'; setTimeout(() => { if (armado){ armado = false; btn.textContent = rotulo; } }, 5000); return; }
-      armado = false; btn.disabled = true; btn.textContent = 'apagando…';
+      armado = false; btn.disabled = true; btn.textContent = "deleting…";
       const r = await acao();
       btn.disabled = false; btn.textContent = rotulo;
       if (r && !r.ok){ avConta.textContent = r.erro; avConta.style.color = '#f58e8e'; }
     };
   };
-  doisCliques(corpo.querySelector('#c-apagar-perso'), 'Apagar personagem', async () => {
+  doisCliques(corpo.querySelector('#c-apagar-perso'), "Delete character", async () => {
     const r = await ctx.conta.apagarPersonagem();
     if (r.ok) location.href = new URL('?jogar=1', location.href).toString();   // volta pro começo: criação de personagem
     return r;
   });
-  doisCliques(corpo.querySelector('#c-apagar-conta'), 'Apagar conta', async () => {
+  doisCliques(corpo.querySelector('#c-apagar-conta'), "Delete account", async () => {
     const senha = prompt('Deleting your account is PERMANENT. Enter your password to confirm:');
     if (!senha) return { ok: false, erro: 'cancelado' };
     const r = await ctx.conta.apagarConta(senha);
