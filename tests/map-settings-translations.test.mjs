@@ -30,8 +30,8 @@ test('the actual minimap display assignment translates source area names',async(
  const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!m[1].includes('importmap'));
  const matches=[];
  function walk(n,s){if(!n||typeof n!=='object')return;if(n.type==='AssignmentExpression'&&n.left?.object?.name==='mmA'&&n.left?.property?.name==='textContent')matches.push(s.slice(n.start,n.end));for(const v of Object.values(n))if(v&&typeof v==='object')Array.isArray(v)?v.forEach(x=>walk(x,s)):walk(v,s);}
- for(const m of scripts)walk(parseAst(m[2]),m[2]);assert.equal(matches.length,1);
- const mmA={textContent:''};vm.runInNewContext(matches[0],{mmA,nomeAreaAtual:()=> 'Cidade Pallet',tr:I.t});assert.equal(mmA.textContent,'Pallet Town');
+ for(const m of scripts){const ast=parseAst(m[2]);walk(ast,m[2]);if(m[2].includes('mmA.textContent'))assert(ast.body.some(n=>n.type==='ImportDeclaration'&&n.source.value==='./i18n.mjs'&&n.specifiers.some(s=>s.type==='ImportNamespaceSpecifier'&&s.local.name==='I18n')), 'minimap translator must use the actual page import');}assert.equal(matches.length,1);
+ const mmA={textContent:''};vm.runInNewContext(matches[0],{mmA,nomeAreaAtual:()=> 'Cidade Pallet',I18n:I});assert.equal(mmA.textContent,'Pallet Town');
 });
 test('dynamic menu labels preserve counts and Portuguese mode preserves source labels',async()=>{
  assert.equal(I.t('Membros — 23 de 50'),'Members — 23 of 50');assert.equal(I.t('anúncios: 3 de 8'),'listings: 3 of 8');
