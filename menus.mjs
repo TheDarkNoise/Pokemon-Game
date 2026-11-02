@@ -1009,7 +1009,7 @@ function areaDoJogador(){
 const ehRota = a => Math.floor(Number(a) / 100) === 12;
 async function encherMapa(pop){
   Popup.rotulo(pop, 'titulo'); Popup.texto(pop, 'regiao', 'Kanto');
-  Popup.imagem(pop, 'mapa', './ui/figma/backgrounds/mapa-kanto.png');
+  Popup.imagem(pop, 'mapa', I18n.idioma() === 'en' ? './ui/figma/backgrounds/mapa-kanto-en.png' : './ui/figma/backgrounds/mapa-kanto.png');
   pontosMapa ??= await fetch('./data/mapa_kanto_pontos.json').then(r => r.json()).catch(() => ({ areas: {}, raio: 0.045 }));
   mapaHabitats ??= await fetch('./data/habitats.json').then(r => r.json()).catch(() => ({ areas: {}, generico: [] }));
   if (aberta !== 'mapa' || !Popup.aberto(pop)) return;
