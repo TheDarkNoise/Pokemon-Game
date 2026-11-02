@@ -47,14 +47,14 @@ const mapaDeTextos = (reId, max) => d => {
   return ok(out);
 };
 
-// ── Missões: capítulos → missões → passos (os tipos que o missoes.mjs e o servidor conhecem) ──────────────────────────────
+// ── Quests: capítulos → missões → passos (os tipos que o missoes.mjs e o servidor conhecem) ──────────────────────────────
 export const TIPOS_PASSO = {
   falar:    'Falar com um NPC',
   ir:       'Ir até uma área',
   inicial:  'Escolher o inicial',
   capturar: 'Capturar Pokémon',
   derrotar: 'Derrotar (selvagens ou treinador)',
-  nivel:    'Ter um Pokémon no nível',
+  nivel:    'Have a Pokémon at level',
   curar:    'Curar o time (Enfermeira Joy)',
   insignia: 'Ter N insígnias',
   entregar: 'Entregar item a um NPC',
@@ -65,7 +65,7 @@ const falas = v => Array.isArray(v) && v.length <= 12 && v.every(s => typeof s =
 function validarPasso(p) {
   if (!ehObj(p)) return 'passo inválido';
   if (!TIPOS_PASSO[p.tipo]) return `tipo de passo desconhecido: ${p.tipo}`;
-  if (typeof p.texto !== 'string' || !p.texto.trim() || p.texto.length > 200) return 'falta o texto do passo (até 200 letras) — é o que o jogador lê no rastreador';
+  if (typeof p.texto !== 'string' || !p.texto.trim() || p.texto.length > 200) return 'missing step text (up to 200 characters) — this is what the player reads in the tracker';
   if (p.onde != null && (typeof p.onde !== 'string' || p.onde.length > 120)) return '"onde": texto de até 120 letras';
   if (p.fala != null && !falas(p.fala)) return '"fala": até 12 linhas de texto';
   const cfg = v => v == null || inteiro(v, 1, 999999999) || listaInt(v, 1, 999999999, 20);
@@ -82,7 +82,7 @@ function validarPasso(p) {
     case 'entregar': if (p.cfg == null || p.item == null) return 'entregar: precisa do NPC (cfg) e do item'; break;
     case 'item': if (p.item == null) return 'item: diga qual item'; break;
     case 'ir': if (p.area == null) return 'ir: diga qual área'; break;
-    case 'nivel': if (!inteiro(p.lv, 1, 100)) return 'nível: "lv" de 1 a 100'; break;
+    case 'nivel': if (!inteiro(p.lv, 1, 100)) return 'level: "lv" from 1 to 100'; break;
     case 'insignia': if (!inteiro(p.n, 1, 99)) return 'insígnia: "n" de 1 a 99'; break;
   }
   return null;
@@ -148,28 +148,28 @@ function validarLearnset(d) {
 }
 
 const regraEvolucao = r => {
-  if (r.gatilho === 'item' && !r.item && !r.itemNome) return 'usar item: diga qual item (ou só o nome, se ainda não existe no jogo)';
-  if (r.item === 0 && !r.itemNome) return 'item que ainda não existe (0): escreva o nome dele, é o que o jogador lê';
-  if (r.segurando === 0 && !r.segurandoNome) return 'item segurado que ainda não existe (0): escreva o nome dele';
-  if (r.golpe != null && !r.golpeNome) return 'conhecer golpe: preencha também o nome do golpe (é o que o jogador lê)';
+  if (r.gatilho === 'item' && !r.item && !r.itemName) return 'usar item: diga qual item (ou só o nome, se ainda não existe no jogo)';
+  if (r.item === 0 && !r.itemName) return 'item que ainda não existe (0): escreva o nome dele, é o que o jogador lê';
+  if (r.segurando === 0 && !r.segurandoName) return 'item segurado que ainda não existe (0): escreva o nome dele';
+  if (r.golpe != null && !r.golpeName) return 'conhecer golpe: preencha também o nome do golpe (é o que o jogador lê)';
   return null;
 };
 
 export const ESQUEMAS_F2 = {
   insignias: {
     titulo: 'Insígnias', arquivo: 'menus_dados', caminho: 'insignias', forma: 'lista', id: 'id',
-    descricao: 'Nome e ícone de cada insígnia. O jogo mostra as da geração 1 (Kanto) no Treinador; a que cada ginásio dá fica na tela Ginásios.',
+    descricao: 'Name and icon for each badge. The game shows generation 1 (Kanto) badges in Trainer; the badge each gym awards is set on the Gyms screen.',
     previa: '/admin/previa_insignia.mjs',
     campos: [
       { k: 'id', rotulo: 'ID', tipo: 'num', int: true, min: 1, max: 9999999, col: true, obrigatorio: true, ajuda: 'O save do jogador guarda este número: não troque o de uma insígnia que já existe.' },
-      { k: 'n', rotulo: 'Nome', tipo: 'texto', max: 60, col: true, obrigatorio: true },
+      { k: 'n', rotulo: 'Name', tipo: 'texto', max: 60, col: true, obrigatorio: true },
       { k: 'i', rotulo: 'Ícone', tipo: 'texto', max: 60, col: true, validar: s => RE_ARQUIVO.test(s) ? null : 'nome do arquivo, sem .png', ajuda: 'Arquivo ui/icones/<ícone>.png (as de Kanto são dghz_1 … dghz_8).' },
       { k: 'gen', rotulo: 'Geração (região)', tipo: 'num', int: true, min: 1, max: 9, col: true, obrigatorio: true, ajuda: '1 = Kanto (a única que o jogo mostra por enquanto).' },
     ],
   },
   exp_curvas: {
     titulo: 'Curvas de EXP', arquivo: 'exp', caminho: 'curvas', forma: 'objeto',
-    descricao: 'EXP total pra chegar em cada nível, nas 6 curvas oficiais. Cada espécie usa uma delas (tela Espécies → EXP).',
+    descricao: 'Total EXP required to reach each level for the 6 official growth curves. Each species uses one of them (Species → EXP).',
     validar: r => {
       for (const [k, c] of Object.entries(r)) {
         if (!CURVAS[k]) continue;
@@ -192,7 +192,7 @@ export const ESQUEMAS_F2 = {
     campos: [
       { k: 'gen', rotulo: 'Geração', tipo: 'num', int: true, min: 1, max: 9, col: true, obrigatorio: true, ajuda: 'Uma aba por geração na escolha do inicial; a 1 é a da mesa do Oak.' },
       { k: 'dex', rotulo: 'Nº (dex)', tipo: 'num', int: true, min: 1, max: 2000, col: true, obrigatorio: true },
-      { k: 'nome', rotulo: 'Nome', tipo: 'texto', max: 40, col: true, obrigatorio: true },
+      { k: 'nome', rotulo: 'Name', tipo: 'texto', max: 40, col: true, obrigatorio: true },
       { k: 'glb', rotulo: 'Modelo', tipo: 'texto', max: 20, col: true, obrigatorio: true, validar: s => RE_GLB_MON.test(s) ? null : 'modelo do Pokémon, ex.: pm0001_00', ajuda: 'Arquivo cenario/mon/<modelo>.glb.' },
       { k: 'tipos', rotulo: 'Tipos', tipo: 'linhas', obrigatorio: true, resumo: v => (v || []).map(t => TIPOS[t] || t).join(' / '),
         validar: v => v.length >= 1 && v.length <= 2 && v.every(t => TIPOS[t]) ? null : 'um ou dois, um por linha, em inglês: ' + Object.keys(TIPOS).join(', ') },
@@ -203,7 +203,7 @@ export const ESQUEMAS_F2 = {
     descricao: 'Os Pokémon que dá pra montar (tecla M e atalhos 5–9): pose do treinador, tamanho, velocidade e por onde andam.',
     campos: [
       { k: 'glb', rotulo: 'Modelo', tipo: 'texto', max: 20, col: true, obrigatorio: true, validar: s => RE_GLB_MON.test(s) ? null : 'modelo do Pokémon, ex.: pm0249_00' },
-      { k: 'nome', rotulo: 'Nome', tipo: 'texto', max: 40, col: true, obrigatorio: true },
+      { k: 'nome', rotulo: 'Name', tipo: 'texto', max: 40, col: true, obrigatorio: true },
       { k: 'livre', rotulo: 'Liberada pra todos', tipo: 'bool', col: true, ajuda: 'Desmarcada = só a staff monta (até a loja de montarias existir). Jogo sem conta monta todas.' },
       { k: 'meio', rotulo: 'Anda por', tipo: 'opcao', col: true, obrigatorio: true, opcoes: [{ v: 'terra', rotulo: 'Terra' }, { v: 'agua', rotulo: 'Água (entra pela beira)' }, { v: 'anfibia', rotulo: 'Terra e água' }] },
       { k: 'voa', rotulo: 'Voa', tipo: 'bool', col: true, ajuda: 'Sobe e passa por cima de tudo (cruza água pelo ar).' },
@@ -217,8 +217,8 @@ export const ESQUEMAS_F2 = {
     titulo: 'Golpes', arquivo: 'golpes', forma: 'mapa', idValido: RE_GOLPE, idAjuda: 'minúsculas e números, ex.: thunderbolt',
     descricao: 'Os golpes com efeito 3D: poder, tipo, PP, alcance, recarga e o efeito/som/animação. O learnset (quem aprende o quê) é a tela Learnset.',
     campos: [
-      { k: 'nome', rotulo: 'Nome (inglês)', tipo: 'texto', max: 40, col: true, obrigatorio: true },
-      { k: 'nomePt', rotulo: 'Nome em português', tipo: 'texto', max: 60, col: true },
+      { k: 'nome', rotulo: 'Name (inglês)', tipo: 'texto', max: 40, col: true, obrigatorio: true },
+      { k: 'nomePt', rotulo: 'Name em português', tipo: 'texto', max: 60, col: true },
       { k: 'tipo', rotulo: 'Tipo', tipo: 'opcao', col: true, obrigatorio: true, opcoes: OPC_TIPOS },
       { k: 'cat', rotulo: 'Categoria', tipo: 'opcao', col: true, obrigatorio: true, opcoes: [{ v: 'fisico', rotulo: 'Físico' }, { v: 'especial', rotulo: 'Especial' }, { v: 'status', rotulo: 'Status' }] },
       { k: 'poder', rotulo: 'Poder', tipo: 'num', int: true, min: 0, max: 300, col: true, obrigatorio: true },
@@ -238,41 +238,41 @@ export const ESQUEMAS_F2 = {
       { k: 'ataque', rotulo: 'Fase de ataque no atacante (Atk)', tipo: 'bool' },
       { k: 'proprio', rotulo: 'Usa em si mesmo', tipo: 'bool' },
       { k: 'acerto', rotulo: 'Tem efeito de acerto (Hit)', tipo: 'bool' },
-      { k: 'descricao', rotulo: 'Descrição', tipo: 'texto', max: 400, area: true },
+      { k: 'descricao', rotulo: 'Description', tipo: 'texto', max: 400, area: true },
     ],
   },
   learnset: {
     titulo: 'Learnset', arquivo: 'learnset', caminho: 'learnset', forma: 'mapa', tela: 'learnset', naLista: true,
-    descricao: 'Que golpes cada espécie aprende e em que nível (tela própria).',
+    descricao: 'Which moves each species learns and at what level (dedicated screen).',
     colecao: validarLearnset,
     campos: [],
   },
   missoes: {
-    titulo: 'Missões', arquivo: 'missoes', caminho: 'capitulos', forma: 'lista', tela: 'missoes', naLista: true,
+    titulo: 'Quests', arquivo: 'missoes', caminho: 'capitulos', forma: 'lista', tela: 'missoes', naLista: true,
     descricao: 'Capítulos, missões, passos e recompensas da história (tela própria).',
     colecao: validarCapitulos,
     campos: [],
   },
   evolucoes: {
-    titulo: 'Evoluções', arquivo: 'evolucoes', caminho: 'por', forma: 'mapa', registroLista: true, tela: 'evolucoes', naLista: true, idValido: RE_DEX, idAjuda: 'o nº da dex',
+    titulo: 'Evolutions', arquivo: 'evolucoes', caminho: 'por', forma: 'mapa', registroLista: true, tela: 'evolucoes', naLista: true, idValido: RE_DEX, idAjuda: 'o nº da dex',
     descricao: 'Como cada espécie evolui (tela própria).',
     validar: regraEvolucao,
     campos: [
       { k: 'para', rotulo: 'Evolui para (nº)', tipo: 'num', int: true, min: 1, max: 2000, obrigatorio: true },
-      { k: 'nome', rotulo: 'Nome da evolução', tipo: 'texto', max: 40, obrigatorio: true },
+      { k: 'nome', rotulo: 'Name da evolução', tipo: 'texto', max: 40, obrigatorio: true },
       { k: 'gatilho', rotulo: 'Como', tipo: 'opcao', obrigatorio: true, opcoes: [
-        { v: 'nivel', rotulo: 'Subir de nível' }, { v: 'item', rotulo: 'Usar um item (pedra)' }, { v: 'troca', rotulo: 'Troca (ou usar o item)' },
+        { v: 'nivel', rotulo: 'Level up' }, { v: 'item', rotulo: 'Use an item (stone)' }, { v: 'troca', rotulo: 'Trade (or use item)' },
         { v: 'muda', rotulo: 'Junto com outra evolução (Shedinja)' }, { v: 'outro', rotulo: 'Especial (não dá por aqui)' }] },
-      { k: 'texto', rotulo: 'Texto pro jogador', tipo: 'texto', max: 160, obrigatorio: true, ajuda: 'O que a ficha mostra, ex.: "Lv 16" ou "usar Pedra da Água".' },
-      { k: 'nivel', rotulo: 'Nível mínimo', tipo: 'num', int: true, min: 1, max: 100 },
-      { k: 'amizade', rotulo: 'Amizade mínima', tipo: 'num', int: true, min: 0, max: 255, ajuda: '160 = amizade alta (padrão dos jogos).' },
+      { k: 'texto', rotulo: 'Player-facing text', tipo: 'texto', max: 160, obrigatorio: true, ajuda: 'What the card shows, e.g. "Lv 16" or "use Water Stone".' },
+      { k: 'nivel', rotulo: 'Minimum level', tipo: 'num', int: true, min: 1, max: 100 },
+      { k: 'amizade', rotulo: 'Minimum friendship', tipo: 'num', int: true, min: 0, max: 255, ajuda: '160 = amizade alta (padrão dos jogos).' },
       { k: 'horario', rotulo: 'Horário', tipo: 'opcao', opcoes: [{ v: 'dia', rotulo: 'Só de dia (6h–17h59)' }, { v: 'noite', rotulo: 'Só à noite' }] },
-      { k: 'item', rotulo: 'Item usado', tipo: 'num', int: true, min: 0, max: 999999999, item: true, ajuda: 'Pedra, cabo ou item da troca. 0 = ainda não existe no jogo (aí o jogador lê o nome abaixo).' },
-      { k: 'itemNome', rotulo: 'Nome do item usado', tipo: 'texto', max: 60 },
+      { k: 'item', rotulo: 'Item used', tipo: 'num', int: true, min: 0, max: 999999999, item: true, ajuda: 'Pedra, cabo ou item da troca. 0 = ainda não existe no jogo (aí o jogador lê o nome abaixo).' },
+      { k: 'itemName', rotulo: 'Name do item usado', tipo: 'texto', max: 60 },
       { k: 'segurando', rotulo: 'Segurando o item', tipo: 'num', int: true, min: 0, max: 999999999, item: true, ajuda: '0 = ainda não existe no jogo.' },
-      { k: 'segurandoNome', rotulo: 'Nome do item segurado', tipo: 'texto', max: 60 },
+      { k: 'segurandoName', rotulo: 'Name do item segurado', tipo: 'texto', max: 60 },
       { k: 'golpe', rotulo: 'Conhecendo o golpe (id)', tipo: 'num', int: true, min: 1, max: 99999, ajuda: 'O id do golpe na Pokédex (dex_extra), ex.: 10246 = Ancient Power.' },
-      { k: 'golpeNome', rotulo: 'Nome do golpe', tipo: 'texto', max: 60 },
+      { k: 'golpeName', rotulo: 'Name do golpe', tipo: 'texto', max: 60 },
       { k: 'tipoGolpe', rotulo: 'Conhecendo um golpe do tipo', tipo: 'opcao', opcoes: OPC_TIPOS },
       { k: 'noTime', rotulo: 'Com este Pokémon no time (nº)', tipo: 'num', int: true, min: 1, max: 2000 },
       { k: 'tipoNoTime', rotulo: 'Com um Pokémon deste tipo no time', tipo: 'opcao', opcoes: OPC_TIPOS },
@@ -282,23 +282,23 @@ export const ESQUEMAS_F2 = {
     ],
   },
   evolucoes_itens: {
-    titulo: 'Itens de evolução', arquivo: 'evolucoes', caminho: 'itens', forma: 'mapa', tela: 'evolucoes', idValido: /^\d{1,9}$/, idAjuda: 'o id do item',
-    descricao: 'Os itens que o jogo deixa usar num Pokémon pra evoluir (a tela Evoluções mantém esta lista sozinha).',
+    titulo: 'Evolution Items', arquivo: 'evolucoes', caminho: 'itens', forma: 'mapa', tela: 'evolucoes', idValido: /^\d{1,9}$/, idAjuda: 'o id do item',
+    descricao: 'Os itens que o jogo deixa usar num Pokémon pra evoluir (a tela Evolutions mantém esta lista sozinha).',
     campos: [
       { k: 'id', rotulo: 'ID', tipo: 'num', int: true, min: 1, max: 999999999, obrigatorio: true },
-      { k: 'n', rotulo: 'Nome', tipo: 'texto', max: 200, obrigatorio: true },
-      { k: 'd', rotulo: 'Descrição', tipo: 'texto', max: 3000 },
+      { k: 'n', rotulo: 'Name', tipo: 'texto', max: 200, obrigatorio: true },
+      { k: 'd', rotulo: 'Description', tipo: 'texto', max: 3000 },
       { k: 't', rotulo: 'Tipo', tipo: 'num', int: true, min: 0, max: 99 },
       { k: 'i', rotulo: 'Ícone', tipo: 'texto', max: 60 },
       { k: 'q', rotulo: 'Qualidade', tipo: 'num', int: true, min: 0, max: 10 },
     ],
   },
-  // ── Espécies (tela própria: admin/conteudo.mjs junta tudo por nº da dex e grava em cada arquivo o que mudou) ─────────────
+  // ── Species (tela própria: admin/conteudo.mjs junta tudo por nº da dex e grava em cada arquivo o que mudou) ─────────────
   especies: {
-    titulo: 'Espécies', arquivo: 'especies', forma: 'mapa', tela: 'especies', naLista: true, idValido: RE_DEX, idAjuda: 'o nº da dex',
-    descricao: 'Nome dos modelos, tamanho, altura, sexo, descrição e EXP de cada espécie (tela própria). Este arquivo guarda os ajustes que não existem nos dados gerados do jogo original (hoje: o tamanho no campo).',
+    titulo: 'Species', arquivo: 'especies', forma: 'mapa', tela: 'especies', naLista: true, idValido: RE_DEX, idAjuda: 'o nº da dex',
+    descricao: 'Name dos modelos, tamanho, altura, sexo, descrição e EXP de cada espécie (tela própria). Este arquivo guarda os ajustes que não existem nos dados gerados do jogo original (hoje: o tamanho no campo).',
     campos: [
-      { k: 'escala', rotulo: 'Ajuste de tamanho no campo (×)', tipo: 'num', min: 0.1, max: 5, ajuda: 'Multiplica o tamanho que sai da altura (régua proporcional, o modo padrão). 1 = sem ajuste.' },
+      { k: 'escala', rotulo: 'Field size adjustment (×)', tipo: 'num', min: 0.1, max: 5, ajuda: 'Multiplies the size derived from height (proportional scale, the default mode). 1 = no adjustment.' },
     ],
   },
   alturas: {
@@ -319,7 +319,7 @@ export const ESQUEMAS_F2 = {
   },
   dex_extra: {
     titulo: 'Pokédex (dados extras)', arquivo: 'dex_extra', caminho: 'especies', forma: 'mapa', tela: 'especies', idValido: RE_DEX,
-    descricao: 'Ficha extra da Pokédex (gênero e altura mostrados, golpes por nível da ficha…).',
+    descricao: 'Extra Pokédex data (displayed gender and height, moves by level, etc.).',
     campos: [
       { k: 'm', rotulo: '% machos', tipo: 'num', min: -1, max: 100 },
       { k: 'f', rotulo: '% fêmeas', tipo: 'num', min: -1, max: 100 },
@@ -331,7 +331,7 @@ export const ESQUEMAS_F2 = {
     descricao: 'Cada modelo 3D de Pokémon que o jogo tem (formas, megas, gigantamax).',
     campos: [
       { k: 'n', rotulo: 'Nº (dex)', tipo: 'num', int: true, min: 1, max: 2000, obrigatorio: true },
-      { k: 'nome', rotulo: 'Nome', tipo: 'texto', max: 40, obrigatorio: true },
+      { k: 'nome', rotulo: 'Name', tipo: 'texto', max: 40, obrigatorio: true },
       { k: 'glb', rotulo: 'Modelo', tipo: 'texto', max: 30, obrigatorio: true, validar: s => /^pm\d{4}[\w-]{0,20}$/.test(s) ? null : 'ex.: pm0025_00' },
       { k: 'nota', rotulo: 'Forma', tipo: 'texto', max: 40 },
       { k: 'altura', rotulo: 'Altura do modelo (m)', tipo: 'num', min: 0, max: 200 },
