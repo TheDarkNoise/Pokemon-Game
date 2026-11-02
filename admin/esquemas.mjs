@@ -83,7 +83,7 @@ export const ESQUEMAS = {
       { k: 'taxaShiny', rotulo: 'Wild shiny rate (1 in N)', tipo: 'num', min: 2, max: 1000000, int: true, ajuda: 'Default 4096. Lower means more shiny encounters.' },
       { k: 'tetoNivel', rotulo: 'Obedience cap by badges', tipo: 'numeros', tam: 9, min: 1, max: 100, int: true, ajuda: 'Maximum level that obeys with 0 through 8 badges. Default: 20, 26, 32, 38, 46, 52, 58, 62, 70.' },
       { k: 'desmaio', rotulo: 'Seconds fainted', tipo: 'num', min: 1, max: 120, int: true, ajuda: 'How long a wild Pokémon stays down (capture window). Default 8.' },
-      { k: 'maxBallsNoAr', rotulo: 'Balls in the air at once', tipo: 'num', min: 1, max: 20, int: true, ajuda: 'Padrão 4.' },
+      { k: 'maxBolasNoAr', rotulo: 'Balls in the air at once', tipo: 'num', min: 1, max: 20, int: true, ajuda: 'Padrão 4.' },
       { k: 'trocaCd', rotulo: 'Pokémon switch cooldown (s)', tipo: 'num', min: 0, max: 120, int: true, ajuda: 'Padrão 6.' },
       { k: 'chefeLv', rotulo: 'Test boss level (?chefe)', tipo: 'num', min: 1, max: 100, int: true, ajuda: 'Padrão 70.' },
       { k: 'nivelArea', rotulo: 'Wild Pokémon level by area', tipo: 'json', validar: faixaNivel, ajuda: 'Easier to edit in Habitats by Area (each area’s level is shown beside its species). Areas not listed here use the code default. Example: { "1201": [2, 5] }' },
@@ -105,7 +105,7 @@ export const ESQUEMAS = {
     ],
   },
   lojas: {
-    titulo: 'Shops', arquivo: 'menus_dados', caminho: 'lojas', forma: 'mapa', registroLista: true, usaItems: true, idValido: /^\d{1,9}$/, idAjuda: 'só números',
+    titulo: 'Shops', arquivo: 'menus_dados', caminho: 'lojas', forma: 'mapa', registroLista: true, usaItens: true, idValido: /^\d{1,9}$/, idAjuda: 'só números',
     descricao: 'What each shop sells: item, quantity per purchase, currency, price, and minimum level. The in-game Poké Mart is shop 2150101.',
     ajudaLista: 'a ordem aqui é a ordem na loja',
     colunas: [
@@ -193,7 +193,7 @@ export const ESQUEMAS = {
       { k: 'vitoria', rotulo: 'Dialogue when player wins', tipo: 'linhas', validar: listaDeTextos },
       { k: 'derrota', rotulo: 'Dialogue when player loses', tipo: 'linhas', validar: listaDeTextos },
       { k: 'cooldownMin', rotulo: 'Espera pra revanche (min)', tipo: 'numeros', min: 0, max: 100000, int: true },
-      { k: 'resetCurrencys', rotulo: 'Currencys pra zerar a espera', tipo: 'num', min: 0, max: 10000000, int: true },
+      { k: 'resetMoedas', rotulo: 'Currencys pra zerar a espera', tipo: 'num', min: 0, max: 10000000, int: true },
     ],
   },
   mochilas: {

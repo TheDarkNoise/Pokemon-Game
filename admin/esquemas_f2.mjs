@@ -148,10 +148,10 @@ function validarLearnset(d) {
 }
 
 const regraEvolucao = r => {
-  if (r.gatilho === 'item' && !r.item && !r.itemName) return 'usar item: diga qual item (ou só o nome, se ainda não existe no jogo)';
-  if (r.item === 0 && !r.itemName) return 'item que ainda não existe (0): escreva o nome dele, é o que o jogador lê';
-  if (r.segurando === 0 && !r.segurandoName) return 'item segurado que ainda não existe (0): escreva o nome dele';
-  if (r.golpe != null && !r.golpeName) return 'conhecer golpe: preencha também o nome do golpe (é o que o jogador lê)';
+  if (r.gatilho === 'item' && !r.item && !r.itemNome) return 'usar item: diga qual item (ou só o nome, se ainda não existe no jogo)';
+  if (r.item === 0 && !r.itemNome) return 'item que ainda não existe (0): escreva o nome dele, é o que o jogador lê';
+  if (r.segurando === 0 && !r.segurandoNome) return 'item segurado que ainda não existe (0): escreva o nome dele';
+  if (r.golpe != null && !r.golpeNome) return 'conhecer golpe: preencha também o nome do golpe (é o que o jogador lê)';
   return null;
 };
 
@@ -268,11 +268,11 @@ export const ESQUEMAS_F2 = {
       { k: 'amizade', rotulo: 'Minimum friendship', tipo: 'num', int: true, min: 0, max: 255, ajuda: '160 = high friendship (game default).' },
       { k: 'horario', rotulo: 'Time of day', tipo: 'opcao', opcoes: [{ v: 'dia', rotulo: 'Daytime only (06:00–17:59)' }, { v: 'noite', rotulo: 'Nighttime only' }] },
       { k: 'item', rotulo: 'Item used', tipo: 'num', int: true, min: 0, max: 999999999, item: true, ajuda: 'Stone, cord or trade item. 0 = not yet available (the player sees the name below).' },
-      { k: 'itemName', rotulo: 'Name do item usado', tipo: 'texto', max: 60 },
+      { k: 'itemNome', rotulo: 'Name do item usado', tipo: 'texto', max: 60 },
       { k: 'segurando', rotulo: 'Segurando o item', tipo: 'num', int: true, min: 0, max: 999999999, item: true, ajuda: '0 = not yet available in the game.' },
-      { k: 'segurandoName', rotulo: 'Name do item segurado', tipo: 'texto', max: 60 },
+      { k: 'segurandoNome', rotulo: 'Name do item segurado', tipo: 'texto', max: 60 },
       { k: 'golpe', rotulo: 'Conhecendo o golpe (id)', tipo: 'num', int: true, min: 1, max: 99999, ajuda: 'Pokédex move ID (dex_extra), e.g. 10246 = Ancient Power.' },
-      { k: 'golpeName', rotulo: 'Name do golpe', tipo: 'texto', max: 60 },
+      { k: 'golpeNome', rotulo: 'Name do golpe', tipo: 'texto', max: 60 },
       { k: 'tipoGolpe', rotulo: 'Conhecendo um golpe do tipo', tipo: 'opcao', opcoes: OPC_TIPOS },
       { k: 'noTime', rotulo: 'With this Pokémon in the party (number)', tipo: 'num', int: true, min: 1, max: 2000 },
       { k: 'tipoNoTime', rotulo: 'With a Pokémon of this type in the party', tipo: 'opcao', opcoes: OPC_TIPOS },
