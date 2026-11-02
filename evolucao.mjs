@@ -29,7 +29,7 @@ export const ehItemDeEvolucao = id => !!D?.itens?.[id];
 export const nomeItem = id => D?.itens?.[id]?.n || ('item ' + id);
 /** Dia 6h–17h59, noite 18h–5h59 (relógio do aparelho — Espeon de dia, Umbreon à noite). */
 export const horario = (d = new Date()) => { const h = d.getHours(); return (h >= 18 || h < 6) ? 'noite' : 'dia'; };
-const TIPOS_PT = { Normal: 'Normal', Fighting: 'Lutador', Flying: 'Voador', Poison: 'Veneno', Ground: 'Terra', Rock: 'Pedra', Bug: 'Inseto', Ghost: 'Fantasma', Steel: 'Aço', Fire: 'Fogo', Water: 'Água', Grass: 'Planta', Electric: 'Elétrico', Psychic: 'Psíquico', Ice: 'Gelo', Dragon: 'Dragão', Dark: 'Sombrio', Fairy: 'Fada' };
+const TIPOS_PT = { Normal: 'Normal', Fighting: 'Fighting', Flying: 'Flying', Poison: 'Poison', Ground: 'Ground', Rock: 'Rock', Bug: 'Bug', Ghost: 'Ghost', Steel: 'Steel', Fire: 'Fire', Water: 'Water', Grass: 'Grass', Electric: 'Electric', Psychic: 'Psychic', Ice: 'Ice', Dragon: 'Dragon', Dark: 'Dark', Fairy: 'Fairy' };
 
 /* ------------------------------------------------------------------ XP */
 const curva = dex => X?.curvas?.[X?.especies?.[dex]?.c || 'medium'] || [];
@@ -49,25 +49,25 @@ export const AMIZADE_EVOLUI = 160;
 /** Avalia uma regra pro Pokémon m ({ dex, lv, amizade }) com o contexto do jogo. Devolve { pode, falta, consome }. */
 export function avaliar(r, m, ctx = {}){
   const lv = m.lv || 1, amizade = m.amizade ?? amizadeBase(m.dex), tem = id => (ctx.itens?.[id] || 0) > 0;
-  if (r.gatilho === 'outro' || r.local || r.chuva || r.beleza) return { pode: false, falta: 'não dá por aqui (' + r.texto + ')', consome: null };
+  if (r.gatilho === 'outro' || r.local || r.chuva || r.beleza) return { pode: false, falta: 'not possible here (' + r.texto + ')', consome: null };
   if (r.gatilho === 'item' || r.gatilho === 'troca'){
-    if (!r.item) return { pode: false, falta: 'precisa de ' + r.itemNome + ' (não existe no jogo ainda)', consome: null };
-    return tem(r.item) ? { pode: true, falta: '', consome: r.item } : { pode: false, falta: 'falta ' + nomeItem(r.item) + ' na mochila (Pokémart)', consome: null };
+    if (!r.item) return { pode: false, falta: 'requires ' + r.itemNome + ' (not in the game yet)', consome: null };
+    return tem(r.item) ? { pode: true, falta: '', consome: r.item } : { pode: false, falta: 'missing ' + nomeItem(r.item) + ' in your bag (Poké Mart)', consome: null };
   }
-  if (r.gatilho === 'muda') return { pode: false, falta: 'vem junto com a outra evolução', consome: null, muda: true };
+  if (r.gatilho === 'muda') return { pode: false, falta: 'appears alongside the other evolution', consome: null, muda: true };
   const faltas = []; let consome = null;
-  if (r.nivel && lv < r.nivel) faltas.push(`Lv ${r.nivel} (está no ${lv})`);
-  if (r.amizade && amizade < r.amizade) faltas.push(`amizade ${r.amizade} (está em ${amizade})`);
-  if (r.horario && r.horario !== horario()) faltas.push(r.horario === 'dia' ? 'só de dia' : 'só à noite');
+  if (r.nivel && lv < r.nivel) faltas.push(`Lv ${r.nivel} (currently ${lv})`);
+  if (r.amizade && amizade < r.amizade) faltas.push(`friendship ${r.amizade} (currently ${amizade})`);
+  if (r.horario && r.horario !== horario()) faltas.push(r.horario === 'dia' ? 'daytime only' : 'nighttime only');
   if ('segurando' in r){
-    if (!r.segurando) faltas.push('precisa de ' + r.segurandoNome + ' (não existe no jogo ainda)');
-    else if (!tem(r.segurando)) faltas.push('falta ' + nomeItem(r.segurando) + ' na mochila');
+    if (!r.segurando) faltas.push('requires ' + r.segurandoNome + ' (not in the game yet)');
+    else if (!tem(r.segurando)) faltas.push('missing ' + nomeItem(r.segurando) + ' in your bag');
     else consome = r.segurando;
   }
-  if (r.golpe && !ctx.conhece?.(m.dex, lv)?.has(r.golpe)) faltas.push('precisa conhecer ' + r.golpeNome);
-  if (r.tipoGolpe && !ctx.tiposConhecidos?.(m.dex, lv)?.has(r.tipoGolpe)) faltas.push('precisa conhecer um golpe do tipo ' + (TIPOS_PT[r.tipoGolpe] || r.tipoGolpe));
-  if (r.noTime && !(ctx.time || []).some(t => t.dex === r.noTime)) faltas.push('precisa de outro Pokémon específico no time');
-  if (r.tipoNoTime && !(ctx.time || []).some(t => t.dex !== m.dex && (ctx.tiposDe?.(t.dex) || []).includes(r.tipoNoTime))) faltas.push('precisa de um Pokémon do tipo ' + (TIPOS_PT[r.tipoNoTime] || r.tipoNoTime) + ' no time');
+  if (r.golpe && !ctx.conhece?.(m.dex, lv)?.has(r.golpe)) faltas.push('must know ' + r.golpeNome);
+  if (r.tipoGolpe && !ctx.tiposConhecidos?.(m.dex, lv)?.has(r.tipoGolpe)) faltas.push('must know a move of type ' + (TIPOS_PT[r.tipoGolpe] || r.tipoGolpe));
+  if (r.noTime && !(ctx.time || []).some(t => t.dex === r.noTime)) faltas.push('requires a specific other Pokémon in the party');
+  if (r.tipoNoTime && !(ctx.time || []).some(t => t.dex !== m.dex && (ctx.tiposDe?.(t.dex) || []).includes(r.tipoNoTime))) faltas.push('requires a Pokémon of type ' + (TIPOS_PT[r.tipoNoTime] || r.tipoNoTime) + ' in the party');
   return { pode: !faltas.length, falta: faltas.join(' · '), consome };
 }
 /** Todas as regras da espécie avaliadas: [{ regra, pode, falta, consome, muda }]. Quem tem modelo é o chamador que decide. */

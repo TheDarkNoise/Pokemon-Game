@@ -27,14 +27,14 @@ import * as Tinta from './tinta.mjs';
 export const SKINS = [
   { id: 'ash',      sexo: 'menino', nome: 'Ash',               glb: 'Male_XiaoZhi', desc: 'Conjunto Ash (Fashion 52001)' },
   { id: 'boy_012',  sexo: 'menino', nome: 'Casaco do Pikachu', glb: 'Boy_012',      desc: 'Fashion 52004' },
-  { id: 'boy_025',  sexo: 'menino', nome: 'Coração de Ouro',   glb: 'Boy_025',      desc: 'Fashion 52017 (HeartGold)' },
-  { id: 'heroi',    sexo: 'menino', nome: 'Herói',             glb: 'Boy_002',      tinta: 'heroi',   desc: 'cores livres: pele, cabelo, roupa, olhos' },
-  { id: 'boy_030',  sexo: 'menino', nome: 'Chapéu de Palha',   glb: 'Boy_030',      desc: 'Fashion 52021 · o do Luffy' },
+  { id: 'boy_025',  sexo: 'menino', nome: 'Heart of Gold',   glb: 'Boy_025',      desc: 'Fashion 52017 (HeartGold)' },
+  { id: 'heroi',    sexo: 'menino', nome: 'Hero',             glb: 'Boy_002',      tinta: 'heroi',   desc: 'cores livres: pele, cabelo, roupa, olhos' },
+  { id: 'boy_030',  sexo: 'menino', nome: 'Straw Hat',   glb: 'Boy_030',      desc: 'Fashion 52021 · o do Luffy' },
   { id: 'misty',    sexo: 'menina', nome: 'Misty',             glb: 'Girl_001',     tinta: 'misty',   desc: 'Fashion 53001 · cabelo e olhos à escolha' },
   { id: 'girl_012', sexo: 'menina', nome: 'Casaco do Pikachu', glb: 'Girl_012',     desc: 'Fashion 53004' },
   { id: 'girl_025', sexo: 'menina', nome: 'Alma de Prata',     glb: 'Girl_025',     desc: 'Fashion 53017 (SoulSilver)' },
-  { id: 'heroina',  sexo: 'menina', nome: 'Heroína',           glb: 'Girl_002',     tinta: 'heroina', desc: 'cores livres: pele, cabelo, vestido, olhos' },
-  { id: 'girl_030', sexo: 'menina', nome: 'Chapéu de Palha',   glb: 'Girl_030',     desc: 'Fashion 53021 · o do Luffy' },
+  { id: 'heroina',  sexo: 'menina', nome: 'Heroine',           glb: 'Girl_002',     tinta: 'heroina', desc: 'cores livres: pele, cabelo, vestido, olhos' },
+  { id: 'girl_030', sexo: 'menina', nome: 'Straw Hat',   glb: 'Girl_030',     desc: 'Fashion 53021 · o do Luffy' },
 ];
 /* O GUARDA-ROUPA: as outras roupas do dump já exportadas (data/skins_treinador.json com `glbOk`, por
    tools/skins_treinador_ok.mjs) entram como skins de visual fixo (02/09): id = prefab em minúsculas (boy_013…), sem tinta.
@@ -58,8 +58,8 @@ export const PADRAO = {
 };
 /* o que cada canal da máscara pinta (sonda de cor de 30/08): branco = fica como a textura */
 export const ROTULOS = {
-  heroi:   { pele: 'pele', cabelo: 'cabelo', roupa: 'boné e camisa', roupa2: 'jaqueta e calça (tom)', olhos: 'olhos' },
-  heroina: { pele: 'pele', cabelo: 'cabelo', roupa: 'vestido', roupa2: 'chapéu (tom)', olhos: 'olhos' },
+  heroi:   { pele: 'pele', cabelo: 'cabelo', roupa: 'cap and shirt', roupa2: 'jacket and trousers (hue)', olhos: 'olhos' },
+  heroina: { pele: 'pele', cabelo: 'cabelo', roupa: 'vestido', roupa2: 'hat (hue)', olhos: 'olhos' },
   misty:   { cabelo: 'cabelo', olhos: 'olhos' },
 };
 export const CANAIS = {
@@ -512,13 +512,13 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
   const coresPor = {}; for (const t of Object.keys(PADRAO)) coresPor[t] = coresDe(t, salvo);
   const nomeSalvo = String(lerLS('nome', '') || '');
   const root = document.createElement('div'); root.id = 'criar'; if (sobreJogo) root.classList.add('sobre-jogo');
-  root.innerHTML = `<div class="caixa">${cancelavel ? '<button type="button" class="x" aria-label="fechar">✕</button>' : ''}<h2>Seu treinador</h2>
-    <div class="sub">escolha quem você é e o seu nome${cancelavel ? '' : ' — dá pra mudar depois em Configurações → ✎ Personagem'}</div>
+  root.innerHTML = `<div class="caixa">${cancelavel ? '<button type="button" class="x" aria-label="fechar">✕</button>' : ''}<h2>Your trainer</h2>
+    <div class="sub">choose your appearance and name${cancelavel ? '' : ' — you can change this later in Settings → ✎ Character'}</div>
     <div class="sexos"><button type="button" data-sexo="menino">Menino</button><button type="button" data-sexo="menina">Menina</button></div>
     <div class="cartas"></div>
     <div class="cores" hidden></div>
-    <div class="nome"><label>nome <input type="text" maxlength="16" autocomplete="off" spellcheck="false" value="${esc(nomeSalvo)}"></label><small class="aviso-nome">aparece em cima da cabeça e no chat · 3 a 16 letras · não pode repetir o de outro treinador</small></div>
-    <div class="acoes">${cancelavel ? '<button type="button" class="cancela">Cancelar</button>' : ''}<button type="button" class="ok">${cancelavel ? 'Salvar' : 'Começar ▶'}</button></div></div>`;
+    <div class="nome"><label>nome <input type="text" maxlength="16" autocomplete="off" spellcheck="false" value="${esc(nomeSalvo)}"></label><small class="aviso-nome">shown above your head and in chat · 3 to 16 letters · must be unique</small></div>
+    <div class="acoes">${cancelavel ? '<button type="button" class="cancela">Cancel</button>' : ''}<button type="button" class="ok">${cancelavel ? 'Save' : 'Start ▶'}</button></div></div>`;
   document.body.appendChild(root);
   const caixa = root.querySelector('.caixa'), cartasEl = root.querySelector('.cartas'), coresEl = root.querySelector('.cores'), input = root.querySelector('.nome input');
   const P = criarPalco(caixa, t => coresPor[t]); caixa.appendChild(P.canvas);
@@ -533,7 +533,7 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
     const cores = coresPor[tinta], chaves = Object.keys(ROTULOS[tinta]);
     coresEl.hidden = false;
     coresEl.innerHTML = `<div class="t">✎ cores — ${esc(skin.nome)}</div>` + chaves.map(k => `<label class="cor"><span>${esc(ROTULOS[tinta][k])}</span><input type="color" data-k="${k}" value="${cores[k]}"><span class="presets">${(PRESETS[k] || []).map(h => `<i data-k="${k}" data-h="${h}" style="background:${h}"></i>`).join('')}</span></label>`).join('')
-      + '<button type="button" class="aleatorio">🎲 aleatório</button><button type="button" class="padrao">padrão do jogo</button>';
+      + '<button type="button" class="aleatorio">🎲 random</button><button type="button" class="padrao">game default</button>';
     const aplicar = () => { coresEl.querySelectorAll('input[type=color]').forEach(i => cores[i.dataset.k] = i.value); P.repintar(skin.id, tinta, cores); };
     coresEl.querySelectorAll('input[type=color]').forEach(i => i.oninput = aplicar);
     coresEl.querySelectorAll('.presets i').forEach(p => p.onclick = () => { coresEl.querySelector(`input[data-k="${p.dataset.k}"]`).value = p.dataset.h; aplicar(); clique(); });
@@ -574,7 +574,7 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
       ocupado = true; dizerNome('conferindo o nome…');
       let r = null; try { r = await reservarNome(nome); } catch (e){ r = { ok: false, erro: String(e?.message || e) }; }
       ocupado = false;
-      if (!r?.ok){ dizerNome(r?.erro || 'Esse nome não deu. Tente outro.'); input.focus(); input.select(); return; }
+      if (!r?.ok){ dizerNome(r?.erro || 'That name did not work. Try another.'); input.focus(); input.select(); return; }
       input.value = r.nome || nome;
     }
     if (fechado) return;

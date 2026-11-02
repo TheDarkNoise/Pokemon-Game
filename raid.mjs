@@ -125,7 +125,7 @@ function aoEstado(m){
     clearTimeout(timerFim); timerFim = null;
     carimbar(snap.id);
     if (!ctx.emArena()) ctx.ativarArena?.(snap.id);                      // entrou na arena sem o carimbo (F5 com o storage limpo, volta pela conta): liga o modo aqui
-    if (snap.fase === 'luta' && antes !== 'luta') avisar(antes && antes !== 'nenhuma' ? 'A raid começa!' : 'A raid já começou: ataque o ' + nomeChefe() + '!');
+    if (snap.fase === 'luta' && antes !== 'luta') avisar(antes && antes !== 'nenhuma' ? 'The raid begins!' : 'The raid has already begun: attack ' + nomeChefe() + '!');
     if (!temRegistro && snap.fase === 'luta' && snap.hp != null && snap.maxHp) chefe({ nome: snap.nome, lv: null, hp: snap.hp, maxHp: snap.maxHp });   // a barra aparece antes do corpo do Mew chegar
     return;
   }
@@ -175,7 +175,7 @@ function aoVoltar(m){
   clearTimeout(timerFim); timerFim = null; clearTimeout(timerIda); timerIda = null;
   chefe(null);
   if (!ctx.emArena() && String(ctx.mapa) !== ARENA) return;
-  ctx.irParaCena?.({ mapa: m.mapa || null, texto: 'Voltando pra onde você estava…' });
+  ctx.irParaCena?.({ mapa: m.mapa || null, texto: 'Returning to your previous location…' });
 }
 
 /* Resultado: a bolsa, as vidas e o save já foram aplicados pelo rede.mjs (como em toda mensagem do servidor); aqui é o aviso. */
@@ -187,15 +187,15 @@ function aoFim(m){
     if (p.mew) partes.push((p.mew.shiny ? '✨ ' : '') + (p.mew.nome || nomeChefe()) + (p.mew.lv ? ' Lv ' + p.mew.lv : ''));
     if (p.dinheiro) partes.push(p.dinheiro + ' ' + I18n.t('Moedas'));
     for (const [id, n] of Object.entries(p.itens || {})) if (n > 0) partes.push(I18n.t(ctx.nomeItem?.(id) || ('item ' + id)) + ' ×' + n);
-    texto = nomeChefe() + ' derrotado! Prêmio: ' + partes.join(', ') + '.';
+    texto = nomeChefe() + ' defeated! Reward: ' + partes.join(', ') + '.';
     try { ctx.Som?.tocar?.('ui/sound_pkmnget', { volume: 0.8, prio: true }); } catch {}
   } else if (m.venceu){
-    texto = nomeChefe() + ' derrotado! Você não causou dano: sem prêmio desta vez.';
+    texto = nomeChefe() + ' defeated! You dealt no damage: no reward this time.';
   } else {
     texto = 'A raid acabou: o ' + nomeChefe() + ' escapou.';
   }
   avisar(texto);
-  if (m.venceu && p?.mew?.shiny) ctx.Chat?.sistema?.('✨ O seu ' + (p.mew.nome || nomeChefe()) + ' é SHINY!');
+  if (m.venceu && p?.mew?.shiny) ctx.Chat?.sistema?.('✨ O seu ' + (p.mew.nome || nomeChefe()) + ' is SHINY!');
   if (p?.mew) ctx.Chat?.sistema?.('O ' + (p.mew.nome || nomeChefe()) + ' entrou no seu time (ou na caixa, se o time estiver cheio).');
-  if (ctx.emArena()) ctx.Chat?.sistema?.('Em instantes você volta pra onde estava.');
+  if (ctx.emArena()) ctx.Chat?.sistema?.('You will return to your previous location shortly.');
 }

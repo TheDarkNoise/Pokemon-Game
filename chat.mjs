@@ -30,7 +30,7 @@ export function instalar(c){
   if (!msgs.length) sistema('Chat: Local (seu mapa + tudo), Global, Trade, Help. Comandos: /g /t /h /l. Com o servidor no ar, os outros jogadores leem.');
 }
 function guardar(){ ctx?.gravarLS('chat', msgs.slice(-200)); }
-export function publicar(canal, txt, de = ctx?.nome || 'Você', cargo = undefined){
+export function publicar(canal, txt, de = ctx?.nome || 'You', cargo = undefined){
   if (!CANAIS[canal]) canal = 'local';
   /* CARGOS (09/09): [STAFF]/[MOD] na frente do nome, na cor do cargo. Quem fala aqui do lado de cá sou eu — o cargo vem do
      servidor (Conta); dos outros, vem junto da mensagem. */
@@ -92,7 +92,7 @@ export function montar(el, { compacto = false, aba: abaInicial = 'local' } = {})
     const tam = ctx?.lerLS?.('chat.tam', null);
     if (tam?.w) el.style.setProperty('--chat-w', tam.w + 'px');       // var CSS: o Hud.aplicar limpa width/height inline, mas não mexe em custom properties
     if (tam?.h) el.style.setProperty('--chat-h', tam.h + 'px');
-    const grip = document.createElement('button'); grip.type = 'button'; grip.className = 'dim'; grip.title = 'arraste: tamanho do chat · duplo clique: padrão'; grip.textContent = '◢';
+    const grip = document.createElement('button'); grip.type = 'button'; grip.className = 'dim'; grip.title = 'drag: resize chat · double-click: default size'; grip.textContent = '◢';
     el.querySelector('.abas').appendChild(grip);
     let d0 = null;
     grip.addEventListener('pointerdown', ev => { ev.preventDefault(); ev.stopPropagation(); d0 = { x: ev.clientX, y: ev.clientY, w: el.offsetWidth, h: el.offsetHeight }; grip.setPointerCapture(ev.pointerId); });

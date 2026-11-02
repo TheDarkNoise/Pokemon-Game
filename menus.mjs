@@ -25,10 +25,10 @@ let ctx = null, D = null, aberta = null, abaAtual = null, carregandoD = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const semBr = s => String(s || '').replace(/<br\s*\/?>/gi, ' ');        // descrição do dump traz <br> escrito: no Figma o texto é puro (v2, rodada 28)
-const CAT_CURTA = { 'Itens transportados': 'Transportado', 'Máquina Técnica': 'MT', 'Chamando a Pedra': 'Pedra', 'Edifícios do Habitat': 'Habitat', 'Materiais do Habitat': 'Habitat', 'Comida do Habitat': 'Habitat', 'Sementes do Habitat': 'Habitat' };
+const CAT_CURTA = { 'Itens transportados': 'Held', 'Máquina Técnica': 'MT', 'Chamando a Pedra': 'Rock', 'Edifícios do Habitat': 'Habitat', 'Materiais do Habitat': 'Habitat', 'Comida do Habitat': 'Habitat', 'Sementes do Habitat': 'Habitat' };
 const catCurta = s => tr(CAT_CURTA[s] || s);                                  // o selo de categoria do detalhe do item (v2) é [max:12]
 export const JANELAS = {
-  pokemon:   { titulo: 'Pokémon', icone: 'pokebola', tecla: 'KeyP', sub: 'time e caixa' },
+  pokemon:   { titulo: 'Pokémon', icone: 'pokebola', tecla: 'KeyP', sub: 'party and storage' },
   mochila:   { titulo: 'Bag', icone: 'mochila', tecla: 'KeyI', sub: 'items and balls' },
   missoes:   { titulo: 'Quests', icone: 'missoes', tecla: 'KeyJ', sub: 'the journey through Kanto' },
   mapa:      { titulo: 'Map', icone: 'mapa', tecla: 'KeyK', sub: 'Kanto' },
@@ -170,8 +170,8 @@ let confirmarAprender = null;                                           // pop-u
 const chaveDe = e => (e?.uid != null ? 'u:' + e.uid : e.glb + '|' + e.lv + '|' + e.nome);
 const mesmoRegistro = (x, e) => (e?.uid != null ? String(x?.uid) === String(e.uid) : !!x && x.glb === e.glb && x.lv === e.lv && x.nome === e.nome);   /* 19/09: pelo uid primeiro — dois da mesma espécie e nível */   // `uid` da posse (servidor, 06/09): dois da mesma espécie e nível deixam de se confundir
 function botaoSoltar(chave, n, seguindo){
-  if (seguindo) return `<button type="button" class="btn" data-arr-nao="1" disabled title="switch partner before releasing">Soltar</button>`;
-  if (n <= 1) return `<button type="button" class="btn" data-arr-nao="1" disabled title="this is your only Pokémon">Soltar</button>`;
+  if (seguindo) return `<button type="button" class="btn" data-arr-nao="1" disabled title="switch partner before releasing">Release</button>`;
+  if (n <= 1) return `<button type="button" class="btn" data-arr-nao="1" disabled title="this is your only Pokémon">Release</button>`;
   return confirmarSoltar === chave
     ? `<button type="button" class="btn perigo" data-arr-nao="1" data-soltar="${esc(chave)}" title="cannot be undone">✔ Release permanently</button><button type="button" class="btn" data-arr-nao="1" data-soltar-nao="1">✖ Cancel</button>`
     : `<button type="button" class="btn" data-arr-nao="1" data-soltar-pede="${esc(chave)}" title="releases the Pokémon (asks for confirmation)">Release</button>`;
@@ -216,7 +216,7 @@ function fichaHtml(e){
   const stats = ctx.Ind ? ctx.Ind.statsDe(S, { ...e, lv }) : bs.map((b, i) => i === 0 ? ctx.R.hpAt(b, lv) : ctx.R.statAt(b, lv));   // IV + natureza do indivíduo
   const nat = ctx.Ind?.natureza(e.natureza), seta = i => !nat || nat[1] === nat[2] ? '' : i === nat[1] ? ' <span class="mais">▲</span>' : i === nat[2] ? ' <span class="menos">▼</span>' : '';
   const movs = e.movs?.length ? e.movs.map(m => ({ ...(ctx.golpe?.(m.id) || { nome: m.id, tipo: '' }), pp: m.pp, ppMax: m.ppMax })) : (ctx.golpesDe?.(e.dex) || []);   // golpes do indivíduo (PP) ou, sem registro, os da espécie
-  const golpes = movs.map(g => `<div class="linha" style="cursor:default"><span class="nome"><b>${esc(g.nome)}</b><small>poder ${g.poder ?? '—'} · recarga ${g.recarga ?? '—'}s${g.ppMax != null ? ' · PP ' + g.pp + '/' + g.ppMax : ''}</small></span>${tipoHtml(g.tipo)}</div>`).join('');
+  const golpes = movs.map(g => `<div class="linha" style="cursor:default"><span class="nome"><b>${esc(g.nome)}</b><small>power ${g.poder ?? '—'} · cooldown ${g.recarga ?? '—'}s${g.ppMax != null ? ' · PP ' + g.pp + '/' + g.ppMax : ''}</small></span>${tipoHtml(g.tipo)}</div>`).join('');
   const novo = e.aprender?.[0] ? (ctx.golpe?.(e.aprender[0]) || null) : null;
   const aprender = novo ? `<div class="evo-linha" style="margin-top:6px"><b>✧ wants to learn ${esc(novo.nome)}</b> <small>${esc(novo.tipo || '')} · power ${novo.poder ?? '—'} · PP ${ctx.Ind?.ppDe?.(novo.id) ?? '?'}</small><div style="margin-top:4px;font-size:12px">forget: ${movs.map((g, i) => `<button type="button" class="btn" data-aprender="${i}">${esc(g.nome)}</button>`).join(' ')} <button type="button" class="btn" data-aprender="-1">don't learn</button></div></div>` : '';
   // regras dos jogos originais (evolucao.mjs): cada evolução com o que falta / ✔ pronto
@@ -257,7 +257,7 @@ function rCaixa(corpo){
   const setas = (i, preso) => `<span class="arr-mini"><button type="button" class="btn" data-arr-nao="1" data-sobe="${i}" title="${esc(tr('move up one slot'))}">↑</button><button type="button" class="btn" data-arr-nao="1" data-desce="${i}" title="${esc(tr('move down one slot'))}">↓</button><button type="button" class="btn" data-arr-nao="1" ${preso ? `disabled title="${esc(tr(i === emCampo ? 'switch partner first' : 'this is your only Pokémon'))}"` : `data-guardar="${i}" title="${esc(tr('send to storage'))}"`}>→ ${esc(tr('storage'))}</button></span>`;
   const linhasT = time.map((e, i) => { const preso = i === emCampo || time.length <= 1;
     return linhaPk(e, i === emCampo ? ' <small>· ' + esc(tr('em campo')) + '</small>' : (e.hp === 0 ? ' <small style="color:#f58e8e">· ' + esc(tr('desmaiado')) + '</small>' : ''), setas(i, preso), preso); }).join('');
-  const linhasC = caixa.map((e, i) => linhaPk(e, '', `<button type="button" class="btn" data-arr-nao="1" data-trazer="${i}" ${time.length >= 6 ? `disabled title="${esc(tr('o time está cheio — arraste pra cima de um do time pra trocar'))}"` : ''}>${esc(tr('Move to team'))}</button>${botaoSoltar(chaveDe(e), 2, false)}`, false)).join('');
+  const linhasC = caixa.map((e, i) => linhaPk(e, '', `<button type="button" class="btn" data-arr-nao="1" data-trazer="${i}" ${time.length >= 6 ? `disabled title="${esc(tr('the party is full — drag onto a party member to swap'))}"` : ''}>${esc(tr('Move to team'))}</button>${botaoSoltar(chaveDe(e), 2, false)}`, false)).join('');
   corpo.innerHTML = `<div class="dois arr-dois">
     <div class="arr-col"><div class="arr-titulo">${esc(tr('Team'))} <small>${time.length}/6</small></div>
       <div class="arr-dica">${esc(tr('arraste pra mudar a ordem — no celular, segure o dedo pra pegar'))}</div>
@@ -284,7 +284,7 @@ function rPokemon(corpo){
   const aba = abas([{ id: 'time', nome: 'Time' }, { id: 'caixa', nome: 'Caixa' }]);
   if (aba === 'caixa'){ rCaixa(corpo); return; }
   const lista = timeAtual();
-  if (!lista.length){ corpo.innerHTML = '<div class="vazio">Sem Pokémon ainda — escolha o inicial no laboratório do Oak.</div>'; return; }
+  if (!lista.length){ corpo.innerHTML = '<div class="vazio">No Pokémon yet — choose a starter at Oak’s lab.</div>'; return; }
   if (selPokemon >= lista.length) selPokemon = 0;
   const e = lista[selPokemon];
   corpo.innerHTML = `<div class="dois"><div class="lista">${lista.map((p, i) => `<div class="linha ${i === selPokemon ? 'on' : ''}" data-i="${i}"><span class="nome"><b>${p.shiny ? '✨ ' : ''}${esc(p.nome)}${p.sexo === 'm' ? ' <small class="sexo m">♂</small>' : p.sexo === 'f' ? ' <small class="sexo f">♀</small>' : ''}${p.seguindo ? ' <small>· seguindo</small>' : ''}${p.hp === 0 ? ' <small style="color:#f58e8e">· fainted</small>' : ''}</b><small>Lv ${p.lv} · Nº ${String(p.dex).padStart(3, '0')}</small><div class="hp"><b style="width:${p.maxHp ? Math.round(100 * p.hp / p.maxHp) : 100}%"></b></div></span>${(ctx.porDex.get(p.dex)?.types || []).map(tipoHtml).join('')}</div>`).join('')}${'<div class="linha vazia"></div>'.repeat(Math.max(0, 6 - lista.length))}
@@ -299,7 +299,7 @@ function rPokemon(corpo){
   ligarSoltar(corpo, 'time');
   corpo.querySelector('#p-caixa')?.addEventListener('click', () => { const t = ctx.jogo.time || []; const k = t.findIndex(x => mesmoRegistro(x, e)); if (k < 0) return; const [saiu] = t.splice(k, 1); ctx.gravarLS('time', t); const cx = ctx.lerLS('caixa', []); cx.push(saiu); ctx.gravarLS('caixa', cx); ctx.atualizarSeguidorPainel?.(); selPokemon = 0; render(); });
 }
-let escolhaEvo = null;                                                   // resposta pendente da caixa "Para qual evolução?" (null = caixa fechada); o `tecla()` lê daqui
+let escolhaEvo = null;                                                   // resposta pendente da caixa "Which evolution?" (null = caixa fechada); o `tecla()` lê daqui
 /* ESCOLHER PARA QUEM EVOLUIR (20/09, chaospider no #bugs "Evolução Eevee": "se eu for direto para a aba do pokémon, ele só
    estava me dando a opção de evoluir para a Vaporeon, sem me dar opção de qualquer outra, mesmo eu tendo a pedra evolutiva
    disponível"). A janela nova (e o ✧ da grade do HUD) tem UM botão de evoluir e ele pegava sempre a primeira regra da espécie
@@ -324,7 +324,7 @@ export function escolherEvolucao(e, ops){
     fundo.appendChild(d);
     const tit = document.createElement('div');
     Object.assign(tit.style, { font: '800 18px \'Baloo 2\', system-ui', color: '#F8C237', textAlign: 'center' });
-    tit.textContent = tr('Para qual evolução?');
+    tit.textContent = tr('Which evolution?');
     const sub = document.createElement('div');
     Object.assign(sub.style, { textAlign: 'center', lineHeight: '1.3' });
     sub.textContent = (e?.nome || 'This Pokémon') + ' ' + tr('can evolve in more than one way. Choose:');
@@ -393,7 +393,7 @@ const iconeMonU = dex => './ui/mon/pm' + String(dex).padStart(4, '0') + '.png';
 let reaprenderAberto = false;
 function reaprenderHtml(e){                                              // janela antiga
   const lista = ctx.golpesReaprender?.(e) || []; if (!lista.length) return '';
-  return `<details class="reaprender" style="margin-top:6px"><summary data-reaprender="1" style="cursor:pointer;font-size:12px">↻ ${esc(tr('Relearn move'))} (${lista.length})</summary><div style="margin-top:4px;font-size:12px">${lista.map(g => `<button type="button" class="btn" data-reaprender-id="${esc(g.id)}" title="Lv ${g.lv} · ${esc(g.tipo || '')} · poder ${g.poder ?? '—'}">${esc(g.nome)} <small>Lv ${g.lv}</small></button>`).join(' ')}</div></details>`;
+  return `<details class="reaprender" style="margin-top:6px"><summary data-reaprender="1" style="cursor:pointer;font-size:12px">↻ ${esc(tr('Relearn move'))} (${lista.length})</summary><div style="margin-top:4px;font-size:12px">${lista.map(g => `<button type="button" class="btn" data-reaprender-id="${esc(g.id)}" title="Lv ${g.lv} · ${esc(g.tipo || '')} · power ${g.poder ?? '—'}">${esc(g.nome)} <small>Lv ${g.lv}</small></button>`).join(' ')}</div></details>`;
 }
 function montarReaprender(pop){
   const f = Popup.grupo(pop, 'ficha'); if (!f || f.querySelector('.gp-reaprender-btn')) return;
@@ -430,7 +430,7 @@ function atualizarReaprender(pop, e){
   if (!reaprenderAberto) return;
   const btn = 'display:inline-block;margin:3px 4px 3px 0;padding:3px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font:inherit;cursor:pointer';
   l.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><b>↻ ' + esc(tr('Relearn')) + '</b><small style="opacity:.8;margin:0 6px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(tr('click the move you want back')) + '</small><button type="button" data-reaprender-fechar="1" style="' + btn + ';margin:0;padding:1px 7px">✕</button></div>'
-    + lista.map(g => '<button type="button" data-reaprender-id="' + esc(g.id) + '" style="' + btn + '" title="Lv ' + g.lv + ' · ' + esc(g.tipo || '') + ' · poder ' + (g.poder ?? '—') + '">' + esc(g.nome) + ' <small style="opacity:.75">Lv ' + g.lv + '</small></button>').join('');
+    + lista.map(g => '<button type="button" data-reaprender-id="' + esc(g.id) + '" style="' + btn + '" title="Lv ' + g.lv + ' · ' + esc(g.tipo || '') + ' · power ' + (g.poder ?? '—') + '">' + esc(g.nome) + ' <small style="opacity:.75">Lv ' + g.lv + '</small></button>').join('');
 }
 function acaoPokemon(nome){
   const lista = timeAtual(), e = lista[selPokemon]; if (!e) return;
@@ -545,7 +545,7 @@ function encherFichaPokemon(pop, e, lista){
     iconesTipo(pop, no, g?.tipo ? [g.tipo] : []);                         // v2 (17/09): ícone do tipo do golpe (card vazio: esconde o encaixe)
     if (!g || !no) continue;
     Popup.texto(pop, 'golpe-nome', g.nome, no);
-    Popup.texto(pop, 'golpe-info', 'poder ' + (g.poder ?? '—') + ' · recarga ' + (g.recarga ?? '—') + 's' + (g.ppMax != null ? ' · PP ' + g.pp + '/' + g.ppMax : ''), no);
+    Popup.texto(pop, 'golpe-info', 'power ' + (g.poder ?? '—') + ' · cooldown ' + (g.recarga ?? '—') + 's' + (g.ppMax != null ? ' · PP ' + g.pp + '/' + g.ppMax : ''), no);
     Popup.badge(pop, 'golpe-tipo', g.tipo && TIPO_FIG[g.tipo], g.tipo || null, no);
   }
   const novoId = e.aprender?.[0] || null, novo = novoId ? (ctx.golpe?.(novoId) || { nome: String(novoId) }) : null;
@@ -564,11 +564,11 @@ function encherFichaPokemon(pop, e, lista){
   const emBreve = ops.length ? null : todasEvo.find(o => !o.glb);
   const prontas = ops.filter(o => o.pode);                               // 20/09: TODAS as que já dão, não só a primeira (Eevee)
   const evoEl = Popup.texto(pop, 'evolucao', novo
-    ? '✧ quer aprender ' + novo.nome + ' — clique no golpe que vai esquecer, ou aqui pra não aprender'
+    ? '✧ wants to learn ' + novo.nome + ' — click the move to forget, or here to skip learning'
     : prontas.length > 1
       ? '→ pode evoluir para ' + prontas.map(o => o.nome).join(', ') + ' — clique em Evoluir e escolha'
       : ops.length
-        ? '→ ' + ops[0].nome + ': ' + ops[0].regra.texto + (pronta ? '' : ' - ' + (ops[0].falta || 'ainda não'))
+        ? '→ ' + ops[0].nome + ': ' + ops[0].regra.texto + (pronta ? '' : ' - ' + (ops[0].falta || 'not yet'))
         : emBreve ? '→ ' + emBreve.nome + ': ' + emBreve.regra.texto + ' (em breve)' : 'does not evolve', f);
   if (evoEl){ evoEl.style.pointerEvents = novo ? 'auto' : ''; evoEl.style.cursor = novo ? 'pointer' : ''; }
   Popup.botao(pop, 'evoluir', !!pronta && !!e.seguindo, prontas.length > 1 ? '✦ Evoluir (' + prontas.length + ' formas)' : pronta ? '✦ Evoluir → ' + pronta.nome : '✦ Evoluir');
@@ -588,12 +588,12 @@ function rMochila(corpo){
   const tiposPresentes = new Set(Object.keys(q).map(id => D.itens[id]?.t).filter(Boolean));
   const ordem = [7, 9, 3, 4, 1, 2, 5, 6, 8, 10, 11, 12, 13, 14, 15];
   const lista = ordem.filter(t => tiposPresentes.has(t)).map(t => ({ id: String(t), nome: tr(D.tipos[t] || ('tipo ' + t)) }));
-  const aba = abas(lista.length ? lista : [{ id: '7', nome: 'Pokébola' }]);
+  const aba = abas(lista.length ? lista : [{ id: '7', nome: 'Poké Ball' }]);
   const itens = Object.entries(q).filter(([id]) => String(D.itens[id]?.t) === aba && q[id] > 0);
   const av = avisoMo && Date.now() < avisoMo.ate ? avisoMo : null;         // 17/09: o motivo/resultado do "Usar no parceiro" aparece aqui, não atrás da janela
   const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))}</div>`
     + (av ? `<div class="aviso-uso" style="margin:-2px 0 8px;font-size:13px;font-weight:700;color:${av.ok ? '#8ef58e' : '#ffd23a'}">${esc(tr(av.texto))}</div>` : '');
-  if (!itens.length){ corpo.innerHTML = cab + '<div class="vazio">Nada aqui ainda. O Pokémart da cidade (fale com o vendedor) vende bolas e remédios; itens de missão chegam com as recompensas.</div>'; return; }
+  if (!itens.length){ corpo.innerHTML = cab + '<div class="vazio">Nothing here yet. The town Poké Mart sells balls and medicine (talk to the clerk); quest items come from rewards.</div>'; return; }
   corpo.innerHTML = cab + `<div class="grade-itens">${itens.map(([id, n]) => { const it = D.itens[id]; const bola = it.t === 7; const rem = it.t === 9; const evo = !bola && !rem && ctx.ehItemDeEvolucao?.(id); return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}${bola && String(ctx.jogo.bolaSel) === String(id) ? ' <small style="color:#ffe07a">(F)</small>' : ''}</b><small>${esc(tr(it.d || tr(D.tipos[it.t] || '')))}</small><div class="acoes">${bola ? `<button type="button" class="btn" data-bola="${id}">Usar no F</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : rem ? `<button type="button" class="btn" data-usar="${id}">Usar no parceiro</button><button type="button" class="btn" data-atalho="${id}" title="prende no primeiro atalho livre (5–8)">⚡ Atalho</button>` : evo ? `<button type="button" class="btn ouro" data-evoitem="${id}" title="evolui o parceiro se a regra dele usa este item">✧ Usar no parceiro</button>` : ''}</div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-bola]').forEach(b => b.onclick = () => { ctx.jogo.bolaSel = b.dataset.bola; ctx.gravarLS('bolaSel', ctx.jogo.bolaSel); render(); });
   corpo.querySelectorAll('[data-evoitem]').forEach(b => b.onclick = () => { fechar(); ctx.usarItemEvolucao?.(b.dataset.evoitem); });
@@ -753,7 +753,7 @@ function encherMochila(pop){
   if (det){
     Popup.texto(pop, 'item-nome', alvo ? tr(alvo.it.n || '') : '', det);
     Popup.texto(pop, 'item-categoria', alvo ? catCurta(D.tipos?.[alvo.it.t] || '') : '', det);
-    Popup.texto(pop, 'item-qtd', alvo ? tr('Você tem {n}').replace('{n}', alvo.n) : '', det);
+    Popup.texto(pop, 'item-qtd', alvo ? tr('You have {n}').replace('{n}', alvo.n) : '', det);
     Popup.texto(pop, 'item-descricao', alvo ? tr(semBr(alvo.it.d)) : '', det);
     const dica = Popup.no(pop, 'item-dica', det);
     if (dica && dica.dataset.corBase == null) dica.dataset.corBase = dica.style.color;
@@ -947,7 +947,7 @@ function encherTreinador(pop){
      posição na Pokédex). Fica a regra do shiny e, com conta, a posição de verdade. */
   const notaRk = pop.querySelector('[data-fig="nota-ranking"]');
   if (notaRk){ notaRk.textContent = tr('shiny 1/4.096 pra todos'); minhaPosicao().then(p => { if (p && p.especies?.pos && aberta === 'treinador' && Popup.aberto(pop)) notaRk.textContent = tr(p.especies.pos + 'º de ' + p.total + ' no ranking · shiny 1/4.096 pra todos'); /* 17/09: a frase inteira no tr() (padrão no ui_en/ui_es) */ }); }
-  Popup.texto(pop, 'obedecem', 'Obedecem até Lv ' + teto + ' · acima disso não obedecem golpes; cada insígnia sobe o teto (' + TETO_OBED.slice(0, 8).join('/') + ', Elite 100)');
+  Popup.texto(pop, 'obedecem', 'Obey up to Lv ' + teto + ' · above that, they disobey move commands; each badge raises the limit (' + TETO_OBED.slice(0, 8).join('/') + ', Elite 100)');
   // colecionador
   const K = ctx.conhecimento;
   if (K){
@@ -955,7 +955,7 @@ function encherTreinador(pop){
     Popup.texto(pop, 'col-kanto', r.pegosKanto + '/' + r.kantoAte + ' capturados (' + Math.round(r.pegosKanto / r.kantoAte * 100) + '%) · ' + r.vistosKanto + ' vistos');
     Popup.texto(pop, 'col-nacional', r.pegos + ' capturados · ' + r.vistos + ' vistos');
     Popup.texto(pop, 'col-shinies', '✨ ' + r.shinies);
-    Popup.texto(pop, 'col-conhecimento', r.mestres + ' espécie' + (r.mestres === 1 ? '' : 's') + ' em Mestre · ' + r.estudadas + ' em Estudado+ · ' + r.pontosTotal + ' pontos');
+    Popup.texto(pop, 'col-conhecimento', r.mestres + ' species' + (r.mestres === 1 ? '' : 's') + ' em Mestre · ' + r.estudadas + ' em Estudado+ · ' + r.pontosTotal + ' pontos');
     const slug = x => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     for (const g of pop.querySelectorAll('[data-fig^="conquista-"]')){
       const chave = g.dataset.fig.slice(10);
@@ -974,7 +974,7 @@ function popupMa(){
   if (popMa) return popMa;
   const def = defPopup('mapa'); if (new URLSearchParams(location.search).get('popup') === '0' || !def) return null;
   popMa = Popup.montar(def, {
-    acao: nome => { if (nome === 'trocar-regiao') Chat.sistema('Só Kanto por enquanto — outras regiões chegam depois.'); },
+    acao: nome => { if (nome === 'trocar-regiao') Chat.sistema('Only Kanto for now — other regions will arrive later.'); },
     /* ÁREA DO JOGADOR A CADA ABERTURA (17/09, chaospider: da Rota 4 pra Cerulean e de Cerulean pra Rota 24 o Mapa seguia na área velha até
        entrar e sair do Centro Pokémon). `areaMapa` é do módulo e só era recalculada quando estava null: a 1ª abertura prendia a área até a
        página recarregar (porta recarrega, por isso o Centro "consertava"). Zerando ao abrir, a janela nasce onde o jogador está; o clique
@@ -1015,7 +1015,7 @@ async function encherMapa(pop){
   if (aberta !== 'mapa' || !Popup.aberto(pop)) return;
   const nomes = { ...(pontosMapa.nomes || {}), ...(ctx.dados?.nomes || {}) };   // a cena recortada (pallet_rota1) só conhece as próprias áreas; os pontos trazem os nomes de Kanto
   if (areaMapa == null || !nomes[areaMapa]) areaMapa = areaDoJogador() ?? +Object.keys(pontosMapa.areas || {})[0];
-  const a = areaMapa, nome = ctx.nomeArea?.(a) || nomes[a] || ('área ' + a);   // 17/09: o mesmo nome do minimapa e do "Você chegou em" (os pontos diziam "Cidade Cerulean"/"Cidade Lavender", sem tradução no EN/ES)
+  const a = areaMapa, nome = ctx.nomeArea?.(a) || nomes[a] || ('area ' + a);   // 17/09: o mesmo nome do minimapa e do "Você chegou em" (os pontos diziam "Cidade Cerulean"/"Cidade Lavender", sem tradução no EN/ES)
   Popup.texto(pop, 'area-nome', nome);
   const proprios = mapaHabitats.areas?.[String(a)] || [];
   const lista = proprios.length ? proprios : (ehRota(a) ? mapaHabitats.generico || [] : []);
@@ -1092,19 +1092,19 @@ async function soAcao(nome, el){
     const inp = soInput(pop, 'dialogo-convite', 'campo-nome'); const para = (inp?.value || '').trim();
     if (!para){ Chat.sistema('Digite o nome exato do treinador.'); return; }
     const r = await soChamar('POST', '/social/pedido', { para });
-    if (r.ok){ Chat.sistema(r.dados.amigos ? '🤝 Você e ' + r.dados.nick + ' agora são amigos.' : '📨 Convite enviado pra ' + r.dados.nick + '.'); if (inp) inp.value = ''; Popup.mostrarExtra(pop, 'dialogo-convite', false); soCarregar(); }
+    if (r.ok){ Chat.sistema(r.dados.amigos ? '🤝 You and ' + r.dados.nick + ' are now friends.' : '📨 Convite enviado pra ' + r.dados.nick + '.'); if (inp) inp.value = ''; Popup.mostrarExtra(pop, 'dialogo-convite', false); soCarregar(); }
     else Chat.sistema('Convite: ' + r.erro);
   } else if (nome === 'aceitar' || nome === 'recusar'){
     const de = el?.closest?.('[data-fig^="solicitacao-"]')?.__de; if (!de) return;
     const r = await soChamar('POST', '/social/' + nome, { de });
-    if (r.ok) Chat.sistema(nome === 'aceitar' ? '🤝 Você e ' + (r.dados.nick || de) + ' agora são amigos.' : 'Convite recusado.'); else Chat.sistema('Social: ' + r.erro);
+    if (r.ok) Chat.sistema(nome === 'aceitar' ? '🤝 You and ' + (r.dados.nick || de) + ' are now friends.' : 'Convite recusado.'); else Chat.sistema('Social: ' + r.erro);
     await soCarregar(); encherSolicitacoes(pop);
   } else if (nome === 'mensagem'){
     Popup.mostrarExtra(pop, 'tooltip-amigo', false); if (soAmigoMenu) soAbrirConversa(soAmigoMenu.usuario);
   } else if (nome === 'convidar'){                                        // fase 4: convite de TROCA (o PvP ainda vem depois)
     Popup.mostrarExtra(pop, 'tooltip-amigo', false);
     if (!soAmigoMenu) return;
-    if (!ctx.trocar?.(soAmigoMenu.nick)) Chat.sistema('Pra trocar, vocês precisam estar na mesma área, um do lado do outro. (O desafio de batalha chega com o PvP.)');
+    if (!ctx.trocar?.(soAmigoMenu.nick)) Chat.sistema('To trade, you need to be next to each other in the same area. (Battle challenges will arrive with PvP.)');
   } else if (nome === 'desfazer-amizade'){
     Popup.mostrarExtra(pop, 'tooltip-amigo', false); if (!soAmigoMenu) return;
     const r = await soChamar('POST', '/social/remover', { usuario: soAmigoMenu.usuario });
@@ -1115,7 +1115,7 @@ async function soAcao(nome, el){
     if (!soConversa){ Chat.sistema('Escolha uma conversa ou abra pelo menu do amigo.'); return; }
     if (!texto) return;
     const r = await soChamar('POST', '/social/mensagem', { para: soConversa, texto });
-    if (r.ok){ if (inp) inp.value = ''; soMsgs.push({ de: soDados?.eu?.usuario, texto, hora: r.dados.hora, lida: true }); const nick = soDados?.amigos.find(a => a.usuario === soConversa)?.nick || soConversa; Chat.publicar('pm', texto, 'você → ' + nick); encherSocial(pop); soCarregar(); }
+    if (r.ok){ if (inp) inp.value = ''; soMsgs.push({ de: soDados?.eu?.usuario, texto, hora: r.dados.hora, lida: true }); const nick = soDados?.amigos.find(a => a.usuario === soConversa)?.nick || soConversa; Chat.publicar('pm', texto, 'you → ' + nick); encherSocial(pop); soCarregar(); }
     else Chat.sistema('Mensagem: ' + r.erro);
   }
 }
@@ -1129,13 +1129,13 @@ export function socialEvento(m){
   } else if (m.t === 'social'){
     const n = m.nick || m.de;
     if (m.tipo === 'pedido' || m.tipo === 'aceito') ctx.Som?.tocar?.('ui/sound_click', { volume: .5, prio: true });
-    Chat.sistema(m.tipo === 'pedido' ? '🤝 ' + n + ' quer ser seu amigo: Social → Solicitações.' : m.tipo === 'aceito' ? '🤝 ' + n + ' aceitou seu convite.' : n + ' desfez a amizade.');
+    Chat.sistema(m.tipo === 'pedido' ? '🤝 ' + n + ' wants to be your friend: Social → Requests.' : m.tipo === 'aceito' ? '🤝 ' + n + ' aceitou seu convite.' : n + ' desfez a amizade.');
     soCarregar();
   }
 }
 /* ---------------------------------------------------------------- Ranking de colecionador (servidor/ranking.mjs) */
 let rankingEu = null, rankingEuEm = 0;
-const NOMES_RANKING = { especies: 'espécies de Kanto', shinies: 'shinies', conhecimento: 'pontos de conhecimento' };
+const NOMES_RANKING = { especies: 'Kanto species', shinies: 'shinies', conhecimento: 'pontos de conhecimento' };
 async function pegarRanking(caminho, comToken = false){
   const base = ctx.conta?.baseUrl?.(); if (!base) return null;
   if (comToken) { const r = await ctx.conta.chamar('GET', caminho); return r.ok ? r.dados : null; }
@@ -1148,7 +1148,7 @@ export async function mostrarRanking(){
   Chat.sistema('🏆 Ranking de colecionadores (' + R.total + ' treinador' + (R.total === 1 ? '' : 'es') + '):');
   for (const [chave, nome] of Object.entries(NOMES_RANKING)){
     const l = (R.listas?.[chave] || []).slice(0, 5);
-    Chat.sistema('• ' + nome + ': ' + (l.length ? l.map(x => x.pos + 'º ' + x.nick + ' (' + x.valor + ')').join(' · ') : 'ninguém ainda'));
+    Chat.sistema('• ' + nome + ': ' + (l.length ? l.map(x => x.pos + 'º ' + x.nick + ' (' + x.valor + ')').join(' · ') : 'no one yet'));
   }
   return true;
 }
@@ -1164,9 +1164,9 @@ export async function enviarDm(nome, texto){
   if (!soLigado()){ Chat.sistema('Mensagem direta precisa de conta no servidor.'); return false; }
   if (!soDados){ const r = await soChamar('GET', '/social'); if (r.ok) soDados = r.dados; }
   const v = String(nome || '').toLowerCase(); const a = (soDados?.amigos || []).find(x => x.usuario === v || x.nick.toLowerCase() === v);
-  if (!a){ Chat.sistema('Não achei "' + nome + '" na sua lista de amigos (mensagem direta é só entre amigos).'); return false; }
+  if (!a){ Chat.sistema('Could not find "' + nome + '" in your friends list (direct messages are only available between friends).'); return false; }
   const r = await soChamar('POST', '/social/mensagem', { para: a.usuario, texto });
-  if (r.ok){ Chat.publicar('pm', texto, 'você → ' + a.nick); if (soConversa === a.usuario) soMsgs.push({ de: soDados.eu.usuario, texto, hora: r.dados.hora }); return true; }
+  if (r.ok){ Chat.publicar('pm', texto, 'you → ' + a.nick); if (soConversa === a.usuario) soMsgs.push({ de: soDados.eu.usuario, texto, hora: r.dados.hora }); return true; }
   Chat.sistema('Mensagem: ' + r.erro); return false;
 }
 function encherSolicitacoes(pop){
@@ -1182,7 +1182,7 @@ function encherSolicitacoes(pop){
   });
   let nota = sol.querySelector(':scope > .pf-nota');
   if (!nota){ nota = document.createElement('div'); nota.className = 'pf-nota'; Object.assign(nota.style, { position: 'absolute', left: '0', right: '0', top: '45%', textAlign: 'center', color: '#B8C2D9', font: '13px "Nunito Sans", system-ui, sans-serif', pointerEvents: 'none' }); sol.appendChild(nota); }
-  nota.textContent = P.length ? '' : 'Nenhum convite pendente.';
+  nota.textContent = P.length ? '' : 'No pending invitations.';
 }
 function encherMensagens(pop, mens){
   const D = soDados; const conv = D?.conversas || [];
@@ -1200,8 +1200,8 @@ function encherMensagens(pop, mens){
     let caixa = log.querySelector(':scope > .pf-dm-log');
     if (!caixa){ caixa = document.createElement('div'); caixa.className = 'pf-dm-log'; Object.assign(caixa.style, { position: 'absolute', inset: '0', overflowY: 'auto', padding: '10px 12px', color: '#E6ECFF', font: '13px/1.45 "Nunito Sans", system-ui, sans-serif', pointerEvents: 'auto', userSelect: 'text' }); log.appendChild(caixa); log.style.pointerEvents = 'auto'; }
     const eu = D?.eu?.usuario, nick = D?.amigos.find(a => a.usuario === soConversa)?.nick || conv.find(x => x.com === soConversa)?.nick || soConversa;
-    if (!soConversa) caixa.innerHTML = '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Escolha uma conversa ao lado, ou clique num amigo e peça "mensagem".</div>';
-    else caixa.innerHTML = soMsgs.length ? soMsgs.map(m => '<div><b style="color:' + (m.de === eu ? '#8ef58e' : '#F8C237') + '">' + esc(m.de === eu ? 'Você' : nick) + '</b> <small style="color:#7f8db0">' + new Date(m.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</small><br>' + esc(m.texto) + '</div>').join('') : '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Sem mensagens ainda. Diga oi pra ' + esc(nick) + '.</div>';
+    if (!soConversa) caixa.innerHTML = '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Choose a conversation on the left, or click a friend and select "message".</div>';
+    else caixa.innerHTML = soMsgs.length ? soMsgs.map(m => '<div><b style="color:' + (m.de === eu ? '#8ef58e' : '#F8C237') + '">' + esc(m.de === eu ? 'You' : nick) + '</b> <small style="color:#7f8db0">' + new Date(m.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</small><br>' + esc(m.texto) + '</div>').join('') : '<div style="color:#B8C2D9;text-align:center;margin-top:40%">Sem mensagens ainda. Diga oi pra ' + esc(nick) + '.</div>';
     caixa.scrollTop = caixa.scrollHeight;
   }
   const inp = soInput(pop, 'conteudo-mensagens', 'campo-mensagem');
@@ -1253,14 +1253,14 @@ function encherSocial(pop){
     const a = amigos[i]; c.style.display = a ? 'block' : 'none'; if (!a) return;
     c.__amigo = a; c.style.pointerEvents = 'auto'; c.style.cursor = 'pointer';
     Popup.texto(pop, 'amigo-nome', a.nick, c);
-    Popup.texto(pop, 'amigo-info', a.online ? 'Lv ' + (a.lv || 0) + (a.area ? ' · ' + a.area : ' · online') : 'offline' + (a.vistoEm ? ' há ' + tempoAtras(a.vistoEm) : ''), c);
+    Popup.texto(pop, 'amigo-info', a.online ? 'Lv ' + (a.lv || 0) + (a.area ? ' · ' + a.area : ' · online') : 'offline' + (a.vistoEm ? ' · last seen: ' + tempoAtras(a.vistoEm) : ''), c);
     Popup.imagem(pop, 'retrato', retrato(a.dex), c);
     const dot = c.querySelector('[data-fig="estado-online"]'); if (dot) dot.style.display = a.online ? 'block' : 'none';   // o quadradinho verde da maquete é "online"
   });
   if (!amigos.length && lista){
     let vazio = lista.querySelector(':scope > .pf-nota');
     if (!vazio){ vazio = document.createElement('div'); vazio.className = 'pf-nota'; Object.assign(vazio.style, { position: 'absolute', left: '0', right: '0', top: '40%', textAlign: 'center', color: '#B8C2D9', font: '13px "Nunito Sans", system-ui, sans-serif', pointerEvents: 'none' }); lista.appendChild(vazio); }
-    vazio.textContent = D.amigos.length ? 'Ninguém com esse nome.' : 'Sem amigos ainda. "Adicionar amigo" pede o nome exato do treinador.'; vazio.style.display = 'block';
+    vazio.textContent = D.amigos.length ? 'No one with that name.' : 'Sem amigos ainda. "Adicionar amigo" pede o nome exato do treinador.'; vazio.style.display = 'block';
   } else { const vazio = lista?.querySelector(':scope > .pf-nota'); if (vazio) vazio.style.display = 'none'; }
   // solicitações (contador no botão; o diálogo é preenchido quando abre)
   const n = D.pedidos.length;
@@ -1345,7 +1345,7 @@ async function encherPokedex(pop){
   Popup.texto(pop, 'especie-visto', '· ' + (st === 'pego' ? 'capturado' : st ? 'visto' : 'desconhecido'));
   bolinhas(Popup.grupo(pop, 'progresso-registro'), nv); Popup.texto(pop, 'nivel-nome', NOMES_NIVEL[nv]);
   const falta = K && nv < 5 ? K.falta(selDex).slice(0, 3) : [];
-  Popup.texto(pop, 'como-subir', nv >= 5 ? 'Nível máximo: você é Mestre desta espécie.' : (rv && rv.proximo != null ? rv.pontos + '/' + rv.proximo + ' pra ' + NOMES_NIVEL[nv + 1] + (falta.length ? ' — pra subir: ' + falta.join(', ') : '') : (st ? '' : 'Encontre este Pokémon pra abrir a ficha.')));
+  Popup.texto(pop, 'como-subir', nv >= 5 ? 'Maximum level: you are a Master of this species.' : (rv && rv.proximo != null ? rv.pontos + '/' + rv.proximo + ' pra ' + NOMES_NIVEL[nv + 1] + (falta.length ? ' — pra subir: ' + falta.join(', ') : '') : (st ? '' : 'Encounter this Pokémon to open its entry.')));
   const f = Popup.grupo(pop, 'ficha-especie');
   pilulasTipo(pop, Popup.grupo(pop, 'tipos-especie') || f, nv >= 1 ? (S?.types || []) : []);
   // visor 3D nas duas caixas [do-jogo]
@@ -1363,9 +1363,9 @@ async function encherPokedex(pop){
   const alt = ctx.alturas?.[selDex] ?? X.a, peso = S?.kg ?? X.p;
   const linhas = [
     ['info-altura---peso', 2, alt || peso ? (alt ? alt.toFixed(1) + ' m' : '—') + ' · ' + (peso ? peso + ' kg' : '—') : '—'],
-    ['info-habilidades', 3, X.h?.length ? X.h.join(', ') + (X.ho ? (nv >= 4 ? ' (oculta: ' + X.ho + ')' : ' (oculta: abre no nível 4)') : '') : '—'],
-    ['info-g-nero', 4, X.m != null ? (X.m < 0 ? 'sem gênero' : '♂ ' + X.m + '% · ♀ ' + X.f + '%') : '—'],
-    ['info-taxa-de-captura', 3, (S?.rate ?? X.c ?? '—') + ' · ' + (chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1) + '% com HP cheio e Pokébola'],
+    ['info-habilidades', 3, X.h?.length ? X.h.join(', ') + (X.ho ? (nv >= 4 ? ' (oculta: ' + X.ho + ')' : ' (hidden: unlocks at level 4)') : '') : '—'],
+    ['info-g-nero', 4, X.m != null ? (X.m < 0 ? 'genderless' : '♂ ' + X.m + '% · ♀ ' + X.f + '%') : '—'],
+    ['info-taxa-de-captura', 3, (S?.rate ?? X.c ?? '—') + ' · ' + (chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1) + '% at full HP with a Poké Ball'],
   ];
   for (const g of pop.querySelectorAll('[data-fig="tabela-infos"] > [data-fig^="info-"]')){
     const l = linhas.find(x => x[0] === g.dataset.fig) || linhas.find(x => g.dataset.fig.startsWith(x[0].slice(0, 9)));
@@ -1373,33 +1373,33 @@ async function encherPokedex(pop){
     if (!l){ continue; }
     const aberto = nv >= l[1];
     const cad = g.querySelector('[data-var="cadeado"]'); if (cad){ cad.style.display = aberto ? 'none' : 'block'; if (!aberto) arteExemplo(cad); }
-    const vl = Popup.texto(pop, 'info-valor', aberto ? l[2] : 'abre no nível ' + l[1] + ' (' + NOMES_NIVEL[l[1]] + ')', g);
+    const vl = Popup.texto(pop, 'info-valor', aberto ? l[2] : 'unlocks at level ' + l[1] + ' (' + NOMES_NIVEL[l[1]] + ')', g);
     if (vl) vl.style.color = aberto ? '#FFFFFF' : '#B8C2D9';
   }
   const noMapa = (ctx.jogo.selvagens || []).filter(s => s.dex === selDex && s.estado !== 'morto').length;
-  const onde = (() => { const hb = ctx.habitats; if (!hb) return []; const out = []; for (const [area, lista] of Object.entries(hb.areas || {})) if (lista.some(e => e.dex === selDex)) out.push(ctx.nomeArea?.(+area) || ctx.dados?.nomes?.[area] || ('área ' + area)); return out; })();
+  const onde = (() => { const hb = ctx.habitats; if (!hb) return []; const out = []; for (const [area, lista] of Object.entries(hb.areas || {})) if (lista.some(e => e.dex === selDex)) out.push(ctx.nomeArea?.(+area) || ctx.dados?.nomes?.[area] || ('area ' + area)); return out; })();
   Popup.rotulo(pop, 'rotulo-onde');
-  Popup.texto(pop, 'onde', nv >= 1 ? ((onde.length ? onde.join(', ') : 'não aparece no mato (só troca/evento)') + (noMapa ? ' · ' + noMapa + ' neste mapa agora' : '')) : '?');
+  Popup.texto(pop, 'onde', nv >= 1 ? ((onde.length ? onde.join(', ') : 'not found in the wild (trade/event only)') + (noMapa ? ' · ' + noMapa + ' neste mapa agora' : '')) : '?');
   const avS = Popup.grupo(pop, 'aviso-stats'), avG = Popup.grupo(pop, 'aviso-golpes');
   const cadeadoDe = g => { const c = g?.querySelector('[data-var="cadeado"]'); arteExemplo(c); if (c) c.style.display = 'block'; };
-  if (avS){ avS.style.display = nv < 2 ? 'block' : 'none'; cadeadoDe(avS); Popup.texto(pop, 'aviso', 'stats, evolução e fraquezas abrem no nível 2 (capture um)', avS); }
-  if (avG){ const golpes = (X.g || []).length, vistosG = (K?.registro(selDex)?.gl || []).length; avG.style.display = nv < 4 && golpes ? 'block' : 'none'; cadeadoDe(avG); Popup.texto(pop, 'aviso', 'golpes abrem vendo a espécie batalhar (' + vistosG + '/' + golpes + ' do learnset vistos; tudo no nível 4)', avG); }
+  if (avS){ avS.style.display = nv < 2 ? 'block' : 'none'; cadeadoDe(avS); Popup.texto(pop, 'aviso', 'stats, evolution and weaknesses unlock at level 2 (catch one)', avS); }
+  if (avG){ const golpes = (X.g || []).length, vistosG = (K?.registro(selDex)?.gl || []).length; avG.style.display = nv < 4 && golpes ? 'block' : 'none'; cadeadoDe(avG); Popup.texto(pop, 'aviso', 'moves unlock by watching the species battle (' + vistosG + '/' + golpes + ' learnset moves seen; all at level 4)', avG); }
 }
 
 /* ------------------------------------------------------------------ Missões */
 function rMissoes(corpo){
   abas([{ id: 'principal', nome: 'Principal' }]);
   const M = ctx.missoes;
-  if (!M?.pronto?.()){ corpo.innerHTML = '<div class="vazio">As missões ainda estão carregando…</div>'; return; }
+  if (!M?.pronto?.()){ corpo.innerHTML = '<div class="vazio">Quests are still loading…</div>'; return; }
   const caps = M.capitulos(), ativa = M.ativa(), idx = M.indicePasso(), prog = M.progresso();
   const nomeItem = id => tr(D.itens[id]?.n || ('item ' + id));
   const rec = r => [r?.dinheiro ? r.dinheiro + ' Moedas' : null, ...Object.entries(r?.itens || {}).map(([id, n]) => esc(nomeItem(id)) + ' ×' + n), r?.exp ? r.exp + ' XP' : null].filter(Boolean).join(' · ') || '—';
   const passoTxt = (p, i) => { const n = p.n || 0; const c = i === idx && n > 1 ? ' ' + Math.min(prog, n) + '/' + n : ''; return esc(p.texto) + c + (p.onde ? ' <small style="color:var(--muted)">(' + esc(p.onde) + ')</small>' : ''); };
-  const atual = ativa ? `<div class="missao-atual"><small style="color:var(--muted)">Capítulo ${ativa.capitulo} · ${esc(ativa.capNome)}</small><br><b>${esc(ativa.nome)}</b><br><span style="font-size:12px">${esc(ativa.des)}</span>
+  const atual = ativa ? `<div class="missao-atual"><small style="color:var(--muted)">Chapter ${ativa.capitulo} · ${esc(ativa.capNome)}</small><br><b>${esc(ativa.nome)}</b><br><span style="font-size:12px">${esc(ativa.des)}</span>
       <div style="margin-top:8px;font-size:13px;line-height:1.5">${ativa.passos.map((p, i) => `<div>${i < idx ? '✔' : i === idx ? '▶' : '○'} ${passoTxt(p, i)}</div>`).join('')}</div>
       <div style="margin-top:6px;font-size:12px;color:var(--muted)">recompensa: ${rec(ativa.recompensa)}</div></div>`
-    : '<div class="missao-atual"><b>Você concluiu tudo o que existe por enquanto.</b><br><span style="font-size:12px">Mais capítulos chegam nas próximas versões.</span></div>';
-  corpo.innerHTML = atual + caps.map(c => { const feitas = c.missoes.filter(m => m.estado === 'feita').length, aberta = c.missoes.some(m => m.estado === 'ativa'); return `<details ${aberta ? 'open' : ''} style="margin-top:8px"><summary style="cursor:pointer;color:${feitas === c.missoes.length ? 'var(--muted)' : '#ffe07a'}">${feitas === c.missoes.length ? '✅' : aberta ? '▶️' : '🔒'} Capítulo ${c.id} — ${esc(c.nome)} <small style="color:var(--muted)">${feitas}/${c.missoes.length}</small></summary><div class="lista">${c.missoes.map(m => `<div class="linha" style="cursor:default;${m.estado === 'travada' ? 'opacity:.55' : ''}"><span style="font-size:16px">${m.estado === 'feita' ? '✅' : m.estado === 'ativa' ? '▶️' : '🔒'}</span><span class="nome"><b>${esc(m.nome)}</b><small>${esc(m.des)} · recompensa: ${rec(m.recompensa)}</small></span></div>`).join('')}</div></details>`; }).join('');
+    : '<div class="missao-atual"><b>You have completed everything available for now.</b><br><span style="font-size:12px">More chapters will arrive in future versions.</span></div>';
+  corpo.innerHTML = atual + caps.map(c => { const feitas = c.missoes.filter(m => m.estado === 'feita').length, aberta = c.missoes.some(m => m.estado === 'ativa'); return `<details ${aberta ? 'open' : ''} style="margin-top:8px"><summary style="cursor:pointer;color:${feitas === c.missoes.length ? 'var(--muted)' : '#ffe07a'}">${feitas === c.missoes.length ? '✅' : aberta ? '▶️' : '🔒'} Chapter ${c.id} — ${esc(c.nome)} <small style="color:var(--muted)">${feitas}/${c.missoes.length}</small></summary><div class="lista">${c.missoes.map(m => `<div class="linha" style="cursor:default;${m.estado === 'travada' ? 'opacity:.55' : ''}"><span style="font-size:16px">${m.estado === 'feita' ? '✅' : m.estado === 'ativa' ? '▶️' : '🔒'}</span><span class="nome"><b>${esc(m.nome)}</b><small>${esc(m.des)} · recompensa: ${rec(m.recompensa)}</small></span></div>`).join('')}</div></details>`; }).join('');
 }
 
 /* ============================================================ pop-up Missões (maquete do Figma, rodada 10)
@@ -1464,9 +1464,9 @@ function encherMissoes(pop){
   if (!M?.pronto?.()) return;
   const ativa = M.ativa(), idx = M.indicePasso(), prog = M.progresso();
   const fa = Popup.grupo(pop, 'missao-ativa');
-  Popup.texto(pop, 'capitulo-local', ativa ? 'Capítulo ' + ativa.capitulo + ' · ' + ativa.capNome : '', fa);
-  Popup.texto(pop, 'missao-titulo', ativa ? ativa.nome : 'Você concluiu tudo o que existe por enquanto.', fa);
-  Popup.texto(pop, 'missao-descricao', ativa ? (ativa.des || '') : 'Mais capítulos chegam nas próximas versões.', fa);
+  Popup.texto(pop, 'capitulo-local', ativa ? 'Chapter ' + ativa.capitulo + ' · ' + ativa.capNome : '', fa);
+  Popup.texto(pop, 'missao-titulo', ativa ? ativa.nome : 'You have completed everything available for now.', fa);
+  Popup.texto(pop, 'missao-descricao', ativa ? (ativa.des || '') : 'More chapters will arrive in future versions.', fa);
   const passos = ativa?.passos || [];
   for (let i = 0; i < 4; i++){
     const g = Popup.grupo(pop, 'objetivo-' + (i + 1)); if (!g) continue;
@@ -1507,7 +1507,7 @@ function encherMissoes(pop){
     const est = feitas === c.missoes.length ? 'concluida' : c.missoes.some(m => m.estado === 'ativa') ? 'ativa' : 'bloqueada';
     const ic = Popup.no(pop, 'capitulo-estado', linha);
     if (ic){ const url = iconeEstado(pop, 'missao', est, 'objetivo-estado', ic); ic.style.backgroundImage = url ? 'url(' + url + ')' : 'none'; }
-    Popup.texto(pop, 'capitulo-nome', 'Capítulo ' + c.id + ' · ' + c.nome, linha);
+    Popup.texto(pop, 'capitulo-nome', 'Chapter ' + c.id + ' · ' + c.nome, linha);
     Popup.texto(pop, 'capitulo-progresso', feitas + '/' + c.missoes.length, linha);
     if (!aberto){ y += G.passoCap; return; }
     y += G.yGrupo;
@@ -1535,7 +1535,7 @@ function rMapa(corpo){
   abas([{ id: 'kanto', nome: 'Kanto' }]);
   const dd = ctx.dados, caixas = (dd.caixas || []).filter(c => c.sx > 0 && c.sz > 0);
   if (caixas.length < 2){ corpo.innerHTML = '<div class="vazio">Sem mapa nesta cena (interior). Saia pra rua pra ver Kanto.</div>'; return; }
-  corpo.innerHTML = `<div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1 1 560px;min-width:340px"><canvas class="mapa" width="1280" height="960" style="width:100%;border-radius:12px;cursor:pointer"></canvas><div id="m-legenda" style="color:var(--muted);font-size:12px;margin-top:6px">clique numa área pra ver os Pokémon dela</div></div><div id="m-card" style="flex:1 1 240px;min-width:230px"></div></div>`;
+  corpo.innerHTML = `<div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1 1 560px;min-width:340px"><canvas class="mapa" width="1280" height="960" style="width:100%;border-radius:12px;cursor:pointer"></canvas><div id="m-legenda" style="color:var(--muted);font-size:12px;margin-top:6px">click an area to see its Pokémon</div></div><div id="m-card" style="flex:1 1 240px;min-width:230px"></div></div>`;
   const cv = corpo.querySelector('canvas'), c = cv.getContext('2d');
   const fx = ctx.flipX();
   const xs = caixas.flatMap(b => [fx * b.x - b.sx / 2, fx * b.x + b.sx / 2]), zs = caixas.flatMap(b => [b.z - b.sz / 2, b.z + b.sz / 2]);
@@ -1562,7 +1562,7 @@ function rMapa(corpo){
     c.fillStyle = '#4d8fd6'; for (const t2 of dd.agua || []) c.fillRect(X(fx * t2.x), Z(t2.z), k, k);       // água
     c.fillStyle = '#3f8a2f'; for (const t2 of dd.grama || []) c.fillRect(X(fx * t2.x), Z(t2.z), k, k);      // grama alta
     for (const b of caixas){                                             // rótulos
-      const nome = dd.nomes?.[b.a] || ''; if (!nome || nome.startsWith('área')) continue;
+      const nome = dd.nomes?.[b.a] || ''; if (!nome || nome.startsWith('area')) continue;
       const cid = ehCidade(nome), rot = nome.replace('Cidade ', ''), cx2 = X(fx * b.x), cz2 = Z(b.z);
       c.font = (cid ? '600 19px' : '600 13px') + ' system-ui'; c.textAlign = 'center';
       if (cid){ const w = c.measureText(rot).width + 16; c.fillStyle = '#ffffffee'; c.beginPath(); c.roundRect(cx2 - w / 2, cz2 - 13, w, 26, 12); c.fill(); c.strokeStyle = '#444'; c.lineWidth = 1; c.stroke(); c.fillStyle = '#1a1a1a'; c.fillText(rot, cx2, cz2 + 5); }
@@ -1573,14 +1573,14 @@ function rMapa(corpo){
   };
   const cartao = async a => {
     mapaSel = a; desenhar();
-    const alvo = corpo.querySelector('#m-card'); const nome = dd.nomes?.[a] || ('área ' + a);
+    const alvo = corpo.querySelector('#m-card'); const nome = dd.nomes?.[a] || ('area ' + a);
     mapaHabitats ??= await fetch('./data/habitats.json').then(r => r.json()).catch(() => ({ areas: {}, generico: [] }));
     const proprios = mapaHabitats.areas?.[String(a)] || [];
     const lista = proprios.length ? proprios : (ehRota(a) ? mapaHabitats.generico || [] : []);
     const d = dexEstado();
     const linha = e => { const st = d[e.dex]; const visto = st === 'visto' || st === 'pego';
       return `<div class="m-poke ${visto ? '' : 'sombra'}"><img src="./ui/mon/pm${String(e.dex).padStart(4, '0')}.png" loading="lazy"><b>${visto ? esc(e.nome) : '???'}</b>${e.agua ? '<small>💧</small>' : ''}${st === 'pego' ? '<small class="pego">✔ pego</small>' : ''}</div>`; };
-    alvo.innerHTML = `<div class="ficha"><h3>${esc(nome)}</h3>${lista.length ? `<div style="color:var(--muted);font-size:11px;margin:4px 0 8px">${proprios.length ? 'Pokémon desta área' : 'Pokémon comuns da região'} — de perto eles entram na Pokédex</div><div class="m-grade">${lista.map(linha).join('')}</div>` : '<div class="vazio" style="padding:14px 6px">Sem Pokémon selvagens aqui.</div>'}</div>`;
+    alvo.innerHTML = `<div class="ficha"><h3>${esc(nome)}</h3>${lista.length ? `<div style="color:var(--muted);font-size:11px;margin:4px 0 8px">${proprios.length ? 'Pokémon in this area' : 'Common regional Pokémon'} — getting close registers them in the Pokédex</div><div class="m-grade">${lista.map(linha).join('')}</div>` : '<div class="vazio" style="padding:14px 6px">No wild Pokémon here.</div>'}</div>`;
   };
   cv.onclick = ev => {
     const r = cv.getBoundingClientRect();
@@ -1764,9 +1764,9 @@ function rPokedex(corpo){
   const todos = [...ctx.porDex.values()].filter(s => s.n >= a && s.n <= b);
   const vistos = todos.filter(s => d[s.n]).length, pegos = todos.filter(s => d[s.n] === 'pego').length;
   if (!sp.some(s => s.n === selDex)) selDex = (sp.find(s => d[s.n]) || sp[0])?.n || null;
-  corpo.innerHTML = `<div class="dois dex-dois"><div><div class="dex-topo"><input id="dex-busca" placeholder="buscar por nome ou número…" value="${esc(dexBusca)}" autocomplete="off"><span>👁 ${vistos} · ★ ${pegos} / ${todos.length}</span></div>
+  corpo.innerHTML = `<div class="dois dex-dois"><div><div class="dex-topo"><input id="dex-busca" placeholder="search by name or number…" value="${esc(dexBusca)}" autocomplete="off"><span>👁 ${vistos} · ★ ${pegos} / ${todos.length}</span></div>
     ${(() => { const K = ctx.conhecimento; if (!K) return ''; const r = K.resumo(); return `<div class="dex-colec"><b>Colecionador</b> Kanto ${r.pegosKanto}/${r.kantoAte} capturados (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} vistos · ✨ ${r.shinies} shiny · 📖 ${r.mestres} mestre${r.mestres === 1 ? '' : 's'}${r.tituloAtual ? ` · 🏅 ${esc(r.tituloAtual)}` : ''}</div>`; })()}
-    <div class="dex-lista">${sp.map(s => `<div class="dex ${d[s.n] === 'pego' ? 'pego' : d[s.n] ? 'visto' : ''} ${s.n === selDex ? 'on' : ''}" data-n="${s.n}"><span class="num">${String(s.n).padStart(3, '0')}</span><span class="nm">${d[s.n] ? esc(s.name) : '?????'}</span><span class="tp">${d[s.n] ? (s.types || []).map(tipoHtml).join('') : ''}</span>${(() => { const n = ctx.conhecimento?.nivel(s.n) ?? (d[s.n] === 'pego' ? 2 : d[s.n] ? 1 : 0); return n ? `<span class="pego-ic" title="conhecimento ${n}/5">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span>` : ''; })()}</div>`).join('') || '<div class="vazio">nada com esse nome nesta geração</div>'}</div></div><div class="ficha dex-ficha" id="dex-ficha"></div></div>`;
+    <div class="dex-lista">${sp.map(s => `<div class="dex ${d[s.n] === 'pego' ? 'pego' : d[s.n] ? 'visto' : ''} ${s.n === selDex ? 'on' : ''}" data-n="${s.n}"><span class="num">${String(s.n).padStart(3, '0')}</span><span class="nm">${d[s.n] ? esc(s.name) : '?????'}</span><span class="tp">${d[s.n] ? (s.types || []).map(tipoHtml).join('') : ''}</span>${(() => { const n = ctx.conhecimento?.nivel(s.n) ?? (d[s.n] === 'pego' ? 2 : d[s.n] ? 1 : 0); return n ? `<span class="pego-ic" title="conhecimento ${n}/5">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span>` : ''; })()}</div>`).join('') || '<div class="vazio">no matching name in this generation</div>'}</div></div><div class="ficha dex-ficha" id="dex-ficha"></div></div>`;
   const busca = corpo.querySelector('#dex-busca');
   busca.addEventListener('input', () => { dexBusca = busca.value; const pos = busca.selectionStart; render(); const b2 = $('j-corpo').querySelector('#dex-busca'); b2?.focus(); try { b2?.setSelectionRange(pos, pos); } catch {} });
   corpo.querySelectorAll('.dex').forEach(el => el.onclick = () => { selDex = +el.dataset.n; corpo.querySelectorAll('.dex').forEach(x => x.classList.toggle('on', x === el)); mostrarDex(); });
@@ -1784,8 +1784,8 @@ async function mostrarDex(){
   const cadeia = conhecido && S ? cadeiaEvolucao(selDex) : [];
   const golpes = (X.g || []).slice().sort((p, q) => p[0] - q[0]);
   const noMapa = (ctx.jogo.selvagens || []).filter(s => s.dex === selDex && s.estado !== 'morto').length;
-  const onde = (() => { const h = ctx.habitats; if (!h) return []; const out = []; for (const [area, lista] of Object.entries(h.areas || {})) if (lista.some(e => e.dex === selDex)) out.push(ctx.nomeArea?.(+area) || ctx.dados?.nomes?.[area] || ('área ' + area)); if ((h.generico || []).some(e => e.dex === selDex)) out.push('grama de qualquer rota'); return out; })();
-  const catMap = { 1: 'físico', 2: 'especial', 3: 'status' };
+  const onde = (() => { const h = ctx.habitats; if (!h) return []; const out = []; for (const [area, lista] of Object.entries(h.areas || {})) if (lista.some(e => e.dex === selDex)) out.push(ctx.nomeArea?.(+area) || ctx.dados?.nomes?.[area] || ('area ' + area)); if ((h.generico || []).some(e => e.dex === selDex)) out.push('grama de qualquer rota'); return out; })();
+  const catMap = { 1: 'physical', 2: 'especial', 3: 'status' };
   /* Pokédex de conhecimento: cada nível revela mais (1 tipos/onde · 2 stats, altura/peso, evolução, fraquezas · 3 taxa de
      captura, habilidades · 4 gênero, learnset completo, habilidade oculta · 5 Mestre). Sem o módulo: visto = 1, pego = 2. */
   const K = ctx.conhecimento, rv = K ? K.revela(selDex) : null;
@@ -1794,10 +1794,10 @@ async function mostrarDex(){
   const vistoGolpe = new Set(K?.registro(selDex)?.gl || []);
   const faltaLista = K && nv < 5 ? K.falta(selDex).slice(0, 4) : [];
   const golpesMostrar = nv >= 4 ? golpes : golpes.filter(([, id]) => vistoGolpe.has(id));
-  const trava = (n, txt) => `<td class="oculto">🔒 nível ${n} (${nomesNivel[n]})${txt ? ' · ' + txt : ''}</td>`;
-  const golpeHtml = ([lv, id]) => { const g = G[id]; return g ? `<div><span class="lv">${lv}</span><b>${esc(g[0])}</b>${tipoHtml(g[1])}<small>${catMap[g[2]] || ''} · poder ${g[3] || '—'} · PP ${g[4] || '—'}</small></div>` : ''; };
+  const trava = (n, txt) => `<td class="oculto">🔒 level ${n} (${nomesNivel[n]})${txt ? ' · ' + txt : ''}</td>`;
+  const golpeHtml = ([lv, id]) => { const g = G[id]; return g ? `<div><span class="lv">${lv}</span><b>${esc(g[0])}</b>${tipoHtml(g[1])}<small>${catMap[g[2]] || ''} · power ${g[3] || '—'} · PP ${g[4] || '—'}</small></div>` : ''; };
   f.innerHTML = `<h3>${nv >= 1 ? esc(S?.name) : '?????'} <small style="color:var(--muted)">Nº ${String(selDex).padStart(3, '0')} · ${st === 'pego' ? 'capturado' : st ? 'visto' : 'desconhecido'}</small></h3>
-    <div class="dex-nivel"><span class="pts" title="${rv ? rv.pontos + ' pontos de conhecimento' : ''}">${'●'.repeat(nv)}${'○'.repeat(5 - nv)}</span> <b>${nomesNivel[nv]}</b>${rv && rv.proximo != null ? ` <small>${rv.pontos}/${rv.proximo} pra ${nomesNivel[nv + 1]}</small>` : nv >= 5 ? ' <small>✨ você sabe tudo sobre a espécie</small>' : ''}${faltaLista.length ? `<div class="dex-falta">pra subir: ${faltaLista.map(esc).join(' · ')}</div>` : ''}</div>
+    <div class="dex-nivel"><span class="pts" title="${rv ? rv.pontos + ' pontos de conhecimento' : ''}">${'●'.repeat(nv)}${'○'.repeat(5 - nv)}</span> <b>${nomesNivel[nv]}</b>${rv && rv.proximo != null ? ` <small>${rv.pontos}/${rv.proximo} pra ${nomesNivel[nv + 1]}</small>` : nv >= 5 ? ' <small>✨ you know everything about this species</small>' : ''}${faltaLista.length ? `<div class="dex-falta">pra subir: ${faltaLista.map(esc).join(' · ')}</div>` : ''}</div>
     <div class="dex-visor"></div>
     <div class="dex-rotulos"><span>Normal</span><span id="dex-rotulo-shiny">✨ Shiny</span></div>
     <div style="color:var(--muted);font-size:11px;text-align:center">${glb ? 'arraste pra girar os dois' : 'sem modelo 3D exportado ainda'}</div>
@@ -1806,17 +1806,17 @@ async function mostrarDex(){
     ${(I18n.descricaoDex(selDex) || X.d) && nv >= 2 ? `<p class="dex-des">${esc(I18n.descricaoDex(selDex) || X.d)}</p>` : ''}
     <table class="stats dex-tab">
       <tr><td>altura / peso</td>${nv >= 2 ? `<td>${alt ? alt.toFixed(1) + ' m' : '—'} · ${peso ? peso + ' kg' : '—'}</td>` : trava(2, 'capture um')}</tr>
-      ${X.h?.length ? `<tr><td>habilidades</td>${nv >= 3 ? `<td>${X.h.map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(oculta: ${esc(X.ho)})</small>` : ' <small class="oculto">(oculta: 🔒 nível 4)</small>') : ''}</td>` : trava(3)}</tr>` : ''}
-      ${X.m != null ? `<tr><td>gênero</td>${nv >= 4 ? `<td>${X.m < 0 ? 'sem gênero' : `♂ ${X.m}% · ♀ ${X.f}%`}</td>` : trava(4)}</tr>` : ''}
-      <tr><td>taxa de captura</td>${nv >= 3 ? `<td>${S?.rate ?? X.c ?? '—'} · ${(chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1)}% com HP cheio e Pokébola (desmaiado: ${(chanceCaptura((S?.rate ?? 45) * 3) * 100).toFixed(0)}%)</td>` : trava(3, 'enfrente e capture mais')}</tr>
-      <tr><td>onde encontrar</td><td>${onde.length ? onde.map(esc).join(', ') : 'não aparece no mato (só troca/evento)'}${noMapa ? ` · <b>${noMapa} neste mapa agora</b>` : ''}</td></tr>
+      ${X.h?.length ? `<tr><td>habilidades</td>${nv >= 3 ? `<td>${X.h.map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(oculta: ${esc(X.ho)})</small>` : ' <small class="oculto">(oculta: 🔒 level 4)</small>') : ''}</td>` : trava(3)}</tr>` : ''}
+      ${X.m != null ? `<tr><td>gender</td>${nv >= 4 ? `<td>${X.m < 0 ? 'genderless' : `♂ ${X.m}% · ♀ ${X.f}%`}</td>` : trava(4)}</tr>` : ''}
+      <tr><td>taxa de captura</td>${nv >= 3 ? `<td>${S?.rate ?? X.c ?? '—'} · ${(chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1)}% at full HP with a Poké Ball (fainted: ${(chanceCaptura((S?.rate ?? 45) * 3) * 100).toFixed(0)}%)</td>` : trava(3, 'enfrente e capture mais')}</tr>
+      <tr><td>onde encontrar</td><td>${onde.length ? onde.map(esc).join(', ') : 'not found in the wild (trade/event only)'}${noMapa ? ` · <b>${noMapa} neste mapa agora</b>` : ''}</td></tr>
     </table>
     ${nv >= 2 ? `<div class="dex-stats">${bs.map((b, i) => `<span><small>${nomes[i]}</small>${b}</span>`).join('')}<span><small>total</small>${S?.bst || bs.reduce((x, y) => x + y, 0)}</span></div>
-    <div class="dex-secao">evolução</div><div class="dex-cadeia">${cadeia.map(({ s, prof }) => `<span class="${s.n === selDex ? 'on' : ''}" data-n="${s.n}" style="margin-left:${prof * 14}px">${prof ? '▸ ' : ''}${esc(s.name)}${(() => { const pre = cadeia.find(c => (c.s.evo || []).some(e => e.to === s.name)); const e = pre?.s.evo.find(e => e.to === s.name); return e ? ` <small>${e.lvl ? 'Nv. ' + e.lvl : ''}${e.cond ? ' ' + esc(e.cond) : ''}</small>` : ''; })()}</span>`).join('')}</div>
+    <div class="dex-secao">evolution</div><div class="dex-cadeia">${cadeia.map(({ s, prof }) => `<span class="${s.n === selDex ? 'on' : ''}" data-n="${s.n}" style="margin-left:${prof * 14}px">${prof ? '▸ ' : ''}${esc(s.name)}${(() => { const pre = cadeia.find(c => (c.s.evo || []).some(e => e.to === s.name)); const e = pre?.s.evo.find(e => e.to === s.name); return e ? ` <small>${e.lvl ? 'Nv. ' + e.lvl : ''}${e.cond ? ' ' + esc(e.cond) : ''}</small>` : ''; })()}</span>`).join('')}</div>
     <div class="dex-secao">fraco contra ${fr.fraco.length}</div><div>${fr.fraco.map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m}</span>`).join('') || '—'}</div>
-    <div class="dex-secao">resiste a ${fr.resiste.length + fr.imune.length}</div><div>${[...fr.resiste, ...fr.imune].map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m === 0 ? '0' : m === 0.25 ? '¼' : '½'}</span>`).join('') || '—'}</div>` : '<div class="dex-secao oculto">🔒 stats, evolução e fraquezas abrem no nível 2 (Registrado): capture um</div>'}
-    ${golpes.length ? (golpesMostrar.length ? `<div class="dex-secao">golpes por nível${nv < 4 ? ` <small>(${golpesMostrar.length}/${golpes.length} vistos · o learnset completo abre no nível 4)</small>` : ''}</div><div class="dex-golpes">${golpesMostrar.map(golpeHtml).join('')}</div>` : `<div class="dex-secao oculto">🔒 golpes: veja a espécie usar golpes em batalha (${golpes.length} no learnset; completo no nível 4)</div>`) : ''}`
-    : '<div style="color:var(--muted);font-size:12px;margin-top:8px">Encontre este Pokémon pra abrir a ficha.</div>'}`;
+    <div class="dex-secao">resiste a ${fr.resiste.length + fr.imune.length}</div><div>${[...fr.resiste, ...fr.imune].map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m === 0 ? '0' : m === 0.25 ? '¼' : '½'}</span>`).join('') || '—'}</div>` : '<div class="dex-secao oculto">🔒 stats, evolution and weaknesses unlock at level 2 (Registered): catch one</div>'}
+    ${golpes.length ? (golpesMostrar.length ? `<div class="dex-secao">moves by level${nv < 4 ? ` <small>(${golpesMostrar.length}/${golpes.length} vistos · o learnset completo unlocks at level 4)</small>` : ''}</div><div class="dex-golpes">${golpesMostrar.map(golpeHtml).join('')}</div>` : `<div class="dex-secao oculto">🔒 moves: watch the species use moves in battle (${golpes.length} in the learnset; complete at level 4)</div>`) : ''}`
+    : '<div style="color:var(--muted);font-size:12px;margin-top:8px">Encounter this Pokémon to open its entry.</div>'}`;
   f.querySelector('.dex-visor').appendChild(v.canvas);
   f.querySelectorAll('.dex-cadeia [data-n]').forEach(e => e.onclick = () => { selDex = +e.dataset.n; render(); });
   selDexGlb = glb;
@@ -1832,17 +1832,17 @@ function rTreinador(corpo){
   const t = ctx.lerLS('tempo', 0), h = Math.floor(t / 3600), mi = Math.floor((t % 3600) / 60);
   const d = dexEstado(); const pegos = Object.values(d).filter(v => v === 'pego').length, vistos = Object.keys(d).length;
   const ins = (D.insignias || []).filter(b => b.gen === 1); const tem = new Set(ctx.lerLS('insignias', []));
-  corpo.innerHTML = `<div class="dois"><div class="ficha"><h3>${esc(ctx.nome || 'Ash')}</h3><table class="stats"><tr><td>dinheiro</td><td>${dinheiro().toLocaleString('pt-BR')} ${esc(D.moedas?.[1] || '')}</td></tr><tr><td>tempo de jogo</td><td>${h}h ${String(mi).padStart(2, '0')}m</td></tr><tr><td>time</td><td>${timeAtual().length}/6 · caixa ${ctx.lerLS('caixa', []).length}</td></tr><tr><td>pokédex</td><td>${vistos} vistos · ${pegos} capturados</td></tr><tr><td>insígnias</td><td>${tem.size}/8</td></tr><tr><td>personagem</td><td>${esc(ctx.personagemNome?.() || 'Ash')}</td></tr><tr><td>inicial</td><td>${esc(ctx.lerLS('inicial', null)?.nome || '—')}</td></tr></table></div>
-    <div class="ficha"><h3>Insígnias de Kanto</h3><div class="insignias">${ins.map(b => `<div class="insignia ${tem.has(b.id) ? 'tem' : ''}" title="${esc(b.n)}">${esc(b.n.replace(/^medalha /i, ''))}</div>`).join('')}</div><div style="margin-top:6px;font-size:12px">Obedecem até <b style="color:#ffe07a">Lv ${tetoObed()}</b> <small style="color:var(--muted)">· acima disso ignoram ordens às vezes; cada insígnia sobe o teto em 10</small></div><small style="color:var(--muted)">os 8 ginásios entram com as batalhas contra treinadores</small></div></div>`;
+  corpo.innerHTML = `<div class="dois"><div class="ficha"><h3>${esc(ctx.nome || 'Ash')}</h3><table class="stats"><tr><td>dinheiro</td><td>${dinheiro().toLocaleString('pt-BR')} ${esc(D.moedas?.[1] || '')}</td></tr><tr><td>tempo de jogo</td><td>${h}h ${String(mi).padStart(2, '0')}m</td></tr><tr><td>time</td><td>${timeAtual().length}/6 · caixa ${ctx.lerLS('caixa', []).length}</td></tr><tr><td>pokédex</td><td>${vistos} vistos · ${pegos} caught</td></tr><tr><td>badges</td><td>${tem.size}/8</td></tr><tr><td>personagem</td><td>${esc(ctx.personagemNome?.() || 'Ash')}</td></tr><tr><td>inicial</td><td>${esc(ctx.lerLS('inicial', null)?.nome || '—')}</td></tr></table></div>
+    <div class="ficha"><h3>Kanto badges</h3><div class="insignias">${ins.map(b => `<div class="insignia ${tem.has(b.id) ? 'tem' : ''}" title="${esc(b.n)}">${esc(b.n.replace(/^medalha /i, ''))}</div>`).join('')}</div><div style="margin-top:6px;font-size:12px">Obey up to <b style="color:#ffe07a">Lv ${tetoObed()}</b> <small style="color:var(--muted)">· above that, they sometimes ignore commands; each badge raises the limit by 10</small></div><small style="color:var(--muted)">the 8 gyms will arrive with trainer battles</small></div></div>`;
   if (ctx.conhecimento){                                               // Pokédex de conhecimento: placar do colecionador e títulos
     const r = ctx.conhecimento.resumo(), ts = ctx.conhecimento.listaTitulos();
     corpo.insertAdjacentHTML('beforeend', `<div class="ficha" style="margin-top:8px"><h3>Colecionador${r.tituloAtual ? ` <small style="color:var(--gold,#f4aa35)">🏅 ${esc(r.tituloAtual)}</small>` : ''}</h3>
       <table class="stats"><tr><td>Kanto</td><td>${r.pegosKanto}/${r.kantoAte} capturados (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} vistos</td></tr>
       <tr><td>nacional</td><td>${r.pegos} capturados · ${r.vistos} vistos</td></tr>
-      <tr><td>shinies capturados</td><td>✨ ${r.shinies}</td></tr>
+      <tr><td>shinies caught</td><td>✨ ${r.shinies}</td></tr>
       <tr><td>conhecimento</td><td>${r.mestres} espécie${r.mestres === 1 ? '' : 's'} em Mestre · ${r.estudadas} em Estudado+ · ${r.pontosTotal} pontos</td></tr></table>
       <div class="titulos">${ts.map(x => `<div class="titulo ${x.tem ? 'tem' : ''}" title="${esc(x.desc)}">${x.tem ? '🏅' : '○'} ${esc(x.nome)} <small>${esc(x.desc)}</small></div>`).join('')}</div>
-      <div style="color:var(--muted);font-size:11px;margin-top:6px">ranking entre jogadores chega com o servidor; a chance de shiny é igual pra todos (1/4.096), sem exceção.</div></div>`);
+      <div style="color:var(--muted);font-size:11px;margin-top:6px">player rankings will arrive with the server; shiny odds are the same for everyone (1/4,096), without exception.</div></div>`);
   }
 }
 
@@ -1853,7 +1853,7 @@ function rLoja(corpo){
   const aba = (abaAtual && lojas[abaAtual]) ? abaAtual : '2150101';   // SÓ a loja deste vendedor: as abas "Loja 1107/1501/4103/4401" (outras lojas do dump) não fazem sentido no Pokémart (Jaime, 31/08)
   abas([{ id: aba, nome: nomeLoja(aba) }]);                              // uma aba só, com o nome da loja (e limpa abas da janela anterior)
   const lista = lojas[aba] || [];
-  corpo.innerHTML = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))} · preços do jogo original</div><div class="grade-itens">${lista.map(l => { const it = D.itens[l.item]; if (!it) return ''; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">${l.preco.toLocaleString('pt-BR')}</span><b>${esc(tr(it.n))}${l.n > 1 ? ' ×' + l.n : ''}</b><small>${esc(tr(it.d || D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-comprar="${l.item}" data-preco="${l.preco}" data-n="${l.n}" ${dinheiro() < l.preco ? 'disabled' : ''}>Comprar</button></div></div>`; }).join('')}</div>`;
+  corpo.innerHTML = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">💰 ${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || 'Moeda'))} · original game prices</div><div class="grade-itens">${lista.map(l => { const it = D.itens[l.item]; if (!it) return ''; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">${l.preco.toLocaleString('pt-BR')}</span><b>${esc(tr(it.n))}${l.n > 1 ? ' ×' + l.n : ''}</b><small>${esc(tr(it.d || D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-comprar="${l.item}" data-preco="${l.preco}" data-n="${l.n}" ${dinheiro() < l.preco ? 'disabled' : ''}>Comprar</button></div></div>`; }).join('')}</div>`;
   corpo.querySelectorAll('[data-comprar]').forEach(b => b.onclick = () => { const id = b.dataset.comprar, preco = +b.dataset.preco, n = +b.dataset.n || 1; if (dinheiro() < preco) return; if (ctx.comConta?.()) ctx.bolsaOp('comprar', { loja: aba, item: +id }).then(() => render()); else if (D.itens[id]?.t === 7){ ctx.jogo.bolas[id] = (ctx.jogo.bolas[id] || 0) + n; ctx.gravarLS('bolas', ctx.jogo.bolas); } else { const it = itensLS(); it[id] = (it[id] || 0) + n; ctx.gravarLS('itens', it); } if (!ctx.comConta?.()){ setDinheiro(dinheiro() - preco); ctx.Som?.tocar?.('ui/sound_itemget', { volume: .7, prio: true }); } render(); });
 }
 
@@ -1871,12 +1871,12 @@ function rSocial(corpo){
     corpo.innerHTML = '<div class="chat-janela"></div><div style="color:var(--muted);font-size:11px;margin-top:6px">o mesmo chat da HUD, em tela cheia: Local mostra tudo com etiqueta [G] [T] [H] [S]; /g /t /h /l mudam o canal</div>';
     Chat.montar(corpo.querySelector('.chat-janela'), { compacto: false });
   } else if (aba === 'amigos') corpo.innerHTML = '<div class="vazio">Lista de amigos vazia. Adicionar, convidar pra batalha e presentear entram com o servidor.</div>';
-  else corpo.innerHTML = '<div class="lista"><div class="linha" style="cursor:default"><span style="font-size:18px">✉️</span><span class="nome"><b>Bem-vindo a Kanto</b><small>Sistema · sua jornada começa em Pallet. Anexo: 5 Pokébolas (já na mochila).</small></span></div></div>';
+  else corpo.innerHTML = '<div class="lista"><div class="linha" style="cursor:default"><span style="font-size:18px">✉️</span><span class="nome"><b>Welcome to Kanto</b><small>System · your journey begins in Pallet. Attached: 5 Poké Balls (already in your bag).</small></span></div></div>';
 }
 function rBatalha(corpo){
   const aba = abas([{ id: 'trein', nome: 'Treinadores' }, { id: 'pvp', nome: 'PvP' }, { id: 'rank', nome: 'Ranking' }]);
-  if (aba === 'trein'){ const n = new Set((ctx.dados.treinadores || []).map(t => String(t.cfg))).size, venc = new Set([].concat(ctx.lerLS('treinadoresVencidos', []) || []).map(k => String(k).split('@')[0])).size; /* 17/09: por treinador (cfg), não por vaga — o mapa tem 1.984 vagas pra 166 treinadores e as contas do bug das vagas (genandrade) têm o mesmo treinador 2–4 vezes na lista */ corpo.innerHTML = `<div class="vazio">${n} treinadores marcados neste mapa · <b>${venc}</b> vencidos.<br>Procure os nomes <b style="color:#ffb1b1">⚔</b> pelas rotas e fale (Z) pra desafiar — batalha por turnos; ginásios e insígnias vêm depois.</div>`; }
-  else corpo.innerHTML = '<div class="vazio">Precisa de servidor. A janela já existe pra você posicionar.</div>';
+  if (aba === 'trein'){ const n = new Set((ctx.dados.treinadores || []).map(t => String(t.cfg))).size, venc = new Set([].concat(ctx.lerLS('treinadoresVencidos', []) || []).map(k => String(k).split('@')[0])).size; /* 17/09: por treinador (cfg), não por vaga — o mapa tem 1.984 vagas pra 166 treinadores e as contas do bug das vagas (genandrade) têm o mesmo treinador 2–4 vezes na lista */ corpo.innerHTML = `<div class="vazio">${n} treinadores marcados neste mapa · <b>${venc}</b> defeated.<br>Look for names marked <b style="color:#ffb1b1">⚔</b> along the routes and talk (Z) to challenge them — turn-based battles; gyms and badges will arrive later.</div>`; }
+  else corpo.innerHTML = '<div class="vazio">Requires a server. The window is available for positioning.</div>';
 }
 
 /* ------------------------------------------------------------------ Atalhos 5–8 (seletor) */
@@ -1893,7 +1893,7 @@ function rAtalho(corpo){
   const prender = (b) => { ctx.definirAtalho?.(slotAtalho, b); fechar(); };
   if (aba === 'itens'){
     const q = quantidades(); const lista = Object.entries(q).filter(([id, n]) => n > 0 && [7, 9].includes(D.itens[id]?.t));
-    corpo.innerHTML = cab + (lista.length ? `<div class="grade-itens">${lista.map(([id, n]) => { const it = D.itens[id]; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}</b><small>${esc(tr(D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-item="${id}">Prender no ${tecla}</button></div></div>`; }).join('')}</div>` : '<div class="vazio">Nada pra prender: poções e bolas ficam aqui quando estiverem na mochila (Loja).</div>');
+    corpo.innerHTML = cab + (lista.length ? `<div class="grade-itens">${lista.map(([id, n]) => { const it = D.itens[id]; return `<div class="item q${it.q || 1}"><i class="ic-item" style="${iconeItem(it)}"></i><span class="n">×${n}</span><b>${esc(tr(it.n))}</b><small>${esc(tr(D.tipos[it.t] || ''))}</small><div class="acoes"><button type="button" class="btn ouro" data-item="${id}">Prender no ${tecla}</button></div></div>`; }).join('')}</div>` : '<div class="vazio">Nothing to pin: potions and balls appear here when they are in your bag (Shop).</div>');
     corpo.querySelectorAll('[data-item]').forEach(b => b.onclick = () => { const it = D.itens[b.dataset.item]; prender({ tipo: 'item', id: +b.dataset.item, nome: it.n, icone: './ui/itens/' + it.i + '.png', bola: it.t === 7 }); });
   } else {
     const lista = ctx.montarias?.() || [];
@@ -1966,9 +1966,9 @@ const CF_TECLAS = {
   mover: 'W A S D', correr: '—', interagir: 'Z', mochila: 'I', mapa: 'K', chat: 'Enter', atalhos: '1–4 · 5–9',
 };
 const CF_DICA_TECLA = {
-  correr: 'o jogo não tem correr: quem anda rápido é a montaria (M)',
-  interagir: 'Z fala com o NPC perto e interage com o parceiro (Shift+Z troca de Pokémon)',
-  atalhos: '1 a 4 são os golpes, 5 a 9 os itens e montarias, F joga a bola',
+  correr: 'there is no sprint: use a mount (M) to travel faster',
+  interagir: 'Z talks to nearby NPCs and interacts with your partner (Shift+Z switches Pokémon)',
+  atalhos: '1 to 4 use moves, 5 to 9 use items and mounts, F throws a ball',
 };
 const paradaDe = (id, valor) => { const P = PARADAS[id]; const i = P.ops.indexOf(String(valor ?? '')); return i < 0 ? Math.floor(P.ops.length / 2) : i; };
 const kDaParada = (id, i) => { const n = PARADAS[id].ops.length; return n > 1 ? i / (n - 1) : 0; };
@@ -1979,15 +1979,15 @@ const CF_FALTA = {
   'nomes-jogadores': 'em breve', 'dano-flutuante': 'em breve', 'ocultar-lotado': 'em breve',
   'confirmar-importante': 'em breve', 'reduzir-animacoes': 'em breve', 'daltonismo': 'em breve',
   /* Controles: remapear tecla ainda não existe, e o joystick do celular não é ajustável. */
-  'remapear-mover': 'trocar a tecla ainda não dá', 'remapear-correr': 'trocar a tecla ainda não dá',
-  'remapear-interagir': 'trocar a tecla ainda não dá', 'remapear-mochila': 'trocar a tecla ainda não dá',
-  'remapear-mapa': 'trocar a tecla ainda não dá', 'remapear-chat': 'trocar a tecla ainda não dá',
-  'remapear-atalhos': 'trocar a tecla ainda não dá',
+  'remapear-mover': 'key remapping is not available yet', 'remapear-correr': 'key remapping is not available yet',
+  'remapear-interagir': 'key remapping is not available yet', 'remapear-mochila': 'key remapping is not available yet',
+  'remapear-mapa': 'key remapping is not available yet', 'remapear-chat': 'key remapping is not available yet',
+  'remapear-atalhos': 'key remapping is not available yet',
   'lado-joystick': 'em breve', 'tamanho-joystick': 'em breve', 'tamanho-botoes': 'em breve', 'vibracao': 'em breve',   // rodada 25: coluna Celular
   /* Social: privacidade precisa do servidor. */
   'quem-mensagem': 'precisa do servidor — em breve', 'quem-convida': 'precisa do servidor — em breve',
-  'status-online': 'precisa do servidor — em breve', 'fonte-chat': 'o chat já se redimensiona pelo canto ◢',
-  'filtro-chat': 'em breve — hoje quem cuida é a moderação (/aviso, /mudo)',
+  'status-online': 'precisa do servidor — em breve', 'fonte-chat': 'resize chat using the corner ◢',
+  'filtro-chat': 'coming soon — currently handled by moderation (/aviso, /mudo)',
 };
 function popupCf(){
   if (popCf) return popCf;
@@ -2060,9 +2060,9 @@ function cfAcao(nome, el){
     return;
   }
   if (nome === 'resetar-painel-missao'){ Hud.zerarMover(); return; }
-  if (nome === 'resetar-paineis'){ Hud.zerarMover(); Chat.sistema('Painéis de volta ao lugar padrão.'); return; }
+  if (nome === 'resetar-paineis'){ Hud.zerarMover(); Chat.sistema('Panels reset to their default positions.'); return; }
   /* ---- aba Conta */
-  if (nome === 'logout'){ Popup.botao(popCf, 'logout', false, 'Saindo…'); ctx.conta?.sair?.(); return; }
+  if (nome === 'logout'){ Popup.botao(popCf, 'logout', false, 'Signing out…'); ctx.conta?.sair?.(); return; }
   if (nome === 'trocar-senha'){ cfDialogoSenha(); return; }
   if (nome === 'copiar-diagnostico'){ cfCopiarDiag(); return; }
   if (nome === 'diagnostico-chat'){ cfDialogoRelato(); return; }         // RELATOS (11/09): manda pro servidor (e pro #relatos do Discord)
@@ -2070,18 +2070,18 @@ function cfAcao(nome, el){
   if (CF_FALTA[nome]) return;                                              // apagado: não faz nada mesmo
 }
 /** Diagnóstico do aparelho em texto, o mesmo que a tela antiga mostrava. */
-const cfDiagTexto = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'indisponível'; };
+const cfDiagTexto = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'unavailable'; };
 async function cfCopiarDiag(){
   const tx = cfDiagTexto();
   try { await navigator.clipboard.writeText(tx); Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiado!'); setTimeout(() => Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiar'), 2000); }
-  catch { Chat.sistema('Não deu pra copiar sozinho — o texto está aí na caixa, dá pra selecionar.'); }
+  catch { Chat.sistema('Could not copy automatically — you can select the text in the box.'); }
 }
 /** Apagar progresso: com conta, é o personagem que some (a conta fica); sem conta, é o `apagarTudo` de sempre. */
 async function cfApagarProgresso(){
   Popup.mostrarExtra(popCf, 'dialogo-apagar', false);
   if (ctx.conta?.estado?.().modo === 'conta'){
     const r = await ctx.conta.apagarPersonagem();
-    if (r && !r.ok){ Chat.sistema('Não deu pra apagar: ' + r.erro); return; }
+    if (r && !r.ok){ Chat.sistema('Could not delete: ' + r.erro); return; }
     location.reload();
     return;
   }
@@ -2116,11 +2116,11 @@ function cfDialogoRelato(){
     background: '#0F1A2E', border: '2px solid #F8C237', borderRadius: '16px', padding: '18px', zIndex: '600',
     font: '700 13px "Nunito Sans", system-ui, sans-serif', color: '#B8C2D9', display: 'grid', gap: '8px' });
   d.innerHTML = '<div style="font:800 18px \'Baloo 2\', system-ui;color:#F8C237;text-align:center">Mandar pra equipe</div>'
-    + '<div style="text-align:center">Conte o que aconteceu. O diagnóstico do aparelho vai junto.</div>'
+    + '<div style="text-align:center">Describe what happened. Device diagnostics will be included.</div>'
     + '<textarea rows="4" maxlength="1000" placeholder="o que aconteceu?"></textarea>'
     + '<div class="cf-relato-av" style="min-height:16px;color:#f58e8e;text-align:center"></div>'
     + '<div style="display:flex;gap:10px"><button type="button" class="ok" style="flex:1">Enviar</button>'
-    + '<button type="button" class="nao" style="flex:1">Cancelar</button></div>';
+    + '<button type="button" class="nao" style="flex:1">Cancel</button></div>';
   const ta = d.querySelector('textarea');
   Object.assign(ta.style, { background: '#0B1220', border: '1px solid rgba(248,194,55,.4)', borderRadius: '8px', padding: '8px 10px', color: '#fff', font: 'inherit', resize: 'vertical' });
   for (const b of d.querySelectorAll('button'))
@@ -2137,11 +2137,11 @@ function cfDialogoRelato(){
     if (!comConta){
       const tx = texto + '\n\n' + Object.entries({ ...contexto, ...diag }).map(([k, v]) => k + ': ' + (Array.isArray(v) ? v.join(' | ') : v)).join('\n');
       try { await navigator.clipboard.writeText(tx); } catch {}
-      d.remove(); Chat.sistema('Você está jogando sem conta: o relato foi copiado — cole no Discord da equipe.'); return;
+      d.remove(); Chat.sistema('You are playing without an account: the report was copied — paste it into the team’s Discord.'); return;
     }
     av.style.color = '#B8C2D9'; av.textContent = tr('enviando…');
     const r = await ctx.conta.chamar('POST', '/conta/relato', { texto, diag, contexto });
-    if (!r.ok){ av.style.color = '#f58e8e'; av.textContent = tr(r.erro || 'não foi'); return; }
+    if (!r.ok){ av.style.color = '#f58e8e'; av.textContent = tr(r.erro || 'failed'); return; }
     d.remove(); Chat.sistema('Relato enviado pra equipe. Obrigado!');
   };
 }
@@ -2174,13 +2174,13 @@ export function estouPreso(){
   const el = (tag, css = {}, texto = null) => { const e = document.createElement(tag); Object.assign(e.style, css); if (texto != null) e.textContent = tr(texto); d.appendChild(e); return e; };
   el('div', { font: '800 ' + (baixa ? 16 : 18) + 'px \'Baloo 2\', system-ui', color: '#F8C237', textAlign: 'center' }, 'Estou preso');
   el('div', { textAlign: 'center', lineHeight: '1.3' }, centro
-    ? 'Conte o que você estava fazendo e onde tentou ir quando travou. Sua posição e o diagnóstico vão juntos pra equipe. Depois de enviar, você volta pro último Centro Pokémon.'
-    : 'Conte o que você estava fazendo e onde tentou ir quando travou. Sua posição e o diagnóstico vão juntos pra equipe. Depois de enviar, você volta pro laboratório do Professor Oak.');
+    ? 'Describe what you were doing and where you tried to go when you got stuck. Your position and diagnostics are sent to the team. After sending, you return to your last Pokémon Center.'
+    : 'Describe what you were doing and where you tried to go when you got stuck. Your position and diagnostics are sent to the team. After sending, you return to Professor Oak’s lab.');
   el('div', { textAlign: 'center', lineHeight: '1.3', color: '#FFB3B6', background: 'rgba(229,71,77,.12)', border: '1px solid rgba(229,71,77,.55)', borderRadius: '8px', padding: baixa ? '4px 8px' : '6px 10px' },
-    'Use só se estiver preso de verdade: uso falso ou pra atalho tira o acesso ao alfa.');
+    'Only use this if you are truly stuck: false reports or using it as a shortcut will revoke alpha access.');
   const area = el('textarea', { background: '#0B1220', border: '1px solid rgba(248,194,55,.4)', borderRadius: '8px', padding: '8px 10px', color: '#fff', font: 'inherit', resize: 'vertical', minHeight: baixa ? '64px' : '96px' });
   area.rows = baixa ? 3 : 4; area.maxLength = 1000;
-  area.placeholder = tr('Ex.: estava descendo a escada da caverna do Monte Lua, virei pra esquerda e fiquei travado entre a pedra e a parede; não consigo andar pra lado nenhum.');
+  area.placeholder = tr('Example: I was going down the stairs in Mt. Moon, turned left and got stuck between a rock and the wall; I cannot move in any direction.');
   const linha = el('div', { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '10px' });
   const dica = document.createElement('span'), cont = document.createElement('span');
   Object.assign(dica.style, { lineHeight: '1.25', fontWeight: '600' }); Object.assign(cont.style, { font: '800 12px ui-monospace, monospace', whiteSpace: 'nowrap' });
@@ -2188,7 +2188,7 @@ export function estouPreso(){
   const av = el('div', { minHeight: '16px', color: '#f58e8e', textAlign: 'center', lineHeight: '1.3' }); av.className = 'cf-preso-av';
   const bts = el('div', { display: 'flex', gap: '10px' });
   const ok = document.createElement('button'), nao = document.createElement('button');
-  ok.type = nao.type = 'button'; ok.className = 'ok'; nao.className = 'nao'; ok.textContent = tr('Enviar'); nao.textContent = tr('Cancelar');
+  ok.type = nao.type = 'button'; ok.className = 'ok'; nao.className = 'nao'; ok.textContent = tr('Enviar'); nao.textContent = tr('Cancel');
   for (const b of [ok, nao]) Object.assign(b.style, { flex: '1', background: '#13254A', border: '1px solid #F8C237', borderRadius: '10px', padding: baixa ? '7px' : '9px', color: '#F8C237', font: 'inherit', cursor: 'pointer' });
   bts.append(ok, nao);
   document.body.appendChild(d); DIALOGOS.add(d);
@@ -2196,12 +2196,12 @@ export function estouPreso(){
   /** O que impede de usar agora (mensagem) ou '' — o servidor confere de novo. */
   const bloqueio = () => {
     const j = ctx.jogo || {};
-    if (j.turno) return tr('Você está numa batalha por turno: termine a batalha antes de usar o "Estou preso".');
-    if (j.raidArena) return tr('Você está na arena da raid: quando a raid acabar, você volta sozinho pra onde estava.');
-    if (ctx.conta?.estado?.().modo !== 'conta') return tr('Você está jogando sem conta: o "Estou preso" precisa de uma conta, porque o relato tem de chegar na equipe antes de você ser levado. Entre com a sua conta do alfa e tente de novo.');
+    if (j.turno) return tr('You are in a turn-based battle: finish it before using "I’m stuck".');
+    if (j.raidArena) return tr('You are in the raid arena: you will return to your previous location when the raid ends.');
+    if (ctx.conta?.estado?.().modo !== 'conta') return tr('You are playing without an account: "I’m stuck" requires an account so the team receives your report before you are moved. Sign in with your alpha account and try again.');
     return '';
   };
-  const DICAS = { curto: null, palavras: 'Escreva pelo menos 5 palavras: o que você estava fazendo e onde tentou ir quando travou.',
+  const DICAS = { curto: null, palavras: 'Write at least 5 words: what you were doing and where you tried to go when you got stuck.',
     enchimento: 'Isso parece enchimento (letra repetida ou quase nenhum caractere diferente). Conte de verdade o que aconteceu.' };
   const atualizar = () => {
     const R = regrasPreso(area.value), b = bloqueio();
@@ -2232,12 +2232,12 @@ export function estouPreso(){
     const r = await ctx.conta.chamar('POST', '/conta/relato', { texto: area.value.trim(), diag, contexto, preso: true });
     enviando = false;
     if (!r.ok){
-      let msg = tr(r.erro || 'não foi');
+      let msg = tr(r.erro || 'failed');
       if (!I18n.ehPt() && msg === r.erro){                                  // o texto do servidor ainda não tem tradução: diz o essencial no idioma do jogador
         const min = /(\d+)\s*min/.exec(r.erro || '')?.[1];
-        if (r.status === 429 && min) msg = tr('Você usou o "Estou preso" há pouco. Espere {n} min antes de usar de novo.', { n: min });
-        else if (r.status === 400) msg = tr('O relato não passou nas regras: pelo menos 50 caracteres e 5 palavras, sem enchimento.');
-        else if (r.status === 409) msg = tr('Agora não dá: você está numa batalha ou na luta da raid.');
+        if (r.status === 429 && min) msg = tr('You recently used "I’m stuck". Wait {n} min before using it again.', { n: min });
+        else if (r.status === 400) msg = tr('The report does not meet the rules: at least 50 characters and 5 words, without filler.');
+        else if (r.status === 409) msg = tr('Unavailable now: you are in a battle or raid fight.');
       }
       erroServ = msg; atualizar(); return;
     }
@@ -2246,16 +2246,16 @@ export function estouPreso(){
        recusa em batalha/raid. Sem `preso.usos24h` na resposta ninguém é levado: o relato chegou, o teleporte espera o servidor novo. */
     if (!Number.isFinite(r.dados?.preso?.usos24h)){
       semSuporte = true;
-      erroServ = tr('O servidor ainda não conhece o "Estou preso": o seu relato chegou na equipe, mas você não foi levado. Recarregue a página daqui a pouco e tente de novo.');
+      erroServ = tr('The server does not support "I’m stuck" yet: the team received your report, but you were not moved. Reload the page shortly and try again.');
       atualizar(); return;
     }
     fecharDlg();
-    Chat.sistema(centro ? 'Relato enviado pra equipe. Levando você pro último Centro Pokémon…' : 'Relato enviado pra equipe. Levando você pro laboratório do Professor Oak…');
+    Chat.sistema(centro ? 'Report sent to the team. Taking you to your last Pokémon Center…' : 'Report sent to the team. Taking you to Professor Oak’s lab…');
     const n = +r.dados?.preso?.usos24h || 0;
-    if (n >= 3) Chat.sistema(tr('Você já usou o "Estou preso" {n} vezes nas últimas 24 h.', { n }));
+    if (n >= 3) Chat.sistema(tr('You have used "I’m stuck" {n} times in the last 24 hours.', { n }));
     fechar();
     const foi = await ctx.irDestinoPreso?.();
-    if (foi === false) Chat.sistema('O jogo já estava trocando de lugar. Se continuar preso, recarregue a página.');
+    if (foi === false) Chat.sistema('The game was already changing locations. If you remain stuck, reload the page.');
   };
   atualizar();
   setTimeout(() => area.focus(), 50);
@@ -2264,7 +2264,7 @@ export function estouPreso(){
    Este aqui é DOM simples com a paleta dela — pedido de arte pra rodada 25 anotado no figma-desvios.md. */
 function cfDialogoSenha(){
   if (!popCf || document.querySelector('.cf-senha')) return;
-  if (ctx.conta?.estado?.().modo !== 'conta'){ Chat.sistema('Você está jogando sem conta: não há senha pra trocar.'); return; }
+  if (ctx.conta?.estado?.().modo !== 'conta'){ Chat.sistema('You are playing without an account: there is no password to change.'); return; }
   const d = document.createElement('div'); d.className = 'cf-senha';
   Object.assign(d.style, { position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', width: '420px',
     background: '#0F1A2E', border: '2px solid #F8C237', borderRadius: '16px', padding: '18px', zIndex: '600',
@@ -2275,7 +2275,7 @@ function cfDialogoSenha(){
     + '<input type="password" autocomplete="new-password" placeholder="repita a senha nova">'
     + '<div class="cf-senha-av" style="min-height:16px;color:#f58e8e;text-align:center"></div>'
     + '<div style="display:flex;gap:10px"><button type="button" class="ok" style="flex:1">Trocar</button>'
-    + '<button type="button" class="nao" style="flex:1">Cancelar</button></div>';
+    + '<button type="button" class="nao" style="flex:1">Cancel</button></div>';
   for (const i of d.querySelectorAll('input'))
     Object.assign(i.style, { background: '#0B1220', border: '1px solid rgba(248,194,55,.4)', borderRadius: '8px', padding: '8px 10px', color: '#fff', font: 'inherit' });
   for (const b of d.querySelectorAll('button'))
@@ -2285,13 +2285,13 @@ function cfDialogoSenha(){
   const [atual, nova, rep] = d.querySelectorAll('input'), av = d.querySelector('.cf-senha-av');
   d.querySelector('.nao').onclick = () => d.remove();
   d.querySelector('.ok').onclick = async () => {
-    if (nova.value !== rep.value){ av.textContent = tr('as duas senhas novas têm de ser iguais.'); return; }
+    if (nova.value !== rep.value){ av.textContent = tr('the two new passwords must match.'); return; }
     if (nova.value.length < 6){ av.textContent = tr('a senha nova precisa de 6 caracteres ou mais.'); return; }
     av.style.color = '#B8C2D9'; av.textContent = tr('trocando…');
     const r = await ctx.conta.trocarSenha(atual.value, nova.value);
     if (!r.ok){ av.style.color = '#f58e8e'; av.textContent = tr(r.erro); return; }
     d.remove();
-    Chat.sistema('Senha trocada.' + (r.codigo ? ' GUARDE o código de recuperação NOVO (o antigo não vale mais): ' + r.codigo : ''));
+    Chat.sistema('Senha trocada.' + (r.codigo ? ' SAVE the NEW recovery code (the old one no longer works): ' + r.codigo : ''));
   };
   atual.focus();
 }
@@ -2385,7 +2385,7 @@ function abrirPrevia(nome){
   fechar(); fecharGrade(); fecharPrevia();
   let pop = popsPrevia[nome];
   if (!pop){
-    pop = popsPrevia[nome] = Popup.montar(def, { fechar: () => { if (popPrevia === pop) popPrevia = null; }, acao: a => Chat.sistema('Prévia: a ação "' + a + '" ainda não tem função.') });
+    pop = popsPrevia[nome] = Popup.montar(def, { fechar: () => { if (popPrevia === pop) popPrevia = null; }, acao: a => Chat.sistema('Preview: action "' + a + '" is not implemented yet.') });
     Popup.encherExemplo(pop);
   }
   popPrevia = pop; Popup.abrir(pop); ctx.Som?.tocar?.('ui/sound_click', { volume: 0.5 });
@@ -2398,14 +2398,14 @@ export function previa(on = null){
   if (on === false) return false;
   const ori = ctx.MOBILE ? (Hud.presetAtual() === 'celular_deitado' ? 'deitado' : null) : 'pc';
   const ps = ori && ctx.jogo?.hudLayout?.popups?.[ori];
-  if (!ps || !ehV2()){ Chat.sistema('Prévia: ligue o visual novo (Configurações → Geral → Visual novo, ou ?hud=v2)' + (ctx.MOBILE ? ' e deite o celular' : '') + '.'); return false; }
+  if (!ps || !ehV2()){ Chat.sistema('Preview: enable the new look (Settings → General → New look, or ?hud=v2)' + (ctx.MOBILE ? ' e deite o celular' : '') + '.'); return false; }
   const nomes = Object.keys(ps), maquete = ORDEM_PREVIA.filter(n => nomes.includes(n)), janelas = nomes.filter(n => !maquete.includes(n) && JANELAS[n]);
   const p = document.createElement('div'); p.id = 'previa';
-  p.innerHTML = '<b>Prévia das telas (adm)</b><span class="fecha" title="fechar (F7)">×</span>'
+  p.innerHTML = '<b>Screen preview (admin)</b><span class="fecha" title="close (F7)">×</span>'
     + '<div class="sec">Maquete, com os exemplos da Amanda</div><div class="bts" data-sec="maquete"></div>'
     + '<div class="sec">Janelas do jogo</div><div class="bts" data-sec="janela"></div>'
     + '<div class="sec">Banner "Em breve" por recurso</div><div class="bts" data-sec="breve"></div>'
-    + '<small>' + ori + ' · nada é gravado · Esc fecha o pop-up, F7 a paleta</small>';
+    + '<small>' + ori + ' · nothing is saved · Esc closes the popup, F7 closes the palette</small>';
   const bt = (sec, rotulo, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = rotulo; b.onclick = fn; p.querySelector('[data-sec="' + sec + '"]').appendChild(b); };
   for (const n of maquete) bt('maquete', n, () => abrirPrevia(n));
   for (const n of janelas) bt('janela', n, () => { fecharPrevia(); abrir(n); });
@@ -2441,7 +2441,7 @@ async function abrirPreviaMochila(){
         .filter(e => (!tipos || tipos.includes(e.it.t)) && (!b || tr(e.it.n || '').toLowerCase().includes(b)))
         .sort((x, y) => (x.it.t - y.it.t) || tr(String(x.it.n)).localeCompare(tr(String(y.it.n)), I18n.idioma() === 'en' ? 'en' : I18n.idioma() === 'es' ? 'es' : 'pt-BR'));
     };
-    const avisa = a => Chat.sistema('Prévia: "' + a + '" não mexe no inventário (mochila de exemplo).');
+    const avisa = a => Chat.sistema('Preview: "' + a + '" does not affect inventory (sample bag).');
     const encher = () => {
       const L = lista(); if (st.sel >= L.length) st.sel = 0;
       Popup.trocarAba(pop, st.cat); Popup.rotulo(pop, 'titulo');
@@ -2458,7 +2458,7 @@ async function abrirPreviaMochila(){
       if (det){
         Popup.texto(pop, 'item-nome', alvo ? tr(alvo.it.n || '') : '', det);
         Popup.texto(pop, 'item-categoria', alvo ? catCurta(D.tipos?.[alvo.it.t] || '') : '', det);
-        Popup.texto(pop, 'item-qtd', alvo ? tr('Você tem {n}').replace('{n}', alvo.n) : '', det);
+        Popup.texto(pop, 'item-qtd', alvo ? tr('You have {n}').replace('{n}', alvo.n) : '', det);
         Popup.texto(pop, 'item-descricao', alvo ? tr(semBr(alvo.it.d)) : '', det);
         if (alvo && podeUsarMo(alvo)) Popup.rotulo(pop, 'item-dica', det); else Popup.texto(pop, 'item-dica', '', det);
         Popup.imagem(pop, 'item', alvo && alvo.it.i ? './ui/itens/' + alvo.it.i + '.png' : null, det);
@@ -2531,7 +2531,7 @@ function cfLinhaVisual(pop){
   linha.appendChild(lab);
   const { bx, bw, bh, by } = V;
   const on = ehV2();
-  const b = document.createElement('button'); b.type = 'button'; b.textContent = on ? tr('Voltar pro visual atual') : tr('Ligar');
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = on ? tr('Return to the current look') : tr('Ligar');
   Object.assign(b.style, { position: 'absolute', left: bx + 'px', top: by + 'px', width: bw + 'px', height: bh + 'px', borderRadius: (bh / 2) + 'px',
     border: '1px solid rgba(248,194,55,1)', background: on ? 'rgba(11,18,32,.9)' : '#F8C237', color: on ? '#F8C237' : '#1A1A1A', font: fonte, cursor: 'pointer', padding: '0' });
   b.onclick = () => { try { localStorage.setItem('hud.v2', on ? '0' : '1'); } catch {} cfRecarregar('hud', null); };
@@ -2624,8 +2624,8 @@ function encherCfConta(pop){
   Popup.botao(pop, 'trocar-senha', comConta, 'Trocar senha');
   Popup.botao(pop, 'diagnostico-chat', true, 'Mandar pra equipe');        // RELATOS (11/09): era "Mandar pro chat" (só escrevia no chat local)
   cfBotaoPreso(pop);                                                       // ESTOU PRESO (15/09): logo abaixo de Copiar / Mandar pra equipe
-  Popup.desligarGrupo(pop, 'btn-sair', comConta, 'você está jogando sem conta');
-  Popup.desligarGrupo(pop, 'btn-trocar-senha', comConta, 'você está jogando sem conta');
+  Popup.desligarGrupo(pop, 'btn-sair', comConta, 'you are playing without an account');
+  Popup.desligarGrupo(pop, 'btn-trocar-senha', comConta, 'you are playing without an account');
   /* a caixa `diagnostico-info [do-jogo]` recebe o texto, rolável */
   const cx = pop.querySelector('[data-fig="diagnostico-info"]');
   if (cx){
@@ -2672,7 +2672,7 @@ function cfBotaoPreso(pop){
   }
   const rot = mandar.querySelector('.pf-rotulo, [data-txt]');
   const b = document.createElement('button'); b.type = 'button'; b.className = 'cf-preso-btn'; b.textContent = tr('Estou preso');
-  b.title = tr('Travou em parede, escada ou caverna? Conte o que aconteceu e volte pro último Centro Pokémon.');
+  b.title = tr('Stuck in a wall, stairway or cave? Describe what happened and return to your last Pokémon Center.');
   Object.assign(b.style, { position: 'absolute', left: x0 + 'px', top: topo + 'px', width: (px(mandar.style.left) + px(mandar.style.width) - x0) + 'px', height: h + 'px',
     boxSizing: 'border-box', margin: '0', padding: '0', borderRadius: (h / 2) + 'px', border: '1.5px solid #F8C237', background: '#F8C237', color: '#1A1A1A',
     font: '900 ' + (rot?.style.fontSize || '12.5px') + ' "Nunito Sans", system-ui, sans-serif', cursor: 'pointer', pointerEvents: 'auto', zIndex: '60',
@@ -2713,24 +2713,24 @@ function rConfig(corpo){
   const p = new URLSearchParams(location.search);
   const vol = ctx.lerLS('volume', 100);
   corpo.innerHTML = `<div class="config">
-    <label><span>seu nome (aparece em cima da cabeça e no chat)</span><input type="text" id="c-nome" maxlength="16" value="${esc(ctx.nome || 'Ash')}" style="width:160px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#0b1020;color:var(--text);font:inherit"></label>
-    <div id="c-nome-aviso" style="grid-column:1/-1;margin:-6px 0 4px;color:#98a4c0;font-size:12px">o nome é único: não dá pra usar o de outro treinador</div>
+    <label><span>your name (shown above your head and in chat)</span><input type="text" id="c-nome" maxlength="16" value="${esc(ctx.nome || 'Ash')}" style="width:160px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#0b1020;color:var(--text);font:inherit"></label>
+    <div id="c-nome-aviso" style="grid-column:1/-1;margin:-6px 0 4px;color:#98a4c0;font-size:12px">your name must be unique: you cannot use another trainer’s name</div>
     <label><span>volume</span><input type="range" id="c-vol" min="0" max="100" value="${vol}"> <span id="c-volv">${vol}%</span></label>
-    <label><span>qualidade gráfica</span><select id="c-qual"><option value="">automática (${esc(ctx.qualidade || '?')})</option><option value="alta">alta</option><option value="baixa">baixa (sem sombra, 0,75×)</option></select></label>
-    <label><span>tamanho dos Pokémon</span><select id="c-tam"><option value="proporcional">proporcional (padrão)</option><option value="jogo">como o jogo</option><option value="nativo">nativo do modelo</option></select></label>
-    <label><span>tamanho da interface (HUD e janelas)</span><select id="c-ui"><option value="pequena">pequena</option><option value="normal">normal</option><option value="grande">grande</option></select><small id="c-uiv" style="color:var(--muted);font-size:11px;white-space:nowrap"></small></label>
-    ${ctx.conta?.estado?.().modo === 'conta' ? `<label><span>conta: <b>${esc(ctx.conta.estado().usuario)}</b> · o jogo fica salvo no servidor, não neste aparelho</span><button type="button" class="btn" id="c-sair">Sair da conta</button></label>
-    <label><span>apagar o PERSONAGEM: começa do zero (Pokémon, itens, insígnias, missões); a conta continua sua</span><button type="button" class="btn" id="c-apagar-perso">Apagar personagem</button></label>
-    <label><span>apagar a CONTA: some tudo, pra sempre — pede a senha</span><button type="button" class="btn" id="c-apagar-conta">Apagar conta</button></label>
+    <label><span>graphics quality</span><select id="c-qual"><option value="">automatic (${esc(ctx.qualidade || '?')})</option><option value="alta">high</option><option value="baixa">low (no shadows, 0.75×)</option></select></label>
+    <label><span>Pokémon size</span><select id="c-tam"><option value="proporcional">proportional (default)</option><option value="jogo">game size</option><option value="nativo">native model size</option></select></label>
+    <label><span>interface size (HUD and windows)</span><select id="c-ui"><option value="pequena">small</option><option value="normal">normal</option><option value="grande">large</option></select><small id="c-uiv" style="color:var(--muted);font-size:11px;white-space:nowrap"></small></label>
+    ${ctx.conta?.estado?.().modo === 'conta' ? `<label><span>account: <b>${esc(ctx.conta.estado().usuario)}</b> · the game is saved on the server, not this device</span><button type="button" class="btn" id="c-sair">Sign out</button></label>
+    <label><span>delete CHARACTER: start over (Pokémon, items, badges, quests); you keep your account</span><button type="button" class="btn" id="c-apagar-perso">Delete character</button></label>
+    <label><span>delete ACCOUNT: everything is removed permanently — requires your password</span><button type="button" class="btn" id="c-apagar-conta">Delete account</button></label>
     <div id="c-conta-aviso" style="grid-column:1/-1;margin:-6px 0 4px;color:#98a4c0;font-size:12px"></div>` : ''}
-    <label><span>painel de missão: arraste com o mouse ou o dedo pra mudar de lugar</span><button type="button" class="btn" id="c-missao-lugar">↺ lugar padrão</button></label>
-    ${Hud.temGuardado() ? `<label><span>a HUD veio com uma maquete nova; o layout que você montou no editor ficou guardado</span><button type="button" class="btn" id="c-hud-meu">↺ usar o meu de novo</button></label>` : ''}
-    <label><span>densidade de selvagens</span><select id="c-dens"><option value="">normal</option><option value="0.5">pouca</option><option value="1.5">muita</option><option value="3">lotado</option></select></label>
-    ${ctx.gm?.() ? `<label><span>painéis de depuração (hud, chefe, montaria, seguidor)</span><input type="checkbox" id="c-dbg"></label>` : ''}
-    <div class="acoes" style="margin-top:12px"><button type="button" class="btn ouro" id="c-perso">✎ Personagem</button>${ctx.gm?.() ? `<button type="button" class="btn ouro" id="c-hud">🧩 Montar a HUD</button><button type="button" class="btn" id="c-galeria">Galeria da UI do Fairy</button><button type="button" class="btn" id="c-bancada">Bancada de habilidades</button>` : ''}<button type="button" class="btn ouro" id="c-preso">Estou preso</button><button type="button" class="btn" id="c-apagar">Apagar progresso (reinicia tudo)</button></div>
-    <div style="color:var(--muted);font-size:11px;margin-top:8px">qualidade e densidade recarregam a cena.</div>
-    <details style="margin-top:10px"><summary style="cursor:pointer;color:#ffe07a">Diagnóstico do aparelho — abra e copie quando algo ficar preto ou errado</summary><pre id="c-diag" style="white-space:pre-wrap;font-size:11px;color:var(--muted);max-height:260px;overflow:auto;background:#0b1020;padding:8px;border-radius:8px;margin:6px 0"></pre><button type="button" class="btn" id="c-diag-copiar">copiar</button> <button type="button" class="btn" id="c-diag-chat">mandar pro chat</button></details></div>`;
-  const diag = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'indisponível'; };
+    <label><span>quest panel: drag with the mouse or your finger to reposition it</span><button type="button" class="btn" id="c-missao-lugar">↺ default position</button></label>
+    ${Hud.temGuardado() ? `<label><span>the HUD has a new design; your custom editor layout has been saved</span><button type="button" class="btn" id="c-hud-meu">↺ restore my layout</button></label>` : ''}
+    <label><span>wild Pokémon density</span><select id="c-dens"><option value="">normal</option><option value="0.5">low</option><option value="1.5">high</option><option value="3">crowded</option></select></label>
+    ${ctx.gm?.() ? `<label><span>debug panels (HUD, boss, mount, follower)</span><input type="checkbox" id="c-dbg"></label>` : ''}
+    <div class="acoes" style="margin-top:12px"><button type="button" class="btn ouro" id="c-perso">✎ Character</button>${ctx.gm?.() ? `<button type="button" class="btn ouro" id="c-hud">🧩 Edit HUD</button><button type="button" class="btn" id="c-galeria">Fairy UI Gallery</button><button type="button" class="btn" id="c-bancada">Ability Workbench</button>` : ''}<button type="button" class="btn ouro" id="c-preso">I’m stuck</button><button type="button" class="btn" id="c-apagar">Delete progress (reset everything)</button></div>
+    <div style="color:var(--muted);font-size:11px;margin-top:8px">quality and density settings reload the scene.</div>
+    <details style="margin-top:10px"><summary style="cursor:pointer;color:#ffe07a">Device diagnostics — open and copy if something turns black or looks wrong</summary><pre id="c-diag" style="white-space:pre-wrap;font-size:11px;color:var(--muted);max-height:260px;overflow:auto;background:#0b1020;padding:8px;border-radius:8px;margin:6px 0"></pre><button type="button" class="btn" id="c-diag-copiar">copy</button> <button type="button" class="btn" id="c-diag-chat">send to chat</button></details></div>`;
+  const diag = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'unavailable'; };
   const preDiag = corpo.querySelector('#c-diag'); preDiag.textContent = diag();
   corpo.querySelector('#c-diag-copiar').onclick = async () => { const tx = diag(); preDiag.textContent = tx; try { await navigator.clipboard.writeText(tx); corpo.querySelector('#c-diag-copiar').textContent = 'copiado!'; } catch { const r = document.createRange(); r.selectNodeContents(preDiag); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } };
   corpo.querySelector('#c-preso').onclick = () => estouPreso();           // ESTOU PRESO (15/09): o mesmo diálogo da aba Conta do pop-up
@@ -2743,7 +2743,7 @@ function rConfig(corpo){
     const r = await ctx.renomear?.(campo.value);
     campo.disabled = false; campo.value = ctx.nome;
     if (r && !r.ok){ av.textContent = r.erro; av.style.color = '#f58e8e'; }
-    else { av.textContent = 'pronto — você agora é ' + ctx.nome + '.'; av.style.color = '#8fe08f'; }
+    else { av.textContent = 'done — you are now ' + ctx.nome + '.'; av.style.color = '#8fe08f'; }
   };
   corpo.querySelector('#c-vol').oninput = ev => { const v = +ev.target.value; corpo.querySelector('#c-volv').textContent = v + '%'; ctx.gravarLS('volume', v); ctx.Som?.ajustar?.({ sfx: v / 100, mus: v / 100 }); };
   const recarregar = (chave, valor) => { const u = new URL(location.href); if (valor) u.searchParams.set(chave, valor); else u.searchParams.delete(chave); location.href = u.toString(); };
@@ -2756,15 +2756,15 @@ function rConfig(corpo){
   cUi.onchange = ev => { Hud.definirTamanho(ev.target.value); dicaUi(); };
   corpo.querySelector('#c-missao-lugar').onclick = () => Hud.zerarMover();   // painel de missão de volta ao lugar da maquete
   const meuHud = corpo.querySelector('#c-hud-meu');                      // §7 item 14: maquete nova entrou; o layout do editor está guardado
-  if (meuHud) meuHud.onclick = () => { meuHud.textContent = Hud.restaurarGuardado() ? 'pronto — recarregue a página' : 'não deu pra restaurar'; meuHud.disabled = true; };
-  const sairBtn = corpo.querySelector('#c-sair'); if (sairBtn) sairBtn.onclick = () => { sairBtn.textContent = 'Saindo…'; ctx.conta.sair(); };   // fase 2: volta pra tela de login sem o progresso deste aparelho
+  if (meuHud) meuHud.onclick = () => { meuHud.textContent = Hud.restaurarGuardado() ? 'done — reload the page' : 'could not restore'; meuHud.disabled = true; };
+  const sairBtn = corpo.querySelector('#c-sair'); if (sairBtn) sairBtn.onclick = () => { sairBtn.textContent = 'Signing out…'; ctx.conta.sair(); };   // fase 2: volta pra tela de login sem o progresso deste aparelho
   /* APAGAR PERSONAGEM / APAGAR CONTA (08/09): quem apaga é o SERVIDOR. Dois cliques no botão pra confirmar; a conta ainda
      pede a senha, porque é pra sempre. */
   const avConta = corpo.querySelector('#c-conta-aviso');
   const doisCliques = (btn, rotulo, acao) => {
     if (!btn) return; let armado = false;
     btn.onclick = async () => {
-      if (!armado){ armado = true; btn.textContent = 'Tem certeza? Clique de novo'; setTimeout(() => { if (armado){ armado = false; btn.textContent = rotulo; } }, 5000); return; }
+      if (!armado){ armado = true; btn.textContent = 'Are you sure? Click again'; setTimeout(() => { if (armado){ armado = false; btn.textContent = rotulo; } }, 5000); return; }
       armado = false; btn.disabled = true; btn.textContent = 'apagando…';
       const r = await acao();
       btn.disabled = false; btn.textContent = rotulo;
@@ -2777,7 +2777,7 @@ function rConfig(corpo){
     return r;
   });
   doisCliques(corpo.querySelector('#c-apagar-conta'), 'Apagar conta', async () => {
-    const senha = prompt('Apagar a conta é PRA SEMPRE. Digite a sua senha pra confirmar:');
+    const senha = prompt('Deleting your account is PERMANENT. Enter your password to confirm:');
     if (!senha) return { ok: false, erro: 'cancelado' };
     const r = await ctx.conta.apagarConta(senha);
     if (r.ok) location.href = new URL('?jogar=1', location.href).toString();   // sem conta: cai na tela de login
@@ -2789,7 +2789,7 @@ function rConfig(corpo){
      (`atalhos`), que esta cópia não tem — 27/10: sem o fetch (só dava 404), os botões ficam escondidos como já ficavam sem a lista. */
   for (const sel of ['#c-hud', '#c-galeria', '#c-bancada']){ const b = corpo.querySelector(sel); if (b) b.style.display = 'none'; }
   const ap = corpo.querySelector('#c-apagar');
-  ap.onclick = () => { if (!confirmarApagar){ confirmarApagar = true; ap.textContent = 'Tem certeza? Clique de novo'; setTimeout(() => { confirmarApagar = false; ap.textContent = 'Apagar progresso'; }, 4000); return; } apagarTudo(); };   // Jaime (31/08): reinicia TUDO (missões, Centro, abertura, personagem…) pra testar do zero; só preferências do aparelho ficam
+  ap.onclick = () => { if (!confirmarApagar){ confirmarApagar = true; ap.textContent = 'Are you sure? Click again'; setTimeout(() => { confirmarApagar = false; ap.textContent = 'Delete progress'; }, 4000); return; } apagarTudo(); };   // Jaime (31/08): reinicia TUDO (missões, Centro, abertura, personagem…) pra testar do zero; só preferências do aparelho ficam
 }
 /** Apagar progresso = conta nova: limpa localStorage/sessionStorage inteiros, menos o layout da HUD e preferências de
     aparelho (hud.*, volume, tamanhos), e recarrega numa URL limpa (sem mapa/chegada/intro): criação de personagem →

@@ -57,7 +57,7 @@ export function mostrarCodigo(codigo, aoFechar){
 /** Forgot password: usuário + código + senha nova. */
 function formRecuperar(pop){
   const f = painel('<b style="color:#ffe07a;font-size:16px">Forgot password</b>'
-    + '<p style="color:#98a4c0;margin:8px 0 12px">Use the recovery code shown when you created your account. If you lost both your password and code, contact us on the game's Discord.</p>'
+    + '<p style="color:#98a4c0;margin:8px 0 12px">Use the recovery code shown when you created your account. If you lost both your password and code, contact us on the game’s Discord.</p>'
     + '<label style="display:block;margin-bottom:8px">username<input id="rec-usuario" autocomplete="username" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit"></label>'
     + '<label style="display:block;margin-bottom:8px">recovery code<input id="rec-codigo" placeholder="XXXX-XXXX-XXXX-XXXX" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit;text-transform:uppercase"></label>'
     + '<label style="display:block;margin-bottom:12px">new password<input id="rec-senha" type="password" autocomplete="new-password" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit"></label>'
@@ -119,7 +119,7 @@ export function mostrar(nome, L, c = {}){
   } else {
     Popup.imagem(pop, 'fundo', './ui/figma/backgrounds/fundo-login-escuro.png');   // sempre escuro (rodada 23)
     Popup.imagem(pop, 'logo', './ui/figma/backgrounds/logo-pokefable.png');
-    Popup.texto(pop, 'versao', ctx?.conta ? 'v0.2.0 · alfa' : 'v0.1.0 · prévia');
+    Popup.texto(pop, 'versao', ctx?.conta ? 'v0.2.0 · alpha' : 'v0.1.0 · preview');
   }
   for (const inp of (H ? [] : pop.querySelectorAll('input'))){            // Enter = o botão da tela; sem Esc fechando (a tela é obrigatória no login)
     const campo = inp.closest('[data-fig]')?.dataset.fig || '';
@@ -209,11 +209,11 @@ export function atualizando(){
 }
 /** KIKADO (10/09): a conta entrou de outro lugar. Tela por cima de tudo, curta, com o caminho de volta — como em qualquer
     MMO. Nada de explicar save: o jogo daqui parou e ponto. */
-export function derrubado(texto = 'Você entrou de outro lugar.'){
+export function derrubado(texto = 'You signed in from another location.'){
   texto = tr(texto);
   if (document.getElementById('tela-derrubado')) return;
   const f = painel('<b style="color:#ffe07a;font-size:17px">' + texto + '</b>'
-    + '<p style="color:#98a4c0;margin:10px 0 16px">A sua conta só joga de um lugar por vez.</p>'
+    + '<p style="color:#98a4c0;margin:10px 0 16px">Your account can only play from one location at a time.</p>'
     + '<button type="button" class="btn ouro" id="der-voltar" style="width:100%">Go to login</button>');
   f.id = 'tela-derrubado'; f.style.zIndex = '1200';
   /* Volta pra TELA DE LOGIN, não pro jogo (pedido dele, 10/09): a sessão daqui acabou, então o certo é sair da conta e
@@ -270,15 +270,15 @@ async function caixaAlphaKey(pop, erroInicial = ''){
   }
   if (document.getElementById('tela-alpha')) return;
   const f = painel('<b style="color:#ffe07a;font-size:16px">Alpha Key</b>'
-    + '<p style="color:#98a4c0;margin:8px 0 12px">O alfa é fechado: pra criar conta você precisa da chave que recebeu. Cole ela aqui:</p>'
+    + '<p style="color:#98a4c0;margin:8px 0 12px">The alpha is closed: you need an invitation key to create an account. Paste it here:</p>'
     + '<input id="alpha-chave" placeholder="ALPHA-XXXX-XXXX" autocapitalize="characters" autocomplete="off" spellcheck="false" style="width:100%;padding:10px;border:1px solid #2a3350;border-radius:8px;background:#151e30;color:#e8eefc;font:600 18px/1.2 ui-monospace,Consolas,monospace;letter-spacing:2px;text-align:center;box-sizing:border-box">'
     + '<div id="alpha-aviso" style="margin-top:10px;color:#f58e8e;min-height:18px"></div>'
     + '<div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn" id="alpha-nao">Back</button><button type="button" class="btn ouro" id="alpha-sim" style="flex:1">Continue</button></div>'
     /* ONDE SE CONSEGUE UMA CHAVE (20/09): a caixa pedia "a chave que recebeu" sem dizer nunca de onde ela vem — e ela vem
        dos sorteios do Discord. Quem chegava no site sem chave batia aqui e não tinha para onde ir. */
-    + '<p style="color:#7f8db0;margin:14px 0 0;font-size:13px">' + tr('Don't have a key?') + ' '
+    + '<p style="color:#7f8db0;margin:14px 0 0;font-size:13px">' + tr('Don’t have a key?') + ' '
     + '<a class="tela-alpha-discord" href="' + DISCORD + '" target="_blank" rel="noopener noreferrer">' + LOGO_DISCORD
-    + tr('Peça no nosso Discord') + '</a></p>');
+    + tr('Ask on our Discord') + '</a></p>');
   f.id = 'tela-alpha';
   const inp = f.querySelector('#alpha-chave'), botao = f.querySelector('#alpha-sim'), aviso = t => { f.querySelector('#alpha-aviso').textContent = tr(t); };
   if (erroInicial) aviso(erroInicial);
@@ -321,7 +321,7 @@ function acao(tela, a, el, pop){
   } else if (a === 'cadastrar'){
     const u = valor(pop, 'campo-usuario').toLowerCase(), e = valor(pop, 'campo-email'), s = valor(pop, 'campo-senha'), s2 = valor(pop, 'campo-confirmar-senha');
     if (!/^[a-z0-9_.]{3,16}$/.test(u)) return avisar(pop, 'Username: 3 to 16 lowercase letters, numbers, period, or _.', true);
-    if (e && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) return avisar(pop, 'E-mail inválido (pode deixar em branco).', true);
+    if (e && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) return avisar(pop, 'Invalid email (you can leave it blank).', true);
     if (s.length < 6) return avisar(pop, 'Password: at least 6 characters.', true);
     if (s !== s2) return avisar(pop, 'The two passwords do not match.', true);
     ocupado = true; avisar(pop, 'Criando a conta…');
