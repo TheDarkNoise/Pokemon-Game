@@ -2085,7 +2085,24 @@ function cfAcao(nome, el){
   if (CF_FALTA[nome]) return;                                              // apagado: não faz nada mesmo
 }
 /** Diagnóstico do aparelho em texto, o mesmo que a tela antiga mostrava. */
-const cfDiagTexto = () => { const d = ctx.diagnostico?.(); return d ? Object.entries(d).map(([k, v]) => k + ': ' + (Array.isArray(v) ? '\n  ' + v.join('\n  ') : v)).join('\n') : 'unavailable'; };
+const CF_DIAG_ROTULOS = {
+  gpu: 'GPU', webgl2: 'WebGL 2', qualidade: 'Qualidade gráfica', sombras: 'Sombras', antialias: 'Antialiasing',
+  tela: 'Tela', maxTextura: 'Tamanho máximo de textura', unidadesTextura: 'Unidades de textura',
+  varyings: 'Vetores varying', uniformsFrag: 'Uniforms de fragmento', highpFrag: 'Precisão alta de fragmento',
+  mediumpFrag: 'Precisão média de fragmento', extensoes: 'Extensões', programas: 'Programas',
+  geometrias: 'Geometrias', texturas: 'Texturas', navegador: 'Navegador', erros: 'Erros',
+};
+function cfDiagTexto(){
+  const d = ctx.diagnostico?.(); if (!d) return tr('unavailable');
+  return Object.entries(d).map(([k, v]) => {
+    const label = CF_DIAG_ROTULOS[k] ? tr(CF_DIAG_ROTULOS[k]) : k;
+    let value = v;
+    if (k === 'qualidade' && typeof v === 'string') value = tr(v);
+    else if (k === 'extensoes' && Array.isArray(v)) value = v.map(x => String(x).replace(/: (sim|não)$/, (_, flag) => ': ' + tr(flag === 'sim' ? 'Sim' : 'Não')));
+    else if (k === 'erros' && Array.isArray(v) && v.length === 1 && v[0] === 'nenhum') value = [tr('Nenhum')];
+    return label + ': ' + (Array.isArray(value) ? '\n  ' + value.join('\n  ') : value);
+  }).join('\n');
+}
 async function cfCopiarDiag(){
   const tx = cfDiagTexto();
   try { await navigator.clipboard.writeText(tx); Popup.botao(popCf, 'copiar-diagnostico', true, "Copied!"); setTimeout(() => Popup.botao(popCf, 'copiar-diagnostico', true, 'Copiar'), 2000); }
