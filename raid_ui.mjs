@@ -1,4 +1,4 @@
-/* RAID AO VIVO — a interface (arte da Amanda, rodada 26 — 14/09/2026).
+/* RAID LIVE — a interface (arte da Amanda, rodada 26 — 14/09/2026).
  *
  * Contrato (especificação única da raid):
  *   import * as RaidUI from './raid_ui.mjs';
@@ -8,13 +8,13 @@
  *   RaidUI.aviso(texto);     // faixa grande no meio da tela por ~4 s
  *   RaidUI.modoArena(bool);  // na arena: sem botão nem placa da fila
  *
- * O que aparece:
+ * The que aparece:
  *   - btn-raid (HUD): com a raid anunciada ou em contagem, fora da arena. Pisca trocando btn-raid.png ↔ btn-raid-aceso.png a cada
  *     500 ms (tag [pisca] — as duas artes têm o mesmo enquadramento). Clique → Menus.abrir('raid').
  *   - banner-raid (pop-up do menus.mjs): Mew à esquerda, nome, descrição de 3 linhas, 10 vagas (check verde nas ocupadas), "n/10" e
- *     o botão Entrar na fila / Sair da fila. Acompanha o estado ao vivo enquanto aberto.
- *   - fila-raid (HUD, perto do minimapa): só pra quem está na fila e com o banner fechado — "n/10" + "esperando jogadores", ou, em
- *     contagem, a referência [estado:cheia] da maquete (contagem dourada) com "Começa em Ns" contado aqui a partir do `contagemMs`.
+ *     o botão Join queue / Leave queue. Acompanha o estado ao vivo enquanto aberto.
+ *   - fila-raid (HUD, perto do minimapa): só pra quem está na fila e com o banner fechado — "n/10" + "waiting for players", ou, em
+ *     contagem, a referência [estado:cheia] da maquete (contagem dourada) com "Starts in Ns" contado aqui a partir do `contagemMs`.
  *   - barra do chefe (sem arte da Amanda: CSS no estilo do #raid-topo do clipe ?raid=1) e o aviso central.
  *
  * Os nós são nossos (nada estático no index.html). btn-raid e fila-raid são posicionados pelo `Hud.posicionar` com os registros que o
@@ -25,7 +25,7 @@
  * mover na mão: a sobreposição está no docs/figma-desvios.md pra rodada 27.
  * Textos em pt passam pelo I18n.t (sem I18n, texto cru). */
 
-let H = null, P = null, M = null, I = null, AO = {};
+let H = null, P = null, M = null, I = null, AThe = {};
 let menus = null;                                                         // o que o menus.mjs devolve do ligarRaid: { aberto, repintar, fechar }
 let snap = { fase: 'nenhuma', n: 0, vagas: 10, eu: false }, chegouEm = 0;
 let CFG = { chefeNome: 'Mew', vagas: 10 };                                 // Fase 3 do painel: data/raid.json (o raid.mjs passa no instalar)
@@ -101,7 +101,7 @@ function criar(id){
 /* ============================================================ instalação */
 export function instalar({ Hud = null, Popup = null, Menus = null, I18n = null, ao = null, cfg = null } = {}){
   if (cfg) { CFG = { ...CFG, ...cfg }; if (snap.fase === 'nenhuma') snap.vagas = CFG.vagas; }
-  H = Hud || H; P = Popup || P; M = Menus || M; I = I18n || I; AO = ao || AO || {};
+  H = Hud || H; P = Popup || P; M = Menus || M; I = I18n || I; AThe = ao || AThe || {};
   if (!temDom()) return;
   estilo();
   if (!noBtn){
@@ -112,7 +112,7 @@ export function instalar({ Hud = null, Popup = null, Menus = null, I18n = null, 
     noFila = criar('raid-fila');
     noFila.addEventListener('click', ev => { ev.stopPropagation(); ev.preventDefault(); abrirBanner(); });   // tocar na placa também reabre o banner
   }
-  noBtn.setAttribute('aria-label', T('Raid ao vivo'));
+  noBtn.setAttribute('aria-label', T('Live Raid'));
   try { menus = M?.ligarRaid?.({ encher: encherBanner, acao: acaoBanner, simples: bannerSimples, mudou: bannerMudou, def: () => defRaid() }) || null; } catch (e){ console.warn('raid_ui:', e); menus = null; }
   if (!instalar.__ouvindo){
     instalar.__ouvindo = true;
@@ -154,7 +154,7 @@ export function chefe(info){
   const barra = noChefe.querySelector('.rc-hp');
   barra.style.width = (k * 100).toFixed(1) + '%';
   barra.style.background = k <= 0.2 ? 'linear-gradient(90deg,#ff5a5a,#ff9a6e)' : '';
-  noChefe.querySelector('.rc-num').textContent = hp.toLocaleString('pt-BR') + ' / ' + maxHp.toLocaleString('pt-BR');
+  noChefe.querySelector('.rc-num').textContent = hp.toLocaleString('en-GB') + ' / ' + maxHp.toLocaleString('en-GB');
   noChefe.querySelector('.rc-pct').textContent = (hp > 0 ? Math.max(1, Math.ceil(k * 100)) : 0) + '%';
   noChefe.hidden = false;
   document.body.classList.add('raid-chefe');                               // a placa da missão (topo) sai do caminho enquanto a barra existe
@@ -298,11 +298,11 @@ function pintarFila(){
   }
   escrever(noDe(noFila, 'txt/fila'), Math.min(snap.n, snap.vagas) + '/' + snap.vagas);
   const cont = noDe(noFila, 'txt/contagem');
-  if (cheia) escrever(cont, T('Começa em ' + segundosFaltando() + 's'));
-  else escreverCabe(cont, T('esperando jogadores'), T('esperando…'));
+  if (cheia) escrever(cont, T('Starts in ' + segundosFaltando() + 's'));
+  else escreverCabe(cont, T('waiting for players'), T('waiting…'));
 }
-/* ===== v2 (rodada 29): o card `alerta-raid` da maquete substitui o botão "!" e a placa da fila. O hud.mjs desenha a peça (oculta); aqui ela
-   ganha vida: arte por TIPO do chefe (ref `alerta-raid [tipo:x]`), "AO VIVO"/"NA FILA", n/vagas, contagem, retrato do chefe e o pisca. */
+/* ===== v2 (rodada 29): o card `alerta-raid` da maquete substitui o botão "!" e a placa da fila. The hud.mjs desenha a peça (oculta); aqui ela
+   ganha vida: arte por TIPThe do chefe (ref `alerta-raid [tipo:x]`), "LIVE"/"IN QUEUE", n/vagas, contagem, retrato do chefe e o pisca. */
 function alertaV2(){ const el = temDom() ? document.getElementById('alerta-raid') : null; return (el && el.__figmaP?.v2) ? el : null; }
 function mmss(s){ s = Math.max(0, Math.floor(+s || 0)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
 function pintarAlerta(el){
@@ -311,7 +311,7 @@ function pintarAlerta(el){
   if (ref?.img && el.dataset.tipoArte !== tipo){ el.style.backgroundImage = 'url(' + ref.img + ')'; el.dataset.tipoArte = tipo; }
   const cheia = snap.fase === 'contagem';
   escrever(noDe(el, 'txt/raid-nome'), 'Raid: ' + String(snap.nome || CFG.chefeNome));
-  escrever(noDe(el, 'txt/raid-estado'), snap.eu ? T('NA FILA') : T('AO VIVO'));
+  escrever(noDe(el, 'txt/raid-estado'), snap.eu ? T('IN QUEUE') : T('LIVE'));
   escrever(noDe(el, 'txt/raid-fila'), Math.min(snap.n, snap.vagas) + '/' + snap.vagas);
   escrever(noDe(el, 'txt/raid-tempo'), cheia ? mmss(segundosFaltando()) : '');
   const boss = el.querySelector('[data-var="boss"]');
@@ -355,28 +355,28 @@ function bannerMudou(aberto){
   bannerAberto = !!aberto;
   atualizarHud();
 }
-const tituloDe = nome => 'Raid ao vivo: ' + nome + '!';
-const descricaoDe = nome => 'O ' + nome + ' apareceu em Kanto!\nChance de SHINY aumentada.\nRecompensas raras pro grupo.';
+const tituloDe = nome => 'Live Raid: ' + nome + '!';
+const descricaoDe = nome => 'The ' + nome + ' appeared in Kanto!\nIncreased SHINY chance.\nRare rewards for the group.';
 /** Situação do botão do banner: rótulo (pt) e se está ligado. */
 function botaoBanner(){
   const n = Math.min(snap.n, snap.vagas), cheia = n >= snap.vagas;
-  const rotuloPt = snap.eu ? 'Sair da fila' : (cheia ? 'Fila cheia' : 'Entrar na fila');
+  const rotuloPt = snap.eu ? 'Leave queue' : (cheia ? 'Queue full' : 'Join queue');
   const ligado = FILA.has(snap.fase) && !arena && (snap.eu || !cheia) && agora() >= pendenteAte;
   return { rotuloPt, ligado };
 }
 /* BANNER DA RODADA 30 (18/09, Jaime: "pq o banner da raid tá quebrado?"): o `banner-raid` novo da Amanda usa outros nomes — arte
    `img/raid-arte [do-jogo]`, pílula `txt/raid-estado`, `txt/raid-descricao`, `txt/raid-fila`, grupo `contagem` (`txt/raid-contagem`), 10
-   vagas com a ref `vaga [estado:ocupada]` e o botão com a ref `btn-entrar [estado:na-fila]`. O código ainda enchia os do banner antigo
+   vagas com a ref `vaga [estado:ocupada]` e o botão com a ref `btn-entrar [estado:na-fila]`. The código ainda enchia os do banner antigo
    (`fundo`, `descricao`, `vagas`): no site só o título aparecia — sem a arte do Mew, sem texto, sem a fila. As 10 bolinhas são o MÍNIMO
    pra começar (acendem até 10) e o texto é a lotação (n/30), como a Amanda desenhou. */
-const descricaoV2 = nome => 'O ' + nome + ' apareceu em Kanto! Chance de SHINY aumentada e recompensas raras pro grupo que vencer.';
+const descricaoV2 = nome => 'The ' + nome + ' appeared in Kanto! Increased SHINY chance and rare rewards for the winning group.';
 let tBanner = 0;
 function encherBannerV2(pop){
   const nome = String(snap.nome || CFG.chefeNome), vagas = snap.vagas, n = Math.min(snap.n, vagas);
   const arte = pop.querySelector('[data-var="raid-arte"]');
   const url = (!snap.dex || +snap.dex === 151) ? (arte?.dataset.exemplo || ARTE.banner) : './ui/mon/pm' + String(snap.dex).padStart(4, '0') + '.png';   // a arte da maquete é o Mew; outro chefe: o retrato dele
   if (arte && P.imagem(pop, 'raid-arte', url) && url === arte.dataset.exemplo && +arte.dataset.exemploPad) H?.fundoComFolga?.(arte, +arte.dataset.exemploPad);
-  P.texto(pop, 'raid-estado', snap.eu ? 'NA FILA' : 'RAID AO VIVO');
+  P.texto(pop, 'raid-estado', snap.eu ? 'IN QUEUE' : 'RAID LIVE');
   P.texto(pop, 'raid-nome', tituloDe(nome));
   P.texto(pop, 'raid-descricao', descricaoV2(nome));
   P.texto(pop, 'raid-fila', n + '/' + vagas);
@@ -412,7 +412,7 @@ function encherBanner(pop){
   const b = botaoBanner();
   P.botao(pop, 'entrar-fila', b.ligado, b.rotuloPt);
 }
-/** Botão do banner: entra ou sai conforme o snapshot. O botão fica apagado até o servidor responder (ou 2,5 s). */
+/** Botão do banner: entra ou sai conforme o snapshot. The botão fica apagado até o servidor responder (ou 2,5 s). */
 function acaoBanner(){
   const b = botaoBanner(); if (!b.ligado) return;
   const sair = snap.eu;
@@ -437,7 +437,7 @@ function bannerSimples(corpo){
   const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn ouro';
   const b = botaoBanner(); bt.textContent = T(b.rotuloPt); bt.disabled = !b.ligado; bt.onclick = () => acaoBanner();
   ac.appendChild(bt); w.appendChild(ac);
-  if (!FILA.has(snap.fase)){ nn.textContent = T('Nenhuma raid anunciada agora.'); vg.hidden = true; ac.hidden = true; }
+  if (!FILA.has(snap.fase)){ nn.textContent = T('No raid is currently announced.'); vg.hidden = true; ac.hidden = true; }
   corpo.innerHTML = ''; corpo.appendChild(w);
   return true;
 }
