@@ -2,6 +2,9 @@
  * Editor de Mapa (zonas de spawn com raio) + Habitats por área. Fala com o servidor dev (porta 5190) nas rotas /admin/*,
  * que só respondem pra conta GM. Reaproveita o token do jogo (localStorage 'conta.token', mesma origem). */
 
+import { carregarMensagens } from '/admin/mensagens.mjs';
+let traduzirErro = texto => texto;
+const mensagensProntas = carregarMensagens().then(traduzir => { traduzirErro = traduzir; });
 import { instalarDados } from '/admin/dados.mjs';
 import { instalarJogadores } from '/admin/jogadores.mjs';
 import { instalarEventos } from '/admin/eventos.mjs';   // Fase 3: eventos ao vivo, aviso global, manutenção
@@ -27,6 +30,10 @@ async function api(rota, metodo = 'GET', corpo) {
     body: corpo != null ? JSON.stringify(corpo) : undefined,
   });
   let d = {}; try { d = await r.json(); } catch {}
+  if (typeof d?.erro === 'string') {
+    await mensagensProntas;
+    d = { ...d, erro: traduzirErro(d.erro) };
+  }
   return { status: r.status, ok: r.ok, ...d };
 }
 function toast(msg, erro = false) {

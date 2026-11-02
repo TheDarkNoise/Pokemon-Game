@@ -381,5 +381,19 @@
   "regando": "watering",
   "rugindo": "roaring",
   "turno": "turn-based",
-  "koTurno": "fainted"
+  "koTurno": "fainted",
+  "{x0} {x1}: quantidade de 0 a 999999.": "{x0} {x1}: quantity from 0 to 999999.",
+  "{x0}: itens demais.": "{x0}: too many items.",
+  "Pokémon repetido (uid {x0}).": "Duplicate Pokémon (uid {x0}).",
+  "{x0}: IVs de 0 a 31.": "{x0}: IVs from 0 to 31.",
+  "GLB grande demais.": "GLB file is too large.",
+  "Corpo grande demais.": "Request body is too large.",
+  "Muitas contas criadas desse IP. Espere um minuto.": "Too many accounts created from this IP. Wait a minute.",
+  "Muitas tentativas. Espere um minuto.": "Too many attempts. Wait a minute.",
+  "Conta suspensa {x0}.{x1}": "Account suspended {x0}.{x1}",
+  "Nome muito curto.": "Name is too short.",
+  "Senha atual incorreta.": "Incorrect current password.",
+  "Senha incorreta.": "Incorrect password.",
+  "Faltou a lista de zonas.": "The zone list is missing.",
+  "Faltou a lista de caixas.": "The area-box list is missing."
 }
