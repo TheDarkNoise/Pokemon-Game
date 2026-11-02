@@ -212,22 +212,22 @@ function timeAtual(){
 function fichaHtml(e){
   const S = ctx.porDex.get(e.dex); if (!S) return `<div class="ficha"><h3>${esc(e.nome)}</h3><small>no Pokédex data</small></div>`;
   const lv = e.lv || 5, bs = S.bs || [45, 45, 45, 45, 45, 45];
-  const nomes = ['HP', 'Ataque', 'Defesa', 'At. Esp.', 'Def. Esp.', 'Velocidade'];
+  const nomes = ['HP', "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
   const stats = ctx.Ind ? ctx.Ind.statsDe(S, { ...e, lv }) : bs.map((b, i) => i === 0 ? ctx.R.hpAt(b, lv) : ctx.R.statAt(b, lv));   // IV + natureza do indivíduo
   const nat = ctx.Ind?.natureza(e.natureza), seta = i => !nat || nat[1] === nat[2] ? '' : i === nat[1] ? ' <span class="mais">▲</span>' : i === nat[2] ? ' <span class="menos">▼</span>' : '';
   const movs = e.movs?.length ? e.movs.map(m => ({ ...(ctx.golpe?.(m.id) || { nome: m.id, tipo: '' }), pp: m.pp, ppMax: m.ppMax })) : (ctx.golpesDe?.(e.dex) || []);   // golpes do indivíduo (PP) ou, sem registro, os da espécie
-  const golpes = movs.map(g => `<div class="linha" style="cursor:default"><span class="nome"><b>${esc(g.nome)}</b><small>power ${g.poder ?? '—'} · cooldown ${g.recarga ?? '—'}s${g.ppMax != null ? ' · PP ' + g.pp + '/' + g.ppMax : ''}</small></span>${tipoHtml(g.tipo)}</div>`).join('');
+  const golpes = movs.map(g => `<div class="linha" style="cursor:default"><span class="nome"><b>${esc(tr(g.nome))}</b><small>power ${g.poder ?? '—'} · cooldown ${g.recarga ?? '—'}s${g.ppMax != null ? ' · PP ' + g.pp + '/' + g.ppMax : ''}</small></span>${tipoHtml(g.tipo)}</div>`).join('');
   const novo = e.aprender?.[0] ? (ctx.golpe?.(e.aprender[0]) || null) : null;
-  const aprender = novo ? `<div class="evo-linha" style="margin-top:6px"><b>✧ wants to learn ${esc(novo.nome)}</b> <small>${esc(novo.tipo || '')} · power ${novo.poder ?? '—'} · PP ${ctx.Ind?.ppDe?.(novo.id) ?? '?'}</small><div style="margin-top:4px;font-size:12px">forget: ${movs.map((g, i) => `<button type="button" class="btn" data-aprender="${i}">${esc(g.nome)}</button>`).join(' ')} <button type="button" class="btn" data-aprender="-1">don't learn</button></div></div>` : '';
+  const aprender = novo ? `<div class="evo-linha" style="margin-top:6px"><b>✧ wants to learn ${esc(tr(novo.nome))}</b> <small>${esc(tr(novo.tipo || ''))} · power ${novo.poder ?? '—'} · PP ${ctx.Ind?.ppDe?.(novo.id) ?? '?'}</small><div style="margin-top:4px;font-size:12px">forget: ${movs.map((g, i) => `<button type="button" class="btn" data-aprender="${i}">${esc(tr(g.nome))}</button>`).join(' ')} <button type="button" class="btn" data-aprender="-1">don't learn</button></div></div>` : '';
   // regras dos jogos originais (evolucao.mjs): cada evolução com o que falta / ✔ pronto
   const ops = ctx.opcoesEvolucao?.(e) || [];
-  const evo = ops.length ? ops.map(o => `<div class="evo-linha"><b>→ ${esc(o.nome)}</b> <small>${esc(o.regra.texto)}</small><br>${!o.glb ? '<span class="falta">' + esc(tr('coming soon')) + '</span>' : o.pode ? '<span class="ok">✔ ready' + (o.itemNome ? ' (uses ' + esc(o.itemNome) + ')' : '') + '</span>' : '<span class="falta">' + esc(o.falta) + '</span>'}</div>`).join('') : 'does not evolve';
-  const prox = ctx.expPara?.(e.dex, lv + 1), xp = (e.exp != null && prox ? `XP ${e.exp}/${prox}` : '') + (e.expReserva > 0 ? ' · ' + e.expReserva + ' XP guardada' : '');
+  const evo = ops.length ? ops.map(o => `<div class="evo-linha"><b>→ ${esc(o.nome)}</b> <small>${esc(tr(o.regra.texto))}</small><br>${!o.glb ? '<span class="falta">' + esc(tr('coming soon')) + '</span>' : o.pode ? '<span class="ok">✔ ready' + (o.itemNome ? ' (uses ' + esc(tr(o.itemNome)) + ')' : '') + '</span>' : '<span class="falta">' + esc(tr(o.falta)) + '</span>'}</div>`).join('') : 'does not evolve';
+  const prox = ctx.expPara?.(e.dex, lv + 1), xp = (e.exp != null && prox ? `XP ${e.exp}/${prox}` : '') + (e.expReserva > 0 ? ' · ' + e.expReserva + " stored XP" : '');
   return `<div class="ficha"><div class="mini"><img src="./ui/mon/pm${String(e.dex).padStart(4, '0')}.png" alt=""></div><h3>${e.shiny ? '✨ ' : ''}${esc(e.nome)} <small style="color:var(--muted)">Nº ${String(e.dex).padStart(3, '0')} · Lv ${lv}${lv > tetoObed() ? ' <span class="falta" title="above the level cap: will not obey until the next badge">🔒 cap ' + tetoObed() + '</span>' : lv >= tetoObed() ? ' <span class="falta" title="at the level cap: XP is stored until the next badge">🔒 at cap</span>' : ''}${xp ? ' · ' + xp : ''}${e.amizade != null ? ' · friendship ' + e.amizade : ''}${e.seguindo ? ' · following' : ''}</small></h3>
     <div>${(S.types || []).map(tipoHtml).join('')} <small style="color:var(--muted)">${S.kg ? S.kg + ' kg' : ''}</small></div>
     <div class="hp"><b style="width:${Math.round(100 * (e.hp ?? stats[0]) / (e.maxHp || stats[0]))}%"></b></div>
-    <table class="stats">${stats.map((v, i) => `<tr><td>${nomes[i]}${seta(i)}</td><td>${v}</td><td class="iv">${e.ivs ? 'IV ' + e.ivs[i] : ''}</td></tr>`).join('')}<tr><td>total base</td><td>${S.bst || bs.reduce((a, b) => a + b, 0)}</td><td class="iv">${e.ivs ? 'IV ' + ctx.Ind.somaIV(e) + '/' + ctx.Ind.IV_TOTAL : ''}</td></tr>${e.natureza ? `<tr><td>natureza</td><td colspan="2"><b>${esc(e.natureza)}</b> <small style="color:var(--muted)">${esc(ctx.Ind.descNatureza(e.natureza))}</small></td></tr>` : ''}</table>
-    <div class="k" style="margin-top:8px;color:var(--muted);font-size:11px">golpes</div><div class="lista">${golpes || '<small>—</small>'}</div>${aprender}${reaprenderHtml(e)}
+    <table class="stats">${stats.map((v, i) => `<tr><td>${nomes[i]}${seta(i)}</td><td>${v}</td><td class="iv">${e.ivs ? 'IV ' + e.ivs[i] : ''}</td></tr>`).join('')}<tr><td>total base</td><td>${S.bst || bs.reduce((a, b) => a + b, 0)}</td><td class="iv">${e.ivs ? 'IV ' + ctx.Ind.somaIV(e) + '/' + ctx.Ind.IV_TOTAL : ''}</td></tr>${e.natureza ? `<tr><td>nature</td><td colspan="2"><b>${esc(e.natureza)}</b> <small style="color:var(--muted)">${esc(tr(ctx.Ind.descNatureza(e.natureza)))}</small></td></tr>` : ''}</table>
+    <div class="k" style="margin-top:8px;color:var(--muted);font-size:11px">moves</div><div class="lista">${golpes || '<small>—</small>'}</div>${aprender}${reaprenderHtml(e)}
     <div style="margin-top:8px;font-size:12px">${evo}</div></div>`;
 }
 /* ------------------------------------------------------------------ Caixa: arrastar entre o time e a caixa (20/09)
@@ -289,7 +289,7 @@ function rPokemon(corpo){
   const e = lista[selPokemon];
   corpo.innerHTML = `<div class="dois"><div class="lista">${lista.map((p, i) => `<div class="linha ${i === selPokemon ? 'on' : ''}" data-i="${i}"><span class="nome"><b>${p.shiny ? '✨ ' : ''}${esc(p.nome)}${p.sexo === 'm' ? ' <small class="sexo m">♂</small>' : p.sexo === 'f' ? ' <small class="sexo f">♀</small>' : ''}${p.seguindo ? " <small>· following</small>" : ''}${p.hp === 0 ? ' <small style="color:#f58e8e">· fainted</small>' : ''}</b><small>Lv ${p.lv} · Nº ${String(p.dex).padStart(3, '0')}</small><div class="hp"><b style="width:${p.maxHp ? Math.round(100 * p.hp / p.maxHp) : 100}%"></b></div></span>${(ctx.porDex.get(p.dex)?.types || []).map(tipoHtml).join('')}</div>`).join('')}${'<div class="linha vazia"></div>'.repeat(Math.max(0, 6 - lista.length))}
     <div style="color:var(--muted);font-size:11px;margin-top:6px">${lista.length}/6 in party</div></div>
-    <div>${fichaHtml(e)}<div class="acoes">${e.seguindo ? (() => { const todas = ctx.opcoesEvolucao?.(e) || [], ops = todas.filter(o => o.glb), prontas = ops.filter(o => o.pode), breve = !ops.length && todas.find(o => !o.glb); return prontas.length ? prontas.map(o => `<button type="button" class="btn ouro" data-evo="${ops.indexOf(o)}" title="${esc(o.regra.texto)}">✧ Evolve → ${esc(o.nome)}${o.itemNome ? ' (uses ' + esc(o.itemNome) + ')' : ''}</button>`).join('') : `<button type="button" class="btn ouro" disabled title="${esc(ops[0]?.falta || (breve ? breve.nome + ': ' + tr('coming soon') : tr('does not evolve')))}">✧ Evolve${ops[0] ? ' — ' + esc(ops[0].falta) : breve ? ' — ' + esc(breve.nome) + ' (' + esc(tr('coming soon')) + ')' : ''}</button>`; })() : `<button type="button" class="btn ouro" id="p-seguir">Follow</button><button type="button" class="btn" id="p-caixa">Send to storage</button>`}${botaoSoltar(chaveDe(e), lista.length, !!e.seguindo)}${e.hp === 0 ? (() => { const r = ctx.reanimadorNaMochila?.(); return `<button type="button" class="btn ouro" id="p-reanimar" ${r ? '' : 'disabled'} title="${r ? 'usa ' + esc(r.nome) : 'buy a Revive at the Poké Mart'}">💊 ${r ? esc(r.nome) + ' (' + r.n + ')' : 'Revive — none in bag'}</button>`; })() : ''}</div></div></div>`;
+    <div>${fichaHtml(e)}<div class="acoes">${e.seguindo ? (() => { const todas = ctx.opcoesEvolucao?.(e) || [], ops = todas.filter(o => o.glb), prontas = ops.filter(o => o.pode), breve = !ops.length && todas.find(o => !o.glb); return prontas.length ? prontas.map(o => `<button type="button" class="btn ouro" data-evo="${ops.indexOf(o)}" title="${esc(tr(o.regra.texto))}">✧ Evolve → ${esc(o.nome)}${o.itemNome ? ' (uses ' + esc(tr(o.itemNome)) + ')' : ''}</button>`).join('') : `<button type="button" class="btn ouro" disabled title="${esc(ops[0]?.falta || (breve ? breve.nome + ': ' + tr('coming soon') : tr('does not evolve')))}">✧ Evolve${ops[0] ? ' — ' + esc(tr(ops[0].falta)) : breve ? ' — ' + esc(breve.nome) + ' (' + esc(tr('coming soon')) + ')' : ''}</button>`; })() : `<button type="button" class="btn ouro" id="p-seguir">Follow</button><button type="button" class="btn" id="p-caixa">Send to storage</button>`}${botaoSoltar(chaveDe(e), lista.length, !!e.seguindo)}${e.hp === 0 ? (() => { const r = ctx.reanimadorNaMochila?.(); return `<button type="button" class="btn ouro" id="p-reanimar" ${r ? '' : 'disabled'} title="${r ? 'usa ' + esc(r.nome) : 'buy a Revive at the Poké Mart'}">💊 ${r ? esc(r.nome) + ' (' + r.n + ')' : 'Revive — none in bag'}</button>`; })() : ''}</div></div></div>`;
   corpo.querySelectorAll('[data-evo]').forEach(b => b.onclick = () => { const ops = (ctx.opcoesEvolucao?.(e) || []).filter(o => o.glb); fechar(); ctx.evoluir?.(ops[+b.dataset.evo]); });
   corpo.querySelector('#p-reanimar')?.addEventListener('click', () => { ctx.reanimarMembro?.(e); render(); });
   corpo.querySelectorAll('[data-i]').forEach(l => l.onclick = () => { selPokemon = +l.dataset.i; render(); });
@@ -334,7 +334,7 @@ export function escolherEvolucao(e, ops){
     for (const o of ops){
       const b = document.createElement('button'); b.type = 'button';
       Object.assign(b.style, { background: '#13254A', border: '1px solid #F8C237', borderRadius: '10px', padding: '9px', color: '#F8C237', font: 'inherit', cursor: 'pointer', textAlign: 'left' });
-      b.textContent = '✦ ' + o.nome + (o.itemNome ? ' — ' + tr('usa') + ' ' + o.itemNome : ' — ' + tr(o.regra?.texto || ''));
+      b.textContent = '✦ ' + o.nome + (o.itemNome ? ' — ' + tr('usa') + ' ' + tr(o.itemNome) : ' — ' + tr(o.regra?.texto || ''));
       b.onclick = () => fim(o);
       d.appendChild(b);
     }
@@ -916,8 +916,8 @@ function encherTreinador(pop){
   Popup.texto(pop, 'jogador-nome', ctx.nome || 'Ash');
   Popup.texto(pop, 'dinheiro', dinheiro().toLocaleString('pt-BR') + ' ' + (D2.moedas?.[1] || 'Moeda'));
   Popup.texto(pop, 'tempo-jogo', h + 'h ' + String(mi).padStart(2, '0') + 'm');
-  Popup.texto(pop, 'time-resumo', (ctx.jogo.time || []).length + '/6 · caixa ' + (ctx.lerLS('caixa', []) || []).length);
-  Popup.texto(pop, 'pokedex-resumo', vistos + ' vistos · ' + pegos + ' capturados');
+  Popup.texto(pop, 'time-resumo', (ctx.jogo.time || []).length + "/6 · storage " + (ctx.lerLS('caixa', []) || []).length);
+  Popup.texto(pop, 'pokedex-resumo', vistos + " seen · " + pegos + " caught");
   Popup.texto(pop, 'insignias-resumo', tem.size + '/8');
   Popup.texto(pop, 'personagem', pers ? (P.nomeDe?.(pers) || pers.tipo) : 'Ash');
   Popup.texto(pop, 'inicial', ini ? (ini.nome || (ini.dex && ctx.porDex.get(ini.dex)?.name) || '—') : '—');
@@ -952,8 +952,8 @@ function encherTreinador(pop){
   const K = ctx.conhecimento;
   if (K){
     const r = K.resumo(), ts = K.listaTitulos();
-    Popup.texto(pop, 'col-kanto', r.pegosKanto + '/' + r.kantoAte + ' capturados (' + Math.round(r.pegosKanto / r.kantoAte * 100) + '%) · ' + r.vistosKanto + ' vistos');
-    Popup.texto(pop, 'col-nacional', r.pegos + ' capturados · ' + r.vistos + ' vistos');
+    Popup.texto(pop, 'col-kanto', r.pegosKanto + '/' + r.kantoAte + " caught (" + Math.round(r.pegosKanto / r.kantoAte * 100) + '%) · ' + r.vistosKanto + " seen");
+    Popup.texto(pop, 'col-nacional', r.pegos + " caught · " + r.vistos + " seen");
     Popup.texto(pop, 'col-shinies', '✨ ' + r.shinies);
     Popup.texto(pop, 'col-conhecimento', r.mestres + ' species' + (r.mestres === 1 ? '' : 's') + " at Master · " + r.estudadas + " at Studied+ · " + r.pontosTotal + " points");
     const slug = x => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -1343,9 +1343,9 @@ async function encherPokedex(pop){
   const rv = K ? K.revela(selDex) : null, nv = rv ? rv.nivel : (st === 'pego' ? 2 : st ? 1 : 0);
   Popup.texto(pop, 'especie-nome', nv >= 1 ? S?.name : '?????'); Popup.texto(pop, 'especie-numero', 'Nº ' + pad3(selDex));
   Popup.texto(pop, 'especie-visto', '· ' + (st === 'pego' ? 'capturado' : st ? 'visto' : 'desconhecido'));
-  bolinhas(Popup.grupo(pop, 'progresso-registro'), nv); Popup.texto(pop, 'nivel-nome', NOMES_NIVEL[nv]);
+  bolinhas(Popup.grupo(pop, 'progresso-registro'), nv); Popup.texto(pop, 'nivel-nome', tr(NOMES_NIVEL[nv]));
   const falta = K && nv < 5 ? K.falta(selDex).slice(0, 3) : [];
-  Popup.texto(pop, 'como-subir', nv >= 5 ? 'Maximum level: you are a Master of this species.' : (rv && rv.proximo != null ? rv.pontos + '/' + rv.proximo + ' pra ' + NOMES_NIVEL[nv + 1] + (falta.length ? ' — pra subir: ' + falta.join(', ') : '') : (st ? '' : 'Encounter this Pokémon to open its entry.')));
+  Popup.texto(pop, 'como-subir', nv >= 5 ? 'Maximum level: you are a Master of this species.' : (rv && rv.proximo != null ? rv.pontos + '/' + rv.proximo + " to " + tr(NOMES_NIVEL[nv + 1]) + (falta.length ? " — to advance: " + falta.map(tr).join(', ') : '') : (st ? '' : 'Encounter this Pokémon to open its entry.')));
   const f = Popup.grupo(pop, 'ficha-especie');
   pilulasTipo(pop, Popup.grupo(pop, 'tipos-especie') || f, nv >= 1 ? (S?.types || []) : []);
   // visor 3D nas duas caixas [do-jogo]
@@ -1363,7 +1363,7 @@ async function encherPokedex(pop){
   const alt = ctx.alturas?.[selDex] ?? X.a, peso = S?.kg ?? X.p;
   const linhas = [
     ['info-altura---peso', 2, alt || peso ? (alt ? alt.toFixed(1) + ' m' : '—') + ' · ' + (peso ? peso + ' kg' : '—') : '—'],
-    ['info-habilidades', 3, X.h?.length ? X.h.join(', ') + (X.ho ? (nv >= 4 ? ' (oculta: ' + X.ho + ')' : ' (hidden: unlocks at level 4)') : '') : '—'],
+    ['info-habilidades', 3, X.h?.length ? X.h.map(tr).join(', ') + (X.ho ? (nv >= 4 ? " (hidden: " + tr(X.ho) + ')' : ' (hidden: unlocks at level 4)') : '') : '—'],
     ['info-g-nero', 4, X.m != null ? (X.m < 0 ? 'genderless' : '♂ ' + X.m + '% · ♀ ' + X.f + '%') : '—'],
     ['info-taxa-de-captura', 3, (S?.rate ?? X.c ?? '—') + ' · ' + (chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1) + '% at full HP with a Poké Ball'],
   ];
@@ -1373,13 +1373,13 @@ async function encherPokedex(pop){
     if (!l){ continue; }
     const aberto = nv >= l[1];
     const cad = g.querySelector('[data-var="cadeado"]'); if (cad){ cad.style.display = aberto ? 'none' : 'block'; if (!aberto) arteExemplo(cad); }
-    const vl = Popup.texto(pop, 'info-valor', aberto ? l[2] : 'unlocks at level ' + l[1] + ' (' + NOMES_NIVEL[l[1]] + ')', g);
+    const vl = Popup.texto(pop, 'info-valor', aberto ? l[2] : 'unlocks at level ' + l[1] + ' (' + tr(NOMES_NIVEL[l[1]]) + ')', g);
     if (vl) vl.style.color = aberto ? '#FFFFFF' : '#B8C2D9';
   }
   const noMapa = (ctx.jogo.selvagens || []).filter(s => s.dex === selDex && s.estado !== 'morto').length;
   const onde = (() => { const hb = ctx.habitats; if (!hb) return []; const out = []; for (const [area, lista] of Object.entries(hb.areas || {})) if (lista.some(e => e.dex === selDex)) out.push(ctx.nomeArea?.(+area) || ctx.dados?.nomes?.[area] || ('area ' + area)); return out; })();
   Popup.rotulo(pop, 'rotulo-onde');
-  Popup.texto(pop, 'onde', nv >= 1 ? ((onde.length ? onde.join(', ') : 'not found in the wild (trade/event only)') + (noMapa ? ' · ' + noMapa + ' neste mapa agora' : '')) : '?');
+  Popup.texto(pop, 'onde', nv >= 1 ? ((onde.length ? onde.map(tr).join(', ') : 'not found in the wild (trade/event only)') + (noMapa ? ' · ' + noMapa + " on this map now" : '')) : '?');
   const avS = Popup.grupo(pop, 'aviso-stats'), avG = Popup.grupo(pop, 'aviso-golpes');
   const cadeadoDe = g => { const c = g?.querySelector('[data-var="cadeado"]'); arteExemplo(c); if (c) c.style.display = 'block'; };
   if (avS){ avS.style.display = nv < 2 ? 'block' : 'none'; cadeadoDe(avS); Popup.texto(pop, 'aviso', 'stats, evolution and weaknesses unlock at level 2 (catch one)', avS); }
@@ -1388,18 +1388,18 @@ async function encherPokedex(pop){
 
 /* ------------------------------------------------------------------ Missões */
 function rMissoes(corpo){
-  abas([{ id: 'principal', nome: 'Principal' }]);
+  abas([{ id: 'principal', nome: "Main" }]);
   const M = ctx.missoes;
   if (!M?.pronto?.()){ corpo.innerHTML = '<div class="vazio">Quests are still loading…</div>'; return; }
   const caps = M.capitulos(), ativa = M.ativa(), idx = M.indicePasso(), prog = M.progresso();
   const nomeItem = id => tr(D.itens[id]?.n || ('item ' + id));
-  const rec = r => [r?.dinheiro ? r.dinheiro + ' Moedas' : null, ...Object.entries(r?.itens || {}).map(([id, n]) => esc(nomeItem(id)) + ' ×' + n), r?.exp ? r.exp + ' XP' : null].filter(Boolean).join(' · ') || '—';
-  const passoTxt = (p, i) => { const n = p.n || 0; const c = i === idx && n > 1 ? ' ' + Math.min(prog, n) + '/' + n : ''; return esc(p.texto) + c + (p.onde ? ' <small style="color:var(--muted)">(' + esc(p.onde) + ')</small>' : ''); };
-  const atual = ativa ? `<div class="missao-atual"><small style="color:var(--muted)">Chapter ${ativa.capitulo} · ${esc(ativa.capNome)}</small><br><b>${esc(ativa.nome)}</b><br><span style="font-size:12px">${esc(ativa.des)}</span>
+  const rec = r => [r?.dinheiro ? r.dinheiro + " Coins" : null, ...Object.entries(r?.itens || {}).map(([id, n]) => esc(nomeItem(id)) + ' ×' + n), r?.exp ? r.exp + ' XP' : null].filter(Boolean).join(' · ') || '—';
+  const passoTxt = (p, i) => { const n = p.n || 0; const c = i === idx && n > 1 ? ' ' + Math.min(prog, n) + '/' + n : ''; return esc(tr(p.texto)) + c + (p.onde ? ' <small style="color:var(--muted)">(' + esc(tr(p.onde)) + ')</small>' : ''); };
+  const atual = ativa ? `<div class="missao-atual"><small style="color:var(--muted)">Chapter ${ativa.capitulo} · ${esc(tr(ativa.capNome))}</small><br><b>${esc(tr(ativa.nome))}</b><br><span style="font-size:12px">${esc(tr(ativa.des))}</span>
       <div style="margin-top:8px;font-size:13px;line-height:1.5">${ativa.passos.map((p, i) => `<div>${i < idx ? '✔' : i === idx ? '▶' : '○'} ${passoTxt(p, i)}</div>`).join('')}</div>
       <div style="margin-top:6px;font-size:12px;color:var(--muted)">reward: ${rec(ativa.recompensa)}</div></div>`
     : '<div class="missao-atual"><b>You have completed everything available for now.</b><br><span style="font-size:12px">More chapters will arrive in future versions.</span></div>';
-  corpo.innerHTML = atual + caps.map(c => { const feitas = c.missoes.filter(m => m.estado === 'feita').length, aberta = c.missoes.some(m => m.estado === 'ativa'); return `<details ${aberta ? 'open' : ''} style="margin-top:8px"><summary style="cursor:pointer;color:${feitas === c.missoes.length ? 'var(--muted)' : '#ffe07a'}">${feitas === c.missoes.length ? '✅' : aberta ? '▶️' : '🔒'} Chapter ${c.id} — ${esc(c.nome)} <small style="color:var(--muted)">${feitas}/${c.missoes.length}</small></summary><div class="lista">${c.missoes.map(m => `<div class="linha" style="cursor:default;${m.estado === 'travada' ? 'opacity:.55' : ''}"><span style="font-size:16px">${m.estado === 'feita' ? '✅' : m.estado === 'ativa' ? '▶️' : '🔒'}</span><span class="nome"><b>${esc(m.nome)}</b><small>${esc(m.des)} · reward: ${rec(m.recompensa)}</small></span></div>`).join('')}</div></details>`; }).join('');
+  corpo.innerHTML = atual + caps.map(c => { const feitas = c.missoes.filter(m => m.estado === 'feita').length, aberta = c.missoes.some(m => m.estado === 'ativa'); return `<details ${aberta ? 'open' : ''} style="margin-top:8px"><summary style="cursor:pointer;color:${feitas === c.missoes.length ? 'var(--muted)' : '#ffe07a'}">${feitas === c.missoes.length ? '✅' : aberta ? '▶️' : '🔒'} Chapter ${c.id} — ${esc(tr(c.nome))} <small style="color:var(--muted)">${feitas}/${c.missoes.length}</small></summary><div class="lista">${c.missoes.map(m => `<div class="linha" style="cursor:default;${m.estado === 'travada' ? 'opacity:.55' : ''}"><span style="font-size:16px">${m.estado === 'feita' ? '✅' : m.estado === 'ativa' ? '▶️' : '🔒'}</span><span class="nome"><b>${esc(tr(m.nome))}</b><small>${esc(tr(m.des))} · reward: ${rec(m.recompensa)}</small></span></div>`).join('')}</div></details>`; }).join('');
 }
 
 /* ============================================================ pop-up Missões (maquete do Figma, rodada 10)
@@ -1563,7 +1563,7 @@ function rMapa(corpo){
     c.fillStyle = '#3f8a2f'; for (const t2 of dd.grama || []) c.fillRect(X(fx * t2.x), Z(t2.z), k, k);      // grama alta
     for (const b of caixas){                                             // rótulos
       const nome = dd.nomes?.[b.a] || ''; if (!nome || nome.startsWith('area')) continue;
-      const cid = ehCidade(nome), rot = nome.replace('Cidade ', ''), cx2 = X(fx * b.x), cz2 = Z(b.z);
+      const cid = ehCidade(nome), rot = tr(nome).replace('Cidade ', ''), cx2 = X(fx * b.x), cz2 = Z(b.z);
       c.font = (cid ? '600 19px' : '600 13px') + ' system-ui'; c.textAlign = 'center';
       if (cid){ const w = c.measureText(rot).width + 16; c.fillStyle = '#ffffffee'; c.beginPath(); c.roundRect(cx2 - w / 2, cz2 - 13, w, 26, 12); c.fill(); c.strokeStyle = '#444'; c.lineWidth = 1; c.stroke(); c.fillStyle = '#1a1a1a'; c.fillText(rot, cx2, cz2 + 5); }
       else { c.strokeStyle = '#f2f7e6'; c.lineWidth = 3; c.strokeText(rot, cx2, cz2 + 4); c.fillStyle = '#1d3a12'; c.fillText(rot, cx2, cz2 + 4); }
@@ -1580,7 +1580,7 @@ function rMapa(corpo){
     const d = dexEstado();
     const linha = e => { const st = d[e.dex]; const visto = st === 'visto' || st === 'pego';
       return `<div class="m-poke ${visto ? '' : 'sombra'}"><img src="./ui/mon/pm${String(e.dex).padStart(4, '0')}.png" loading="lazy"><b>${visto ? esc(e.nome) : '???'}</b>${e.agua ? '<small>💧</small>' : ''}${st === 'pego' ? '<small class="pego">✔ pego</small>' : ''}</div>`; };
-    alvo.innerHTML = `<div class="ficha"><h3>${esc(nome)}</h3>${lista.length ? `<div style="color:var(--muted);font-size:11px;margin:4px 0 8px">${proprios.length ? 'Pokémon in this area' : 'Common regional Pokémon'} — getting close registers them in the Pokédex</div><div class="m-grade">${lista.map(linha).join('')}</div>` : '<div class="vazio" style="padding:14px 6px">No wild Pokémon here.</div>'}</div>`;
+    alvo.innerHTML = `<div class="ficha"><h3>${esc(tr(nome))}</h3>${lista.length ? `<div style="color:var(--muted);font-size:11px;margin:4px 0 8px">${proprios.length ? 'Pokémon in this area' : 'Common regional Pokémon'} — getting close registers them in the Pokédex</div><div class="m-grade">${lista.map(linha).join('')}</div>` : '<div class="vazio" style="padding:14px 6px">No wild Pokémon here.</div>'}</div>`;
   };
   cv.onclick = ev => {
     const r = cv.getBoundingClientRect();
@@ -1765,8 +1765,8 @@ function rPokedex(corpo){
   const vistos = todos.filter(s => d[s.n]).length, pegos = todos.filter(s => d[s.n] === 'pego').length;
   if (!sp.some(s => s.n === selDex)) selDex = (sp.find(s => d[s.n]) || sp[0])?.n || null;
   corpo.innerHTML = `<div class="dois dex-dois"><div><div class="dex-topo"><input id="dex-busca" placeholder="search by name or number…" value="${esc(dexBusca)}" autocomplete="off"><span>👁 ${vistos} · ★ ${pegos} / ${todos.length}</span></div>
-    ${(() => { const K = ctx.conhecimento; if (!K) return ''; const r = K.resumo(); return `<div class="dex-colec"><b>Collector</b> Kanto ${r.pegosKanto}/${r.kantoAte} caught (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} seen · ✨ ${r.shinies} shiny · 📖 ${r.mestres} mestre${r.mestres === 1 ? '' : 's'}${r.tituloAtual ? ` · 🏅 ${esc(r.tituloAtual)}` : ''}</div>`; })()}
-    <div class="dex-lista">${sp.map(s => `<div class="dex ${d[s.n] === 'pego' ? 'pego' : d[s.n] ? 'visto' : ''} ${s.n === selDex ? 'on' : ''}" data-n="${s.n}"><span class="num">${String(s.n).padStart(3, '0')}</span><span class="nm">${d[s.n] ? esc(s.name) : '?????'}</span><span class="tp">${d[s.n] ? (s.types || []).map(tipoHtml).join('') : ''}</span>${(() => { const n = ctx.conhecimento?.nivel(s.n) ?? (d[s.n] === 'pego' ? 2 : d[s.n] ? 1 : 0); return n ? `<span class="pego-ic" title="conhecimento ${n}/5">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span>` : ''; })()}</div>`).join('') || '<div class="vazio">no matching name in this generation</div>'}</div></div><div class="ficha dex-ficha" id="dex-ficha"></div></div>`;
+    ${(() => { const K = ctx.conhecimento; if (!K) return ''; const r = K.resumo(); return `<div class="dex-colec"><b>Collector</b> Kanto ${r.pegosKanto}/${r.kantoAte} caught (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} seen · ✨ ${r.shinies} shiny · 📖 ${r.mestres} master${r.mestres === 1 ? '' : 's'}${r.tituloAtual ? ` · 🏅 ${esc(tr(r.tituloAtual))}` : ''}</div>`; })()}
+    <div class="dex-lista">${sp.map(s => `<div class="dex ${d[s.n] === 'pego' ? 'pego' : d[s.n] ? 'visto' : ''} ${s.n === selDex ? 'on' : ''}" data-n="${s.n}"><span class="num">${String(s.n).padStart(3, '0')}</span><span class="nm">${d[s.n] ? esc(s.name) : '?????'}</span><span class="tp">${d[s.n] ? (s.types || []).map(tipoHtml).join('') : ''}</span>${(() => { const n = ctx.conhecimento?.nivel(s.n) ?? (d[s.n] === 'pego' ? 2 : d[s.n] ? 1 : 0); return n ? `<span class="pego-ic" title="knowledge ${n}/5">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span>` : ''; })()}</div>`).join('') || '<div class="vazio">no matching name in this generation</div>'}</div></div><div class="ficha dex-ficha" id="dex-ficha"></div></div>`;
   const busca = corpo.querySelector('#dex-busca');
   busca.addEventListener('input', () => { dexBusca = busca.value; const pos = busca.selectionStart; render(); const b2 = $('j-corpo').querySelector('#dex-busca'); b2?.focus(); try { b2?.setSelectionRange(pos, pos); } catch {} });
   corpo.querySelectorAll('.dex').forEach(el => el.onclick = () => { selDex = +el.dataset.n; corpo.querySelectorAll('.dex').forEach(x => x.classList.toggle('on', x === el)); mostrarDex(); });
@@ -1779,7 +1779,7 @@ async function mostrarDex(){
   const X = dexExtra.especies?.[selDex] || {}, G = dexExtra.golpes || {};
   const glb = glbDe(selDex), v = visorDex(); v.redimensionar(600, 600, 0);   // janela antiga: as duas metades de sempre
   const alt = ctx.alturas?.[selDex] ?? X.a, peso = S?.kg ?? X.p;
-  const bs = S?.bs || [], nomes = ['HP', 'Atq', 'Def', 'AtE', 'DfE', 'Vel'];
+  const bs = S?.bs || [], nomes = ['HP', "Atk", 'Def', "Sp. Atk", "Sp. Def", "Speed"];
   const fr = fraquezas(S?.types || []);
   const cadeia = conhecido && S ? cadeiaEvolucao(selDex) : [];
   const golpes = (X.g || []).slice().sort((p, q) => p[0] - q[0]);
@@ -1795,9 +1795,9 @@ async function mostrarDex(){
   const faltaLista = K && nv < 5 ? K.falta(selDex).slice(0, 4) : [];
   const golpesMostrar = nv >= 4 ? golpes : golpes.filter(([, id]) => vistoGolpe.has(id));
   const trava = (n, txt) => `<td class="oculto">🔒 level ${n} (${nomesNivel[n]})${txt ? ' · ' + txt : ''}</td>`;
-  const golpeHtml = ([lv, id]) => { const g = G[id]; return g ? `<div><span class="lv">${lv}</span><b>${esc(g[0])}</b>${tipoHtml(g[1])}<small>${catMap[g[2]] || ''} · power ${g[3] || '—'} · PP ${g[4] || '—'}</small></div>` : ''; };
+  const golpeHtml = ([lv, id]) => { const g = G[id]; return g ? `<div><span class="lv">${lv}</span><b>${esc(tr(g[0]))}</b>${tipoHtml(g[1])}<small>${catMap[g[2]] || ''} · power ${g[3] || '—'} · PP ${g[4] || '—'}</small></div>` : ''; };
   f.innerHTML = `<h3>${nv >= 1 ? esc(S?.name) : '?????'} <small style="color:var(--muted)">Nº ${String(selDex).padStart(3, '0')} · ${st === 'pego' ? "caught" : st ? "seen" : "unknown"}</small></h3>
-    <div class="dex-nivel"><span class="pts" title="${rv ? rv.pontos + " knowledge points" : ''}">${'●'.repeat(nv)}${'○'.repeat(5 - nv)}</span> <b>${nomesNivel[nv]}</b>${rv && rv.proximo != null ? ` <small>${rv.pontos}/${rv.proximo} to ${nomesNivel[nv + 1]}</small>` : nv >= 5 ? ' <small>✨ you know everything about this species</small>' : ''}${faltaLista.length ? `<div class="dex-falta">to advance: ${faltaLista.map(esc).join(' · ')}</div>` : ''}</div>
+    <div class="dex-nivel"><span class="pts" title="${rv ? rv.pontos + " knowledge points" : ''}">${'●'.repeat(nv)}${'○'.repeat(5 - nv)}</span> <b>${nomesNivel[nv]}</b>${rv && rv.proximo != null ? ` <small>${rv.pontos}/${rv.proximo} to ${nomesNivel[nv + 1]}</small>` : nv >= 5 ? ' <small>✨ you know everything about this species</small>' : ''}${faltaLista.length ? `<div class="dex-falta">to advance: ${faltaLista.map(tr).map(esc).join(' · ')}</div>` : ''}</div>
     <div class="dex-visor"></div>
     <div class="dex-rotulos"><span>Normal</span><span id="dex-rotulo-shiny">✨ Shiny</span></div>
     <div style="color:var(--muted);font-size:11px;text-align:center">${glb ? "drag to rotate both" : "no exported 3D model yet"}</div>
@@ -1806,13 +1806,13 @@ async function mostrarDex(){
     ${(I18n.descricaoDex(selDex) || X.d) && nv >= 2 ? `<p class="dex-des">${esc(I18n.descricaoDex(selDex) || X.d)}</p>` : ''}
     <table class="stats dex-tab">
       <tr><td>height / weight</td>${nv >= 2 ? `<td>${alt ? alt.toFixed(1) + ' m' : '—'} · ${peso ? peso + ' kg' : '—'}</td>` : trava(2, "catch one")}</tr>
-      ${X.h?.length ? `<tr><td>abilities</td>${nv >= 3 ? `<td>${X.h.map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(hidden: ${esc(X.ho)})</small>` : " <small class=\"oculto\">(hidden: 🔒 level 4)</small>") : ''}</td>` : trava(3)}</tr>` : ''}
+      ${X.h?.length ? `<tr><td>abilities</td>${nv >= 3 ? `<td>${X.h.map(tr).map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(hidden: ${esc(tr(X.ho))})</small>` : " <small class=\"oculto\">(hidden: 🔒 level 4)</small>") : ''}</td>` : trava(3)}</tr>` : ''}
       ${X.m != null ? `<tr><td>gender</td>${nv >= 4 ? `<td>${X.m < 0 ? 'genderless' : `♂ ${X.m}% · ♀ ${X.f}%`}</td>` : trava(4)}</tr>` : ''}
       <tr><td>catch rate</td>${nv >= 3 ? `<td>${S?.rate ?? X.c ?? '—'} · ${(chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1)}% at full HP with a Poké Ball (fainted: ${(chanceCaptura((S?.rate ?? 45) * 3) * 100).toFixed(0)}%)</td>` : trava(3, "battle and catch more")}</tr>
-      <tr><td>where to find</td><td>${onde.length ? onde.map(esc).join(', ') : 'not found in the wild (trade/event only)'}${noMapa ? ` · <b>${noMapa} on this map now</b>` : ''}</td></tr>
+      <tr><td>where to find</td><td>${onde.length ? onde.map(tr).map(esc).join(', ') : 'not found in the wild (trade/event only)'}${noMapa ? ` · <b>${noMapa} on this map now</b>` : ''}</td></tr>
     </table>
     ${nv >= 2 ? `<div class="dex-stats">${bs.map((b, i) => `<span><small>${nomes[i]}</small>${b}</span>`).join('')}<span><small>total</small>${S?.bst || bs.reduce((x, y) => x + y, 0)}</span></div>
-    <div class="dex-secao">evolution</div><div class="dex-cadeia">${cadeia.map(({ s, prof }) => `<span class="${s.n === selDex ? 'on' : ''}" data-n="${s.n}" style="margin-left:${prof * 14}px">${prof ? '▸ ' : ''}${esc(s.name)}${(() => { const pre = cadeia.find(c => (c.s.evo || []).some(e => e.to === s.name)); const e = pre?.s.evo.find(e => e.to === s.name); return e ? ` <small>${e.lvl ? "Lv. " + e.lvl : ''}${e.cond ? ' ' + esc(e.cond) : ''}</small>` : ''; })()}</span>`).join('')}</div>
+    <div class="dex-secao">evolution</div><div class="dex-cadeia">${cadeia.map(({ s, prof }) => `<span class="${s.n === selDex ? 'on' : ''}" data-n="${s.n}" style="margin-left:${prof * 14}px">${prof ? '▸ ' : ''}${esc(s.name)}${(() => { const pre = cadeia.find(c => (c.s.evo || []).some(e => e.to === s.name)); const e = pre?.s.evo.find(e => e.to === s.name); return e ? ` <small>${e.lvl ? "Lv. " + e.lvl : ''}${e.cond ? ' ' + esc(tr(e.cond)) : ''}</small>` : ''; })()}</span>`).join('')}</div>
     <div class="dex-secao">weak against ${fr.fraco.length}</div><div>${fr.fraco.map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m}</span>`).join('') || '—'}</div>
     <div class="dex-secao">resists ${fr.resiste.length + fr.imune.length}</div><div>${[...fr.resiste, ...fr.imune].map(([t, m]) => `<span class="tipo" style="background:${ctx.R.COR_TIPO?.[t] || '#556'}">${t} ×${m === 0 ? '0' : m === 0.25 ? '¼' : '½'}</span>`).join('') || '—'}</div>` : '<div class="dex-secao oculto">🔒 stats, evolution and weaknesses unlock at level 2 (Registered): catch one</div>'}
     ${golpes.length ? (golpesMostrar.length ? `<div class="dex-secao">moves by level${nv < 4 ? ` <small>(${golpesMostrar.length}/${golpes.length} seen · the full learnset unlocks at level 4)</small>` : ''}</div><div class="dex-golpes">${golpesMostrar.map(golpeHtml).join('')}</div>` : `<div class="dex-secao oculto">🔒 moves: watch the species use moves in battle (${golpes.length} in the learnset; complete at level 4)</div>`) : ''}`
@@ -1832,16 +1832,16 @@ function rTreinador(corpo){
   const t = ctx.lerLS('tempo', 0), h = Math.floor(t / 3600), mi = Math.floor((t % 3600) / 60);
   const d = dexEstado(); const pegos = Object.values(d).filter(v => v === 'pego').length, vistos = Object.keys(d).length;
   const ins = (D.insignias || []).filter(b => b.gen === 1); const tem = new Set(ctx.lerLS('insignias', []));
-  corpo.innerHTML = `<div class="dois"><div class="ficha"><h3>${esc(ctx.nome || 'Ash')}</h3><table class="stats"><tr><td>money</td><td>${dinheiro().toLocaleString('pt-BR')} ${esc(D.moedas?.[1] || '')}</td></tr><tr><td>play time</td><td>${h}h ${String(mi).padStart(2, '0')}m</td></tr><tr><td>party</td><td>${timeAtual().length}/6 · storage ${ctx.lerLS('caixa', []).length}</td></tr><tr><td>pokédex</td><td>${vistos} seen · ${pegos} caught</td></tr><tr><td>badges</td><td>${tem.size}/8</td></tr><tr><td>character</td><td>${esc(ctx.personagemNome?.() || 'Ash')}</td></tr><tr><td>starter</td><td>${esc(ctx.lerLS('inicial', null)?.nome || '—')}</td></tr></table></div>
-    <div class="ficha"><h3>Kanto badges</h3><div class="insignias">${ins.map(b => `<div class="insignia ${tem.has(b.id) ? 'tem' : ''}" title="${esc(b.n)}">${esc(b.n.replace(/^medalha /i, ''))}</div>`).join('')}</div><div style="margin-top:6px;font-size:12px">Obey up to <b style="color:#ffe07a">Lv ${tetoObed()}</b> <small style="color:var(--muted)">· above that, they sometimes ignore commands; each badge raises the limit by 10</small></div><small style="color:var(--muted)">the 8 gyms will arrive with trainer battles</small></div></div>`;
+  corpo.innerHTML = `<div class="dois"><div class="ficha"><h3>${esc(ctx.nome || 'Ash')}</h3><table class="stats"><tr><td>money</td><td>${dinheiro().toLocaleString('pt-BR')} ${esc(tr(D.moedas?.[1] || ''))}</td></tr><tr><td>play time</td><td>${h}h ${String(mi).padStart(2, '0')}m</td></tr><tr><td>party</td><td>${timeAtual().length}/6 · storage ${ctx.lerLS('caixa', []).length}</td></tr><tr><td>pokédex</td><td>${vistos} seen · ${pegos} caught</td></tr><tr><td>badges</td><td>${tem.size}/8</td></tr><tr><td>character</td><td>${esc(tr(ctx.personagemNome?.() || 'Ash'))}</td></tr><tr><td>starter</td><td>${esc(ctx.lerLS('inicial', null)?.nome || '—')}</td></tr></table></div>
+    <div class="ficha"><h3>Kanto badges</h3><div class="insignias">${ins.map(b => `<div class="insignia ${tem.has(b.id) ? 'tem' : ''}" title="${esc(tr(b.n))}">${esc(tr(b.n).replace(/^medalha /i, ''))}</div>`).join('')}</div><div style="margin-top:6px;font-size:12px">Obey up to <b style="color:#ffe07a">Lv ${tetoObed()}</b> <small style="color:var(--muted)">· above that, they sometimes ignore commands; each badge raises the limit by 10</small></div><small style="color:var(--muted)">the 8 gyms will arrive with trainer battles</small></div></div>`;
   if (ctx.conhecimento){                                               // Pokédex de conhecimento: placar do colecionador e títulos
     const r = ctx.conhecimento.resumo(), ts = ctx.conhecimento.listaTitulos();
-    corpo.insertAdjacentHTML('beforeend', `<div class="ficha" style="margin-top:8px"><h3>Collector${r.tituloAtual ? ` <small style="color:var(--gold,#f4aa35)">🏅 ${esc(r.tituloAtual)}</small>` : ''}</h3>
+    corpo.insertAdjacentHTML('beforeend', `<div class="ficha" style="margin-top:8px"><h3>Collector${r.tituloAtual ? ` <small style="color:var(--gold,#f4aa35)">🏅 ${esc(tr(r.tituloAtual))}</small>` : ''}</h3>
       <table class="stats"><tr><td>Kanto</td><td>${r.pegosKanto}/${r.kantoAte} caught (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} seen</td></tr>
       <tr><td>national</td><td>${r.pegos} caught · ${r.vistos} seen</td></tr>
       <tr><td>shinies caught</td><td>✨ ${r.shinies}</td></tr>
       <tr><td>knowledge</td><td>${r.mestres} species${r.mestres === 1 ? '' : ""} at Master · ${r.estudadas} at Studied+ · ${r.pontosTotal} points</td></tr></table>
-      <div class="titulos">${ts.map(x => `<div class="titulo ${x.tem ? 'tem' : ''}" title="${esc(x.desc)}">${x.tem ? '🏅' : '○'} ${esc(x.nome)} <small>${esc(x.desc)}</small></div>`).join('')}</div>
+      <div class="titulos">${ts.map(x => `<div class="titulo ${x.tem ? 'tem' : ''}" title="${esc(tr(x.desc))}">${x.tem ? '🏅' : '○'} ${esc(tr(x.nome))} <small>${esc(tr(x.desc))}</small></div>`).join('')}</div>
       <div style="color:var(--muted);font-size:11px;margin-top:6px">player rankings will arrive with the server; shiny odds are the same for everyone (1/4,096), without exception.</div></div>`);
   }
 }
@@ -2742,7 +2742,7 @@ function rConfig(corpo){
     campo.disabled = true; av.textContent = "checking…"; av.style.color = '#98a4c0';
     const r = await ctx.renomear?.(campo.value);
     campo.disabled = false; campo.value = ctx.nome;
-    if (r && !r.ok){ av.textContent = r.erro; av.style.color = '#f58e8e'; }
+    if (r && !r.ok){ av.textContent = tr(r.erro); av.style.color = '#f58e8e'; }
     else { av.textContent = 'done — you are now ' + ctx.nome + '.'; av.style.color = '#8fe08f'; }
   };
   corpo.querySelector('#c-vol').oninput = ev => { const v = +ev.target.value; corpo.querySelector('#c-volv').textContent = v + '%'; ctx.gravarLS('volume', v); ctx.Som?.ajustar?.({ sfx: v / 100, mus: v / 100 }); };
@@ -2768,7 +2768,7 @@ function rConfig(corpo){
       armado = false; btn.disabled = true; btn.textContent = "deleting…";
       const r = await acao();
       btn.disabled = false; btn.textContent = rotulo;
-      if (r && !r.ok){ avConta.textContent = r.erro; avConta.style.color = '#f58e8e'; }
+      if (r && !r.ok){ avConta.textContent = tr(r.erro); avConta.style.color = '#f58e8e'; }
     };
   };
   doisCliques(corpo.querySelector('#c-apagar-perso'), "Delete character", async () => {
