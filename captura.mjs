@@ -40,7 +40,7 @@ async function povoar({ dex, lv, perfil, shiny, n, raio, frente }){
       else { const ang = Math.random() * Math.PI * 2, d = raio * (0.45 + 0.55 * Math.random()); x = a.x + Math.sin(ang) * d; z = a.z + Math.cos(ang) * d; }
       ok = ctx.chaoEm(x, z) != null && ctx.livre(x, z) && Math.hypot(x - a.x, z - a.z) >= 3;   // `livre`: fora de cerca/árvore/parede — nascendo dentro de bloqueio ele nunca sai do lugar
     }
-    if (!ok){ status('sem chão livre em volta — anda pra um lugar mais aberto'); continue; }
+    if (!ok){ status("no free ground nearby — move to a more open area"); continue; }
     try {
       const s = await ctx.jogo.criarSelvagem(esp, x, z, { lv: +lv || null, perfil: perfil || null });
       if (shiny && !s.shiny){ s.shiny = true; ctx.aplicarShinyCampo(s.pivo, true); }
@@ -49,7 +49,7 @@ async function povoar({ dex, lv, perfil, shiny, n, raio, frente }){
          tiles) ou, se `pertoDeGrama === false`, por pontos andáveis a até 10 m de `casa` — é esse o modo que serve. */
       s.pertoDeGrama = false; s.vagaLivre = true; s.pausa = 0.5 + Math.random() * 2;   // vagaLivre: o jogo não deixa selvagem vagar dentro de cidade; na cena vale
       rotular(s); meus.push(s); feitos++;
-    } catch (e){ status(nomeDex(dex) + ' não carregou: ' + (e?.message || e)); break; }
+    } catch (e){ status(nomeDex(dex) + " did not load: " + (e?.message || e)); break; }
   }
   pintarVivos(); return feitos;
 }
@@ -58,29 +58,29 @@ function pintarVivos(){
   const ul = $('cap-vivos'); if (!ul) return;
   const a = ctx.jogo.ash;
   meus = meus.filter(vivo);                                             // capturado / fugiu / morreu: some da lista
-  ul.innerHTML = meus.map((s, i) => `<li>${s.shiny ? '✨ ' : ''}<b>${esc(s.nome)}</b> Lv${s.lv} ${s.perfil === 'agressivo' ? '⚔' : '🏃'}<small>${Math.round(Math.hypot(s.x - a.x, s.z - a.z))} m</small><button data-i="${i}" class="perigo" title="tirar da cena">✕</button></li>`).join('') || '<li class="k">nenhum povoado por você</li>';
+  ul.innerHTML = meus.map((s, i) => `<li>${s.shiny ? '✨ ' : ''}<b>${esc(s.nome)}</b> Lv${s.lv} ${s.perfil === 'agressivo' ? '⚔' : '🏃'}<small>${Math.round(Math.hypot(s.x - a.x, s.z - a.z))} m</small><button data-i="${i}" class="perigo" title="remove from scene">✕</button></li>`).join('') || "<li class=\"k\">none spawned by you</li>";
   ul.querySelectorAll('button[data-i]').forEach(b => b.onclick = () => tirar(meus[+b.dataset.i]));
-  $('cap-conta').textContent = meus.length + ' seu(s) · ' + ctx.jogo.selvagens.length + ' no mapa';
+  $('cap-conta').textContent = meus.length + " yours · " + ctx.jogo.selvagens.length + " on the map";
 }
 
 /* ---------------------------------------------------------------- seguidor, roupa, teleporte, bolas */
 async function trocarSeguidor(dex, shiny){
-  status('carregando ' + nomeDex(dex) + '…');
+  status("loading " + nomeDex(dex) + '…');
   const p = await ctx.jogo.trocarSeguidor(glbDe(dex));
   p.shiny = !!shiny; ctx.aplicarShinyCampo(p.pivo, !!shiny);
   cena.seguidor = { dex: +dex, shiny: !!shiny }; salvar();
-  status('seguidor: ' + (shiny ? '✨ ' : '') + nomeDex(dex));
+  status("follower: " + (shiny ? '✨ ' : '') + nomeDex(dex));
 }
 function irPara(area){
-  const c = ctx.centroArea.get(+area); if (!c) return status('área sem centro conhecido');
+  const c = ctx.centroArea.get(+area); if (!c) return status("area has no known center");
   let x = c.cx, z = c.cz, y = ctx.livre(x, z) ? ctx.chaoEm(x, z) : null;
   for (let k = 0; k < 24 && y == null; k++){ const ang = k * 1.1, d = 3 + k * 1.5; x = c.cx + Math.sin(ang) * d; z = c.cz + Math.cos(ang) * d; y = ctx.livre(x, z) ? ctx.chaoEm(x, z) : null; }
-  if (y == null) return status('não achei chão nessa área');
+  if (y == null) return status("could not find ground in this area");
   const a = ctx.jogo.ash, p = ctx.jogo.pika;
   for (const e of [a, p]){ if (!e) continue; const dx = e === a ? 0 : 1.2, dz = e === a ? 0 : 1; e.x = x + dx; e.z = z + dz; e.y = ctx.chaoEm(e.x, e.z) ?? y; e.vx = e.x; e.vz = e.z; e.vy = e.y; e.pivo.position.set(e.x, e.y, e.z); e.alvoClique = null; }
-  status('teleportado pra ' + ctx.nomeArea(+area));
+  status("teleported to " + ctx.nomeArea(+area));
 }
-function darBolas(id, n){ const b = ctx.jogo.bolas; b[id] = (b[id] || 0) + n; ctx.gravarLS('bolas', b); ctx.pintarHud(); status(`+${n} ${({ 1001: 'Pokébola', 1002: 'Grande Bola', 1003: 'Ultra Bola', 1004: 'Bola Mestra' })[id]} (tem ${b[id]})`); }
+function darBolas(id, n){ const b = ctx.jogo.bolas; b[id] = (b[id] || 0) + n; ctx.gravarLS('bolas', b); ctx.pintarHud(); status(`+${n} ${({ 1001: "Poké Ball", 1002: "Great Ball", 1003: "Ultra Ball", 1004: "Master Ball" })[id]} (owned: ${b[id]})`); }
 
 /* ---------------------------------------------------------------- textos */
 function pintarBanner(){ banner.innerHTML = '<b>' + esc(cena.banner.titulo) + '</b><span>' + esc(cena.banner.sub) + '</span>'; }
@@ -91,8 +91,8 @@ function mostrarFlash(a, b, seg){ flash.innerHTML = '<b>' + esc(a) + '</b><span>
 function salvar(){ ctx.gravarLS('captura.cena', cena); }
 function pintarReceitas(){
   const ul = $('cap-receitas');
-  ul.innerHTML = cena.receitas.map((r, i) => `<li>${r.shiny ? '✨ ' : ''}<b>${esc(nomeDex(r.dex))}</b> ×${r.n} Lv${r.lv || '?'} ${r.perfil === 'agressivo' ? '⚔' : r.perfil === 'arisco' ? '🏃' : '🎲'} <small>${r.frente ? 'na frente' : r.raio + ' m'}</small><button data-run="${i}" title="povoar agora">▶</button><button data-del="${i}" class="perigo">✕</button></li>`).join('') || '<li class="k">nenhuma receita salva</li>';
-  ul.querySelectorAll('[data-run]').forEach(b => b.onclick = () => povoar(cena.receitas[+b.dataset.run]).then(k => status(k + ' nasceram')));
+  ul.innerHTML = cena.receitas.map((r, i) => `<li>${r.shiny ? '✨ ' : ''}<b>${esc(nomeDex(r.dex))}</b> ×${r.n} Lv${r.lv || '?'} ${r.perfil === 'agressivo' ? '⚔' : r.perfil === 'arisco' ? '🏃' : '🎲'} <small>${r.frente ? "in front" : r.raio + ' m'}</small><button data-run="${i}" title="spawn now">▶</button><button data-del="${i}" class="perigo">✕</button></li>`).join('') || "<li class=\"k\">no saved recipes</li>";
+  ul.querySelectorAll('[data-run]').forEach(b => b.onclick = () => povoar(cena.receitas[+b.dataset.run]).then(k => status(k + " spawned")));
   ul.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { cena.receitas.splice(+b.dataset.del, 1); pintarReceitas(); salvar(); });
 }
 
@@ -102,63 +102,63 @@ function montarPainel(){
   const areas = [...ctx.centroArea.keys()].sort((a, b) => a - b).map(a => `<option value="${a}">${esc(ctx.nomeArea(a))}</option>`).join('');
   painel = document.createElement('div'); painel.id = 'cap';
   painel.innerHTML = `
-    <div class="linha"><b style="color:#ffe07a">🎥 Cena de captura</b> <span class="k">H esconde · F9 flash</span></div>
-    <div id="cap-status" class="k">spawn natural desligado: só aparece quem você povoar</div>
-    <h2>Cena</h2>
-    <label><span>mapa</span><select id="c-mapa"><option value="pallet_rota1">Pallet + Rota 1 (leve)</option><option value="kanto">Kanto inteira</option><option value="casa">Terreno (lote)</option></select><button id="c-ir">ir</button></label>
-    <label><span>teleporte</span><select id="c-area">${areas}</select><button id="c-tele">ir</button></label>
-    <div class="linha"><button id="c-exportar">Exportar cena</button><button id="c-importar">Importar</button><input type="file" id="c-arq" accept="application/json" hidden><button id="c-limpar" class="perigo">Limpar receitas</button></div>
-    <h2>Você</h2>
-    <label><span>roupa</span><select id="v-skin">${skins}</select><button id="v-rand" title="skin e cores aleatórias">🎲</button><button id="v-ok">trocar</button></label>
-    <label><span>seguidor</span><input type="number" id="v-dex" value="25" min="1" max="1025" style="flex:.6"><span id="v-nome" style="min-width:0;flex:1"></span><button id="v-dex-rand">🎲</button></label>
-    <label><input type="checkbox" id="v-shiny"> seguidor shiny <button id="v-seg-ok" class="ok" style="margin-left:auto">trocar seguidor</button></label>
-    <h2>Selvagens</h2>
+    <div class="linha"><b style="color:#ffe07a">🎥 Capture scene</b> <span class="k">H hides · F9 flash</span></div>
+    <div id="cap-status" class="k">natural spawning disabled: only Pokémon you spawn will appear</div>
+    <h2>Scene</h2>
+    <label><span>map</span><select id="c-mapa"><option value="pallet_rota1">Pallet + Route 1 (lightweight)</option><option value="kanto">All of Kanto</option><option value="casa">Terrain (plot)</option></select><button id="c-ir">go</button></label>
+    <label><span>teleport</span><select id="c-area">${areas}</select><button id="c-tele">go</button></label>
+    <div class="linha"><button id="c-exportar">Export scene</button><button id="c-importar">Import</button><input type="file" id="c-arq" accept="application/json" hidden><button id="c-limpar" class="perigo">Clear recipes</button></div>
+    <h2>You</h2>
+    <label><span>outfit</span><select id="v-skin">${skins}</select><button id="v-rand" title="random skin and colors">🎲</button><button id="v-ok">change</button></label>
+    <label><span>follower</span><input type="number" id="v-dex" value="25" min="1" max="1025" style="flex:.6"><span id="v-nome" style="min-width:0;flex:1"></span><button id="v-dex-rand">🎲</button></label>
+    <label><input type="checkbox" id="v-shiny"> shiny follower <button id="v-seg-ok" class="ok" style="margin-left:auto">change follower</button></label>
+    <h2>Wild Pokémon</h2>
     <label><span>Pokémon</span><input type="number" id="s-dex" value="16" min="1" max="1025" style="flex:.6"><span id="s-nome" style="min-width:0;flex:1"></span><button id="s-dex-rand">🎲</button></label>
-    <label><span>nível</span><input type="number" id="s-lv" value="5" min="1" max="100" style="flex:.5"><span>perfil</span><select id="s-perfil" style="flex:1"><option value="">sorteia</option><option value="agressivo">⚔ agressivo (vem pra cima)</option><option value="arisco">🏃 arisco (foge)</option></select></label>
-    <label><span>quantos</span><input type="number" id="s-n" value="3" min="1" max="12" style="flex:.5"><span>raio m</span><input type="number" id="s-raio" value="10" min="4" max="30" style="flex:.5"><input type="checkbox" id="s-shiny"> ✨ shiny</label>
-    <div class="linha"><button id="s-volta" class="ok">povoar em volta</button><button id="s-frente">1 na frente</button><button id="s-guardar" title="guarda esta configuração pra repetir depois">+ receita</button></div>
-    <div class="k">receitas (▶ povoa de novo; tudo fica salvo):</div>
+    <label><span>level</span><input type="number" id="s-lv" value="5" min="1" max="100" style="flex:.5"><span>behavior</span><select id="s-perfil" style="flex:1"><option value="">random</option><option value="agressivo">⚔ aggressive (approaches)</option><option value="arisco">🏃 skittish (flees)</option></select></label>
+    <label><span>count</span><input type="number" id="s-n" value="3" min="1" max="12" style="flex:.5"><span>radius m</span><input type="number" id="s-raio" value="10" min="4" max="30" style="flex:.5"><input type="checkbox" id="s-shiny"> ✨ shiny</label>
+    <div class="linha"><button id="s-volta" class="ok">spawn nearby</button><button id="s-frente">1 in front</button><button id="s-guardar" title="save these settings to reuse later">+ recipe</button></div>
+    <div class="k">recipes (▶ spawns again; everything is saved):</div>
     <ul id="cap-receitas"></ul>
-    <div class="linha"><button id="s-tudo">▶ povoar todas as receitas</button><button id="s-limpar" class="perigo">tirar os meus</button></div>
+    <div class="linha"><button id="s-tudo">▶ spawn all recipes</button><button id="s-limpar" class="perigo">remove mine</button></div>
     <div class="k" id="cap-conta"></div>
     <ul id="cap-vivos"></ul>
-    <h2>Mochila</h2>
-    <div class="linha"><button id="b-1001">+10 Pokébola</button><button id="b-1002">+10 Grande</button><button id="b-1003">+10 Ultra</button><button id="b-1004">+1 Mestra</button></div>
-    <h2>Textos</h2>
-    <label><span>título</span><input id="t-titulo"></label>
-    <label><span>subtítulo</span><input id="t-sub"></label>
-    <label><span>flash</span><input id="t-fa" placeholder="grande"><input id="t-fb" placeholder="pequeno" style="flex:.8"><button id="t-flash">▶</button></label>
-    <h2>Câmera</h2>
+    <h2>Bag</h2>
+    <div class="linha"><button id="b-1001">+10 Poké Balls</button><button id="b-1002">+10 Great Balls</button><button id="b-1003">+10 Ultra Balls</button><button id="b-1004">+1 Master Ball</button></div>
+    <h2>Text</h2>
+    <label><span>title</span><input id="t-titulo"></label>
+    <label><span>subtitle</span><input id="t-sub"></label>
+    <label><span>flash</span><input id="t-fa" placeholder="large"><input id="t-fb" placeholder="small" style="flex:.8"><button id="t-flash">▶</button></label>
+    <h2>Camera</h2>
     <label><span>zoom</span><input type="range" id="c-zoom" min="0.35" max="3" step="0.05"><span id="c-zoomv"></span></label>
-    <div class="k">a câmera é a do jogo (botão direito arrasta, roda dá zoom). Tab mira o selvagem mais perto; golpes nos atalhos; bola no atalho da Pokébola.</div>
-    <div class="k" style="margin-top:10px">OBS: monta a cena, aperta H pra sumir o painel e grava jogando.</div>`;
+    <div class="k">The game camera is used (right-drag to rotate, wheel to zoom). Tab targets the nearest wild Pokémon; use shortcuts for moves and the Poké Ball shortcut to throw a ball.</div>
+    <div class="k" style="margin-top:10px">Recording: set up the scene, press H to hide the panel and record while playing.</div>`;
   document.body.appendChild(painel);
-  const dica = document.createElement('div'); dica.id = 'cap-dica'; dica.textContent = 'H: painel · F9: flash'; document.body.appendChild(dica);
+  const dica = document.createElement('div'); dica.id = 'cap-dica'; dica.textContent = "H: panel · F9: flash"; document.body.appendChild(dica);
   // cena
   $('c-mapa').value = ctx.mapaNome === 'kanto' ? 'kanto' : ctx.mapaNome === 'casa' ? 'casa' : 'pallet_rota1';
   $('c-ir').onclick = () => { const u = new URL(location.href); u.searchParams.set('mapa', $('c-mapa').value); u.searchParams.delete('chegada'); location.href = u.toString(); };
   $('c-tele').onclick = () => irPara($('c-area').value);
   $('c-exportar').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(cena, null, 1)], { type: 'application/json' })); a.download = 'cena_captura.json'; a.click(); };
   $('c-importar').onclick = () => $('c-arq').click();
-  $('c-arq').onchange = () => { const f = $('c-arq').files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const d = JSON.parse(String(r.result)); cena.receitas = d.receitas || []; cena.banner = d.banner || cena.banner; cena.seguidor = d.seguidor || cena.seguidor; salvar(); pintarReceitas(); pintarBanner(); status('cena importada'); } catch { status('JSON inválido'); } }; r.readAsText(f); };
+  $('c-arq').onchange = () => { const f = $('c-arq').files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const d = JSON.parse(String(r.result)); cena.receitas = d.receitas || []; cena.banner = d.banner || cena.banner; cena.seguidor = d.seguidor || cena.seguidor; salvar(); pintarReceitas(); pintarBanner(); status("scene imported"); } catch { status("Invalid JSON"); } }; r.readAsText(f); };
   $('c-limpar').onclick = () => { cena.receitas = []; pintarReceitas(); salvar(); };
   // você
-  $('v-rand').onclick = () => { const s = rnd(ctx.Personagem.SKINS); const p = { tipo: s.id }; if (s.tinta){ p.cores = {}; for (const k of Object.keys(ctx.Personagem.PADRAO[s.tinta] || {})) p.cores[k] = k === 'pele' ? rnd(['#ffcbaa', '#f2b58e', '#c98c62', '#8d5a3c']) : '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0'); } $('v-skin').value = p.tipo; $('v-skin').dataset.cores = JSON.stringify(p.cores || null); status('roupa sorteada: ' + ctx.Personagem.nomeDe(p) + ' — clique em trocar'); };
+  $('v-rand').onclick = () => { const s = rnd(ctx.Personagem.SKINS); const p = { tipo: s.id }; if (s.tinta){ p.cores = {}; for (const k of Object.keys(ctx.Personagem.PADRAO[s.tinta] || {})) p.cores[k] = k === 'pele' ? rnd(['#ffcbaa', '#f2b58e', '#c98c62', '#8d5a3c']) : '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0'); } $('v-skin').value = p.tipo; $('v-skin').dataset.cores = JSON.stringify(p.cores || null); status("random outfit: " + ctx.Personagem.nomeDe(p) + " — click change"); };
   $('v-skin').onchange = () => { delete $('v-skin').dataset.cores; };
-  $('v-ok').onclick = async () => { const cores = $('v-skin').dataset.cores ? JSON.parse($('v-skin').dataset.cores) : null; const p = { tipo: $('v-skin').value, ...(cores ? { cores } : {}) }; status('trocando roupa…'); await ctx.jogo.trocarJogador(p); cena.roupa = p; salvar(); status('roupa: ' + ctx.Personagem.nomeDe(p)); };
+  $('v-ok').onclick = async () => { const cores = $('v-skin').dataset.cores ? JSON.parse($('v-skin').dataset.cores) : null; const p = { tipo: $('v-skin').value, ...(cores ? { cores } : {}) }; status("changing outfit…"); await ctx.jogo.trocarJogador(p); cena.roupa = p; salvar(); status("outfit: " + ctx.Personagem.nomeDe(p)); };
   const nomes = () => { $('v-nome').textContent = nomeDex($('v-dex').value); $('s-nome').textContent = nomeDex($('s-dex').value); };
   if (cena.seguidor){ $('v-dex').value = cena.seguidor.dex; $('v-shiny').checked = !!cena.seguidor.shiny; }
   nomes(); $('v-dex').oninput = nomes; $('s-dex').oninput = nomes;
   $('v-dex-rand').onclick = () => { $('v-dex').value = rnd(DEX_RAND); nomes(); };
-  $('v-seg-ok').onclick = () => trocarSeguidor(+$('v-dex').value, $('v-shiny').checked).catch(e => status('seguidor não carregou: ' + (e?.message || e)));
+  $('v-seg-ok').onclick = () => trocarSeguidor(+$('v-dex').value, $('v-shiny').checked).catch(e => status("follower did not load: " + (e?.message || e)));
   // selvagens
   const receita = frente => ({ dex: +$('s-dex').value, lv: +$('s-lv').value || 0, perfil: $('s-perfil').value, shiny: $('s-shiny').checked, n: frente ? 1 : Math.max(1, Math.min(12, +$('s-n').value || 1)), raio: Math.max(4, Math.min(30, +$('s-raio').value || 10)), frente: !!frente });
   $('s-dex-rand').onclick = () => { $('s-dex').value = rnd(DEX_RAND); nomes(); };
-  $('s-volta').onclick = () => { status('povoando…'); povoar(receita(false)).then(k => status(k + ' ' + nomeDex($('s-dex').value) + ' em volta de você')); };
-  $('s-frente').onclick = () => { status('povoando…'); povoar(receita(true)).then(k => status(k ? nomeDex($('s-dex').value) + ' na sua frente' : 'não coube na frente')); };
-  $('s-guardar').onclick = () => { cena.receitas.push(receita(false)); pintarReceitas(); salvar(); status('receita guardada'); };
-  $('s-tudo').onclick = async () => { let t = 0; for (const r of cena.receitas) t += await povoar(r); status(t + ' nasceram (todas as receitas)'); };
-  $('s-limpar').onclick = () => { for (const s of [...meus]) tirar(s); status('seus selvagens saíram de cena'); };
+  $('s-volta').onclick = () => { status("spawning…"); povoar(receita(false)).then(k => status(k + ' ' + nomeDex($('s-dex').value) + " around you")); };
+  $('s-frente').onclick = () => { status("spawning…"); povoar(receita(true)).then(k => status(k ? nomeDex($('s-dex').value) + " in front of you" : "not enough room in front")); };
+  $('s-guardar').onclick = () => { cena.receitas.push(receita(false)); pintarReceitas(); salvar(); status("recipe saved"); };
+  $('s-tudo').onclick = async () => { let t = 0; for (const r of cena.receitas) t += await povoar(r); status(t + " spawned (all recipes)"); };
+  $('s-limpar').onclick = () => { for (const s of [...meus]) tirar(s); status("your wild Pokémon were removed from the scene"); };
   // mochila
   for (const [id, n] of [[1001, 10], [1002, 10], [1003, 10], [1004, 1]]) $('b-' + id).onclick = () => darBolas(id, n);
   // textos

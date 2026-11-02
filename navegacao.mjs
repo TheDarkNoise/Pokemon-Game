@@ -45,7 +45,7 @@ const ui = {};
 /** `pai`: onde pôr o botão (senão fica fixo no canto superior direito). */
 export function instalar({ pai = null } = {}){
   const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
-  ui.botao = document.createElement('button'); ui.botao.id = 'nav-botao'; ui.botao.type = 'button'; ui.botao.textContent = '☰ Páginas';
+  ui.botao = document.createElement('button'); ui.botao.id = 'nav-botao'; ui.botao.type = 'button'; ui.botao.textContent = "☰ Pages";
   ui.botao.hidden = true;   /* só aparece quando docs/paginas.json existe (local); no site fica escondido */
   ui.painel = document.createElement('div'); ui.painel.id = 'nav-painel'; ui.painel.hidden = true;
   if (pai){ ui.botao.style.position = 'static'; pai.appendChild(ui.botao); } else document.body.appendChild(ui.botao);
@@ -95,7 +95,7 @@ function pintar(){
         el = document.createElement('a'); el.href = new URL(it.url, RAIZ).href;
         if (aqui(it.url)) el.classList.add('aqui');
       }
-      el.innerHTML = `${it.nome}<span>${it.desc}</span>${el.classList?.contains('aqui') ? '<span>◂ você está aqui</span>' : ''}`;
+      el.innerHTML = `${it.nome}<span>${it.desc}</span>${el.classList?.contains('aqui') ? "<span>◂ you are here</span>" : ''}`;
       ui.painel.appendChild(el);
     }
     if (g.dica){ const d = document.createElement('div'); d.className = 'dica'; d.textContent = g.dica; ui.painel.appendChild(d); }
@@ -108,7 +108,7 @@ async function checar(g){
   let ok = false;
   try { await fetch(g.checar, { mode: 'no-cors', cache: 'no-store', signal: c.signal }); ok = true; } catch {}
   clearTimeout(t);
-  pt.className = 'pt ' + (ok ? 'on' : 'off'); pt.title = ok ? 'servidor no ar' : 'servidor fora do ar';
+  pt.className = 'pt ' + (ok ? 'on' : 'off'); pt.title = ok ? "server online" : "server offline";
 }
 
 const ACOES = {};                                 // (a folha dos efeitos, tools/bancada_efeitos.js, saiu do menu em 01/09: dependia de um global `jogo` que não existe mais)
