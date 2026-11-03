@@ -1176,5 +1176,19 @@
   "🔒 {raw_target} Lv {x1} passa do seu teto (Lv {x2}): só vai obedecer depois de {x3}.": "🔒 {raw_target} Lv {x1} exceeds your cap (Lv {x2}): it will only obey after {x3}.",
   "{raw_target} está desmaiado — na batalha o Reanimador sai pela Mochila": "{raw_target} has fainted — use a Revive from the Bag during battle",
   "{raw_target} está desmaiado — precisa de Reanimador (Pokémart)": "{raw_target} has fainted — a Revive is needed (Poké Mart)",
-  "{raw_target} está desmaiado — F pra capturar": "{raw_target} has fainted — press F to catch it"
+  "{raw_target} está desmaiado — F pra capturar": "{raw_target} has fainted — press F to catch it",
+  "falta: {requirement}": "requirements: {requirement}",
+  "{raw_before} evoluiu para {raw_after}!": "{raw_before} evolved into {raw_after}!",
+  "troca em {raw_seconds} s": "switch available in {raw_seconds} s",
+  "{raw_target}, vai!": "Go, {raw_target}!",
+  "vai, {raw_target}!": "Go, {raw_target}!",
+  "Pegou um Fragmento de Teracristal Normal (o cristal volta em 2 min).": "Picked up a Normal Tera Shard (the crystal returns in 2 min).",
+  "de volta!": "back!",
+  "chegue mais perto do treinador": "move closer to the trainer",
+  "⚔ Batalha contra {raw_trainer} ({raw_count} Pokémon)!": "⚔ Battle against {raw_trainer} ({raw_count} Pokémon)!",
+  "Use: /raid hp N (vida do Mew) ou /raid hp auto.": "Usage: /raid hp N (Mew’s HP) or /raid hp auto.",
+  "O nome do treinador tem de ter pelo menos 3 characters.": "Trainer names must contain at least 3 characters.",
+  "pegou Fragmento de Teracristal": "picked up a Tera Shard",
+  "Use: /raid dano F (ex.: 0,5 ou 1,5).": "Usage: /raid dano F (e.g. 0.5 or 1.5).",
+  "Use: /raid shiny N (1 em N).": "Usage: /raid shiny N (1 in N)."
 }

@@ -353,7 +353,7 @@ export function aplicarDoServidor(save, revNovo){
     { ok:false, erro } — quem chama mostra o erro em vez de fingir que trocou. Sem conta, grava só neste aparelho. */
 export async function trocarNome(nome){
   const n = String(nome || '').replace(/\s+/g, ' ').trim().slice(0, 16);
-  if (n.length < 3) return { ok: false, erro: "O nome do treinador tem de ter pelo menos 3 characters." };
+  if (n.length < 3) return { ok: false, erro: I18n.t("O nome do treinador tem de ter pelo menos 3 characters.") };
   if (modo !== 'conta'){ gravar('nome', JSON.stringify(n)); return { ok: true, nome: n, local: true }; }
   const r = await api('POST', '/conta/nome', { nome: n });
   if (!r.ok) return { ok: false, erro: r.erro || "Could not change the name." };
