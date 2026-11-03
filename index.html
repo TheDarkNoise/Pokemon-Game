@@ -7402,7 +7402,7 @@ if (jogo.ash){
     Object.assign(sel.style, { padding: '3px 4px', border: '1px solid var(--line)', borderRadius: '3px', background: '#0b1020', color: 'var(--text)', font: 'inherit' });
     for (const [glb, nome] of LENDARIOS){ const o = document.createElement('option'); o.value = glb; o.textContent = nome; sel.appendChild(o); }
     sel.value = (params0.get('chefe') || 'pm0249_00').replace(/\.glb$/, ''); if (!sel.value) sel.value = 'pm0249_00';
-    const btn = document.createElement('button'); btn.id = 'chefe-btn'; btn.type = 'button'; btn.innerHTML = '☄ Chamar chefe <b>B</b>';
+    const btn = document.createElement('button'); btn.id = 'chefe-btn'; btn.type = 'button'; btn.innerHTML = I18n.t('☄ Chamar chefe') + ' <b>B</b>';
     Object.assign(btn.style, { padding: '5px 10px', border: '1px solid #ff5f5f', borderRadius: '6px', background: 'linear-gradient(#4a1414,#10131b)', color: '#ffd9d9', font: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap' });
     btn.querySelector('b').style.cssText = 'display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #ff5f5f;border-radius:3px;font-family:ui-monospace,Consolas,monospace';
     btn.addEventListener('click', () => { Som.destravar(); btn.blur(); chegarChefe(sel.value); });
@@ -7429,7 +7429,7 @@ if (jogo.ash){
     Object.assign(painel.style, { position: 'fixed', right: '320px', top: '88px', zIndex: 30, display: 'flex', gap: '6px', alignItems: 'center', padding: '5px 8px', border: '1px solid #8ef58e', borderRadius: '8px', background: 'rgba(10,20,14,.85)', backdropFilter: 'blur(4px)', color: 'var(--text)', font: 'inherit', fontSize: '12px' });
     const sel = document.createElement('select'); sel.id = 'segue-esp';
     Object.assign(sel.style, { padding: '3px 4px', border: '1px solid var(--line)', borderRadius: '3px', background: '#0b1020', color: 'var(--text)', font: 'inherit', maxWidth: '190px' });
-    const btn = document.createElement('button'); btn.id = 'segue-btn'; btn.type = 'button'; btn.innerHTML = '🐾 Seguir';
+    const btn = document.createElement('button'); btn.id = 'segue-btn'; btn.type = 'button'; btn.innerHTML = I18n.t('🐾 Seguir');
     Object.assign(btn.style, { padding: '5px 10px', border: '1px solid #8ef58e', borderRadius: '6px', background: 'linear-gradient(#14401f,#10131b)', color: '#d9ffe0', font: 'inherit', cursor: 'pointer' });
     const encher = async () => {
       let lista = [];
@@ -7461,7 +7461,7 @@ if (jogo.ash){
   if (!DEMO) {
     const painel = document.createElement('div'); painel.id = 'admin-ctl';
     Object.assign(painel.style, { position: 'fixed', right: '320px', top: '126px', zIndex: 30, display: 'flex', alignItems: 'center', padding: '5px 8px', border: '1px solid #F8C237', borderRadius: '8px', background: 'rgba(26,20,6,.85)', backdropFilter: 'blur(4px)', font: 'inherit', fontSize: '12px', boxShadow: '0 8px 18px #000a' });
-    const btn = document.createElement('button'); btn.id = 'admin-btn'; btn.type = 'button'; btn.innerHTML = '⚙ Painel Admin';
+    const btn = document.createElement('button'); btn.id = 'admin-btn'; btn.type = 'button'; btn.innerHTML = I18n.t('⚙ Painel Admin');
     Object.assign(btn.style, { padding: '5px 10px', border: '1px solid #F8C237', borderRadius: '6px', background: 'linear-gradient(#4a3a10,#10131b)', color: '#ffe9a8', font: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap' });
     btn.addEventListener('click', () => { btn.blur(); window.open(new URL('/admin', location.href).toString(), '_blank'); });
     painel.append(btn); document.body.appendChild(painel);
@@ -7743,8 +7743,8 @@ function setTexto(el, s){ if (el.__txt !== s){ el.textContent = s; el.__txt = s;
 /* `TIPO_PT` (nomes dos ícones de tipo) mora junto do `jogo`, lá em cima: `pintarBarra` pode rodar por mensagem da rede antes desta linha (auditoria 12/09). */
 function pintarBarra(){
   const p = jogo.pika; if (!p) return;
-  const bc = $('chefe-btn'); if (bc){ const ocupado = !!jogo.chefe; if (bc.disabled !== ocupado){ bc.disabled = ocupado; bc.style.opacity = ocupado ? 0.45 : 1; bc.innerHTML = ocupado ? '☄ chefe em campo' : '☄ Chamar chefe <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #ff5f5f;border-radius:3px;font-family:ui-monospace,Consolas,monospace">B</b>'; } }
-  const bm = $('monta-btn'); if (bm){ const rot = jogo.montaria ? '⬇ Desmontar' : '🐉 Montar'; if (bm.dataset.rot !== rot){ bm.dataset.rot = rot; bm.innerHTML = rot + ' <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #79a7ff;border-radius:3px;font-family:ui-monospace,Consolas,monospace">M</b>'; } }
+  const bc = $('chefe-btn'); if (bc){ const ocupado = !!jogo.chefe; if (bc.disabled !== ocupado){ bc.disabled = ocupado; bc.style.opacity = ocupado ? 0.45 : 1; bc.innerHTML = ocupado ? I18n.t('☄ chefe em campo') : I18n.t('☄ Chamar chefe') + ' <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #ff5f5f;border-radius:3px;font-family:ui-monospace,Consolas,monospace">B</b>'; } }
+  const bm = $('monta-btn'); if (bm){ const rot = I18n.t(jogo.montaria ? '⬇ Desmontar' : '🐉 Montar'); if (bm.dataset.rot !== rot){ bm.dataset.rot = rot; bm.innerHTML = rot + ' <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #79a7ff;border-radius:3px;font-family:ui-monospace,Consolas,monospace">M</b>'; } }
   const hpEl = $('f-pika-hp'), hpK = p.hp / p.maxHp;
   if (hpEl.__k !== hpK){ hpEl.__k = hpK; hpEl.style.width = (hpK * 100) + '%'; hpEl.style.background = hpK > 0.5 ? '#86ef5f' : hpK > 0.2 ? '#f4aa35' : '#e45670'; }
   setTexto($('f-pika-nome'), p.nome);

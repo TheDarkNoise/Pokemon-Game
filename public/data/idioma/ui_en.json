@@ -1105,5 +1105,14 @@
   "repita a senha nova": "repeat the new password",
   "Use: /tp nome cidade (pallet, viridian, pewter, cerulean, vermilion, lavender, celadon, fuchsia, saffron, cinnabar) ou /tp nome x z.": "Usage: /tp player city (pallet, viridian, pewter, cerulean, vermilion, lavender, celadon, fuchsia, saffron, cinnabar) or /tp player x z.",
   "o servidor não respondeu": "the server did not respond",
-  "nome do arquivo, sem .png": "filename without .png"
+  "nome do arquivo, sem .png": "filename without .png",
+  "☄ Chamar chefe": "☄ Summon boss",
+  "☄ chefe em campo": "☄ Boss active",
+  "🐾 Seguir": "🐾 Follow",
+  "⚙ Painel Admin": "⚙ Admin panel",
+  "⬇ Desmontar": "⬇ Dismount",
+  "🐉 Montar": "🐉 Mount",
+  "sem Moedas suficientes": "not enough Coins",
+  "⚠ o servidor não respondeu.": "⚠ The server did not respond.",
+  "🏆 Revanche vencida contra {raw_leader}: +{raw_coins} Moedas.": "🏆 Rematch won against {raw_leader}: +{raw_coins} Coins."
 }
