@@ -680,7 +680,7 @@ function acaoMochila(nome){
     if (!podeUsarMo(alvo)){ avisarMo(alvo.id, 'this item cannot be used from the Bag'); render(); return; }   // só chega aqui pelo toque duplo (o botão fica desligado)
     if (alvo.it.t === 7){ ctx.jogo.bolaSel = alvo.id; ctx.gravarLS('bolaSel', alvo.id); render(); return; }   // Pokébola: vira a bola escolhida
     if (ctx.ehItemDeEvolucao?.(alvo.id)){
-      if (!evoluiAgoraMo(alvo)){ avisarMo(alvo.id, (alvo.it.n || 'this item') + ' has no effect on ' + (ctx.jogo?.pika?.nome || 'your Pokémon')); render(); return; }   // revisão (17/09): o aviso fica na janela (antes ela fechava e o aviso flutuava atrás)
+      if (!evoluiAgoraMo(alvo)){ avisarMo(alvo.id, tr(alvo.it.n || 'this item') + ' has no effect on ' + (ctx.jogo?.pika?.nome || 'your Pokémon')); render(); return; }   // revisão (17/09): o aviso fica na janela (antes ela fechava e o aviso flutuava atrás)
       fechar(); ctx.usarItemEvolucao?.(alvo.id); return;
     }
     ctx.usarItem?.(alvo.id, alvo.it.n || '', (txt, ok) => avisarMo(alvo.id, txt, ok));
@@ -692,7 +692,7 @@ function acaoMochila(nome){
     if (confirmarDescarte !== alvo.id){ confirmarDescarte = alvo.id; render(); return; }   // 1º clique pede confirmação
     if (ctx.comConta?.()) ctx.bolsaOp('descartar', { item: +alvo.id }).then(() => render());   // com conta é o servidor que joga fora
     else { const itens = ctx.lerLS('itens', {}); delete itens[alvo.id]; ctx.gravarLS('itens', itens); }
-    ctx.flutuar?.(ctx.jogo.ash, 'descartou ' + (alvo.it.n || 'item'), '#f58e8e');
+    ctx.flutuar?.(ctx.jogo.ash, 'discarded ' + tr(alvo.it.n || 'item'), '#f58e8e');
     confirmarDescarte = null; selMo = 0; render();
   }
 }
@@ -723,7 +723,7 @@ function encherMochila(pop){
       if (!duplo){ render(); return; }
       const e2 = itensMochila()[n - 1];                                   // revisão (17/09): pedra que evolui pede confirmação — o Usar segue direto
       if (e2 && evoluiAgoraMo(e2) && !(avisoMo?.confirmaEvo && avisoMo.id === String(e2.id) && Date.now() < avisoMo.ate)){
-        avisarMo(e2.id, 'Evolution cannot be undone: do it again to use ' + (e2.it.n || 'the item')); avisoMo.confirmaEvo = true; render(); return;
+        avisarMo(e2.id, 'Evolution cannot be undone: do it again to use ' + tr(e2.it.n || 'the item')); avisoMo.confirmaEvo = true; render(); return;
       }
       acaoMochila('usar');
     });
@@ -1905,7 +1905,7 @@ function rAtalho(corpo){
   const tecla = (ctx.teclasAtalho || ['5', '6', '7', '8'])[slotAtalho] || '?', atual = (ctx.atalhos?.() || [])[slotAtalho];
   $('j-titulo').innerHTML = `<i class="ic ic-mochila" style="display:inline-block;width:26px;height:26px;vertical-align:middle;margin-right:6px"></i>Shortcut ${tecla}`;
   const aba = abas([{ id: 'itens', nome: "Items" }, { id: 'montarias', nome: "Mounts" }]);
-  const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">key <b style="color:#ffe07a">${tecla}</b> or tap the slot to use it; ${atual ? "current: <b>" + esc(atual.nome) + '</b>' : "empty slot"}</div>`;
+  const cab = `<div style="margin-bottom:8px;color:var(--muted);font-size:12px">key <b style="color:#ffe07a">${tecla}</b> or tap the slot to use it; ${atual ? "current: <b>" + esc(atual.tipo === 'item' ? tr(atual.nome) : atual.nome) + '</b>' : "empty slot"}</div>`;
   const prender = (b) => { ctx.definirAtalho?.(slotAtalho, b); fechar(); };
   if (aba === 'itens'){
     const q = quantidades(); const lista = Object.entries(q).filter(([id, n]) => n > 0 && [7, 9].includes(D.itens[id]?.t));
@@ -1913,7 +1913,7 @@ function rAtalho(corpo){
     corpo.querySelectorAll('[data-item]').forEach(b => b.onclick = () => { const it = D.itens[b.dataset.item]; prender({ tipo: 'item', id: +b.dataset.item, nome: it.n, icone: './ui/itens/' + it.i + '.png', bola: it.t === 7 }); });
   } else {
     const lista = ctx.montarias?.() || [];
-    corpo.innerHTML = cab + `<div class="grade-itens">${lista.map(m => { const dex = ctx.dexDoGlb(m.glb); return `<div class="item"><i class="ic-item" style="background-image:url('./ui/mon/pm${String(dex).padStart(4, '0')}.png')"></i><b>${esc(m.nome)}</b><small>${m.voa ? "flying · flies over everything" : 'terrestre'}</small><div class="acoes"><button type="button" class="btn ouro" data-monta="${m.glb}">Pin to ${tecla}</button></div></div>`; }).join('')}</div>`;
+    corpo.innerHTML = cab + `<div class="grade-itens">${lista.map(m => { const dex = ctx.dexDoGlb(m.glb); return `<div class="item"><i class="ic-item" style="background-image:url('./ui/mon/pm${String(dex).padStart(4, '0')}.png')"></i><b>${esc(m.nome)}</b><small>${m.voa ? "flying · flies over everything" : 'ground'}</small><div class="acoes"><button type="button" class="btn ouro" data-monta="${m.glb}">Pin to ${tecla}</button></div></div>`; }).join('')}</div>`;
     corpo.querySelectorAll('[data-monta]').forEach(b => b.onclick = () => { const m = lista.find(x => x.glb === b.dataset.monta); const dex = ctx.dexDoGlb(m.glb); prender({ tipo: 'montaria', glb: m.glb, nome: m.nome, icone: './ui/mon/pm' + String(dex).padStart(4, '0') + '.png' }); });
   }
   if (atual) corpo.insertAdjacentHTML('beforeend', "<div class=\"acoes\" style=\"margin-top:12px\"><button type=\"button\" class=\"btn\" id=\"a-limpar\">Clear shortcut</button></div>"), corpo.querySelector('#a-limpar').onclick = () => prender(null);
