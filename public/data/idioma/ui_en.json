@@ -1190,5 +1190,6 @@
   "O nome do treinador tem de ter pelo menos 3 characters.": "Trainer names must contain at least 3 characters.",
   "pegou Fragmento de Teracristal": "picked up a Tera Shard",
   "Use: /raid dano F (ex.: 0,5 ou 1,5).": "Usage: /raid dano F (e.g. 0.5 or 1.5).",
-  "Use: /raid shiny N (1 em N).": "Usage: /raid shiny N (1 in N)."
+  "Use: /raid shiny N (1 em N).": "Usage: /raid shiny N (1 in N).",
+  "Adeus, {raw_target}! 👋": "Goodbye, {raw_target}! 👋"
 }

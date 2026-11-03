@@ -184,7 +184,7 @@ async function soltar(chave, origem){
   const k = lista.findIndex(x => chaveDe(x) === chave); if (k < 0){ render(); return; }
   /* POSSE (06/09): com conta, quem tira o Pokémon da conta é o SERVIDOR — só depois do OK dele o cliente tira da lista. */
   const ok = await ctx.soltarNoServidor?.(lista[k]);
-  if (ok && ok.ok === false){ Chat.sistema('Release: ' + (ok.erro || 'the server refused') + '.'); render(); return; }
+  if (ok && ok.ok === false){ Chat.sistema('Release: ' + tr(ok.erro || 'the server refused')); render(); return; }
   const [foi] = lista.splice(k, 1);
   if (origem === 'caixa') ctx.gravarLS('caixa', lista);
   else { ctx.gravarLS('time', lista); ctx.pintarTime?.(true); ctx.atualizarSeguidorPainel?.(); }
@@ -1101,7 +1101,7 @@ async function soAcao(nome, el){
   } else if (nome === 'aceitar' || nome === 'recusar'){
     const de = el?.closest?.('[data-fig^="solicitacao-"]')?.__de; if (!de) return;
     const r = await soChamar('POST', '/social/' + nome, { de });
-    if (r.ok) Chat.sistema(nome === 'aceitar' ? '🤝 You and ' + (r.dados.nick || de) + ' are now friends.' : 'Convite recusado.'); else Chat.sistema('Social: ' + r.erro);
+    if (r.ok) Chat.sistema(nome === 'aceitar' ? '🤝 You and ' + (r.dados.nick || de) + ' are now friends.' : 'Convite recusado.'); else Chat.sistema('Social: ' + tr(r.erro));
     await soCarregar(); encherSolicitacoes(pop);
   } else if (nome === 'mensagem'){
     Popup.mostrarExtra(pop, 'tooltip-amigo', false); if (soAmigoMenu) soAbrirConversa(soAmigoMenu.usuario);
@@ -1112,7 +1112,7 @@ async function soAcao(nome, el){
   } else if (nome === 'desfazer-amizade'){
     Popup.mostrarExtra(pop, 'tooltip-amigo', false); if (!soAmigoMenu) return;
     const r = await soChamar('POST', '/social/remover', { usuario: soAmigoMenu.usuario });
-    if (r.ok) Chat.sistema(soAmigoMenu.nick + ' was removed from your friends list.'); else Chat.sistema('Social: ' + r.erro);
+    if (r.ok) Chat.sistema(soAmigoMenu.nick + ' was removed from your friends list.'); else Chat.sistema('Social: ' + tr(r.erro));
     soCarregar();
   } else if (nome === 'enviar'){
     const inp = soInput(pop, 'conteudo-mensagens', 'campo-mensagem'); const texto = (inp?.value || '').trim();
@@ -2114,7 +2114,7 @@ async function cfApagarProgresso(){
   Popup.mostrarExtra(popCf, 'dialogo-apagar', false);
   if (ctx.conta?.estado?.().modo === 'conta'){
     const r = await ctx.conta.apagarPersonagem();
-    if (r && !r.ok){ Chat.sistema('Could not delete: ' + r.erro); return; }
+    if (r && !r.ok){ Chat.sistema('Could not delete: ' + tr(r.erro)); return; }
     location.reload();
     return;
   }
