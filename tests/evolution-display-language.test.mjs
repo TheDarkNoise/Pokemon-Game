@@ -45,3 +45,20 @@ test('actual legacy Revive button translates the item name and tooltip while ret
   assert.equal(JSON.stringify(r),before);
  }
 });
+
+test('multiple-evolution and move/release confirmation labels translate while preserving targets and action states',async()=>{
+ const source=await read('menus.mjs'),ast=parseAst(source),evolution=find(ast,n=>n.type==='CallExpression'&&n.callee.property?.name==='texto'&&n.arguments[1]?.value==='evolucao');
+ const targets=[{nome:'Vaporeon',pode:true},{nome:'Jolteon',pode:true}];let text,enabled;
+ const Popup={texto:(_,__,s)=>text=I.t(s),botao:(_,__,on,s)=>{text=I.t(s);enabled=on}};
+ vm.runInNewContext(source.slice(evolution.start,evolution.end),{Popup,pop:{},f:{},novo:null,prontas:targets,ops:targets,pronta:targets[0],emBreve:null,tr:I.t});
+ assert.equal(text,'→ can evolve into Vaporeon, Jolteon — click Evolve to choose');
+ const button=find(ast,n=>n.type==='CallExpression'&&n.callee.property?.name==='botao'&&n.arguments[1]?.value==='evoluir'&&source.slice(n.start,n.end).includes('prontas.length'));
+ for(const prontas of [[],[targets[0]],targets])for(const seguindo of [false,true]){
+  const pronta=prontas[0]||null;vm.runInNewContext(source.slice(button.start,button.end),{Popup,pop:{},prontas,pronta,e:{seguindo}});
+  assert.equal(enabled,!!pronta&&seguindo);assert.equal(text,prontas.length>1?'✦ Evolve (2 forms)':pronta?'✦ Evolve → Vaporeon':'✦ Evolve');
+ }
+ const learn=find(ast,n=>n.type==='CallExpression'&&n.callee.property?.name==='texto'&&n.arguments[1]?.value==='golpe-info'&&source.slice(n.start,n.end).includes('✔ clique de novo'));
+ vm.runInNewContext(source.slice(learn.start,learn.end),{Popup,pop:{},no:{},movs:[{nome:'Tackle'}],i:0,novo:{nome:'Thunder Shock'}});assert.equal(text,'✔ click again: forget Tackle and learn Thunder Shock');
+ const release=find(ast,n=>n.type==='CallExpression'&&n.callee.property?.name==='botao'&&n.arguments[1]?.value==='soltar'&&source.slice(n.start,n.end).includes('podeSoltar'));
+ vm.runInNewContext(source.slice(release.start,release.end),{Popup,pop:{},podeSoltar:true,confirmarSoltar:'original-id',chaveDe:e=>e.uid,e:{uid:'original-id'}});assert.equal(text,'✔ Release permanently');assert.equal(enabled,true);
+});

@@ -1135,5 +1135,10 @@
   "+Def. Esp. −Defesa": "+Sp. Def −Defense",
   "+Def. Esp. −Velocidade": "+Sp. Def −Speed",
   "+Def. Esp. −At. Esp.": "+Sp. Def −Sp. Atk",
-  "CHEFE": "BOSS"
+  "CHEFE": "BOSS",
+  "→ pode evoluir para {raw_targets} — clique em Evoluir e escolha": "→ can evolve into {raw_targets} — click Evolve to choose",
+  "✦ Evoluir → {raw_target}": "✦ Evolve → {raw_target}",
+  "✦ Evoluir ({raw_count} formas)": "✦ Evolve ({raw_count} forms)",
+  "✔ clique de novo: esquece {raw_old} e aprende {raw_new}": "✔ click again: forget {raw_old} and learn {raw_new}",
+  "✔ Soltar de vez": "✔ Release permanently"
 }
