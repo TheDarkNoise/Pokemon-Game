@@ -5254,7 +5254,7 @@ async function verBolaDoOutro(s, m){
     if (chac >= 4){
       const luz = anim.getObjectByName('ee105_03_succeeded_light') || anim;
       efeito('Capture_OK', luz, 0.6); Som.tocar('ui/sound_pkmnget', { volume: .5 });
-      flutuar(de || s, (m.por || 'alguém') + ' capturou ' + s.nome + '!', '#8ef58e');
+      flutuar(de || s, (m.por || I18n.t('alguém')) + ' capturou ' + s.nome + '!', '#8ef58e');
       await dorme(2000);
       s.pivo.scale.setScalar(escBase);                                    // o corpo some pelo `sumiu capturado` do servidor
     } else {
@@ -5262,7 +5262,7 @@ async function verBolaDoOutro(s, m){
       await dorme(Math.max(0.17, tocar('Open')) * 1000);
       grupo.visible = false; await dorme(100);
       if (s.estado !== 'guardado'){ s.pivo.visible = true; await animar(120, k => s.pivo.scale.setScalar(escBase * (0.1 + 0.9 * k))); if (s.rotulo) s.rotulo.style.display = ''; }
-      flutuar(s, 'escapou da bola de ' + (m.por || 'alguém'), '#f58e8e');
+      flutuar(s, 'escapou da bola de ' + (m.por || I18n.t('alguém')), '#f58e8e');
       await dorme(400);
     }
   } catch (e){ console.warn('bola do outro:', e); }
@@ -5280,7 +5280,7 @@ async function jogarBola(){
   if (s.raid){ flutuar(ash, 'o Mew da raid não pode ser capturado', '#ffd23a'); Chat.sistema('O Mew da raid não pode ser capturado: derrube ele junto com o grupo e o prêmio chega no fim.'); return; }   // RAID AO VIVO (14/09)
   if (s.chefe){ flutuar(ash, 'chefão não cabe numa bola', '#f58e8e'); return; }
   if (s.estado !== 'desmaiado'){ flutuar(ash, 'derruba ele primeiro: só captura desmaiado', '#ffd23a'); return; }
-  if ((jogo.bolas[id] || 0) <= 0){ flutuar(ash, 'sem ' + (BOLAS[id]?.[0] || 'bola'), '#f58e8e'); return; }
+  if ((jogo.bolas[id] || 0) <= 0){ flutuar(ash, 'no ' + I18n.t(BOLAS[id]?.[0] || 'bola') + ' left', '#f58e8e'); return; }
   const dist = Math.hypot(s.x - ash.x, s.z - ash.z);
   if (dist > RAIO_BOLA){ flutuar(ash, 'longe demais (' + dist.toFixed(0) + ' m)', '#ffd23a'); return; }
   if (bolasVivas.length >= MAX_BOLAS_NO_AR){ flutuar(ash, 'espera as bolas caírem', '#ffd23a'); return; }
@@ -6313,7 +6313,7 @@ async function rodarIntro({ configurarSeguidor }){
     + '#intro-pular{position:fixed;right:18px;top:14px;z-index:41;background:#0009;color:#fff;border:1px solid #fff6;border-radius:8px;padding:6px 12px;font:600 13px system-ui,sans-serif;cursor:pointer}';
   document.head.appendChild(css);
   const leg = document.createElement('div'); leg.id = 'intro-leg'; document.body.appendChild(leg);
-  const pular = document.createElement('button'); pular.id = 'intro-pular'; pular.textContent = 'Pular ▸'; document.body.appendChild(pular);
+  const pular = document.createElement('button'); pular.id = 'intro-pular'; pular.textContent = I18n.t('Pular ▸'); document.body.appendChild(pular);
   pular.onclick = terminarIntro; window.addEventListener('keydown', e => { if (e.code === 'Escape') terminarIntro(); });
   const legenda = async (txt, seg) => { leg.textContent = txt; leg.classList.add('on'); await esperarSeg(seg); leg.classList.remove('on'); };
   const mover = async (seg, fn) => { const n = Math.max(1, Math.round(seg / 0.04)); for (let i = 1; i <= n; i++){ fn(i / n); await esperarSeg(0.04); } };
