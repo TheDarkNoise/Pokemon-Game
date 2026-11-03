@@ -18,9 +18,9 @@ test('admin messages format validation errors and preserve dynamic identifiers',
 
 test('admin dictionary loading uses root paths and panel overrides for exact and pattern messages',async()=>{
  const paths=[];
- const t=await carregarMensagens(async url=>{paths.push(url);return{ok:true,json:async()=>url.endsWith('ui_en.json')?{'Só conta GM.':'GM only','Caixa inválida: {id}':'Bad box {id}'}:[{pt:'Só conta GM.',en:'Staff access required'},{pt:'Caixa inválida: {id}',en:'Check area {id}'}]};});
- assert.deepEqual(paths,['/data/idioma/ui_en.json','/data/traducoes.json']);
- assert.equal(t('Só conta GM.'),'Staff access required');assert.equal(t('Caixa inválida: 44'),'Check area 44');
+ const t=await carregarMensagens(async url=>{paths.push(url);return{ok:true,json:async()=>url.endsWith('conteudo_en.json')?{'Cidade Pallet':'Pallet Town'}:url.endsWith('ui_en.json')?{'Só conta GM.':'GM only','Caixa inválida: {id}':'Bad box {id}'}:[{pt:'Só conta GM.',en:'Staff access required'},{pt:'Caixa inválida: {id}',en:'Check area {id}'}]};});
+ assert.deepEqual(paths,['/data/idioma/conteudo_en.json','/data/idioma/ui_en.json','/data/traducoes.json']);
+ assert.equal(t('Cidade Pallet'),'Pallet Town');assert.equal(t('Só conta GM.'),'Staff access required');assert.equal(t('Caixa inválida: 44'),'Check area 44');
 });
 
 test('unavailable dictionaries leave error messages readable without breaking requests',async()=>{

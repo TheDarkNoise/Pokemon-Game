@@ -92,12 +92,15 @@ let idsUsados = new Set();// todo id de área de todas as cenas (id novo não po
 let desenhandoArea = false, rascunho = null;
 let foto = null;          // fundo "minimapa" do map atual ({ img, x0, z0, esc, w, h, fonte, map })
 const nomeArea = a => nomesCena[a] || dadosMapa?.nomes?.[a] || ('Área ' + a);
+// Translate labels only; editable values and saved area names remain the source text.
+const rotuloArea = a => traduzirErro(nomeArea(a));
 
 const CORES = ['#ff5d5d', '#4da3ff', '#3ecf8e', '#ffcf3a', '#c678dd', '#ff9d4d', '#56d4dd', '#f06292'];
 const corZona = z => CORES[(z.__i ?? 0) % CORES.length];
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
 async function iniciar() {
+  await mensagensProntas;
   const quem = await api('/admin/eu');
   if (quem.status === 401 || !token) { mostrarLogin(); return; }
   if (!quem.gm) { mostrarLogin('Account "' + (quem.usuario || '') + '" is not a GM.'); return; }
@@ -140,6 +143,7 @@ async function carregarTudo() {
 // ╔═══════════════════════════════ EDITOR DE MAPA ═══════════════════════════════╗
 const tela = $('m-tela'), cv = $('m-canvas'), ctx = cv.getContext('2d');
 const camadas = { minimapa: true, caixas: true, grama: true, agua: true, piso: true, zonas: true, npcs: false, treinadores: false };
+const ROTULOS_CAMADAS = { minimapa: 'Minimap', caixas: 'Area boxes', grama: 'Grass', agua: 'Water', piso: 'Cave floor', zonas: 'Spawn zones', npcs: 'NPCs', treinadores: 'Trainers' };
 let Camadas = null;   // admin/camadas.mjs (pontos e pincel) — criado no ligarUI, depois do login
 
 async function carregarCenas() {
@@ -216,7 +220,7 @@ function desenhar() {
       ctx.setLineDash(!areasOriginais.has(c.a) ? [6, 4] : []); ctx.strokeRect(r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0); ctx.setLineDash([]);
     }
     if (cam.esc > 0.9) for (const c of dadosMapa.caixas || []) {   // rótulos por cima de todas as boxes (pílula escura: legível em cima da foto)
-      const r = rectTela(c), txt = nomeArea(c.a), sel = c === caixaSel;
+      const r = rectTela(c), txt = rotuloArea(c.a), sel = c === caixaSel;
       ctx.font = (sel ? 'bold ' : '') + '11px system-ui';
       const tw = ctx.measureText(txt).width + 10, cx = (r.x0 + r.x1) / 2;
       if (tw > r.x1 - r.x0 + 30 && !sel) continue;
@@ -396,7 +400,7 @@ function renderListaAreas() {
   const cxs = dadosMapa?.caixas || [];
   $('a-qtd').textContent = '(' + new Set(cxs.map(c => c.a)).size + ')';
   const filtro = ($('a-filtro').value || '').toLowerCase();
-  const itens = cxs.map(c => ({ c, nome: nomeArea(c.a) })).filter(o => !filtro || o.nome.toLowerCase().includes(filtro) || String(o.c.a).includes(filtro))
+  const itens = cxs.map(c => ({ c, nome: rotuloArea(c.a), fonte: nomeArea(c.a) })).filter(o => !filtro || o.nome.toLowerCase().includes(filtro) || o.fonte.toLowerCase().includes(filtro) || String(o.c.a).includes(filtro))
     .sort((p, q) => p.nome.localeCompare(q.nome, undefined, { numeric: true }) || p.c.a - q.c.a);
   const nCaixas = {}; for (const c of cxs) nCaixas[c.a] = (nCaixas[c.a] || 0) + 1;
   $('a-lista').innerHTML = itens.map(({ c, nome }) => `<button data-i="${cxs.indexOf(c)}" class="${c === caixaSel ? 'atual' : ''}">
@@ -417,7 +421,7 @@ function abrirEditorArea() {
 function atualizarCamposArea() {
   const c = caixaSel; if (!c) return;
   const nova = !areasOriginais.has(c.a), irmas = dadosMapa.caixas.filter(k => k.a === c.a).length;
-  $('a-titulo').textContent = nomeArea(c.a);
+  $('a-titulo').textContent = rotuloArea(c.a);
   if (document.activeElement !== $('a-nome')) $('a-nome').value = nomeArea(c.a);
   if (document.activeElement !== $('a-id')) $('a-id').value = c.a;
   $('a-id').disabled = !nova;
@@ -463,13 +467,13 @@ function adicionarCaixa() {   // outra caixa na MESMA área (pra área que não 
   const c0 = caixaSel; if (!c0) return;
   const c = { ...c0, x: +(c0.x + FLIPX * (c0.sx / 2 + 4)).toFixed(2), sx: Math.min(c0.sx, 20), sz: Math.min(c0.sz, 20) };
   dadosMapa.caixas.push(c); marcarSujoAreas(); selecionarCaixa(c);
-  toast("Box added to area \"" + nomeArea(c.a) + "\". Drag and resize it.");
+  toast("Box added to area \"" + rotuloArea(c.a) + "\". Drag and resize it.");
 }
 function excluirCaixa() {
   const c = caixaSel; if (!c) return;
   const irmas = dadosMapa.caixas.filter(k => k.a === c.a).length;
-  const msg = irmas > 1 ? `Delete this box from area "${nomeArea(c.a)}"? (the other ${irmas - 1} remain)`
-    : `Delete area "${nomeArea(c.a)}" (${c.a})?\nThe game stops showing its name; habitats and grass tiles retain the ID.`;
+  const msg = irmas > 1 ? `Delete this box from area "${rotuloArea(c.a)}"? (the other ${irmas - 1} remain)`
+    : `Delete area "${rotuloArea(c.a)}" (${c.a})?\nThe game stops showing its name; habitats and grass tiles retain the ID.`;
   if (!confirm(msg)) return;
   dadosMapa.caixas.splice(dadosMapa.caixas.indexOf(c), 1);
   if (irmas === 1 && !areasOriginais.has(c.a)) { dadosMapa.areas = (dadosMapa.areas || []).filter(a => a !== c.a); delete dadosMapa.nomes[c.a]; nomesMudados.delete(c.a); }
@@ -478,11 +482,11 @@ function excluirCaixa() {
 function puxarTiles() {
   const c = caixaSel; if (!c) return;
   const t = tilesDentro(c), n = t.grama.length + t.agua.length;
-  if (!n || !confirm(`Move ${n} grass/water tile(s) inside this box to area "${nomeArea(c.a)}"?\nPokémon on these tiles will come from this area’s habitat.`)) return;
+  if (!n || !confirm(`Move ${n} grass/water tile(s) inside this box to area "${rotuloArea(c.a)}"?\nPokémon on these tiles will come from this area’s habitat.`)) return;
   for (const i of t.grama) dadosMapa.grama[i].a = c.a;
   for (const i of t.agua) dadosMapa.agua[i].a = c.a;
   tilesMudados = true; marcarSujoAreas(); atualizarCamposArea();
-  toast(n + " tile(s) now belong to \"" + nomeArea(c.a) + "\". Add species in Habitats by Area.");
+  toast(n + " tile(s) now belong to \"" + rotuloArea(c.a) + "\". Add species in Habitats by Area.");
 }
 function trocarIdArea(novo) {
   const c = caixaSel; if (!c || areasOriginais.has(c.a)) return;
@@ -622,7 +626,7 @@ function ligarUI() {
   $('a-del').addEventListener('click', excluirCaixa);
   $('a-puxar').addEventListener('click', puxarTiles);
   // camadas
-  $('m-camadas').innerHTML = Object.keys(camadas).map(k => `<label class="chk"><input type="checkbox" data-cam="${k}"${camadas[k] ? ' checked' : ''}> ${k}</label>`).join('');
+  $('m-camadas').innerHTML = Object.keys(camadas).map(k => `<label class="chk"><input type="checkbox" data-cam="${k}"${camadas[k] ? ' checked' : ''}> ${esc(ROTULOS_CAMADAS[k] || k)}</label>`).join('');
   $('m-camadas').querySelectorAll('input').forEach(i => i.addEventListener('change', () => { camadas[i.dataset.cam] = i.checked; desenhar(); }));
   // campos da zona
   campoZona('e-nome', 'nome', v => v.slice(0, 60));
@@ -667,14 +671,14 @@ let areaSel = null;
 function listaAreas() {
   // as áreas com habitat + TODAS as do map aberto (área nova aparece aqui pra ganhar espécies); nome = o que o jogo mostra
   const ids = new Set([...Object.keys(habitats.areas), ...(dadosMapa?.areas || []).map(String)]);
-  const arr = [...ids].map(id => ({ id, nome: nomeArea(id), qtd: (habitats.areas[id] || []).length }));
+  const arr = [...ids].map(id => ({ id, nome: rotuloArea(id), fonte: nomeArea(id), qtd: (habitats.areas[id] || []).length }));
   arr.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
   return arr;
 }
 function renderHabitats() {
   const filtro = ($('h-busca').value || '').toLowerCase();
   const arr = [{ id: '__gen', nome: '★ Generic (any grass)', qtd: habitats.generico.length }, ...listaAreas()]
-    .filter(a => !filtro || a.nome.toLowerCase().includes(filtro) || a.id.includes(filtro));
+    .filter(a => !filtro || a.nome.toLowerCase().includes(filtro) || (a.fonte || '').toLowerCase().includes(filtro) || a.id.includes(filtro));
   $('h-areas').innerHTML = arr.map(a => `<button data-id="${a.id}" class="${a.id === areaSel ? 'atual' : ''}"><span>${esc(a.nome)}</span><span class="fraco">${a.qtd}</span></button>`).join('');
   for (const b of $('h-areas').querySelectorAll('button')) b.onclick = () => selecionarArea(b.dataset.id);
 }
@@ -710,7 +714,7 @@ function selecionarArea(id) {
   areaSel = id; renderHabitats();
   const gen = id === '__gen';
   const lista = gen ? habitats.generico : (habitats.areas[id] ||= []);
-  const nome = gen ? 'Generic' : nomeArea(id);
+  const nome = gen ? 'Generic' : rotuloArea(id);
   $('h-titulo').textContent = nome + (gen ? '' : '  —  ' + id);
   mostrarNivel(gen ? null : id);
   const cont = $('h-especies'); cont.dataset.agua = '1';

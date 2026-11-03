@@ -1048,5 +1048,6 @@
   "Faltou a cidade ou x e z.": "A city or x and z coordinates are required.",
   "A raid do {raw_boss} foi cancelada: ninguém entrou na fila.": "The {raw_boss} raid was canceled: no one joined the queue.",
   "vencer a Elite Four": "defeat the Elite Four",
-  "vencer {raw_leader} ({gym})": "defeat {raw_leader} ({gym})"
+  "vencer {raw_leader} ({gym})": "defeat {raw_leader} ({gym})",
+  "Área {raw_id}": "Area {raw_id}"
 }

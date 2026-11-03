@@ -37,9 +37,9 @@ export async function carregarMensagens(fetcher = globalThis.fetch) {
     try { const r = await fetcher(caminho); return r.ok ? await r.json() : {}; }
     catch { return {}; }
   };
-  const [ui, painel] = await Promise.all([ler('/data/idioma/ui_en.json'), ler('/data/traducoes.json')]);
+  const [conteudo, ui, painel] = await Promise.all([ler('/data/idioma/conteudo_en.json'), ler('/data/idioma/ui_en.json'), ler('/data/traducoes.json')]);
   const correcoes = Object.fromEntries((Array.isArray(painel) ? painel : [])
     .filter(r => r && typeof r.pt === 'string' && r.pt.trim() && typeof r.en === 'string' && r.en.trim())
     .map(r => [r.pt.trim(), r.en]));
-  return criarTradutor(ui, correcoes);
+  return criarTradutor(conteudo, ui, correcoes);
 }
