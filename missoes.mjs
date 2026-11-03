@@ -58,7 +58,7 @@ export function reiniciar(){ estado = { atual: primeiraMissao()?.id || null, pas
 function concluirPasso(){
   const m = ativa(); if (!m) return;
   const p = m.passos[estado.passo];
-  ctx.aviso?.('✔ ' + (p?.texto || 'step completed'));
+  ctx.aviso?.('✔ ' + tr(p?.texto || 'step completed'));
   estado.passo++;
   if (estado.passo >= m.passos.length) concluirMissao(m);
   else { gravar(); checarImediatos(); }
@@ -70,8 +70,8 @@ function concluirMissao(m){
   estado.atual = prox ? prox.id : null; estado.passo = 0;
   gravar();
   ctx.recompensa?.(m.recompensa || {}, m);
-  ctx.aviso?.('🏁 Quest completed: ' + m.nome, { destaque: true });
-  if (prox) ctx.aviso?.('📜 New quest: ' + prox.nome);
+  ctx.aviso?.('🏁 Quest completed: ' + tr(m.nome), { destaque: true });
+  if (prox) ctx.aviso?.('📜 New quest: ' + tr(prox.nome));
   else ctx.aviso?.('You have completed everything available for now — more chapters will arrive in future versions.');
   checarImediatos();
 }

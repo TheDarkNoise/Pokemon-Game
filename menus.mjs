@@ -1333,9 +1333,9 @@ async function encherPokedex(pop){
   if (!sp.some(s => s.n === selDex)) selDex = (sp.find(s => d[s.n]) || sp[0])?.n ?? null;
   Popup.texto(pop, 'contadores', '👁 ' + vistos + ' · ★ ' + pegos + '/' + todos.length);
   if (K){
-    const r = K.resumo(); const base = 'Colecionador Kanto · ' + r.pegosKanto + '/' + r.kantoAte + ' capturados · ' + r.vistosKanto + ' vistos · ' + r.shinies + ' shiny';
+    const r = K.resumo(); const base = 'Kanto Collector · ' + r.pegosKanto + '/' + r.kantoAte + ' caught · ' + r.vistosKanto + ' seen · ' + r.shinies + ' shiny';
     Popup.texto(pop, 'colecionador', base);
-    minhaPosicao().then(p => { if (p && p.especies?.pos && aberta === 'pokedex' && Popup.aberto(pop)) Popup.texto(pop, 'colecionador', base + ' · ' + p.especies.pos + 'º de ' + p.total + ' no ranking'); });   // posição entre os jogadores (servidor)
+    minhaPosicao().then(p => { if (p && p.especies?.pos && aberta === 'pokedex' && Popup.aberto(pop)) Popup.texto(pop, 'colecionador', base + ' · rank ' + p.especies.pos + ' of ' + p.total); });   // posição entre os jogadores (servidor)
   }
   // lista
   const cels = Popup.celulas(pop, 'lista-especies', Math.max(sp.length, 1), 'especie');
@@ -1454,7 +1454,7 @@ function arteExemplo(el){
 }
 function textoRecompensaMi(r){
   const nomeItem = id => tr(D.itens[id]?.n || ('item ' + id));
-  return [r?.dinheiro ? r.dinheiro + ' Moedas' : null,
+  return [r?.dinheiro ? r.dinheiro + ' ' + tr('Moedas') : null,
           ...Object.entries(r?.itens || {}).map(([id, n]) => nomeItem(id) + ' ×' + n),
           r?.exp ? r.exp + ' XP' : null].filter(Boolean).join(' · ') || '—';
 }
@@ -1480,7 +1480,7 @@ function encherMissoes(pop){
   if (!M?.pronto?.()) return;
   const ativa = M.ativa(), idx = M.indicePasso(), prog = M.progresso();
   const fa = Popup.grupo(pop, 'missao-ativa');
-  Popup.texto(pop, 'capitulo-local', ativa ? 'Chapter ' + ativa.capitulo + ' · ' + ativa.capNome : '', fa);
+  Popup.texto(pop, 'capitulo-local', ativa ? 'Chapter ' + ativa.capitulo + ' · ' + tr(ativa.capNome) : '', fa);
   Popup.texto(pop, 'missao-titulo', ativa ? ativa.nome : 'You have completed everything available for now.', fa);
   Popup.texto(pop, 'missao-descricao', ativa ? (ativa.des || '') : 'More chapters will arrive in future versions.', fa);
   const passos = ativa?.passos || [];
@@ -1498,8 +1498,8 @@ function encherMissoes(pop){
       ic.style.borderRadius = url ? '0' : '50%';
     }
     const cont = (i === idx && p2.n > 1) ? ' ' + Math.min(prog, p2.n) + '/' + p2.n : '';
-    Popup.texto(pop, 'objetivo', (p2.texto || '') + cont, g);
-    Popup.texto(pop, 'objetivo-local', p2.onde ? '(' + p2.onde + ')' : '', g);
+    Popup.texto(pop, 'objetivo', tr(p2.texto || '') + cont, g);
+    Popup.texto(pop, 'objetivo-local', p2.onde ? '(' + tr(p2.onde) + ')' : '', g);
   }
   Popup.texto(pop, 'recompensa', ativa ? "Reward: " + textoRecompensaMi(ativa.recompensa) : '');
   // ---- lista de capítulos (altura variável)
@@ -1523,7 +1523,7 @@ function encherMissoes(pop){
     const est = feitas === c.missoes.length ? 'concluida' : c.missoes.some(m => m.estado === 'ativa') ? 'ativa' : 'bloqueada';
     const ic = Popup.no(pop, 'capitulo-estado', linha);
     if (ic){ const url = iconeEstado(pop, 'missao', est, 'objetivo-estado', ic); ic.style.backgroundImage = url ? 'url(' + url + ')' : 'none'; }
-    Popup.texto(pop, 'capitulo-nome', 'Chapter ' + c.id + ' · ' + c.nome, linha);
+    Popup.texto(pop, 'capitulo-nome', 'Chapter ' + c.id + ' · ' + tr(c.nome), linha);
     Popup.texto(pop, 'capitulo-progresso', feitas + '/' + c.missoes.length, linha);
     if (!aberto){ y += G.passoCap; return; }
     y += G.yGrupo;
@@ -1538,7 +1538,7 @@ function encherMissoes(pop){
       if (ic2){ const url = iconeEstado(pop, 'missao', estM, 'objetivo-estado', ic2); ic2.style.backgroundImage = url ? 'url(' + url + ')' : 'none'; }
       const nomeEl = Popup.texto(pop, 'missao-nome', m.nome, el);
       if (nomeEl) nomeEl.style.color = estM === 'bloqueada' ? '#B8C2D9' : '#FFFFFF';
-      Popup.texto(pop, 'missao-resumo', (m.des || '') + " · reward: " + textoRecompensaMi(m.recompensa), el);
+      Popup.texto(pop, 'missao-resumo', tr(m.des || '') + " · reward: " + textoRecompensaMi(m.recompensa), el);
     });
     y += Math.max(0, (c.missoes.length - 1) * G.passoMis + G.hMis) + G.depois;
   });
