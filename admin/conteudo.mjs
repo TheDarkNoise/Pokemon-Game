@@ -3,6 +3,7 @@
  * Cada tela lê e grava pelas MESMAS rotas e esquemas do editor genérico (/admin/dados/<esquema>, admin/esquemas_f2.mjs): a tela
  * valida antes com o mesmo validarColecao que o servidor usa, e o servidor guarda backup de cada gravação (Histórico / Desfazer).
  * A tela de cada aba só é montada no primeiro clique (os arquivos de espécie somam ~1,5 MB). */
+import { carregarMensagens } from '/admin/mensagens.mjs';
 import { ESQUEMAS, validarColecao } from '/admin/esquemas.mjs';
 
 export const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -18,6 +19,8 @@ const TELAS = {
 
 /* ── Referências (só leitura, cache): nomes de espécie/item/área/NPC, golpes ─────────────────────────────────────────────── */
 const cacheRef = new Map();
+let nomesTraduzidos = null;
+const traduzirNomes = () => (nomesTraduzidos ||= carregarMensagens());
 const baixar = (url, padrao) => { if (!cacheRef.has(url)) cacheRef.set(url, fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now()).then(r => r.ok ? r.json() : padrao).catch(() => padrao)); return cacheRef.get(url); };
 export const ref = {
   /** dex → { nome, tipos } (pokedex.json: a 1ª entrada de cada nº é a forma base) */
@@ -28,8 +31,9 @@ export const ref = {
   },
   async itens() { return (await baixar('/data/menus_dados.json', {})).itens || {}; },
   async areas() {
-    const c = await baixar('/data/cenas.json', {}), areas = {}, cenas = {};
-    for (const ce of c.cenas || []) { cenas[ce.id] = ce.nome; for (const a of ce.areas || []) if (!(a.id in areas)) areas[a.id] = a.nome; }
+    const [c, traduzir] = await Promise.all([baixar('/data/cenas.json', {}), traduzirNomes()]);
+    const areas = {}, cenas = {};
+    for (const ce of c.cenas || []) { cenas[ce.id] = traduzir(ce.nome); for (const a of ce.areas || []) if (!(a.id in areas)) areas[a.id] = traduzir(a.nome); }
     return { areas, cenas };
   },
   async npcs() { return await baixar('/data/npcs_glb.json', {}); },

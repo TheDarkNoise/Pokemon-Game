@@ -16,7 +16,7 @@
  * Pokémon names remain in English in every language. */
 export const IDIOMAS = { pt: 'Português', en: 'English', es: 'Español' };
 const LS = 'idioma';
-let atual = 'en', exatas = new Map(), padroes = [], carregado = { pt: true };
+let atual = 'en', exatas = new Map(), padroes = [], habilidades = {}, carregado = { pt: true };
 const cache = new Map();                                                  // idioma → { exatas, padroes }
 
 export const idioma = () => atual;
@@ -55,8 +55,9 @@ async function baixar(l, bust = ''){
   const pega = async n => { try { const r = await fetch('./data/idioma/' + n + '_' + l + '.json'); return r.ok ? await r.json() : {}; } catch { return {}; } };
   /* PAINEL (Fase 3 → Traduções): data/traducoes.json = [{ pt, en, es }] editado pelo GM — vence tudo (é a correção mais recente). */
   const painel = async () => { try { const r = await fetch('./data/traducoes.json' + bust, { cache: 'no-cache' }); const lista = r.ok ? await r.json() : []; return Object.fromEntries((Array.isArray(lista) ? lista : []).filter(x => x?.pt && typeof x[l] === 'string' && x[l].trim()).map(x => [String(x.pt).trim(), x[l]])); } catch { return {}; } };
-  const [ui, conteudo, nomes, doPainel] = await Promise.all([pega('ui'), pega('conteudo'), pega('nomes'), painel()]);
+  const [ui, conteudo, nomes, doPainel, nomesHabilidades] = await Promise.all([pega('ui'), pega('conteudo'), pega('nomes'), painel(), l === 'en' ? pega('habilidades') : {}]);
   const d = montar([nomes, conteudo, ui, doPainel]);                       // a mão (ui, conteudo = missões/ginásios) vence o gerado (nomes); o painel vence tudo
+  d.habilidades = nomesHabilidades;
   cache.set(l, d); return d;
 }
 /** O painel salvou as traduções: relê o idioma atual (pt não traduz, não precisa). */
@@ -64,7 +65,7 @@ export async function recarregar(){
   cache.clear();
   if (atual === 'pt') return atual;
   const d = await baixar(atual, '?t=' + Date.now());
-  exatas = d.exatas; padroes = d.padroes;
+  exatas = d.exatas; padroes = d.padroes; habilidades = d.habilidades || {};
   return atual;
 }
 /* DESCRIÇÕES DA POKÉDEX (etapa 3): data/idioma/dex_<l>.json, por número da dex, geradas do jogo original pelo
@@ -84,9 +85,9 @@ export async function carregarDex(){ dex = await baixarDex(atual); return dex; }
 export async function carregar(l){
   if (!IDIOMAS[l]) l = 'pt';
   dex = dexCache.get(l) || {};
-  if (l === 'pt'){ atual = 'pt'; exatas = new Map(); padroes = []; document.documentElement.lang = 'pt'; return atual; }
+  if (l === 'pt'){ atual = 'pt'; exatas = new Map(); padroes = []; habilidades = {}; document.documentElement.lang = 'pt'; return atual; }
   const d = await baixar(l);
-  atual = l; exatas = d.exatas; padroes = d.padroes; carregado[l] = true;
+  atual = l; exatas = d.exatas; padroes = d.padroes; habilidades = d.habilidades || {}; carregado[l] = true;
   document.documentElement.lang = l;
   return atual;
 }
@@ -124,6 +125,12 @@ export function t(s, vars = null){
   }
   if (vars) r = r.replace(/\{(\w+)\}/g, (tudo, nome) => (nome in vars ? String(vars[nome]) : tudo));
   return r;
+}
+/** Ability labels use a separate dictionary so common words and user names are unaffected. */
+export function habilidade(nome){
+  if (atual === 'pt' || typeof nome !== 'string') return nome;
+  const chave = nome.trim();
+  return Object.hasOwn(habilidades, chave) ? nome.replace(chave, habilidades[chave]) : t(nome);
 }
 /** Traduz um HTML pequeno trocando só os textos entre as tags (pra templates antigos). */
 export function tHtml(html){

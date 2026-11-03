@@ -1,3 +1,6 @@
+import { carregarMensagens } from '/admin/mensagens.mjs';
+let traduzirRotulo = texto => texto;
+const rotulosProntos = carregarMensagens().then(t => { traduzirRotulo = t; });
 /* Prévia da skin no editor de dados (esquema skins_treinador → `previa`). Usa o MESMO palco 3D da tela de criação do jogo
  * (personagem.mjs criarPalco: Idle, gira sozinho, arrastar gira, tinta de fábrica do npc_tintas.json + receita de cor), então
  * o que aparece aqui é o que o jogador vê. Além do modelo:
@@ -44,6 +47,7 @@ export function mostrar(caixa, r) {
 
 /** Registro mudou (linha nova, prefab ou receita trocados): remonta só se o modelo ou a receita mudaram. */
 export async function atualizar(r) {
+  await rotulosProntos;
   if (!raiz) return;
   let glb, t, versao = '';
   if (r?.modelo && r.texturas) {
@@ -79,7 +83,7 @@ export async function atualizar(r) {
     const partesDe = tx => ['R', 'G', 'B', 'K'].map(k => CANAIS[t][tx][k]).filter(v => typeof v === 'string');
     const todas = new Set(Object.keys(CANAIS[t]).flatMap(partesDe));
     const pegam = new Set(Object.keys(CANAIS[t]).filter(tx => nomes.has(tx)).flatMap(partesDe));
-    const rot = ks => { const s = new Set(ks); return [...Object.keys(ROTULOS[t]).filter(k => s.has(k)), ...[...s].filter(k => !(k in ROTULOS[t]))].map(k => ROTULOS[t][k] || k).join(', '); };
+    const rot = ks => { const s = new Set(ks); return [...Object.keys(ROTULOS[t]).filter(k => s.has(k)), ...[...s].filter(k => !(k in ROTULOS[t]))].map(k => traduzirRotulo(ROTULOS[t][k] || k)).join(', '); };
     if (!pegam.size) { info(`⚠ A receita <b>${esc(t)}</b> does not apply to this model (its textures do not match the mask). Color selectors will have no effect in the game.`, true); return; }
     const faltam = [...todas].filter(k => !pegam.has(k));
     if (faltam.length) info(`⚠ A receita <b>${esc(t)}</b> only applies to part of this model: changes <b>${esc(rot(pegam))}</b>; does not change <b>${esc(rot(faltam))}</b> (the body mask belongs to another model).`, true);
@@ -102,7 +106,7 @@ async function texturasDo(obj) {
 
 function seletores(t, id, pegam) {
   const el = raiz.querySelector('.previa-cores'), c = coresDe(t);
-  el.innerHTML = Object.entries(ROTULOS[t]).filter(([k]) => pegam.has(k)).map(([k, rot]) => `<label class="cor"><input type="color" data-k="${k}" value="${c[k]}"><span>${esc(rot)}</span></label>`).join('')
+  el.innerHTML = Object.entries(ROTULOS[t]).filter(([k]) => pegam.has(k)).map(([k, rot]) => `<label class="cor"><input type="color" data-k="${k}" value="${c[k]}"><span>${esc(traduzirRotulo(rot))}</span></label>`).join('')
     + '<button type="button" class="aleatorio">🎲</button><button type="button" class="padrao">default</button>';
   const repintar = () => { for (const i of el.querySelectorAll('input[type=color]')) c[i.dataset.k] = i.value; P.repintar(id, t, c); };
   for (const i of el.querySelectorAll('input[type=color]')) i.oninput = repintar;

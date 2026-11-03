@@ -1378,7 +1378,7 @@ async function encherPokedex(pop){
   const alt = ctx.alturas?.[selDex] ?? X.a, peso = S?.kg ?? X.p;
   const linhas = [
     ['info-altura---peso', 2, alt || peso ? (alt ? alt.toFixed(1) + ' m' : '—') + ' · ' + (peso ? peso + ' kg' : '—') : '—'],
-    ['info-habilidades', 3, X.h?.length ? X.h.map(tr).join(', ') + (X.ho ? (nv >= 4 ? " (hidden: " + tr(X.ho) + ')' : ' (hidden: unlocks at level 4)') : '') : '—'],
+    ['info-habilidades', 3, X.h?.length ? X.h.map(I18n.habilidade).join(', ') + (X.ho ? (nv >= 4 ? " (hidden: " + I18n.habilidade(X.ho) + ')' : ' (hidden: unlocks at level 4)') : '') : '—'],
     ['info-g-nero', 4, X.m != null ? (X.m < 0 ? 'genderless' : '♂ ' + X.m + '% · ♀ ' + X.f + '%') : '—'],
     ['info-taxa-de-captura', 3, (S?.rate ?? X.c ?? '—') + ' · ' + (chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1) + '% at full HP with a Poké Ball'],
   ];
@@ -1821,7 +1821,7 @@ async function mostrarDex(){
     ${(I18n.descricaoDex(selDex) || X.d) && nv >= 2 ? `<p class="dex-des">${esc(I18n.descricaoDex(selDex) || X.d)}</p>` : ''}
     <table class="stats dex-tab">
       <tr><td>height / weight</td>${nv >= 2 ? `<td>${alt ? alt.toFixed(1) + ' m' : '—'} · ${peso ? peso + ' kg' : '—'}</td>` : trava(2, "catch one")}</tr>
-      ${X.h?.length ? `<tr><td>abilities</td>${nv >= 3 ? `<td>${X.h.map(tr).map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(hidden: ${esc(tr(X.ho))})</small>` : " <small class=\"oculto\">(hidden: 🔒 level 4)</small>") : ''}</td>` : trava(3)}</tr>` : ''}
+      ${X.h?.length ? `<tr><td>abilities</td>${nv >= 3 ? `<td>${X.h.map(I18n.habilidade).map(esc).join(', ')}${X.ho ? (nv >= 4 ? ` <small style="color:var(--muted)">(hidden: ${esc(I18n.habilidade(X.ho))})</small>` : " <small class=\"oculto\">(hidden: 🔒 level 4)</small>") : ''}</td>` : trava(3)}</tr>` : ''}
       ${X.m != null ? `<tr><td>gender</td>${nv >= 4 ? `<td>${X.m < 0 ? 'genderless' : `♂ ${X.m}% · ♀ ${X.f}%`}</td>` : trava(4)}</tr>` : ''}
       <tr><td>catch rate</td>${nv >= 3 ? `<td>${S?.rate ?? X.c ?? '—'} · ${(chanceCaptura(S?.rate ?? X.c ?? 45) * 100).toFixed(1)}% at full HP with a Poké Ball (fainted: ${(chanceCaptura((S?.rate ?? 45) * 3) * 100).toFixed(0)}%)</td>` : trava(3, "battle and catch more")}</tr>
       <tr><td>where to find</td><td>${onde.length ? onde.map(tr).map(esc).join(', ') : 'not found in the wild (trade/event only)'}${noMapa ? ` · <b>${noMapa} on this map now</b>` : ''}</td></tr>

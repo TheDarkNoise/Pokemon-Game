@@ -17,7 +17,7 @@ const ROTULO_PAPEL = { cura: 'Heal', loja: 'Shop', caixa: 'Storage' };
 const COR_TILE = { spawn: 'rgba(214,160,90,.5)' };
 
 export function criarCamadas(dep) {
-  const { $, esc, api, toast, avisarJogo, canal, FLIPX, cam, w2t, t2w, redesenhar, dados, mapa, camadas, areaEm, nomeArea, aoMudar, mapas, trocarMapa } = dep;
+  const { $, esc, api, toast, avisarJogo, canal, FLIPX, cam, w2t, t2w, redesenhar, dados, mapa, camadas, areaEm, nomeArea, traduzir = texto => texto, aoMudar, mapas, trocarMapa } = dep;
   let ferramenta = 'zonas', sel = null, arraste = null, colocar = null, ref = null, pintando = false, hover = null, indice = null, avisouSemArea = false;
   const pincel = { tipo: 'grama', modo: 'pintar', raio: 1 };
   const sujo = { npcs: false, treinadores: false, grama: false, agua: false, spawn: false }, glbSujos = new Set(), portasSujas = new Set();
@@ -82,14 +82,14 @@ export function criarCamadas(dep) {
     if (lista === 'treinadores') return ref?.treinadores[o.cfg]?.nome || '';
     const p = ref?.portas[o.cfg];
     if (p?.t === 6) return '→ ' + destinoTexto(p.n, true);
-    if (p?.t === 7) return 'chegada';
+    if (p?.t === 7) return 'Arrival';
     return ref?.npcs[o.cfg]?.nome || '';
   }
   function destinoTexto(n, curto) {
     if (!n) return "no exit";
     const dest = ref?.portas[n]; if (!dest) return 'cfg ' + n + " (not found)";
-    const area = dest.a ? nomeArea(dest.a) : '', cena = ref.cenas[dest.c] || "scene " + dest.c;
-    return curto ? (area && !/^Área \d/.test(area) ? area : cena) : `${cena}${area ? ' · ' + area : ''} (arrival ${n})`;
+    const fonte = dest.a ? nomeArea(dest.a) : '', area = traduzir(fonte), cena = traduzir(ref.cenas[dest.c] || "scene " + dest.c);
+    return curto ? (fonte && !/^Área \d/.test(fonte) ? area : cena) : `${cena}${area ? ' · ' + area : ''} (arrival ${n})`;
   }
   const arquivoDaCena = c => { const nome = +c === 1000001 ? 'kanto' : String(c); return mapas().includes(nome) ? nome : null; };
 

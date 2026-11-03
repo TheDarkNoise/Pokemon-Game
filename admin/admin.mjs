@@ -601,7 +601,7 @@ function ligarUI() {
   });
   $('m-nova-area').addEventListener('click', () => { if (desenhandoArea) { sairDoModoArea(); return; } entrarModoArea(); });
   // camadas do map (Fase 1): pontos e pincel — avisarJogo/canal ficam no fim do arquivo, por isso o embrulho em função
-  Camadas = criarCamadas({ $, esc, api, toast, FLIPX, cam, w2t, t2w, camadas, nomeArea, areaEm, tela,
+  Camadas = criarCamadas({ $, esc, api, toast, FLIPX, cam, w2t, t2w, camadas, nomeArea, traduzir: texto => traduzirErro(texto), areaEm, tela,
     avisarJogo: (...a) => avisarJogo(...a), canal: { postMessage: m => canal.postMessage(m) },
     redesenhar: desenhar, dados: () => dadosMapa, mapa: () => mapaAtual, mapas: () => mapas, trocarMapa, aoMudar: atualizarSujoMapa,
     ligarCamada: k => { camadas[k] = true; const i = $('m-camadas').querySelector(`[data-cam="${k}"]`); if (i) i.checked = true; desenhar(); } });

@@ -7436,7 +7436,7 @@ if (jogo.ash){
       sel.innerHTML = '';
       const doTime = new Map((jogo.time || []).map(e => [e.glb.replace(/\.glb$/, ''), e]));
       for (const e of jogo.time || []){ const o = document.createElement('option'); o.value = e.glb.replace(/\.glb$/, ''); o.textContent = `★ ${e.nome} Lv${e.lv || '?'}`; sel.appendChild(o); }
-      for (const e of lista){ if (doTime.has(e.glb)) continue; const o = document.createElement('option'); o.value = e.glb; o.textContent = `#${String(e.n).padStart(3, '0')} ${e.nome}${e.nota ? ' · ' + e.nota : ''}`; sel.appendChild(o); }
+      for (const e of lista){ if (doTime.has(e.glb)) continue; const o = document.createElement('option'); o.value = e.glb; o.textContent = `#${String(e.n).padStart(3, '0')} ${e.nome}${e.nota ? ' · ' + I18n.t(e.nota) : ''}`; sel.appendChild(o); }
       sel.value = (jogo.pika?.glb || 'pm0025_00').replace(/\.glb$/, '');
     };
     encher(); painel.__encher = encher;
