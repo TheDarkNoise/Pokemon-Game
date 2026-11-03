@@ -1,3 +1,4 @@
+import { ehLocalidade } from './areas.mjs';
 import { t as tr, tHtml } from './i18n.mjs';   // IDIOMA (11/09): tr() traduz texto pt pro idioma do jogador
 import * as I18n from './i18n.mjs';                                     // etapa 3: a linha de idioma nas Configurações e a Pokédex por idioma
 /* Menus do jogo — casca DOM, sem servidor (menus.css).
@@ -1564,7 +1565,7 @@ function rMapa(corpo){
       if (/road|floor|bridge|pier|stair/.test(n) && !/sea|water|shui/.test(n)) mapaRuas.push({ x: o.x, z: o.z, w: +o.w || 4 });
     }
   }
-  const ehCidade = nome => /Cidade|Ilha|Liga/.test(nome);
+  const ehCidade = ehLocalidade;
   const desenhar = () => {
     c.fillStyle = '#79b7e0'; c.fillRect(0, 0, 1280, 960);                // mar
     for (const b of caixas){                                             // áreas

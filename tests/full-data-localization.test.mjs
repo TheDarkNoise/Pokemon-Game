@@ -35,7 +35,7 @@ test('actual Pokédex ability markup retains knowledge locks and translates norm
 
 test('every shipped Safari scene label translates and all source descriptions have English alternatives',async()=>{
  const scenes=JSON.parse(await read('public/data/cenas.json'));let checked=0;
- for(const scene of scenes.cenas)for(const name of [scene.nome,...(scene.areas||[]).map(a=>a.nome)])if(/campo de saf[aá]ri/i.test(name)){assert(I.t(name).includes('Safari Zone'),name);checked++;}
+ for(const scene of scenes.cenas)for(const name of [scene.nome,...(scene.areas||[]).map(a=>a.nome)])if(/campo de saf[aá]ri|Safari Zone/i.test(name)){assert(I.t(name).includes('Safari Zone'),name);checked++;}
  assert(checked>=12);assert.equal(I.t('campo de safári'),'Safari Zone');assert.equal(I.t('Campo de Safári Casa 5'),'Safari Zone House 5');
  await I.carregarDex();for(const [dex,sp]of Object.entries(extra.especies))if(sp.d)assert(I.descricaoDex(dex),dex);
 });

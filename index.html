@@ -202,6 +202,7 @@ import * as Evento from './evento.mjs';         // Fase 3 do painel: evento ao v
 import * as Dialogos from './dialogos.mjs';     // Fase 3 do painel: falas fixas (portão, Oak, abertura) vêm do data/dialogos.json
 import { GOLPES, GOLPES_PIKA, GOLPES_ESPECIE, VEL_PROJETIL, ajusteEfeito, atrasoDoGolpe, corrigirEfeito } from './golpes.mjs';
 import * as R from './regras.mjs';              // fórmulas da série: stats, dano, tipos
+import * as Areas from './areas.mjs';
 import * as I18n from './i18n.mjs';             // IDIOMA do jogador (11/09): pt (fonte), en, es
 import * as Arrastar from './arrastar_time.mjs';   // 20/09: arrastar pra reordenar o time (e mover entre time e caixa); o servidor já aceitava (intenção `arranjo`)
 
@@ -717,7 +718,7 @@ function remapearInteriorCompartilhado(){
 document.title = 'Pokemon 3D Base';                                    // era 'Kanto' / nome da cena (Jaime, 12/09: o título é o do jogo)
 $('titulo').textContent = I18n.t(cenaAtual ? cenaAtual.nome + ' · ' + NOME
   : 'Kanto — ' + (dados.areas.length > 4
-    ? dados.areas.length + ' áreas (' + Object.values(dados.nomes || {}).filter(n => /Cidade|Ilha/.test(n)).length + ' cidades)'
+    ? dados.areas.length + ' áreas (' + Object.values(dados.nomes || {}).filter(Areas.ehCidadeOuIlha).length + ' cidades)'
     : dados.areas.map(a => dados.nomes?.[a] || NOMES_AREA[a] || ('área ' + a)).join(' + ')));
 if (DEMO){
   $('titulo').textContent = 'Pallet & Rota 1 · demo';
@@ -3793,7 +3794,7 @@ const DENS_JOGADOR = (() => {                                            // Fase
   return Math.max(0.2, Math.min(4, v || 1));
 })();
 const caixaArea = new Map((dados.caixas || []).map(c => [c.a, c]));
-const cidades = new Set(Object.entries(dados.nomes || {}).filter(([, n]) => /^Cidade/.test(n)).map(([a]) => +a));
+const cidades = new Set(Object.entries(dados.nomes || {}).filter(([, n]) => Areas.ehCidade(n)).map(([a]) => +a));
 const dentroDeCidade = (x, z) => {                     // x, z em coordenadas de mundo
   for (const a of cidades){ const c = caixaArea.get(a); if (!c) continue;
     if (Math.abs(x - flipX * c.x) <= c.sx / 2 && Math.abs(z - c.z) <= c.sz / 2) return true; }

@@ -1,0 +1,7615 @@
+{
+  "files": {
+    "public/data/1000002.json": "88cfb227bb9c9e3323bc29ddfe6a83e016640d2f819558c64862f0a226e90ddd",
+    "public/data/2100001.json": "370b42b9c169c9f09630243b819db194f1ec040d10fc920d0545677842299e5a",
+    "public/data/2100002.json": "2d0d39a9fa6b4740be97bd1f846c76324eab70c6d9014b01b514f0f1a1871b19",
+    "public/data/2100003.json": "c2ed6def4bd3a66313819f4c33fb9a3c22b541876f4a41375664377591496d15",
+    "public/data/2100004.json": "346bef42b1fa87028fac49b0e1d20baaa13ef0b3a0a3aa800ee0adb6b5c81ce8",
+    "public/data/2100005.json": "dccaaa48f9c24acb0c43ce1b908c78f299565f40c8906d496a4eb3248b25fe1e",
+    "public/data/2100006.json": "99529a631dfb360e857588f94e94bd3058c555f4cc928ebc17c99bc4d6428440",
+    "public/data/2100007.json": "b0e112d56775bbff69ba80913c26acd0b4309ed0c1c14353528995fa6463386c",
+    "public/data/2100008.json": "cdb2b435886307dee2a9f1b7bba2ff8f35f29d13cd9c966b2f85b31fb8a5aff9",
+    "public/data/2100009.json": "c04018df435ccfa638a6f42726ee2a90756021205ec5728562bad32a33fee9e2",
+    "public/data/2100010.json": "b4e06025691a52d45855f83e839759172a9c90f50c1254b88896ee37aa324843",
+    "public/data/2100012.json": "d2cd7da8e1b666865e0a09fe3e988ba94afe8173e3109c4d8eeb863e76acb745",
+    "public/data/2100013.json": "99ad0c555b050ed48ad9c6cb8154a2fe02ce396e607589bcc86e6bcdd631d1a1",
+    "public/data/2500001.json": "7d696402276575bbdd9852e2b38a876dbea25abcb4a8d2a3dbcf80722ccecb26",
+    "public/data/2520001.json": "da9ef09b356cb8edadaefc745850881fd72bace85debe6807c09be7b9b7e798e",
+    "public/data/2520002.json": "391b945a974a470c939401164991c54701b92c5ade37ac459189138f8f7144fa",
+    "public/data/2520003.json": "49ed1b7b9dc84a974279b01c8d05d4c3763f2df476558b53b6d5385bb5ae77db",
+    "public/data/2520004.json": "f913973d6fe3c81cbbb070fc65484a0aeb2a71b9b573528007c1b9fabf220892",
+    "public/data/2520005.json": "c1fcb62f6a09d03cc11062f821221c5357da04e10cea34f2e125e9a6a1f512c1",
+    "public/data/2520006.json": "8f8a3477afc8624e1b686684d418f9be1c2893c9ef4092f31c5ee9c81ce89798",
+    "public/data/2520007.json": "d41cb1d3751f63a87247ce027ea66fc955f0cef75b386dc9a97b68a1247a0025",
+    "public/data/2540001.json": "497a308a88add2abf4038a0f899845d2b983cf228a29753284deaf0bff9990f9",
+    "public/data/2540002.json": "fc75c4344578c45c7e9181d66d6d11b1c4968b24a3f7a7d3802c75298cfd7411",
+    "public/data/4110001.json": "564629db3a9a7aa0d173434da36c03a0c3cc5d60235efd630a9187aabe9eb3fd",
+    "public/data/4110002.json": "5be1460adfb514c53978beffd2e42f2c9280ebf8f4e5b4a8a81738d571366d29",
+    "public/data/4110003.json": "e0a15df37806f5ab404aed5de5e56ac22386cf2ec76b83107753a0f0a972a131",
+    "public/data/4110004.json": "d725392c0d70da79ef0ba3d865479bad8f83d4b48d6884b1102d0680f4642209",
+    "public/data/4110006.json": "517e0070a7e0fe89bc312e8401ef54033f575d7dab1cc8635d604da2151643ae",
+    "public/data/4110007.json": "84ce7deab862164a909b42a531b79a8c0469c4e37d14b6d603df18c7f13bfc90",
+    "public/data/4110008.json": "79d1e2ccb59e4da0716ad13aa42f7e26e9fa76c2c34eb540d3d3337171b26a6c",
+    "public/data/4110014.json": "b92392536c771138c2def4f21c8f99d21267f5d2364cfadf865902d1b1ef0d57",
+    "public/data/4110015.json": "1a27f200dc35489de7dec01a9f3690a7bd34f421994e08f6c463dcc395848470",
+    "public/data/4110017.json": "237cc95c7f06132a7843ac03239613e0e20edd80a1169dec1559fb473a482033",
+    "public/data/4110018.json": "39f475d976ecc6a42f16dbeddb7a9529d0247000607965bc6f183d29d0c98793",
+    "public/data/4110019.json": "2870d82ea7412d4bc7fe4182cbda0589b5e82e47b784347169a18befbe406322",
+    "public/data/4110020.json": "59e98cb4a83a77b694158107e220d9db85b30d3a6132020cfc95d82e0f85eb90",
+    "public/data/4120001.json": "38ec1295d3929a8d69d495dd6e0cf3599e4b573bf8459bafb837d57b491eff9b",
+    "public/data/4120002.json": "b974fb9d927c53961a453a549ea9b856883ca26f5299cf0b249dc7f56054333c",
+    "public/data/4120003.json": "c986f474f7a5bac0a36230ad662a5fd5ae7dc8206a2982952e2ae0e5a2808fcd",
+    "public/data/4120004.json": "8aa32443fdf1bdda5f4b6d0ff6e2551874a46ad0f25e59eb6e366bd41163f74d",
+    "public/data/4120005.json": "5cf19aa6be6cdc3c2ff61908d13f872780a00900480db173251dde612d3f7729",
+    "public/data/4120006.json": "16f3667ea58fc391c22c8a6218588f533ea56ccf1d099e5603bf448aa9ed13cc",
+    "public/data/4120007.json": "c4b9a612ac6d038759befd2fc06612571d0a7adbe8ed06f934cb5b9814d5edd4",
+    "public/data/4120008.json": "b4e004e3c34254740b73920140357a575bd6e960f7c0240a2bbe0fbcd3ba8b7b",
+    "public/data/4120009.json": "d69dcdc6fa3762dded86a792d300c2c0d950fdd21af6a0098c2c8c442210520a",
+    "public/data/4120010.json": "172496f96bd113c4e876b1a0e0859a050da90d3a260c668b1a7eccb51f454f61",
+    "public/data/4120011.json": "cc61ba20fe4d91712c95f63673df962e4fadddf6c1d9963b9398b0aafe50b29d",
+    "public/data/4120012.json": "8b7590c50d616d35331d8cfd11d9e002ea698cd0617b071a05312fe88869c100",
+    "public/data/4120013.json": "919d95ea6e756f00ba5558bbbb365a392ed6843f408e6186904c53bb8951c6ab",
+    "public/data/4120014.json": "e7a93ed9a941d64ecb4c80eaf5a0f375ddc198082b206c03a1472359d9928c7a",
+    "public/data/4120015.json": "4ac024154a8fe316503a60d754cde86210a9bda51d0e9c13634be385aaaf8691",
+    "public/data/4120016.json": "e74f95ff6b9d5d96374ed6daebf3f07af5882a1982bbefda5a5e4964e9e85445",
+    "public/data/4120017.json": "06701e33bacb06e9b986d43ba79331b5520ad3472296af6665f14e94edebbb13",
+    "public/data/4120018.json": "75bed0559156589b8461090e917f226b95dc6d284a1b903ac77dae95d81f4878",
+    "public/data/4120019.json": "1e29416f5789b4bf49e05acfffb385de75e68822c0ea094e28fdceaf1323db7a",
+    "public/data/4120020.json": "1ae14f0da43c618497de8e683509561b5b4f015ce671083273229f15f25a0f48",
+    "public/data/4220013.json": "411322ee7e44ee61a76024854b2f1b97761979d1c4b1645ec76b2125d362d495",
+    "public/data/4400014.json": "d02a92ea1fe7c2574171bc5086de1a3b833ba56d1e0075723d8254ec17e8e03a",
+    "public/data/4700001.json": "6feb0b1c89b94a615c4f1e95a558b7de233ad4333e66c9f1f617722b1c0a1cb1",
+    "public/data/cenas.json": "87e0ffd0d55ee5cde67970e55abbd48e5171b670764bb2f1e0ed82db9ca1c113",
+    "public/data/kanto.json": "73efffa0bacdb1ff33c0b905406a2f410b7de0f41928cfc58114d3e3342d3d17",
+    "public/data/mapa_kanto_pontos.json": "84ac0ee199b551a5f496b680b84c552220633dde16607d62db664f98780b8277"
+  },
+  "fields": [
+    {
+      "file": "public/data/1000002.json",
+      "path": [
+        "nomes",
+        "100002"
+      ],
+      "id": "100002",
+      "source": "Habitat",
+      "en": "Habitat",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100001.json",
+      "path": [
+        "nomes",
+        "1301"
+      ],
+      "id": "1301",
+      "source": "Torre de Pokémon Piso 1",
+      "en": "Pokémon Tower 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100001.json",
+      "path": [
+        "nomes",
+        "1302"
+      ],
+      "id": "1302",
+      "source": "Torre de Pokémon Piso 2",
+      "en": "Pokémon Tower 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100001.json",
+      "path": [
+        "nomes",
+        "1303"
+      ],
+      "id": "1303",
+      "source": "Torre de Pokémon Piso 3",
+      "en": "Pokémon Tower 3F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100001.json",
+      "path": [
+        "nomes",
+        "1304"
+      ],
+      "id": "1304",
+      "source": "Torre de Pokémon Piso 4",
+      "en": "Pokémon Tower 4F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100001.json",
+      "path": [
+        "nomes",
+        "1305"
+      ],
+      "id": "1305",
+      "source": "Torre de Pokémon Piso 5",
+      "en": "Pokémon Tower 5F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100001.json",
+      "path": [
+        "nomes",
+        "1306"
+      ],
+      "id": "1306",
+      "source": "Torre de Pokémon Piso 6",
+      "en": "Pokémon Tower 6F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100001.json",
+      "path": [
+        "nomes",
+        "1307"
+      ],
+      "id": "1307",
+      "source": "Torre de Pokémon Piso 7",
+      "en": "Pokémon Tower 7F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100002.json",
+      "path": [
+        "nomes",
+        "1332"
+      ],
+      "id": "1332",
+      "source": "Usina Elétrica Abandonada",
+      "en": "Abandoned Power Plant",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100003.json",
+      "path": [
+        "nomes",
+        "1310"
+      ],
+      "id": "1310",
+      "source": "Ilhas Seaform Piso 1",
+      "en": "Seafoam Islands – Floor 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100003.json",
+      "path": [
+        "nomes",
+        "1311"
+      ],
+      "id": "1311",
+      "source": "Ilhas Seaform Piso 2",
+      "en": "Seafoam Islands – Floor 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100003.json",
+      "path": [
+        "nomes",
+        "1312"
+      ],
+      "id": "1312",
+      "source": "Ilhas Seaform Piso 3",
+      "en": "Seafoam Islands – Floor 3",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100003.json",
+      "path": [
+        "nomes",
+        "1313"
+      ],
+      "id": "1313",
+      "source": "Ilhas Seaform Piso 4",
+      "en": "Seafoam Islands – Floor 4",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100003.json",
+      "path": [
+        "nomes",
+        "1314"
+      ],
+      "id": "1314",
+      "source": "Ilhas Seaform Piso 5",
+      "en": "Seafoam Islands – Floor 5",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100004.json",
+      "path": [
+        "nomes",
+        "1315"
+      ],
+      "id": "1315",
+      "source": "Caminho dos Campeões Piso 1",
+      "en": "Victory Road 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100004.json",
+      "path": [
+        "nomes",
+        "1316"
+      ],
+      "id": "1316",
+      "source": "Caminho dos Campeões Piso 2",
+      "en": "Victory Road 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100004.json",
+      "path": [
+        "nomes",
+        "1317"
+      ],
+      "id": "1317",
+      "source": "Caminho dos Campeões Piso 3",
+      "en": "Victory Road 3F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100005.json",
+      "path": [
+        "nomes",
+        "1308"
+      ],
+      "id": "1308",
+      "source": "Esconderijo da Equipe Rocket Piso 1",
+      "en": "Team Rocket Hideout 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100005.json",
+      "path": [
+        "nomes",
+        "1309"
+      ],
+      "id": "1309",
+      "source": "Esconderijo da Equipe Rocket Piso 2",
+      "en": "Team Rocket Hideout 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100006.json",
+      "path": [
+        "nomes",
+        "1318"
+      ],
+      "id": "1318",
+      "source": "Caverna Celeste Piso 1",
+      "en": "Cerulean Cave – Floor 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100006.json",
+      "path": [
+        "nomes",
+        "1319"
+      ],
+      "id": "1319",
+      "source": "Caverna Celeste Piso 2",
+      "en": "Cerulean Cave – Floor 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100006.json",
+      "path": [
+        "nomes",
+        "1320"
+      ],
+      "id": "1320",
+      "source": "Caverna Celeste Piso 3",
+      "en": "Cerulean Cave – Floor 3",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100007.json",
+      "path": [
+        "nomes",
+        "1322"
+      ],
+      "id": "1322",
+      "source": "Monte Lua Piso 1",
+      "en": "Mt. Moon – Floor 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100007.json",
+      "path": [
+        "nomes",
+        "1323"
+      ],
+      "id": "1323",
+      "source": "Monte Lua Piso 1",
+      "en": "Mt. Moon – Floor 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100007.json",
+      "path": [
+        "nomes",
+        "1324"
+      ],
+      "id": "1324",
+      "source": "Monte Lua Piso 1",
+      "en": "Mt. Moon – Floor 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100008.json",
+      "path": [
+        "nomes",
+        "1321"
+      ],
+      "id": "1321",
+      "source": "Caverna Diglett",
+      "en": "Diglett’s Cave",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100009.json",
+      "path": [
+        "nomes",
+        "1325"
+      ],
+      "id": "1325",
+      "source": "Companhia Silph Piso 1",
+      "en": "Silph Co. – Floor 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100009.json",
+      "path": [
+        "nomes",
+        "1326"
+      ],
+      "id": "1326",
+      "source": "Companhia Silph Piso 2",
+      "en": "Silph Co. – Floor 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100009.json",
+      "path": [
+        "nomes",
+        "1327"
+      ],
+      "id": "1327",
+      "source": "Companhia Silph Piso 3",
+      "en": "Silph Co. – Floor 3",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100010.json",
+      "path": [
+        "nomes",
+        "1328"
+      ],
+      "id": "1328",
+      "source": "Edifício de Celadon Piso 1",
+      "en": "Celadon Building 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100010.json",
+      "path": [
+        "nomes",
+        "1329"
+      ],
+      "id": "1329",
+      "source": "Edifício de Celadon Piso 2",
+      "en": "Celadon Building 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100010.json",
+      "path": [
+        "nomes",
+        "1330"
+      ],
+      "id": "1330",
+      "source": "Edifício de Celadon Piso 3",
+      "en": "Celadon Building 3F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100012.json",
+      "path": [
+        "nomes",
+        "1333"
+      ],
+      "id": "1333",
+      "source": "Túnel de pedra piso 1",
+      "en": "Rock Tunnel 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100012.json",
+      "path": [
+        "nomes",
+        "1334"
+      ],
+      "id": "1334",
+      "source": "Túnel de pedra piso 2",
+      "en": "Rock Tunnel 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2100013.json",
+      "path": [
+        "nomes",
+        "1335"
+      ],
+      "id": "1335",
+      "source": "Casa de Pokémon",
+      "en": "Pokémon House",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2249"
+      ],
+      "id": "2249",
+      "source": "Ilha Um",
+      "en": "One Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2250"
+      ],
+      "id": "2250",
+      "source": "Ilha Dois",
+      "en": "Two Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2251"
+      ],
+      "id": "2251",
+      "source": "Ilha Três",
+      "en": "Three Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2252"
+      ],
+      "id": "2252",
+      "source": "Ilha Quatro",
+      "en": "Four Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2253"
+      ],
+      "id": "2253",
+      "source": "Ilha Cinco",
+      "en": "Five Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2254"
+      ],
+      "id": "2254",
+      "source": "Ilha Seis",
+      "en": "Six Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2255"
+      ],
+      "id": "2255",
+      "source": "Ilha Sete",
+      "en": "Seven Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2265"
+      ],
+      "id": "2265",
+      "source": "Cabo da Ponta",
+      "en": "Cape Brink",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2266"
+      ],
+      "id": "2266",
+      "source": "Porto",
+      "en": "Port",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2267"
+      ],
+      "id": "2267",
+      "source": "Ponte Suspensa",
+      "en": "Suspension Bridge",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2268"
+      ],
+      "id": "2268",
+      "source": "Floresta dos Berries",
+      "en": "Berry Forest",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2270"
+      ],
+      "id": "2270",
+      "source": "Lugar Vazio",
+      "en": "Empty Area",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2271"
+      ],
+      "id": "2271",
+      "source": "Torre Memorial",
+      "en": "Memorial Pillar",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2272"
+      ],
+      "id": "2272",
+      "source": "Labirinto das Águas",
+      "en": "Water Labyrinth",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2273"
+      ],
+      "id": "2273",
+      "source": "Resort Luxuoso",
+      "en": "Resort Gorgeous",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2275"
+      ],
+      "id": "2275",
+      "source": "Caminho das águas",
+      "en": "Water Path",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2276"
+      ],
+      "id": "2276",
+      "source": "Vale das Ruínas",
+      "en": "Ruin Valley",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2280"
+      ],
+      "id": "2280",
+      "source": "Caminho Verde",
+      "en": "Green Path",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2281"
+      ],
+      "id": "2281",
+      "source": "Bosque Marcado",
+      "en": "Pattern Bush",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2282"
+      ],
+      "id": "2282",
+      "source": "Ilha Solitária",
+      "en": "Outcast Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2284"
+      ],
+      "id": "2284",
+      "source": "Entrada do cânion",
+      "en": "Canyon Entrance",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2285"
+      ],
+      "id": "2285",
+      "source": "Sevault Canyon",
+      "en": "Sevault Canyon",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2500001.json",
+      "path": [
+        "nomes",
+        "2287"
+      ],
+      "id": "2287",
+      "source": "Rocha do umbigo",
+      "en": "Navel Rock",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520001.json",
+      "path": [
+        "nomes",
+        "2263"
+      ],
+      "id": "2263",
+      "source": "Monte das Brasas-Caverna do Meio da Montanha",
+      "en": "Mt. Ember-Mountainside Cave",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520002.json",
+      "path": [
+        "nomes",
+        "2260"
+      ],
+      "id": "2260",
+      "source": "Monte das Brasas-Caverna Direita Piso -1",
+      "en": "Mt. Ember – Right Cave – Floor -1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520002.json",
+      "path": [
+        "nomes",
+        "2261"
+      ],
+      "id": "2261",
+      "source": "Monte das Brasas-Caverna Direita Piso -2",
+      "en": "Mt. Ember – Right Cave – Floor -2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520002.json",
+      "path": [
+        "nomes",
+        "2262"
+      ],
+      "id": "2262",
+      "source": "Monte das Brasas-Sala Secreta da Caverna Direita",
+      "en": "Mt. Ember-Right Cave Secret Room",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520003.json",
+      "path": [
+        "nomes",
+        "2258"
+      ],
+      "id": "2258",
+      "source": "Fonte Termal do monte das Brasas",
+      "en": "Ember Spa",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520004.json",
+      "path": [
+        "nomes",
+        "2269"
+      ],
+      "id": "2269",
+      "source": "Caverna Glacial",
+      "en": "Icefall Cave",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520005.json",
+      "path": [
+        "nomes",
+        "2283"
+      ],
+      "id": "2283",
+      "source": "Caverna da Alteração",
+      "en": "Altering Cave",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520006.json",
+      "path": [
+        "nomes",
+        "2286"
+      ],
+      "id": "2286",
+      "source": "Ruínas de Tanoby",
+      "en": "Tanoby Ruins",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2520007.json",
+      "path": [
+        "nomes",
+        "2274"
+      ],
+      "id": "2274",
+      "source": "Caverna perdida",
+      "en": "Lost Cave",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2540001.json",
+      "path": [
+        "nomes",
+        "2289"
+      ],
+      "id": "2289",
+      "source": "Ilha um-Centro de Pokémon",
+      "en": "One Island-Pokémon Center",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/2540002.json",
+      "path": [
+        "nomes",
+        "2288"
+      ],
+      "id": "2288",
+      "source": "Arzamento de Equipe Rocket",
+      "en": "Rocket Warehouse",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110001.json",
+      "path": [
+        "nomes",
+        "1402"
+      ],
+      "id": "1402",
+      "source": "Pewter-Centro de Pokémon",
+      "en": "Pewter-Pokémon Center",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110002.json",
+      "path": [
+        "nomes",
+        "1801"
+      ],
+      "id": "1801",
+      "source": "Laboratório do Professor Oak",
+      "en": "Professor Oak's Laboratory",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110003.json",
+      "path": [
+        "nomes",
+        "1802"
+      ],
+      "id": "1802",
+      "source": "Bicicleta milagrosa",
+      "en": "Miracle Cycle",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110004.json",
+      "path": [
+        "nomes",
+        "1803"
+      ],
+      "id": "1803",
+      "source": "Escola de Treinadores",
+      "en": "Trainer School",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110006.json",
+      "path": [
+        "nomes",
+        "1412"
+      ],
+      "id": "1412",
+      "source": "Liga ÍndigoCentro de Pokémon",
+      "en": "Indigo League Pokémon Center",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110007.json",
+      "path": [
+        "nomes",
+        "1509"
+      ],
+      "id": "1509",
+      "source": "Loja da Cidade Cinnabar",
+      "en": "Poké Mart - Cinnabar",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110008.json",
+      "path": [
+        "nomes",
+        "1804"
+      ],
+      "id": "1804",
+      "source": "A casa do personagem principal Piso 1",
+      "en": "Player’s House 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110008.json",
+      "path": [
+        "nomes",
+        "1805"
+      ],
+      "id": "1805",
+      "source": "A casa do personagem principal Piso 2",
+      "en": "Player’s House 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110014.json",
+      "path": [
+        "nomes",
+        "1506"
+      ],
+      "id": "1506",
+      "source": "Loja de departamentos Piso 1",
+      "en": "Department Store 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110014.json",
+      "path": [
+        "nomes",
+        "1588"
+      ],
+      "id": "1588",
+      "source": "Loja de departamentos Piso 2",
+      "en": "Department Store 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110015.json",
+      "path": [
+        "nomes",
+        "1839"
+      ],
+      "id": "1839",
+      "source": "Lavanda-Casa dos Espíritos",
+      "en": "Lavender-Spirit House",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110017.json",
+      "path": [
+        "nomes",
+        "1841"
+      ],
+      "id": "1841",
+      "source": "Pewter-Museu de Ciências Piso 1",
+      "en": "Pewter-Museum of Science 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110017.json",
+      "path": [
+        "nomes",
+        "1842"
+      ],
+      "id": "1842",
+      "source": "Pewter-Museu de Ciências Piso 2",
+      "en": "Pewter-Museum of Science 2F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110017.json",
+      "path": [
+        "nomes",
+        "1851"
+      ],
+      "id": "1851",
+      "source": "Pewter-Museu de Ciências Piso 1",
+      "en": "Pewter-Museum of Science 1F",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110018.json",
+      "path": [
+        "nomes",
+        "1843"
+      ],
+      "id": "1843",
+      "source": "Salão de Videogames",
+      "en": "Game Corner",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110019.json",
+      "path": [
+        "nomes",
+        "1844"
+      ],
+      "id": "1844",
+      "source": "Laboratório Cinnabar",
+      "en": "Cinnabar Lab",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4110020.json",
+      "path": [
+        "nomes",
+        "1845"
+      ],
+      "id": "1845",
+      "source": "Cabana do Cabo",
+      "en": "Sea Cottage",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120001.json",
+      "path": [
+        "nomes",
+        "1601"
+      ],
+      "id": "1601",
+      "source": "Ginásio-Pewter",
+      "en": "Gym-Pewter",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120002.json",
+      "path": [
+        "nomes",
+        "1602"
+      ],
+      "id": "1602",
+      "source": "Ginásio - Celeste",
+      "en": "Gym - Cerulean",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120003.json",
+      "path": [
+        "nomes",
+        "1603"
+      ],
+      "id": "1603",
+      "source": "Ginásio-Vermilion 1",
+      "en": "Gym-Vermilion 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120003.json",
+      "path": [
+        "nomes",
+        "1604"
+      ],
+      "id": "1604",
+      "source": "Ginásio-Vermilion 2",
+      "en": "Gym-Vermilion 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120003.json",
+      "path": [
+        "nomes",
+        "1605"
+      ],
+      "id": "1605",
+      "source": "Ginásio-Vermilion 3",
+      "en": "Gym-Vermilion 3",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120004.json",
+      "path": [
+        "nomes",
+        "1606"
+      ],
+      "id": "1606",
+      "source": "Celadon-Ginásio",
+      "en": "Celadon-Gym",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120005.json",
+      "path": [
+        "nomes",
+        "1607"
+      ],
+      "id": "1607",
+      "source": "Fuchsia-Ginásio 1",
+      "en": "Fuchsia-Gym 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120005.json",
+      "path": [
+        "nomes",
+        "1608"
+      ],
+      "id": "1608",
+      "source": "Fuchsia-Ginásio 2",
+      "en": "Fuchsia-Gym 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120005.json",
+      "path": [
+        "nomes",
+        "1609"
+      ],
+      "id": "1609",
+      "source": "Fuchsia-Ginásio 3",
+      "en": "Fuchsia-Gym 3",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120005.json",
+      "path": [
+        "nomes",
+        "1610"
+      ],
+      "id": "1610",
+      "source": "Fuchsia-Ginásio 4",
+      "en": "Fuchsia-Gym 4",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120005.json",
+      "path": [
+        "nomes",
+        "1611"
+      ],
+      "id": "1611",
+      "source": "Fuchsia-Ginásio 5",
+      "en": "Fuchsia-Gym 5",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120006.json",
+      "path": [
+        "nomes",
+        "1612"
+      ],
+      "id": "1612",
+      "source": "Saffron-Ginásio",
+      "en": "Saffron-Gym",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120007.json",
+      "path": [
+        "nomes",
+        "1613"
+      ],
+      "id": "1613",
+      "source": "Cinnabar-Ginásio",
+      "en": "Cinnabar-Gym",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120008.json",
+      "path": [
+        "nomes",
+        "1614"
+      ],
+      "id": "1614",
+      "source": "Viridian-Ginásio",
+      "en": "Viridian-Gym",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120009.json",
+      "path": [
+        "nomes",
+        "1701"
+      ],
+      "id": "1701",
+      "source": "Quarto do Lorelei",
+      "en": "Lorelei’s Room",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120010.json",
+      "path": [
+        "nomes",
+        "1702"
+      ],
+      "id": "1702",
+      "source": "Quarto do Bruno",
+      "en": "Bruno’s Room",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120011.json",
+      "path": [
+        "nomes",
+        "1703"
+      ],
+      "id": "1703",
+      "source": "Quarto da Agatha",
+      "en": "Agatha’s Room",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120012.json",
+      "path": [
+        "nomes",
+        "1704"
+      ],
+      "id": "1704",
+      "source": "Quarto do Lance",
+      "en": "Lance’s Room",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120013.json",
+      "path": [
+        "nomes",
+        "1705"
+      ],
+      "id": "1705",
+      "source": "Quarto do Campeão",
+      "en": "Champion’s Room",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120014.json",
+      "path": [
+        "nomes",
+        "1331"
+      ],
+      "id": "1331",
+      "source": "Ginásio lutador",
+      "en": "Fighting Dojo",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120015.json",
+      "path": [
+        "nomes",
+        "1618"
+      ],
+      "id": "1618",
+      "source": "Fuchsia-Ginásio",
+      "en": "Fuchsia-Gym",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120016.json",
+      "path": [
+        "nomes",
+        "1616"
+      ],
+      "id": "1616",
+      "source": "Ginásio-Vermilion",
+      "en": "Gym-Vermilion",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120017.json",
+      "path": [
+        "nomes",
+        "1615"
+      ],
+      "id": "1615",
+      "source": "Ginásio-Pewter",
+      "en": "Gym-Pewter",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120018.json",
+      "path": [
+        "nomes",
+        "1706"
+      ],
+      "id": "1706",
+      "source": "centro de conexões",
+      "en": "Connection Center",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120019.json",
+      "path": [
+        "nomes",
+        "1617"
+      ],
+      "id": "1617",
+      "source": "Celadon-Ginásio",
+      "en": "Celadon-Gym",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120020.json",
+      "path": [
+        "nomes",
+        "1336"
+      ],
+      "id": "1336",
+      "source": "Santa Anne",
+      "en": "S.S. Anne",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120020.json",
+      "path": [
+        "nomes",
+        "1337"
+      ],
+      "id": "1337",
+      "source": "Santa Anne Piso 1",
+      "en": "S.S. Anne – Floor 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120020.json",
+      "path": [
+        "nomes",
+        "1338"
+      ],
+      "id": "1338",
+      "source": "Santa Anne Piso -1",
+      "en": "S.S. Anne – Floor -1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120020.json",
+      "path": [
+        "nomes",
+        "1339"
+      ],
+      "id": "1339",
+      "source": "Santa Anne Piso 2",
+      "en": "S.S. Anne – Floor 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120020.json",
+      "path": [
+        "nomes",
+        "1340"
+      ],
+      "id": "1340",
+      "source": "cabine do capitão de Santa Anne",
+      "en": "S.S. Anne Captain’s Cabin",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120020.json",
+      "path": [
+        "nomes",
+        "1341"
+      ],
+      "id": "1341",
+      "source": "corredor do convés de Santa Anne",
+      "en": "S.S. Anne Deck Corridor",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4120020.json",
+      "path": [
+        "nomes",
+        "1342"
+      ],
+      "id": "1342",
+      "source": "cozinha de de Santa Anne",
+      "en": "S.S. Anne Kitchen",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4220013.json",
+      "path": [
+        "nomes",
+        "3121"
+      ],
+      "id": "3121",
+      "source": "parque natural",
+      "en": "Nature Park",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4400014.json",
+      "path": [
+        "nomes",
+        "47101"
+      ],
+      "id": "47101",
+      "source": "Território das Bestas Divinas",
+      "en": "Legendary Beasts’ Territory",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/4700001.json",
+      "path": [
+        "nomes",
+        "3131"
+      ],
+      "id": "3131",
+      "source": "Casa",
+      "en": "Home",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "nome"
+      ],
+      "id": 1000001,
+      "source": "Cidade Pallet",
+      "en": "Pallet Town",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1101,
+      "source": "Cidade Pallet",
+      "en": "Pallet Town",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1102,
+      "source": "Cidade Viridian",
+      "en": "Viridian City",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1103,
+      "source": "Cidade Pewter",
+      "en": "Pewter City",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1104,
+      "source": "Cidade Celeste",
+      "en": "Cerulean City",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1105,
+      "source": "Cidade Vermilion",
+      "en": "Vermilion City",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1106,
+      "source": "Cidade Lavanda",
+      "en": "Lavender Town",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 1107,
+      "source": "Cidade Celadon",
+      "en": "Celadon City",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 1108,
+      "source": "Cidade Saffron",
+      "en": "Saffron City",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 1109,
+      "source": "Cidade Fuchsia",
+      "en": "Fuchsia City",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        9,
+        "nome"
+      ],
+      "id": 1110,
+      "source": "Ilha Cinnabar",
+      "en": "Cinnabar Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        10,
+        "nome"
+      ],
+      "id": 1191,
+      "source": "Floresta Verde",
+      "en": "Viridian Forest",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        11,
+        "nome"
+      ],
+      "id": 1192,
+      "source": "campo de safári",
+      "en": "Safari Zone",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        12,
+        "nome"
+      ],
+      "id": 1193,
+      "source": "Centro de Competição",
+      "en": "Competition Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        13,
+        "nome"
+      ],
+      "id": 1201,
+      "source": "Rota 1",
+      "en": "Route 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        14,
+        "nome"
+      ],
+      "id": 1202,
+      "source": "Rota 2",
+      "en": "Route 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        15,
+        "nome"
+      ],
+      "id": 1203,
+      "source": "Rota 3",
+      "en": "Route 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        16,
+        "nome"
+      ],
+      "id": 1204,
+      "source": "Rota 4",
+      "en": "Route 4",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        17,
+        "nome"
+      ],
+      "id": 1205,
+      "source": "Rota 5",
+      "en": "Route 5",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        18,
+        "nome"
+      ],
+      "id": 1206,
+      "source": "Rota 6",
+      "en": "Route 6",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        19,
+        "nome"
+      ],
+      "id": 1207,
+      "source": "Rota 7",
+      "en": "Route 7",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        20,
+        "nome"
+      ],
+      "id": 1208,
+      "source": "Rota 8",
+      "en": "Route 8",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        21,
+        "nome"
+      ],
+      "id": 1209,
+      "source": "Rota 9",
+      "en": "Route 9",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        22,
+        "nome"
+      ],
+      "id": 1210,
+      "source": "Rota 10",
+      "en": "Route 10",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        23,
+        "nome"
+      ],
+      "id": 1211,
+      "source": "Rota 11",
+      "en": "Route 11",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        24,
+        "nome"
+      ],
+      "id": 1212,
+      "source": "Rota 12",
+      "en": "Route 12",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        25,
+        "nome"
+      ],
+      "id": 1213,
+      "source": "Rota 13",
+      "en": "Route 13",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        26,
+        "nome"
+      ],
+      "id": 1214,
+      "source": "Rota 14",
+      "en": "Route 14",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        27,
+        "nome"
+      ],
+      "id": 1215,
+      "source": "Rota 15",
+      "en": "Route 15",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        28,
+        "nome"
+      ],
+      "id": 1216,
+      "source": "Rota 16",
+      "en": "Route 16",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        29,
+        "nome"
+      ],
+      "id": 1217,
+      "source": "Rota 17",
+      "en": "Route 17",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        30,
+        "nome"
+      ],
+      "id": 1218,
+      "source": "Rota 18",
+      "en": "Route 18",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        31,
+        "nome"
+      ],
+      "id": 1219,
+      "source": "Rota 19",
+      "en": "Route 19",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        32,
+        "nome"
+      ],
+      "id": 1220,
+      "source": "Rota 20",
+      "en": "Route 20",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        33,
+        "nome"
+      ],
+      "id": 1221,
+      "source": "Rota 21",
+      "en": "Route 21",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        34,
+        "nome"
+      ],
+      "id": 1222,
+      "source": "Rota 22",
+      "en": "Route 22",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        35,
+        "nome"
+      ],
+      "id": 1223,
+      "source": "Rota 23",
+      "en": "Route 23",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        36,
+        "nome"
+      ],
+      "id": 1224,
+      "source": "Rota 24",
+      "en": "Route 24",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        37,
+        "nome"
+      ],
+      "id": 1225,
+      "source": "Rota 25",
+      "en": "Route 25",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        0,
+        "areas",
+        38,
+        "nome"
+      ],
+      "id": 1299,
+      "source": "ilhas seaform",
+      "en": "Seafoam Islands",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        1,
+        "nome"
+      ],
+      "id": 1000002,
+      "source": "Habitat",
+      "en": "Habitat",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        1,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 100002,
+      "source": "Habitat",
+      "en": "Habitat",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "nome"
+      ],
+      "id": 2100001,
+      "source": "Torre de Pokémon",
+      "en": "Pokémon Tower",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1301,
+      "source": "Torre de Pokémon Piso 1",
+      "en": "Pokémon Tower 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1302,
+      "source": "Torre de Pokémon Piso 2",
+      "en": "Pokémon Tower 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1303,
+      "source": "Torre de Pokémon Piso 3",
+      "en": "Pokémon Tower 3F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1304,
+      "source": "Torre de Pokémon Piso 4",
+      "en": "Pokémon Tower 4F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1305,
+      "source": "Torre de Pokémon Piso 5",
+      "en": "Pokémon Tower 5F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1306,
+      "source": "Torre de Pokémon Piso 6",
+      "en": "Pokémon Tower 6F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        2,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 1307,
+      "source": "Torre de Pokémon Piso 7",
+      "en": "Pokémon Tower 7F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        3,
+        "nome"
+      ],
+      "id": 2100002,
+      "source": "Usina Elétrica Abandonada",
+      "en": "Abandoned Power Plant",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        3,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1332,
+      "source": "Usina Elétrica Abandonada",
+      "en": "Abandoned Power Plant",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        4,
+        "nome"
+      ],
+      "id": 2100003,
+      "source": "Ilhas Seaform",
+      "en": "Seafoam Islands",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        4,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1310,
+      "source": "Ilhas Seaform Piso 1",
+      "en": "Seafoam Islands – Floor 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        4,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1311,
+      "source": "Ilhas Seaform Piso 2",
+      "en": "Seafoam Islands – Floor 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        4,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1312,
+      "source": "Ilhas Seaform Piso 3",
+      "en": "Seafoam Islands – Floor 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        4,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1313,
+      "source": "Ilhas Seaform Piso 4",
+      "en": "Seafoam Islands – Floor 4",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        4,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1314,
+      "source": "Ilhas Seaform Piso 5",
+      "en": "Seafoam Islands – Floor 5",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        5,
+        "nome"
+      ],
+      "id": 2100004,
+      "source": "Caminho dos Campeões",
+      "en": "Victory Road",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        5,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1315,
+      "source": "Caminho dos Campeões Piso 1",
+      "en": "Victory Road 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        5,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1316,
+      "source": "Caminho dos Campeões Piso 2",
+      "en": "Victory Road 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        5,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1317,
+      "source": "Caminho dos Campeões Piso 3",
+      "en": "Victory Road 3F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        6,
+        "nome"
+      ],
+      "id": 2100005,
+      "source": "Esconderijo da Equipe Rocket",
+      "en": "Team Rocket Hideout",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        6,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1308,
+      "source": "Esconderijo da Equipe Rocket Piso 1",
+      "en": "Team Rocket Hideout 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        6,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1309,
+      "source": "Esconderijo da Equipe Rocket Piso 2",
+      "en": "Team Rocket Hideout 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        7,
+        "nome"
+      ],
+      "id": 2100006,
+      "source": "Caverna Celeste",
+      "en": "Cerulean Cave",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        7,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1318,
+      "source": "Caverna Celeste Piso 1",
+      "en": "Cerulean Cave – Floor 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        7,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1319,
+      "source": "Caverna Celeste Piso 2",
+      "en": "Cerulean Cave – Floor 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        7,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1320,
+      "source": "Caverna Celeste Piso 3",
+      "en": "Cerulean Cave – Floor 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        8,
+        "nome"
+      ],
+      "id": 2100007,
+      "source": "Monte Lua",
+      "en": "Mt. Moon",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        8,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1322,
+      "source": "Monte Lua Piso 1",
+      "en": "Mt. Moon – Floor 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        8,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1323,
+      "source": "Monte Lua Piso 1",
+      "en": "Mt. Moon – Floor 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        8,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1324,
+      "source": "Monte Lua Piso 1",
+      "en": "Mt. Moon – Floor 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        9,
+        "nome"
+      ],
+      "id": 2100008,
+      "source": "Caverna Diglett",
+      "en": "Diglett’s Cave",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        9,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1321,
+      "source": "Caverna Diglett",
+      "en": "Diglett’s Cave",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        10,
+        "nome"
+      ],
+      "id": 2100009,
+      "source": "Companhia Silph",
+      "en": "Silph Co.",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        10,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1325,
+      "source": "Companhia Silph Piso 1",
+      "en": "Silph Co. – Floor 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        10,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1326,
+      "source": "Companhia Silph Piso 2",
+      "en": "Silph Co. – Floor 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        10,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1327,
+      "source": "Companhia Silph Piso 3",
+      "en": "Silph Co. – Floor 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        11,
+        "nome"
+      ],
+      "id": 2100010,
+      "source": "Edifício de Celadon",
+      "en": "Celadon Building",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        11,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1328,
+      "source": "Edifício de Celadon Piso 1",
+      "en": "Celadon Building 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        11,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1329,
+      "source": "Edifício de Celadon Piso 2",
+      "en": "Celadon Building 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        11,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1330,
+      "source": "Edifício de Celadon Piso 3",
+      "en": "Celadon Building 3F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "nome"
+      ],
+      "id": 2100011,
+      "source": "Campo de Safári (Kanto)",
+      "en": "Safari Zone (Kanto)",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 3101,
+      "source": "Campo de Safári (Kanto)",
+      "en": "Safari Zone (Kanto)",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 3104,
+      "source": "Campo de Safári 1",
+      "en": "Safari Zone 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 3111,
+      "source": "Campo de Safári 1",
+      "en": "Safari Zone 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 3112,
+      "source": "Campo de Safári 2",
+      "en": "Safari Zone 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 3113,
+      "source": "Campo de Safári 3",
+      "en": "Safari Zone 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 3114,
+      "source": "Campo de Safári 1",
+      "en": "Safari Zone 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        12,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 100001,
+      "source": "área 100001",
+      "en": "Area 100001",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        13,
+        "nome"
+      ],
+      "id": 2100012,
+      "source": "Túnel de pedra",
+      "en": "Rock Tunnel",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        13,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1333,
+      "source": "Túnel de pedra piso 1",
+      "en": "Rock Tunnel 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        13,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1334,
+      "source": "Túnel de pedra piso 2",
+      "en": "Rock Tunnel 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        14,
+        "nome"
+      ],
+      "id": 2100013,
+      "source": "Casa de Pokémon",
+      "en": "Pokémon House",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        14,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1335,
+      "source": "Casa de Pokémon",
+      "en": "Pokémon House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "nome"
+      ],
+      "id": 2500001,
+      "source": "Ilha Um",
+      "en": "One Island",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2249,
+      "source": "Ilha Um",
+      "en": "One Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 2250,
+      "source": "Ilha Dois",
+      "en": "Two Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 2251,
+      "source": "Ilha Três",
+      "en": "Three Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 2252,
+      "source": "Ilha Quatro",
+      "en": "Four Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 2253,
+      "source": "Ilha Cinco",
+      "en": "Five Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 2254,
+      "source": "Ilha Seis",
+      "en": "Six Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 2255,
+      "source": "Ilha Sete",
+      "en": "Seven Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 2265,
+      "source": "Cabo da Ponta",
+      "en": "Cape Brink",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 2266,
+      "source": "Porto",
+      "en": "Port",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        9,
+        "nome"
+      ],
+      "id": 2267,
+      "source": "Ponte Suspensa",
+      "en": "Suspension Bridge",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        10,
+        "nome"
+      ],
+      "id": 2268,
+      "source": "Floresta dos Berries",
+      "en": "Berry Forest",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        11,
+        "nome"
+      ],
+      "id": 2270,
+      "source": "Lugar Vazio",
+      "en": "Empty Area",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        12,
+        "nome"
+      ],
+      "id": 2271,
+      "source": "Torre Memorial",
+      "en": "Memorial Pillar",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        13,
+        "nome"
+      ],
+      "id": 2272,
+      "source": "Labirinto das Águas",
+      "en": "Water Labyrinth",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        14,
+        "nome"
+      ],
+      "id": 2273,
+      "source": "Resort Luxuoso",
+      "en": "Resort Gorgeous",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        15,
+        "nome"
+      ],
+      "id": 2275,
+      "source": "Caminho das águas",
+      "en": "Water Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        16,
+        "nome"
+      ],
+      "id": 2276,
+      "source": "Vale das Ruínas",
+      "en": "Ruin Valley",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        17,
+        "nome"
+      ],
+      "id": 2277,
+      "source": "Caverna de ponto Piso 1",
+      "en": "Dotted Hole 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        18,
+        "nome"
+      ],
+      "id": 2278,
+      "source": "Caverna de ponto Piso -1",
+      "en": "Dotted Hole B1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        19,
+        "nome"
+      ],
+      "id": 2279,
+      "source": "Caverna de ponto Sala Secreta",
+      "en": "Dotted Hole Secret Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        20,
+        "nome"
+      ],
+      "id": 2280,
+      "source": "Caminho Verde",
+      "en": "Green Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        21,
+        "nome"
+      ],
+      "id": 2281,
+      "source": "Bosque Marcado",
+      "en": "Pattern Bush",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        22,
+        "nome"
+      ],
+      "id": 2282,
+      "source": "Ilha Solitária",
+      "en": "Outcast Island",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        23,
+        "nome"
+      ],
+      "id": 2284,
+      "source": "Entrada do cânion",
+      "en": "Canyon Entrance",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        24,
+        "nome"
+      ],
+      "id": 2285,
+      "source": "Sevault Canyon",
+      "en": "Sevault Canyon",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        15,
+        "areas",
+        25,
+        "nome"
+      ],
+      "id": 2287,
+      "source": "Rocha do umbigo",
+      "en": "Navel Rock",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        16,
+        "nome"
+      ],
+      "id": 2520001,
+      "source": "Monte das Brasas-Caverna do Meio da Montanha",
+      "en": "Mt. Ember-Mountainside Cave",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        16,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2263,
+      "source": "Monte das Brasas-Caverna do Meio da Montanha",
+      "en": "Mt. Ember-Mountainside Cave",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        17,
+        "nome"
+      ],
+      "id": 2520002,
+      "source": "Monte das Brasas-Caverna Direita",
+      "en": "Mt. Ember – Right Cave",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        17,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2260,
+      "source": "Monte das Brasas-Caverna Direita Piso -1",
+      "en": "Mt. Ember – Right Cave – Floor -1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        17,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 2261,
+      "source": "Monte das Brasas-Caverna Direita Piso -2",
+      "en": "Mt. Ember – Right Cave – Floor -2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        17,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 2262,
+      "source": "Monte das Brasas-Sala Secreta da Caverna Direita",
+      "en": "Mt. Ember-Right Cave Secret Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        18,
+        "nome"
+      ],
+      "id": 2520003,
+      "source": "Fonte Termal do monte das Brasas",
+      "en": "Ember Spa",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        18,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2258,
+      "source": "Fonte Termal do monte das Brasas",
+      "en": "Ember Spa",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        19,
+        "nome"
+      ],
+      "id": 2520004,
+      "source": "Caverna Glacial",
+      "en": "Icefall Cave",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        19,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2269,
+      "source": "Caverna Glacial",
+      "en": "Icefall Cave",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        20,
+        "nome"
+      ],
+      "id": 2520005,
+      "source": "Caverna da Alteração",
+      "en": "Altering Cave",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        20,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2283,
+      "source": "Caverna da Alteração",
+      "en": "Altering Cave",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        21,
+        "nome"
+      ],
+      "id": 2520006,
+      "source": "Ruínas de Tanoby",
+      "en": "Tanoby Ruins",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        21,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2286,
+      "source": "Ruínas de Tanoby",
+      "en": "Tanoby Ruins",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        22,
+        "nome"
+      ],
+      "id": 2520007,
+      "source": "Caverna perdida",
+      "en": "Lost Cave",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        22,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2274,
+      "source": "Caverna perdida",
+      "en": "Lost Cave",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        23,
+        "nome"
+      ],
+      "id": 2540001,
+      "source": "Ilha um-Centro de Pokémon",
+      "en": "One Island-Pokémon Center",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        23,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2289,
+      "source": "Ilha um-Centro de Pokémon",
+      "en": "One Island-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        24,
+        "nome"
+      ],
+      "id": 2540002,
+      "source": "Arzamento de Equipe Rocket",
+      "en": "Rocket Warehouse",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        24,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 2288,
+      "source": "Arzamento de Equipe Rocket",
+      "en": "Rocket Warehouse",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "nome"
+      ],
+      "id": 4110001,
+      "source": "Viridian-Centro de Pokémon",
+      "en": "Viridian-Pokémon Center",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1401,
+      "source": "Viridian-Centro de Pokémon",
+      "en": "Viridian-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1402,
+      "source": "Pewter-Centro de Pokémon",
+      "en": "Pewter-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1403,
+      "source": "Celeste-Centro de Pokémon",
+      "en": "Cerulean-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1404,
+      "source": "Vermilion-Centro de Pokémon",
+      "en": "Vermilion-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1405,
+      "source": "Lavanda-Centro de Pokémon",
+      "en": "Lavender-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1406,
+      "source": "Celadon-Centro de Pokémon",
+      "en": "Celadon-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 1407,
+      "source": "Saffron-Centro de Pokémon",
+      "en": "Saffron-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 1408,
+      "source": "Fuchsia-Centro de Pokémon",
+      "en": "Fuchsia-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 1409,
+      "source": "Cinnabar-Centro de Pokémon",
+      "en": "Cinnabar-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        9,
+        "nome"
+      ],
+      "id": 1410,
+      "source": "Rota 4-Centro de Pokémon",
+      "en": "Route 4-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        10,
+        "nome"
+      ],
+      "id": 1411,
+      "source": "Rota 10-Centro de Pokémon",
+      "en": "Route 10-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        11,
+        "nome"
+      ],
+      "id": 2290,
+      "source": "Ilha dois-Centro de Pokémon",
+      "en": "Two Island-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        12,
+        "nome"
+      ],
+      "id": 2291,
+      "source": "Ilha três-Centro de Pokémon",
+      "en": "Three Island-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        13,
+        "nome"
+      ],
+      "id": 2292,
+      "source": "Ilha Quatro-Centro de Pokémon",
+      "en": "Four Island-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        14,
+        "nome"
+      ],
+      "id": 2293,
+      "source": "Ilha Cinco-Centro de Pokémon",
+      "en": "Five Island-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        15,
+        "nome"
+      ],
+      "id": 2294,
+      "source": "Ilha seis-Centro de Pokémon",
+      "en": "Six Island-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        25,
+        "areas",
+        16,
+        "nome"
+      ],
+      "id": 2295,
+      "source": "Ilha sete-Centro de Pokémon",
+      "en": "Seven Island-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        26,
+        "nome"
+      ],
+      "id": 4110002,
+      "source": "Laboratório do Professor Oak",
+      "en": "Professor Oak's Laboratory",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        26,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1801,
+      "source": "Laboratório do Professor Oak",
+      "en": "Professor Oak's Laboratory",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        27,
+        "nome"
+      ],
+      "id": 4110003,
+      "source": "Bicicleta milagrosa",
+      "en": "Miracle Cycle",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        27,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1802,
+      "source": "Bicicleta milagrosa",
+      "en": "Miracle Cycle",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        28,
+        "nome"
+      ],
+      "id": 4110004,
+      "source": "Escola de Treinadores",
+      "en": "Trainer School",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        28,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1803,
+      "source": "Escola de Treinadores",
+      "en": "Trainer School",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        29,
+        "nome"
+      ],
+      "id": 4110006,
+      "source": "Liga Índigo-Centro de Pokémon",
+      "en": "Indigo League-Pokémon Center",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        29,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1412,
+      "source": "Liga Índigo-Centro de Pokémon",
+      "en": "Indigo League-Pokémon Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "nome"
+      ],
+      "id": 4110007,
+      "source": "Loja da Cidade Viridian",
+      "en": "Poké Mart - Viridian",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1501,
+      "source": "Loja da Cidade Viridian",
+      "en": "Poké Mart - Viridian",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1502,
+      "source": "Loja da Cidade Pewter",
+      "en": "Poké Mart - Pewter",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1503,
+      "source": "Loja da Cidade Celeste",
+      "en": "Poké Mart - Cerulean",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1504,
+      "source": "Loja da Cidade Vermilion",
+      "en": "Poké Mart - Vermilion",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1505,
+      "source": "Loja da Cidade Lavanda",
+      "en": "Poké Mart - Lavender",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1507,
+      "source": "Loja de da Cidade Saffron",
+      "en": "Poké Mart - Saffron",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 1508,
+      "source": "Loja da Cidade Fuchsia",
+      "en": "Poké Mart - Fuchsia",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 1509,
+      "source": "Loja da Cidade Cinnabar",
+      "en": "Poké Mart - Cinnabar",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 2296,
+      "source": "Ilha três-Loja de Amizade",
+      "en": "Three Island-Poké Mart",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        9,
+        "nome"
+      ],
+      "id": 2297,
+      "source": "Ilha Quatro-Loja de Amizade",
+      "en": "Four Island-Poké Mart",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        10,
+        "nome"
+      ],
+      "id": 2298,
+      "source": "Ilha seis-Loja de Amizade",
+      "en": "Six Island-Poké Mart",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        30,
+        "areas",
+        11,
+        "nome"
+      ],
+      "id": 2299,
+      "source": "Ilha sete-Loja de Amizade",
+      "en": "Seven Island-Poké Mart",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        31,
+        "nome"
+      ],
+      "id": 4110008,
+      "source": "A casa do personagem principal",
+      "en": "Player’s House",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        31,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1804,
+      "source": "A casa do personagem principal Piso 1",
+      "en": "Player’s House 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        31,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1805,
+      "source": "A casa do personagem principal Piso 2",
+      "en": "Player’s House 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        31,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1823,
+      "source": "Pewter-Casa do Brock",
+      "en": "Pewter-Brock’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        31,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1827,
+      "source": "Saffron-Casa da moça Piso 1",
+      "en": "Saffron-Girl’s House 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        31,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 18231,
+      "source": "Pewter-Casa do Brock",
+      "en": "Pewter-Brock’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        31,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 18271,
+      "source": "Saffron-Casa da moça Piso 2",
+      "en": "Saffron-Girl’s House 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "nome"
+      ],
+      "id": 4110009,
+      "source": "Cidade Pallet-Casa do Gary Oak",
+      "en": "Pallet Town-Gary Oak’s House",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1806,
+      "source": "Cidade Pallet-Casa do Gary Oak",
+      "en": "Pallet Town-Gary Oak’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1807,
+      "source": "Rota 2-Instituto de Florestas",
+      "en": "Route 2-Forest Institute",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1813,
+      "source": "Rota 5 - Casa central da Rota 5",
+      "en": "Route 5 - Central House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1814,
+      "source": "Rota 16-Casa",
+      "en": "Route 16 – House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1816,
+      "source": "Viridian-Casa da Velha",
+      "en": "Viridian-Old Woman’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1824,
+      "source": "Celeste-Casa do Professor",
+      "en": "Cerulean-Professor’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 1828,
+      "source": "Fuchsia-Quarto 2 Casa do Bill",
+      "en": "Fuchsia-Bill’s House Room 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 1831,
+      "source": "Celeste-Casa da Jenny",
+      "en": "Cerulean-Jenny’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        32,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 1850,
+      "source": "Campo de Safári Casa 5",
+      "en": "Safari Zone House 5",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "nome"
+      ],
+      "id": 4110010,
+      "source": "Lavanda-Casa do Avaliador",
+      "en": "Lavender-Name Rater’s House",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1811,
+      "source": "Lavanda-Casa do Avaliador",
+      "en": "Lavender-Name Rater’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1815,
+      "source": "Fuchsia-Casa do diretor",
+      "en": "Fuchsia-Warden’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1817,
+      "source": "Celeste-Quarto pequeno comum",
+      "en": "Cerulean – Small Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1818,
+      "source": "Vermilion-Quarto 1",
+      "en": "Vermilion – Room 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1821,
+      "source": "Fuchsia-Quarto 1",
+      "en": "Fuchsia – Room 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1822,
+      "source": "Saffron-Casa do Tio Lutador",
+      "en": "Saffron-Fighter’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        33,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 1830,
+      "source": "Vermilion-Quarto 1",
+      "en": "Vermilion – Room 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        34,
+        "nome"
+      ],
+      "id": 4110011,
+      "source": "Vermilion-Quarto 3",
+      "en": "Vermilion – Room 3",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        34,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1810,
+      "source": "Vermilion-Quarto 3",
+      "en": "Vermilion – Room 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        34,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1812,
+      "source": "Celadon-Quarto 1",
+      "en": "Celadon – Room 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        34,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1846,
+      "source": "Campo de Safári Casa 1",
+      "en": "Safari Zone House 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        34,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1847,
+      "source": "Campo de Safári Casa 2",
+      "en": "Safari Zone House 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        34,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1848,
+      "source": "Campo de Safári Casa 3",
+      "en": "Safari Zone House 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        34,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1849,
+      "source": "Campo de Safári Casa 4",
+      "en": "Safari Zone House 4",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        35,
+        "nome"
+      ],
+      "id": 4110012,
+      "source": "Pewter-Casa do Ata",
+      "en": "Pewter-Ata’s House",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        35,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1808,
+      "source": "Pewter-Casa do Ata",
+      "en": "Pewter-Ata’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        35,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1825,
+      "source": "Lavanda- Casa do Velho",
+      "en": "Lavender-Old Man’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        35,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1834,
+      "source": "Rota 12-Casa",
+      "en": "Route 12 – House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        36,
+        "nome"
+      ],
+      "id": 4110013,
+      "source": "Celeste-Tio de medalhas",
+      "en": "Cerulean-Badge Collector",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        36,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1809,
+      "source": "Celeste-Tio de medalhas",
+      "en": "Cerulean-Badge Collector",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        36,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1832,
+      "source": "Cinnabar-Edifício Abandonado",
+      "en": "Cinnabar-Abandoned Building",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        36,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1833,
+      "source": "Fuchsia-Casa do Pescador",
+      "en": "Fuchsia-Fisherman’s House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        36,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1838,
+      "source": "Celeste-Casa Roubada",
+      "en": "Cerulean – Burgled House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        37,
+        "nome"
+      ],
+      "id": 4110014,
+      "source": "Loja de departamentos",
+      "en": "Department Store",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        37,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1506,
+      "source": "Loja de departamentos Piso 1",
+      "en": "Department Store 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        37,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1588,
+      "source": "Loja de departamentos Piso 2",
+      "en": "Department Store 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        38,
+        "nome"
+      ],
+      "id": 4110015,
+      "source": "Lavanda-Casa dos Espíritos",
+      "en": "Lavender-Spirit House",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        38,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1839,
+      "source": "Lavanda-Casa dos Espíritos",
+      "en": "Lavender-Spirit House",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        39,
+        "nome"
+      ],
+      "id": 4110016,
+      "source": "Celadon-Quarto 3",
+      "en": "Celadon – Room 3",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        39,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1819,
+      "source": "Celadon-Quarto 3",
+      "en": "Celadon – Room 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        39,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1820,
+      "source": "Saffron-Clube de treinadores",
+      "en": "Saffron-Trainers’ Club",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        39,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1826,
+      "source": "Celadon-Quarto 2",
+      "en": "Celadon – Room 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        39,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1829,
+      "source": "Fuchsia-Sala de descanso do Diretor",
+      "en": "Fuchsia-Warden’s Rest Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        39,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1840,
+      "source": "Clube dos Entusiastas",
+      "en": "Fan Club",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        40,
+        "nome"
+      ],
+      "id": 4110017,
+      "source": "Pewter-Museu de Ciências",
+      "en": "Pewter-Museum of Science",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        40,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1841,
+      "source": "Pewter-Museu de Ciências Piso 1",
+      "en": "Pewter-Museum of Science 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        40,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1842,
+      "source": "Pewter-Museu de Ciências Piso 2",
+      "en": "Pewter-Museum of Science 2F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        40,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1851,
+      "source": "Pewter-Museu de Ciências Piso 1",
+      "en": "Pewter-Museum of Science 1F",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        41,
+        "nome"
+      ],
+      "id": 4110018,
+      "source": "Salão de Videogames",
+      "en": "Game Corner",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        41,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1843,
+      "source": "Salão de Videogames",
+      "en": "Game Corner",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        42,
+        "nome"
+      ],
+      "id": 4110019,
+      "source": "Laboratório Cinnabar",
+      "en": "Cinnabar Lab",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        42,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1844,
+      "source": "Laboratório Cinnabar",
+      "en": "Cinnabar Lab",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        43,
+        "nome"
+      ],
+      "id": 4110020,
+      "source": "Cabana do Cabo",
+      "en": "Sea Cottage",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        43,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1845,
+      "source": "Cabana do Cabo",
+      "en": "Sea Cottage",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        44,
+        "nome"
+      ],
+      "id": 4120001,
+      "source": "Ginásio-Pewter",
+      "en": "Gym-Pewter",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        44,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1601,
+      "source": "Ginásio-Pewter",
+      "en": "Gym-Pewter",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        45,
+        "nome"
+      ],
+      "id": 4120002,
+      "source": "Ginásio - Celeste",
+      "en": "Gym - Cerulean",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        45,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1602,
+      "source": "Ginásio - Celeste",
+      "en": "Gym - Cerulean",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        46,
+        "nome"
+      ],
+      "id": 4120003,
+      "source": "Ginásio-Vermilion 1",
+      "en": "Gym-Vermilion 1",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        46,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1603,
+      "source": "Ginásio-Vermilion 1",
+      "en": "Gym-Vermilion 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        46,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1604,
+      "source": "Ginásio-Vermilion 2",
+      "en": "Gym-Vermilion 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        46,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1605,
+      "source": "Ginásio-Vermilion 3",
+      "en": "Gym-Vermilion 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        47,
+        "nome"
+      ],
+      "id": 4120004,
+      "source": "Celadon-Ginásio",
+      "en": "Celadon-Gym",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        47,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1606,
+      "source": "Celadon-Ginásio",
+      "en": "Celadon-Gym",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        48,
+        "nome"
+      ],
+      "id": 4120005,
+      "source": "Fuchsia-Ginásio 1",
+      "en": "Fuchsia-Gym 1",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        48,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1607,
+      "source": "Fuchsia-Ginásio 1",
+      "en": "Fuchsia-Gym 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        48,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1608,
+      "source": "Fuchsia-Ginásio 2",
+      "en": "Fuchsia-Gym 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        48,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1609,
+      "source": "Fuchsia-Ginásio 3",
+      "en": "Fuchsia-Gym 3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        48,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1610,
+      "source": "Fuchsia-Ginásio 4",
+      "en": "Fuchsia-Gym 4",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        48,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1611,
+      "source": "Fuchsia-Ginásio 5",
+      "en": "Fuchsia-Gym 5",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        49,
+        "nome"
+      ],
+      "id": 4120006,
+      "source": "Saffron-Ginásio",
+      "en": "Saffron-Gym",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        49,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1612,
+      "source": "Saffron-Ginásio",
+      "en": "Saffron-Gym",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        50,
+        "nome"
+      ],
+      "id": 4120007,
+      "source": "Cinnabar-Ginásio",
+      "en": "Cinnabar-Gym",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        50,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1613,
+      "source": "Cinnabar-Ginásio",
+      "en": "Cinnabar-Gym",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        51,
+        "nome"
+      ],
+      "id": 4120008,
+      "source": "Viridian-Ginásio",
+      "en": "Viridian-Gym",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        51,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1614,
+      "source": "Viridian-Ginásio",
+      "en": "Viridian-Gym",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        52,
+        "nome"
+      ],
+      "id": 4120009,
+      "source": "Quarto da Lorelei",
+      "en": "Lorelei’s Room",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        52,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1701,
+      "source": "Quarto da Lorelei",
+      "en": "Lorelei’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        52,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1707,
+      "source": "Quarto da Lorelei",
+      "en": "Lorelei’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        53,
+        "nome"
+      ],
+      "id": 4120010,
+      "source": "Quarto do Bruno",
+      "en": "Bruno’s Room",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        53,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1702,
+      "source": "Quarto do Bruno",
+      "en": "Bruno’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        53,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1708,
+      "source": "Quarto do Bruno",
+      "en": "Bruno’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        54,
+        "nome"
+      ],
+      "id": 4120011,
+      "source": "Quarto da Agatha",
+      "en": "Agatha’s Room",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        54,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1703,
+      "source": "Quarto da Agatha",
+      "en": "Agatha’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        54,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1709,
+      "source": "Quarto da Agatha",
+      "en": "Agatha’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        55,
+        "nome"
+      ],
+      "id": 4120012,
+      "source": "Quarto do Lance",
+      "en": "Lance’s Room",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        55,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1704,
+      "source": "Quarto do Lance",
+      "en": "Lance’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        55,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1710,
+      "source": "Quarto do Lance",
+      "en": "Lance’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        56,
+        "nome"
+      ],
+      "id": 4120013,
+      "source": "Quarto do Campeão",
+      "en": "Champion’s Room",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        56,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1705,
+      "source": "Quarto do Campeão",
+      "en": "Champion’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        56,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1711,
+      "source": "Quarto do Campeão",
+      "en": "Champion’s Room",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        57,
+        "nome"
+      ],
+      "id": 4120014,
+      "source": "Ginásio lutador",
+      "en": "Fighting Dojo",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        57,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1331,
+      "source": "Ginásio lutador",
+      "en": "Fighting Dojo",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        58,
+        "nome"
+      ],
+      "id": 4120015,
+      "source": "Fuchsia-Ginásio",
+      "en": "Fuchsia-Gym",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        58,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1618,
+      "source": "Fuchsia-Ginásio",
+      "en": "Fuchsia-Gym",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        59,
+        "nome"
+      ],
+      "id": 4120016,
+      "source": "Ginásio-Vermilion",
+      "en": "Gym-Vermilion",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        59,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1616,
+      "source": "Ginásio-Vermilion",
+      "en": "Gym-Vermilion",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        60,
+        "nome"
+      ],
+      "id": 4120017,
+      "source": "Ginásio-Pewter",
+      "en": "Gym-Pewter",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        60,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1615,
+      "source": "Ginásio-Pewter",
+      "en": "Gym-Pewter",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        61,
+        "nome"
+      ],
+      "id": 4120018,
+      "source": "centro de conexões",
+      "en": "Connection Center",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        61,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1706,
+      "source": "centro de conexões",
+      "en": "Connection Center",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        62,
+        "nome"
+      ],
+      "id": 4120019,
+      "source": "Celadon-Ginásio",
+      "en": "Celadon-Gym",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        62,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1617,
+      "source": "Celadon-Ginásio",
+      "en": "Celadon-Gym",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "nome"
+      ],
+      "id": 4120020,
+      "source": "Santa Anne",
+      "en": "S.S. Anne",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 1336,
+      "source": "Santa Anne",
+      "en": "S.S. Anne",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 1337,
+      "source": "Santa Anne Piso 1",
+      "en": "S.S. Anne – Floor 1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 1338,
+      "source": "Santa Anne Piso -1",
+      "en": "S.S. Anne – Floor -1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 1339,
+      "source": "Santa Anne Piso 2",
+      "en": "S.S. Anne – Floor 2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 1340,
+      "source": "cabine do capitão de Santa Anne",
+      "en": "S.S. Anne Captain’s Cabin",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 1341,
+      "source": "corredor do convés de Santa Anne",
+      "en": "S.S. Anne Deck Corridor",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        63,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 1342,
+      "source": "cozinha de de Santa Anne",
+      "en": "S.S. Anne Kitchen",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "nome"
+      ],
+      "id": 4220010,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 3201,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 3202,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 3203,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 3204,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 3205,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 3206,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 3207,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 3208,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 3209,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        9,
+        "nome"
+      ],
+      "id": 3210,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        10,
+        "nome"
+      ],
+      "id": 3211,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        11,
+        "nome"
+      ],
+      "id": 3212,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        12,
+        "nome"
+      ],
+      "id": 3213,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        13,
+        "nome"
+      ],
+      "id": 3214,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        14,
+        "nome"
+      ],
+      "id": 3215,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        15,
+        "nome"
+      ],
+      "id": 3216,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        16,
+        "nome"
+      ],
+      "id": 3217,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        64,
+        "areas",
+        17,
+        "nome"
+      ],
+      "id": 3218,
+      "source": "Caminho de Provas",
+      "en": "Trial Path",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        65,
+        "nome"
+      ],
+      "id": 4220013,
+      "source": "parque natural",
+      "en": "Nature Park",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        65,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 3121,
+      "source": "parque natural",
+      "en": "Nature Park",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        65,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 3132,
+      "source": "Pomar",
+      "en": "Orchard",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        66,
+        "nome"
+      ],
+      "id": 4400007,
+      "source": "Terra dos Tesouros",
+      "en": "Treasure Land",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        66,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 47002,
+      "source": "Terra dos Tesouros",
+      "en": "Treasure Land",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "nome"
+      ],
+      "id": 4400008,
+      "source": "Campo de Batalha Gigantamax",
+      "en": "Gigantamax Battlefield",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 47001,
+      "source": "Campo de Batalha Gigantamax",
+      "en": "Gigantamax Battlefield",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 47003,
+      "source": "área 47003",
+      "en": "Area 47003",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 47004,
+      "source": "área 47004",
+      "en": "Area 47004",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 47005,
+      "source": "área 47005",
+      "en": "Area 47005",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 47006,
+      "source": "área 47006",
+      "en": "Area 47006",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 47007,
+      "source": "área 47007",
+      "en": "Area 47007",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 47008,
+      "source": "área 47008",
+      "en": "Area 47008",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 47009,
+      "source": "área 47009",
+      "en": "Area 47009",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 47010,
+      "source": "área 47010",
+      "en": "Area 47010",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        9,
+        "nome"
+      ],
+      "id": 47011,
+      "source": "área 47011",
+      "en": "Area 47011",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        10,
+        "nome"
+      ],
+      "id": 47012,
+      "source": "área 47012",
+      "en": "Area 47012",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        11,
+        "nome"
+      ],
+      "id": 47013,
+      "source": "área 47013",
+      "en": "Area 47013",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        12,
+        "nome"
+      ],
+      "id": 47014,
+      "source": "área 47014",
+      "en": "Area 47014",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        13,
+        "nome"
+      ],
+      "id": 47015,
+      "source": "área 47015",
+      "en": "Area 47015",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        14,
+        "nome"
+      ],
+      "id": 47016,
+      "source": "área 47016",
+      "en": "Area 47016",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        15,
+        "nome"
+      ],
+      "id": 47017,
+      "source": "área 47017",
+      "en": "Area 47017",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        16,
+        "nome"
+      ],
+      "id": 47018,
+      "source": "área 47018",
+      "en": "Area 47018",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        17,
+        "nome"
+      ],
+      "id": 47019,
+      "source": "área 47019",
+      "en": "Area 47019",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        18,
+        "nome"
+      ],
+      "id": 47020,
+      "source": "área 47020",
+      "en": "Area 47020",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        19,
+        "nome"
+      ],
+      "id": 47021,
+      "source": "área 47021",
+      "en": "Area 47021",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        20,
+        "nome"
+      ],
+      "id": 47022,
+      "source": "área 47022",
+      "en": "Area 47022",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        21,
+        "nome"
+      ],
+      "id": 47023,
+      "source": "área 47023",
+      "en": "Area 47023",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        22,
+        "nome"
+      ],
+      "id": 47024,
+      "source": "área 47024",
+      "en": "Area 47024",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        23,
+        "nome"
+      ],
+      "id": 47025,
+      "source": "área 47025",
+      "en": "Area 47025",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        24,
+        "nome"
+      ],
+      "id": 47026,
+      "source": "área 47026",
+      "en": "Area 47026",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        25,
+        "nome"
+      ],
+      "id": 47027,
+      "source": "área 47027",
+      "en": "Area 47027",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        26,
+        "nome"
+      ],
+      "id": 47028,
+      "source": "área 47028",
+      "en": "Area 47028",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        27,
+        "nome"
+      ],
+      "id": 47029,
+      "source": "área 47029",
+      "en": "Area 47029",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        28,
+        "nome"
+      ],
+      "id": 47030,
+      "source": "área 47030",
+      "en": "Area 47030",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        29,
+        "nome"
+      ],
+      "id": 47031,
+      "source": "área 47031",
+      "en": "Area 47031",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        30,
+        "nome"
+      ],
+      "id": 47032,
+      "source": "área 47032",
+      "en": "Area 47032",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        31,
+        "nome"
+      ],
+      "id": 47033,
+      "source": "área 47033",
+      "en": "Area 47033",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        67,
+        "areas",
+        32,
+        "nome"
+      ],
+      "id": 47034,
+      "source": "área 47034",
+      "en": "Area 47034",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        68,
+        "nome"
+      ],
+      "id": 4400014,
+      "source": "Território das Bestas Divinas",
+      "en": "Legendary Beasts’ Territory",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        68,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 47101,
+      "source": "Território das Bestas Divinas",
+      "en": "Legendary Beasts’ Territory",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        69,
+        "nome"
+      ],
+      "id": 4440001,
+      "source": "Campo de Batalha da Comunidade",
+      "en": "Community Battlefield",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        69,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 42001,
+      "source": "Campo de Batalha da Comunidade",
+      "en": "Community Battlefield",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "nome"
+      ],
+      "id": 4440037,
+      "source": "Caminho da Expedição Dificuldade fácil-1",
+      "en": "Expedition Path Easy-1",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 47201,
+      "source": "Caminho da Expedição Dificuldade fácil-1",
+      "en": "Expedition Path Easy-1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        1,
+        "nome"
+      ],
+      "id": 47202,
+      "source": "Caminho da Expedição Dificuldade fácil-2",
+      "en": "Expedition Path Easy-2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        2,
+        "nome"
+      ],
+      "id": 47203,
+      "source": "Caminho da Expedição Dificuldade fácil-3",
+      "en": "Expedition Path Easy-3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        3,
+        "nome"
+      ],
+      "id": 47204,
+      "source": "Caminho da Expedição Dificuldade fácil-4",
+      "en": "Expedition Path Easy-4",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        4,
+        "nome"
+      ],
+      "id": 47205,
+      "source": "Caminho da Expedição Dificuldade fácil-5",
+      "en": "Expedition Path Easy-5",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        5,
+        "nome"
+      ],
+      "id": 47206,
+      "source": "Caminho da Expedição Dificuldade fácil-6",
+      "en": "Expedition Path Easy-6",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        6,
+        "nome"
+      ],
+      "id": 47207,
+      "source": "Caminho da Expedição Dificuldade fácil-7",
+      "en": "Expedition Path Easy-7",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        7,
+        "nome"
+      ],
+      "id": 47208,
+      "source": "Caminho da Expedição Dificuldade fácil-8",
+      "en": "Expedition Path Easy-8",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        8,
+        "nome"
+      ],
+      "id": 47209,
+      "source": "Caminho da Expedição Dificuldade fácil-9",
+      "en": "Expedition Path Easy-9",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        9,
+        "nome"
+      ],
+      "id": 47210,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -1",
+      "en": "Expedition Path Hard-1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        10,
+        "nome"
+      ],
+      "id": 47211,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -2",
+      "en": "Expedition Path Hard-2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        11,
+        "nome"
+      ],
+      "id": 47212,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -3",
+      "en": "Expedition Path Hard-3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        12,
+        "nome"
+      ],
+      "id": 47213,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -4",
+      "en": "Expedition Path Hard-4",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        13,
+        "nome"
+      ],
+      "id": 47214,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -5",
+      "en": "Expedition Path Hard-5",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        14,
+        "nome"
+      ],
+      "id": 47215,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -6",
+      "en": "Expedition Path Hard-6",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        15,
+        "nome"
+      ],
+      "id": 47216,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -7",
+      "en": "Expedition Path Hard-7",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        16,
+        "nome"
+      ],
+      "id": 47217,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -8",
+      "en": "Expedition Path Hard-8",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        17,
+        "nome"
+      ],
+      "id": 47218,
+      "source": "Caminho de Expedição Dificuldade Dificuldade -9",
+      "en": "Expedition Path Hard-9",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        18,
+        "nome"
+      ],
+      "id": 47219,
+      "source": "Caminho de Expedição Dificuldade Mestre -1",
+      "en": "Expedition Path Master-1",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        19,
+        "nome"
+      ],
+      "id": 47220,
+      "source": "Caminho de Expedição Dificuldade Mestre -2",
+      "en": "Expedition Path Master-2",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        20,
+        "nome"
+      ],
+      "id": 47221,
+      "source": "Caminho de Expedição Dificuldade Mestre -3",
+      "en": "Expedition Path Master-3",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        21,
+        "nome"
+      ],
+      "id": 47222,
+      "source": "Caminho de Expedição Dificuldade Mestre -4",
+      "en": "Expedition Path Master-4",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        22,
+        "nome"
+      ],
+      "id": 47223,
+      "source": "Caminho de Expedição Dificuldade Mestre -5",
+      "en": "Expedition Path Master-5",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        23,
+        "nome"
+      ],
+      "id": 47224,
+      "source": "Caminho de Expedição Dificuldade Mestre -6",
+      "en": "Expedition Path Master-6",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        24,
+        "nome"
+      ],
+      "id": 47225,
+      "source": "Caminho de Expedição Dificuldade Mestre -7",
+      "en": "Expedition Path Master-7",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        25,
+        "nome"
+      ],
+      "id": 47226,
+      "source": "Caminho de Expedição Dificuldade Mestre -8",
+      "en": "Expedition Path Master-8",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        70,
+        "areas",
+        26,
+        "nome"
+      ],
+      "id": 47227,
+      "source": "Caminho de Expedição Dificuldade Mestre -9",
+      "en": "Expedition Path Master-9",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        71,
+        "nome"
+      ],
+      "id": 4700001,
+      "source": "Casa",
+      "en": "Home",
+      "kind": "scene"
+    },
+    {
+      "file": "public/data/cenas.json",
+      "path": [
+        "cenas",
+        71,
+        "areas",
+        0,
+        "nome"
+      ],
+      "id": 3131,
+      "source": "Casa",
+      "en": "Home",
+      "kind": "area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1101"
+      ],
+      "id": "1101",
+      "source": "Cidade Pallet",
+      "en": "Pallet Town",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1102"
+      ],
+      "id": "1102",
+      "source": "Cidade Viridian",
+      "en": "Viridian City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1103"
+      ],
+      "id": "1103",
+      "source": "Cidade Pewter",
+      "en": "Pewter City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1104"
+      ],
+      "id": "1104",
+      "source": "Cidade Cerulean",
+      "en": "Cerulean City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1105"
+      ],
+      "id": "1105",
+      "source": "Cidade Vermilion",
+      "en": "Vermilion City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1106"
+      ],
+      "id": "1106",
+      "source": "Cidade Lavender",
+      "en": "Lavender Town",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1107"
+      ],
+      "id": "1107",
+      "source": "Cidade Celadon",
+      "en": "Celadon City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1108"
+      ],
+      "id": "1108",
+      "source": "Cidade Saffron",
+      "en": "Saffron City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1109"
+      ],
+      "id": "1109",
+      "source": "Cidade Fuchsia",
+      "en": "Fuchsia City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1110"
+      ],
+      "id": "1110",
+      "source": "Ilha Cinnabar",
+      "en": "Cinnabar Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1191"
+      ],
+      "id": "1191",
+      "source": "Floresta Verde",
+      "en": "Viridian Forest",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1192"
+      ],
+      "id": "1192",
+      "source": "campo de safári",
+      "en": "Safari Zone",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1193"
+      ],
+      "id": "1193",
+      "source": "Centro de Competição",
+      "en": "Competition Center",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1201"
+      ],
+      "id": "1201",
+      "source": "Rota 1",
+      "en": "Route 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1202"
+      ],
+      "id": "1202",
+      "source": "Rota 2",
+      "en": "Route 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1203"
+      ],
+      "id": "1203",
+      "source": "Rota 3",
+      "en": "Route 3",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1204"
+      ],
+      "id": "1204",
+      "source": "Rota 4",
+      "en": "Route 4",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1205"
+      ],
+      "id": "1205",
+      "source": "Rota 5",
+      "en": "Route 5",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1206"
+      ],
+      "id": "1206",
+      "source": "Rota 6",
+      "en": "Route 6",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1207"
+      ],
+      "id": "1207",
+      "source": "Rota 7",
+      "en": "Route 7",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1208"
+      ],
+      "id": "1208",
+      "source": "Rota 8",
+      "en": "Route 8",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1209"
+      ],
+      "id": "1209",
+      "source": "Rota 9",
+      "en": "Route 9",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1210"
+      ],
+      "id": "1210",
+      "source": "Rota 10",
+      "en": "Route 10",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1211"
+      ],
+      "id": "1211",
+      "source": "Rota 11",
+      "en": "Route 11",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1212"
+      ],
+      "id": "1212",
+      "source": "Rota 12",
+      "en": "Route 12",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1213"
+      ],
+      "id": "1213",
+      "source": "Rota 13",
+      "en": "Route 13",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1214"
+      ],
+      "id": "1214",
+      "source": "Rota 14",
+      "en": "Route 14",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1215"
+      ],
+      "id": "1215",
+      "source": "Rota 15",
+      "en": "Route 15",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1216"
+      ],
+      "id": "1216",
+      "source": "Rota 16",
+      "en": "Route 16",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1217"
+      ],
+      "id": "1217",
+      "source": "Rota 17",
+      "en": "Route 17",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1218"
+      ],
+      "id": "1218",
+      "source": "Rota 18",
+      "en": "Route 18",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1219"
+      ],
+      "id": "1219",
+      "source": "Rota 19",
+      "en": "Route 19",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1220"
+      ],
+      "id": "1220",
+      "source": "Rota 20",
+      "en": "Route 20",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1221"
+      ],
+      "id": "1221",
+      "source": "Rota 21",
+      "en": "Route 21",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1222"
+      ],
+      "id": "1222",
+      "source": "Rota 22",
+      "en": "Route 22",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1223"
+      ],
+      "id": "1223",
+      "source": "Rota 23",
+      "en": "Route 23",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1224"
+      ],
+      "id": "1224",
+      "source": "Rota 24",
+      "en": "Route 24",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1225"
+      ],
+      "id": "1225",
+      "source": "Rota 25",
+      "en": "Route 25",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/kanto.json",
+      "path": [
+        "nomes",
+        "1299"
+      ],
+      "id": "1299",
+      "source": "ilhas seaform",
+      "en": "Seafoam Islands",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1101"
+      ],
+      "id": "1101",
+      "source": "Cidade Pallet",
+      "en": "Pallet Town",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1102"
+      ],
+      "id": "1102",
+      "source": "Cidade Viridian",
+      "en": "Viridian City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1103"
+      ],
+      "id": "1103",
+      "source": "Cidade Pewter",
+      "en": "Pewter City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1104"
+      ],
+      "id": "1104",
+      "source": "Cidade Cerulean",
+      "en": "Cerulean City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1105"
+      ],
+      "id": "1105",
+      "source": "Cidade Vermilion",
+      "en": "Vermilion City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1106"
+      ],
+      "id": "1106",
+      "source": "Cidade Lavender",
+      "en": "Lavender Town",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1107"
+      ],
+      "id": "1107",
+      "source": "Cidade Celadon",
+      "en": "Celadon City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1108"
+      ],
+      "id": "1108",
+      "source": "Cidade Saffron",
+      "en": "Saffron City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1109"
+      ],
+      "id": "1109",
+      "source": "Cidade Fuchsia",
+      "en": "Fuchsia City",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1110"
+      ],
+      "id": "1110",
+      "source": "Ilha Cinnabar",
+      "en": "Cinnabar Island",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1191"
+      ],
+      "id": "1191",
+      "source": "Floresta Verde",
+      "en": "Viridian Forest",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1192"
+      ],
+      "id": "1192",
+      "source": "campo de safári",
+      "en": "Safari Zone",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1193"
+      ],
+      "id": "1193",
+      "source": "Centro de Competição",
+      "en": "Competition Center",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1201"
+      ],
+      "id": "1201",
+      "source": "Rota 1",
+      "en": "Route 1",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1202"
+      ],
+      "id": "1202",
+      "source": "Rota 2",
+      "en": "Route 2",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1203"
+      ],
+      "id": "1203",
+      "source": "Rota 3",
+      "en": "Route 3",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1204"
+      ],
+      "id": "1204",
+      "source": "Rota 4",
+      "en": "Route 4",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1205"
+      ],
+      "id": "1205",
+      "source": "Rota 5",
+      "en": "Route 5",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1206"
+      ],
+      "id": "1206",
+      "source": "Rota 6",
+      "en": "Route 6",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1207"
+      ],
+      "id": "1207",
+      "source": "Rota 7",
+      "en": "Route 7",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1208"
+      ],
+      "id": "1208",
+      "source": "Rota 8",
+      "en": "Route 8",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1209"
+      ],
+      "id": "1209",
+      "source": "Rota 9",
+      "en": "Route 9",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1210"
+      ],
+      "id": "1210",
+      "source": "Rota 10",
+      "en": "Route 10",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1211"
+      ],
+      "id": "1211",
+      "source": "Rota 11",
+      "en": "Route 11",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1212"
+      ],
+      "id": "1212",
+      "source": "Rota 12",
+      "en": "Route 12",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1213"
+      ],
+      "id": "1213",
+      "source": "Rota 13",
+      "en": "Route 13",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1214"
+      ],
+      "id": "1214",
+      "source": "Rota 14",
+      "en": "Route 14",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1215"
+      ],
+      "id": "1215",
+      "source": "Rota 15",
+      "en": "Route 15",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1216"
+      ],
+      "id": "1216",
+      "source": "Rota 16",
+      "en": "Route 16",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1217"
+      ],
+      "id": "1217",
+      "source": "Rota 17",
+      "en": "Route 17",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1218"
+      ],
+      "id": "1218",
+      "source": "Rota 18",
+      "en": "Route 18",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1219"
+      ],
+      "id": "1219",
+      "source": "Rota 19",
+      "en": "Route 19",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1220"
+      ],
+      "id": "1220",
+      "source": "Rota 20",
+      "en": "Route 20",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1221"
+      ],
+      "id": "1221",
+      "source": "Rota 21",
+      "en": "Route 21",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1222"
+      ],
+      "id": "1222",
+      "source": "Rota 22",
+      "en": "Route 22",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1223"
+      ],
+      "id": "1223",
+      "source": "Rota 23",
+      "en": "Route 23",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1224"
+      ],
+      "id": "1224",
+      "source": "Rota 24",
+      "en": "Route 24",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1225"
+      ],
+      "id": "1225",
+      "source": "Rota 25",
+      "en": "Route 25",
+      "kind": "map-area"
+    },
+    {
+      "file": "public/data/mapa_kanto_pontos.json",
+      "path": [
+        "nomes",
+        "1299"
+      ],
+      "id": "1299",
+      "source": "ilhas seaform",
+      "en": "Seafoam Islands",
+      "kind": "map-area"
+    }
+  ]
+}
