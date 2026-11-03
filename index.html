@@ -5142,8 +5142,8 @@ function usarAtalho(i){
   const b = jogo.atalhos[i]; if (!jogo.ash) return;
   if (!b){ abrirSeletorAtalho(i); return; }
   if (b.tipo === 'montaria'){ montar(b.glb, { trocar: true }); return; }   // outra montaria assume no lugar (sem pisar no chão); a mesma = desmonta
-  if (b.bola){ if ((jogo.bolas[b.id] || 0) <= 0){ flutuar(jogo.ash, 'sem ' + b.nome, '#f58e8e'); return; } jogo.bolaSel = String(b.id); gravarLS('bolaSel', jogo.bolaSel); flutuar(jogo.ash, b.nome + ' no F', '#ffd23a'); pintarAtalhos(true); return; }
-  if (!usarItem(b.id, b.nome) && !(lerLS('itens', {})[b.id] > 0)) flutuar(jogo.ash, 'sem ' + b.nome, '#f58e8e');
+  if (b.bola){ if ((jogo.bolas[b.id] || 0) <= 0){ flutuar(jogo.ash, 'no ' + I18n.t(b.nome) + ' left', '#f58e8e'); return; } jogo.bolaSel = String(b.id); gravarLS('bolaSel', jogo.bolaSel); flutuar(jogo.ash, b.nome + ' no F', '#ffd23a'); pintarAtalhos(true); return; }
+  if (!usarItem(b.id, b.nome) && !(lerLS('itens', {})[b.id] > 0)) flutuar(jogo.ash, 'no ' + I18n.t(b.nome) + ' left', '#f58e8e');
 }
 function pintarAtalhos(forcar = false){
   const el = $('atalhos'); if (!el) return;
@@ -5184,7 +5184,7 @@ function proximaBola(){
   if (!ids.length) return;
   const i = ids.indexOf(String(jogo.bolaSel));
   jogo.bolaSel = ids[(i + 1) % ids.length]; gravarLS('bolaSel', jogo.bolaSel);
-  if (jogo.ash) flutuar(jogo.ash, BOLAS[jogo.bolaSel][0] + ' ×' + jogo.bolas[jogo.bolaSel], '#ffd23a');
+  if (jogo.ash) flutuar(jogo.ash, I18n.t(BOLAS[jogo.bolaSel][0]) + ' ×' + jogo.bolas[jogo.bolaSel], '#ffd23a');
 }
 /** Quantas chacoalhadas a bola dá (0–4); 4 = pegou. */
 function sortearCaptura(s, bonus){
@@ -5771,7 +5771,7 @@ async function evoluirParceiro(opcao = null){
      achava 0 quando o jogador tinha só UMA (a recém-comprada), avisava "sem Pedra do Trovão" e desistia com o servidor já evoluído; a
      forma nova só chegava no próximo save (a saída da loja). Com 2+ pedras passava, por isso parecia coisa da loja. Agora confere antes;
      depois do "sim" do servidor a evolução é fato e a animação segue. */
-  if (alvo.consome && !(lerLS('itens', {})[alvo.consome] > 0)){ flutuar(p, 'sem ' + Evolucao.nomeItem(alvo.consome), '#f58e8e'); return false; }
+  if (alvo.consome && !(lerLS('itens', {})[alvo.consome] > 0)){ flutuar(p, 'missing ' + I18n.t(Evolucao.nomeItem(alvo.consome)), '#f58e8e'); return false; }
   if (comConta()){
     if (!t?.uid){ flutuar(p, 'este Pokémon ainda não está registrado no servidor', '#f58e8e'); return false; }
     const r = await Rede.pedirPosse('evoluir', { uid: t.uid, item: alvo.consome ?? null, itens: lerLS('itens', {}) });
