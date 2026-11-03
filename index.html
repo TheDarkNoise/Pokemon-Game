@@ -5928,11 +5928,11 @@ function rotularJogador(){
      TÍTULO (12/09): numa SEGUNDA linha, embaixo do nome (Alpha Tester, ou o do colecionador quando conquistado). */
   const eu = Conta.comCargo(nomeJogador(), Conta.meuCargoAtual?.());
   const titulo = Conhecimento.tituloAtual?.() || '';
-  a.rotuloNome = rotuloSprite(eu.texto, eu.cor, 2.0, titulo);
+  a.rotuloNome = rotuloSprite(eu.texto, eu.cor, 2.0, titulo, '#bcd3ff', false);
   a.rotuloNome.position.set(0, (a.altura || 1.5) + 0.35 + (titulo ? 0.16 : 0), 0); a.pivo.add(a.rotuloNome);   // (06/09: um comentário tinha engolido estas duas chamadas — o próprio nome nunca entrava na cena); título sobe um pouco a plaquinha
 }
-function rotuloSprite(txt, cor = '#ffe07a', larg = 2.2, sub = '', subCor = '#bcd3ff'){
-  txt = I18n.t(txt);                                                      // idioma (etapa 2): NPC, líder, treinador e título; nome de jogador passa direto
+function rotuloSprite(txt, cor = '#ffe07a', larg = 2.2, sub = '', subCor = '#bcd3ff', traduzirNome = true){
+  if (traduzirNome) txt = I18n.t(txt);                                    // NPC labels translate; player names stay verbatim.
   sub = sub ? '<' + I18n.t(sub) + '>' : '';                              // título sob o nome (12/09): linha menor, entre < > (Alpha Tester ou o do colecionador)
   const med = document.createElement('canvas').getContext('2d');
   med.font = 'bold 44px Segoe UI, Arial'; const wNome = med.measureText(txt).width;

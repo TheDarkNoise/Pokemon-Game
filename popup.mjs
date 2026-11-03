@@ -6,7 +6,7 @@ import { t as tr, tHtml } from './i18n.mjs';   // IDIOMA (11/09): tr() traduz te
  * quem conhece as regras do jogo é quem chama (menus.mjs), escrevendo nas áreas pelo id do Figma:
  *
  *   const p = Popup.montar(layout.popups.pokemon, { acao, aba, item, fechar });
- *   Popup.texto(p, 'ficha-nome', 'Pikachu');      Popup.imagem(p, 'pokemon', './ui/mon/pm0025.png', item);
+ *   Popup.textoBruto(p, 'ficha-nome', 'Pikachu'); Popup.imagem(p, 'pokemon', './ui/mon/pm0025.png', item);
  *   Popup.barra(p, 'vida', 0.7, '#2FAE47', item); Popup.badge(p, 'ficha-tipo', 'eletrico', 'Electric');
  *   Popup.abrir(p);  Popup.fechar(p);
  *
@@ -432,7 +432,10 @@ export function item(pop, i, prefixo = 'item-time'){ return pop?.querySelector('
 export function grupo(pop, nome){ return pop?.querySelector('[data-fig="' + nome + '"]'); }
 
 export function texto(pop, id, s, dentro = null){
-  s = tr(s);                                                               // idioma (11/09): valor em pt vira o do jogador; número e nome passam direto
+  return textoBruto(pop, id, tr(s), dentro);
+}
+/** Player-authored text bypasses translation while retaining normal popup sizing and line breaks. */
+export function textoBruto(pop, id, s, dentro = null){
   const el = noDe(pop, 'data-txt', id, dentro); if (!el) return null;
   const v = s == null ? '' : String(s);
   /* Texto com QUEBRA escrita (rodada 26: a descrição da raid `[quebrar:3]` vem em 3 frases separadas por \n): o `white-space:normal`

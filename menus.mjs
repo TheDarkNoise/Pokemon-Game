@@ -479,7 +479,7 @@ function encherPokemon(pop){
     Popup.texto(pop, 'tecla', String(i + 1), it);                        // celular: número do slot
     if (!p) continue;
     const tipo = S?.types?.[0] || null;
-    Popup.texto(pop, 'item-nome', (p.shiny ? '✨ ' : '') + p.nome, it);   // shiny (14/09)
+    Popup.textoBruto(pop, 'item-nome', (p.shiny ? '✨ ' : '') + p.nome, it);   // shiny (14/09)
     Popup.texto(pop, 'item-status', p.seguindo ? 'Following' : p.hp === 0 ? 'Fainted' : '', it);
     Popup.texto(pop, 'item-nivel', 'Lv ' + p.lv + ' · Nº ' + String(p.dex).padStart(3, '0'), it);
     Popup.badge(pop, 'item-tipo', tipo && TIPO_FIG[tipo], tipo && (S.types.length > 1 ? S.types.join(' · ') : tipo), it);   // 14/09 (l.neto): os dois tipos no mesmo selo (ícone/cor do primeiro)
@@ -516,7 +516,7 @@ function encherFichaPokemon(pop, e, lista){
   const stats = ctx.Ind ? ctx.Ind.statsDe(S, { ...e, lv }) : bs.map((b, i) => i === 0 ? ctx.R.hpAt(b, lv) : ctx.R.statAt(b, lv));
   const prox = ctx.expPara?.(e.dex, lv + 1);
   const tipo = S.types?.[0] || null;
-  Popup.texto(pop, 'ficha-nome', (e.shiny ? '✨ ' : '') + e.nome, f);   // shiny (14/09)
+  Popup.textoBruto(pop, 'ficha-nome', (e.shiny ? '✨ ' : '') + e.nome, f);   // shiny (14/09)
   Popup.texto(pop, 'ficha-status', e.seguindo ? 'Following' : e.hp === 0 ? 'Fainted' : lv > tetoObed() ? 'At cap' : '', f);
   Popup.texto(pop, 'ficha-numero', 'Nº ' + String(e.dex).padStart(3, '0') + ' · Lv ' + lv
     + (e.exp != null && prox ? ' · XP ' + e.exp + '/' + prox : '') + (e.amizade != null ? ' · friendship ' + e.amizade : ''), f);
@@ -914,14 +914,14 @@ function encherTreinador(pop){
   const tem = new Set(ctx.lerLS('insignias', []));
   const P = ctx.Personagem, pers = P?.ler?.();
   const ini = ctx.lerLS('inicial', null);
-  Popup.texto(pop, 'jogador-nome', ctx.nome || 'Ash');
+  Popup.textoBruto(pop, 'jogador-nome', ctx.nome || 'Ash');
   Popup.texto(pop, 'dinheiro', dinheiro().toLocaleString('pt-BR') + ' ' + (D2.moedas?.[1] || 'Moeda'));
   Popup.texto(pop, 'tempo-jogo', h + 'h ' + String(mi).padStart(2, '0') + 'm');
   Popup.texto(pop, 'time-resumo', (ctx.jogo.time || []).length + "/6 · storage " + (ctx.lerLS('caixa', []) || []).length);
   Popup.texto(pop, 'pokedex-resumo', vistos + " seen · " + pegos + " caught");
   Popup.texto(pop, 'insignias-resumo', tem.size + '/8');
   Popup.texto(pop, 'personagem', pers ? (P.nomeDe?.(pers) || pers.tipo) : 'Ash');
-  Popup.texto(pop, 'inicial', ini ? (ini.nome || (ini.dex && ctx.porDex.get(ini.dex)?.name) || '—') : '—');
+  Popup.textoBruto(pop, 'inicial', ini ? (ini.nome || (ini.dex && ctx.porDex.get(ini.dex)?.name) || '—') : '—');
   // o bonequinho 3D
   const cx = Popup.no(pop, 'jogador');
   if (cx){
@@ -1028,7 +1028,7 @@ async function encherMapa(pop){
     const st = d[e.dex], visto = st === 'visto' || st === 'pego';
     Popup.imagem(pop, 'pokemon', iconeMonDex(e.dex), c);
     const img = c.querySelector('[data-var="pokemon"]'); if (img){ img.style.filter = visto ? '' : 'brightness(0) opacity(.85)'; if (!img.style.borderRadius) img.style.borderRadius = '50%'; }   /* silhueta preta de quem você ainda não viu; 18/09 (teste da Amanda no site): retrato e silhueta recortados no CÍRCULO da célula. A rodada 32 trouxe o `raio` (metade da caixa) no img/pokemon e o popup.mjs já o aplica com o `recorta`; o 50 % fica só pro layout que não traz raio (HUD padrão) */
-    Popup.texto(pop, 'pokemon-nome', visto ? e.nome : '???', c);
+    Popup.textoBruto(pop, 'pokemon-nome', visto ? e.nome : '???', c);
     Popup.estadoRef(pop, c, 'pokemon', visto ? 'descoberto' : 'oculto');
     /* JÁ CAPTURADO (17/09, ideia do chaospider): Pokébola pequena no canto da célula de quem já foi pego (o mesmo `dexEstado` da Pokédex:
        time, caixa e conhecimento). A maquete não tem esse estado, então a marca é um nó nosso, criado uma vez por célula. */
@@ -1181,7 +1181,7 @@ function encherSolicitacoes(pop){
   cs.forEach((c, i) => {
     const p = P[i]; c.style.display = p ? 'block' : 'none'; if (!p) return;
     c.__de = p.de; c.style.pointerEvents = 'auto';
-    Popup.texto(pop, 'solicitante-nome', p.nick, c); Popup.texto(pop, 'solicitante-info', 'Lv ' + (p.lv || 0) + (p.online ? ' · online' : ''), c);
+    Popup.textoBruto(pop, 'solicitante-nome', p.nick, c); Popup.texto(pop, 'solicitante-info', 'Lv ' + (p.lv || 0) + (p.online ? ' · online' : ''), c);
     Popup.imagem(pop, 'retrato', retrato(p.dex), c);
   });
   let nota = sol.querySelector(':scope > .pf-nota');
@@ -1194,7 +1194,7 @@ function encherMensagens(pop, mens){
   cels.forEach((c, i) => {
     const v = conv[i]; c.style.display = v ? 'block' : 'none'; if (!v) return;
     c.__com = v.com; c.style.pointerEvents = 'auto'; c.style.cursor = 'pointer';
-    Popup.texto(pop, 'conversa-nome', v.nick, c); Popup.texto(pop, 'ultima-mensagem', v.ultima, c); Popup.texto(pop, 'nao-lidas', v.naoLidas ? String(v.naoLidas) : '', c);
+    Popup.textoBruto(pop, 'conversa-nome', v.nick, c); Popup.textoBruto(pop, 'ultima-mensagem', v.ultima, c); Popup.texto(pop, 'nao-lidas', v.naoLidas ? String(v.naoLidas) : '', c);
     const bq = c.querySelector('[data-fig="badge-nao-lidas"], [data-fig="badge-qtd"]'); if (bq) bq.style.display = v.naoLidas ? 'block' : 'none';
     Popup.imagem(pop, 'retrato', retrato(v.dex), c);
     c.style.outline = v.com === soConversa ? '1px solid #F8C237' : ''; c.style.outlineOffset = '-1px'; c.style.borderRadius = '6px';
@@ -1268,7 +1268,7 @@ function encherSocial(pop){
   cels.forEach((c, i) => {
     const a = amigos[i]; c.style.display = a ? 'block' : 'none'; if (!a) return;
     c.__amigo = a; c.style.pointerEvents = 'auto'; c.style.cursor = 'pointer';
-    Popup.texto(pop, 'amigo-nome', a.nick, c);
+    Popup.textoBruto(pop, 'amigo-nome', a.nick, c);
     Popup.texto(pop, 'amigo-info', a.online ? 'Lv ' + (a.lv || 0) + (a.area ? ' · ' + a.area : ' · online') : 'offline' + (a.vistoEm ? ' · last seen: ' + tempoAtras(a.vistoEm) : ''), c);
     Popup.imagem(pop, 'retrato', retrato(a.dex), c);
     const dot = c.querySelector('[data-fig="estado-online"]'); if (dot) dot.style.display = a.online ? 'block' : 'none';   // o quadradinho verde da maquete é "online"
@@ -1343,7 +1343,7 @@ async function encherPokedex(pop){
     const s = sp[i]; c.style.display = s ? 'block' : 'none'; if (!s) return;
     const st = d[s.n], nv = K ? K.nivel(s.n) : (st === 'pego' ? 2 : st ? 1 : 0);
     c.__dex = s.n; c.style.pointerEvents = 'auto'; c.style.cursor = 'pointer';
-    Popup.texto(pop, 'numero', pad3(s.n), c); Popup.texto(pop, 'nome', st ? s.name : '?????', c);
+    Popup.texto(pop, 'numero', pad3(s.n), c); Popup.textoBruto(pop, 'nome', st ? s.name : '?????', c);
     const prog = c.querySelector('[data-fig="progresso-especie"]'); if (prog){ prog.style.display = st ? 'block' : 'none'; bolinhas(prog, nv); }
     for (const g of c.querySelectorAll(':scope > [data-fig^="tipo-"]')) g.style.display = 'none';
     if (st) pilulasTipo(pop, c, s.types || []);
@@ -1357,8 +1357,8 @@ async function encherPokedex(pop){
   if (aberta !== 'pokedex' || !Popup.aberto(pop)) return;
   const X = dexExtra.especies?.[selDex] || {};
   const rv = K ? K.revela(selDex) : null, nv = rv ? rv.nivel : (st === 'pego' ? 2 : st ? 1 : 0);
-  Popup.texto(pop, 'especie-nome', nv >= 1 ? S?.name : '?????'); Popup.texto(pop, 'especie-numero', 'Nº ' + pad3(selDex));
-  Popup.texto(pop, 'especie-visto', '· ' + (st === 'pego' ? 'capturado' : st ? 'visto' : 'desconhecido'));
+  Popup.textoBruto(pop, 'especie-nome', nv >= 1 ? S?.name : '?????'); Popup.texto(pop, 'especie-numero', 'Nº ' + pad3(selDex));
+  Popup.texto(pop, 'especie-visto', '· ' + (st === 'pego' ? 'caught' : st ? 'seen' : 'unknown'));
   bolinhas(Popup.grupo(pop, 'progresso-registro'), nv); Popup.texto(pop, 'nivel-nome', tr(NOMES_NIVEL[nv]));
   const falta = K && nv < 5 ? K.falta(selDex).slice(0, 3) : [];
   Popup.texto(pop, 'como-subir', nv >= 5 ? 'Maximum level: you are a Master of this species.' : (rv && rv.proximo != null ? rv.pontos + '/' + rv.proximo + " to " + tr(NOMES_NIVEL[nv + 1]) + (falta.length ? " — to advance: " + falta.map(tr).join(', ') : '') : (st ? '' : 'Encounter this Pokémon to open its entry.')));
@@ -2650,7 +2650,7 @@ function encherCfSom(pop){
 /** CONTA: quem é, sair, trocar senha, apagar e o diagnóstico do aparelho. */
 function encherCfConta(pop){
   const c = ctx.conta?.estado?.() || {}, comConta = c.modo === 'conta';
-  Popup.texto(pop, 'jogador-nome', ctx.nome || '—');
+  Popup.textoBruto(pop, 'jogador-nome', ctx.nome || '—');
   Popup.texto(pop, 'email', comConta ? (cfEmail || "no email registered") : "— (playing without an account)");
   if (comConta && cfEmail === null) cfBuscarEmail();
   Popup.botao(pop, 'logout', comConta, 'Sair da conta');
