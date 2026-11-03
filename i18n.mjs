@@ -132,6 +132,14 @@ export function habilidade(nome){
   const chave = nome.trim();
   return Object.hasOwn(habilidades, chave) ? nome.replace(chave, habilidades[chave]) : t(nome);
 }
+/** Translate built-in trainer classes without looking up the personal name as ordinary UI text. */
+export function nomeTreinador(nome){
+  if (typeof nome !== 'string' || atual === 'pt') return nome;
+  const classes = { Aluno: 'Student', Campista: 'Camper', 'Menina de Pique Nique': 'Picnicker', Jovem: 'Youngster', 'Menino de Shorts': 'Youngster', 'Gêmeas': 'Twins', Montanhista: 'Hiker', Alpinista: 'Hiker', 'Irmãos Lutadores': 'Fighting Brothers' };
+  const m = /^(Aluno|Campista|Menina de Pique Nique|Jovem|Menino de Shorts|Gêmeas|Montanhista|Alpinista|Irmãos Lutadores)(\s*-\s*)(.+)$/.exec(nome);
+  if (!m) return nome;
+  return atual === 'en' ? classes[m[1]] + m[2] + m[3] : t(nome);
+}
 /** Traduz um HTML pequeno trocando só os textos entre as tags (pra templates antigos). */
 export function tHtml(html){
   if (atual === 'pt' || typeof html !== 'string') return html;

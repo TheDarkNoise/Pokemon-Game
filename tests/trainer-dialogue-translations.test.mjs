@@ -22,10 +22,10 @@ test('all shipped trainer classes and battle dialogue translate while personal n
  assert.equal(Object.keys(trainers).length,60);assert.equal(lines,240);assert.equal(JSON.stringify(trainers),before);
 });
 test('actual trainer nameplate expressions translate before adding battle and victory markers',()=>{
- const selected=expressions.filter(s=>/I18n\.t\((?:info\.nome|t\.nome)/.test(s));assert.equal(selected.length,3);
+ const selected=expressions.filter(s=>/I18n\.nomeTreinador\((?:info\.nome|t\.nome)|\+ e\.nome/.test(s));assert.equal(selected.length,3);
  for(const trainer of Object.values(trainers))for(const expr of selected)for(const venceu of [false,true]){
-  const out=vm.runInNewContext(expr,{I18n:I,info:trainer,t:trainer,n:{nome:trainer.nome},venceu});
-  assert.match(out,/^[✔⚔] /);assert.equal(out.slice(2),I.t(trainer.nome));
+  const out=vm.runInNewContext(expr,{I18n:I,info:trainer,t:trainer,n:{nome:trainer.nome},e:{nome:I.nomeTreinador(trainer.nome)},venceu});
+  assert.match(out,/^[✔⚔] /);assert.equal(out.slice(2),I.nomeTreinador(trainer.nome));
  }
 });
 test('gym and Elite nameplate expressions translate each label independently',()=>{

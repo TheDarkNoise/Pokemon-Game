@@ -4184,7 +4184,7 @@ function nivelTreinador(area, n){
 }
 function renivelarTreinador(info, area){
   const lv = nivelTreinador(area, info.time.length);
-  return lv ? { ...info, time: info.time.map(m => ({ ...m, lv })) } : info;
+  return { ...info, nome: I18n.nomeTreinador(info.nome), time: lv ? info.time.map(m => ({ ...m, lv })) : info.time };
 }
 const poolMon = new Map();
 function guardarSelvagem(s){
@@ -7002,7 +7002,7 @@ async function mostrarFala(quem, linhas, dono = null, { semTempo = false } = {})
       caixa.innerHTML = '<b class="fala-nome"></b><span class="fala-txt"></span><small class="fala-dica"></small>';
       caixa.hidden = false; Hud.remontar(caixa);                         // Figma: nome/fala/dica nos lugares do balão
       const bN = caixa.querySelector('.fala-nome'), bT = caixa.querySelector('.fala-txt'), bD = caixa.querySelector('.fala-dica');
-      bN.textContent = I18n.t(quem);                                   // idioma (etapa 2): nome do NPC e cada linha da fala
+      bN.textContent = dono && (dono.papel === 'treinador' || dono.ginasio || dono.elite) ? I18n.nomeTreinador(quem) : I18n.t(quem);
       bT.style.whiteSpace = 'pre-line';                                // o `<br>` do dump vira quebra de linha de verdade (placas: "Cidade Pewter" / descrição)
       for (const pedaco of paginarFala(bT, limparTextoRico(I18n.t(linhas[i])))){
         bT.textContent = pedaco.txt; Hud.encolher(bT);
@@ -8407,11 +8407,11 @@ async function povoarTreinadores(){
         const spotKey = spot.cfg + '@' + Math.round(spot.x) + ',' + Math.round(spot.z);
         const venceu = treinadorVencido(spot.cfg, vencidos);                // 17/09: pelo cfg, não pela vaga (ver treinadorVencido)
         e.npc = true; e.papel = 'treinador'; e.cfg = spot.cfg; e.treino = renivelarTreinador(info, spot.a); e.spotKey = spotKey; e.spot = spot;
-        e.nome = info.nome;
+        e.nome = e.treino.nome;
         e.falas = venceu ? [info.vitoria[0] || Dialogos.texto('jaVenceu')] : info.fala;   // vencido: ele te parabeniza (a fala de consolo é pra quando VOCÊ perde)
         teleportar(e, tx, tz);                                            // tx/tz = a vaga, já tirada da água (16/09)
         e.giro = Math.random() * Math.PI * 2; e.pivo.rotation.y = e.giro;
-        e.rotSprite = rotuloSprite((venceu ? '✔ ' : '⚔ ') + I18n.t(info.nome), venceu ? '#9fb2d0' : '#ffb1b1', 2.4);
+        e.rotSprite = rotuloSprite((venceu ? '✔ ' : '⚔ ') + e.nome, venceu ? '#9fb2d0' : '#ffb1b1', 2.4, '', '#bcd3ff', false);
         e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
         tocarAnim(e, 'Idle');
         jogo.npcs.push(e); jogo.treinadores.push(e);
@@ -8436,7 +8436,7 @@ function marcarTreinadorVencido(n){
   if (!treinadorVencido(n.cfg, v)){ v.push(n.spotKey || (n.cfg + '@' + Math.round(flipX * n.x) + ',' + Math.round(n.z))); gravarLS('treinadoresVencidos', v); }
   const info = n.treino || {};
   n.falas = [(info.vitoria || [])[0] || Dialogos.texto('jaVenceu')];
-  if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.t(info.nome || n.nome || ''), '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+  if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.nomeTreinador(info.nome || n.nome || ''), '#9fb2d0', 2.4, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
 }
 async function desafiarTreinador(n){
   if (jogo.turno) return;
@@ -8460,7 +8460,7 @@ function pintarConvite(n){
   }
   if (g){                                                            // ginásio: cabeçalho próprio, cooldown e "tentar agora" pago
     const tem = (lerLS('insignias', []) || []).includes(g.insignia.id), esp = ginasioEspera(g), min = Math.ceil(esp / 60);
-    el.innerHTML = `<div class="tcab">🏟 <b>${I18n.t(g.nome)}</b> · Leader ${I18n.t(g.lider)} <span class="tmini">${I18n.t(g.tipo)} · ${g.time.length} Pokémon · Lv ${g.time[0].lv}–${g.time[g.time.length - 1].lv}${tem ? " · you already have the " + I18n.t(g.insignia.nome) : " · reward: " + I18n.t(g.insignia.nome)}</span></div>
+    el.innerHTML = `<div class="tcab">🏟 <b>${I18n.t(g.nome)}</b> · Leader ${I18n.nomeTreinador(g.lider)} <span class="tmini">${I18n.t(g.tipo)} · ${g.time.length} Pokémon · Lv ${g.time[0].lv}–${g.time[g.time.length - 1].lv}${tem ? " · you already have the " + I18n.t(g.insignia.nome) : " · reward: " + I18n.t(g.insignia.nome)}</span></div>
       ${esp ? `<div class="tmini" style="margin:4px 0">You recently lost: the leader returns in <b>${min} min</b>. Trying now costs <b>${g.resetMoedas} Coins</b>.</div>` : ''}
       <div class="tlinha">${esp ? `<button type="button" class="tbt luta" id="t-pagar">💰 Try now (${g.resetMoedas})</button>` : "<button type=\"button\" class=\"tbt luta\" id=\"t-sim\">⚔ Challenge</button>"}<button type="button" class="tbt" id="t-nao">Not now</button></div>`;
     el.hidden = false;
@@ -8469,7 +8469,7 @@ function pintarConvite(n){
     $('t-nao').onclick = () => { el.hidden = true; };
     return;
   }
-  el.innerHTML = `<div class="tcab">⚔ <b>${I18n.t(n.treino.nome)}</b> wants to battle! <span class="tmini">${n.treino.time.length} Pokémon · turn-based</span></div>
+  el.innerHTML = `<div class="tcab">⚔ <b>${I18n.nomeTreinador(n.treino.nome)}</b> wants to battle! <span class="tmini">${n.treino.time.length} Pokémon · turn-based</span></div>
     <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Battle</button><button type="button" class="tbt" id="t-nao">Not now</button></div>`;
   el.hidden = false;
   $('t-sim').onclick = () => { Som.destravar(); iniciarTurno(n); };
@@ -8497,7 +8497,7 @@ async function iniciarTurno(n){
   }
   jogo.turno = { npc: n, info: n.treino, idx: -1, rodada: 0, fase: 'posiciona', caiu: false, inimigo: null, serv };
   atualizarMusica();                                                      // música de batalha (treinador / ginásio / elite)
-  if (serv) jogo.turno.info = { ...n.treino, nome: serv.nomeInimigo || n.treino?.nome, time: serv.dele.map(x => ({ dex: x.dex, lv: x.lv, glb: 'pm' + String(x.dex).padStart(4, '0') + '_00' })) };
+  if (serv) jogo.turno.info = { ...n.treino, nome: I18n.nomeTreinador(serv.nomeInimigo || n.treino?.nome), time: serv.dele.map(x => ({ dex: x.dex, lv: x.lv, glb: 'pm' + String(x.dex).padStart(4, '0') + '_00' })) };
   for (const s of jogo.selvagens) if (s.estado === 'atacando'){ s.estado = 'vagando'; s.pausa = 2; s.investida = null; }   // selvagem desiste: a batalha é só de vocês
   p.pivo.visible = false;                                                // o parceiro "volta pra bola" — sai dela no arremesso
   $('turno').hidden = true;
@@ -8771,7 +8771,7 @@ function fimTurno(vitoria, op = {}){
       Chat.sistema('🏆 Você venceu ' + E.nome + ' e é o Campeão de Kanto! Os seus Pokémon obedecem até o Lv 100' + (r.soltou ? ' e a XP guardada pelo teto saiu (' + r.soltou + ' Pokémon)' : '') + '.' + (r.premio && r.premio.dinheiro ? ' +' + r.premio.dinheiro + ' Moedas' : ''));
       flutuar(jogo.ash, '🏆 Campeão de Kanto!', '#ffd23a');
       liberarReserva();
-      if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏆 ' + I18n.t(E.nome) + ' · ' + I18n.t('ex-Campeão'), '#ffd23a', 2.8); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+      if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏆 ' + I18n.nomeTreinador(E.nome) + ' · ' + I18n.t('ex-Campeão'), '#ffd23a', 2.8, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     } else if (vitoria){
       /* o `dinheiro` do membro (data/elite.json) é pago pelo servidor na PRIMEIRA vez que aquele membro cai: sem dizer aqui,
          a bolsa engordava em silêncio e o jogador só via a diferença ao abrir a Mochila */
@@ -8797,7 +8797,7 @@ function fimTurno(vitoria, op = {}){
     if (!comConta() && !doServidor) gravarLS('dinheiro', lerLS('dinheiro', 50000) + ganho);
     const cd = ginasioCd(); delete cd[g.numero]; gravarLS('ginasioCd', cd);
     n.falas = [g.vitoria[0]];
-    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏅 ' + I18n.t(g.lider) + ' · ' + I18n.t(g.nome), '#ffd23a', 2.6); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏅 ' + I18n.nomeTreinador(g.lider) + ' · ' + I18n.t(g.nome), '#ffd23a', 2.6, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     if (primeira){ Chat.sistema('🏅 Você venceu ' + g.lider + ' e ganhou a ' + g.insignia.nome + '! (' + ins.length + '/8 de Kanto · Pokémon obedecem até um nível maior) +' + ganho + ' Moedas'); flutuar(jogo.ash, '🏅 ' + g.insignia.nome + '!', '#ffd23a'); if (jogo.missoesOk) Missoes.evento({ tipo: 'insignia', id: g.insignia.id, numero: g.numero }); }
     else { Chat.sistema('🏆 Revanche vencida contra ' + g.lider + ': +' + ganho + ' Moedas.'); flutuar(jogo.ash, '+' + ganho + ' Moedas', '#ffd23a'); }
     mostrarFala(g.lider, g.vitoria, n);
@@ -8823,7 +8823,7 @@ function fimTurno(vitoria, op = {}){
     else if (comConta()) bolsaOp('treinador', { treinador: n.spotKey, dinheiro: g, venceu: true });
     else gravarLS('dinheiro', lerLS('dinheiro', 50000) + g);
     n.falas = [t.vitoria[0] || Dialogos.texto('jaVenceu')];
-    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.t(t.nome), '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.nomeTreinador(t.nome), '#9fb2d0', 2.4, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     Chat.sistema('🏆 Você venceu ' + t.nome + ' e ganhou ' + g + ' Moedas!');
     flutuar(jogo.ash, '+' + g + ' Moedas', '#ffd23a');
     mostrarFala(t.nome, t.vitoria, n);
