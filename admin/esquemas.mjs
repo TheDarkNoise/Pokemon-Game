@@ -18,7 +18,7 @@ import { ESQUEMAS_F2 } from './esquemas_f2.mjs';
 import { ESQUEMAS_F3 } from './esquemas_f3.mjs';   // Fase 3: cores de NPC, falas, diálogos, traduções, músicas, raid
 
 const faixaNivel = v => {
-  if (!v || typeof v !== 'object' || Array.isArray(v)) return "expected an object { \"área\": [min, max] }";
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return "expected an object { \"area ID\": [min, max] }";
   for (const [a, f] of Object.entries(v)) {
     if (!/^\d{1,8}$/.test(a)) return `invalid area: ${a}`;
     if (!Array.isArray(f) || f.length !== 2 || !f.every(n => Number.isInteger(n) && n >= 1 && n <= 100) || f[0] > f[1]) return `area ${a}: use [min, max] between 1 and 100`;
@@ -100,7 +100,7 @@ export const ESQUEMAS = {
       { k: 'd', rotulo: 'Description', tipo: 'texto', max: 3000, area: true },
       { k: 'v', rotulo: "Value (currency, price)", tipo: 'json', col: true, validar: precoItem, resumo: v => (v || []).map(([m, p]) => p + " (currency " + m + ')').join(" or "),
         ajuda: "Reference value in the original game: [[currency, price]], e.g. [[1, 100]] = 100 Coins. Empty = no value. The shop SALE price is set in Shops." },
-      { k: 'i', rotulo: 'Icon', tipo: 'texto', max: 60, validar: s => /^[\w-]{1,60}$/.test(s) ? null : "filename without extension", ajuda: "File ui/itens/<ícone>.png." },
+      { k: 'i', rotulo: 'Icon', tipo: 'texto', max: 60, validar: s => /^[\w-]{1,60}$/.test(s) ? null : "filename without extension", ajuda: "File ui/itens/<icon>.png." },
       { k: 'q', rotulo: "Quality (rarity)", tipo: 'num', min: 0, max: 10, int: true },
     ],
   },
@@ -127,7 +127,7 @@ export const ESQUEMAS = {
     previa: '/admin/previa_treinador.mjs',
     campos: [
       { k: 'nome', rotulo: 'Name', tipo: 'texto', max: 60, col: true, obrigatorio: true },
-      { k: 'glb', rotulo: "Model (NPC)", tipo: 'texto', max: 40, col: true, validar: s => /^[\w-]{1,40}$/.test(s) ? null : "filename without .glb", ajuda: "File cenario/npc/<modelo>.glb (e.g. NPC1008, fc1041_00)." },
+      { k: 'glb', rotulo: "Model (NPC)", tipo: 'texto', max: 40, col: true, validar: s => /^[\w-]{1,40}$/.test(s) ? null : "filename without .glb", ajuda: "File cenario/npc/<model>.glb (e.g. NPC1008, fc1041_00)." },
       { k: 'time', rotulo: "Party", tipo: 'json', col: true, obrigatorio: true, validar: timeNpc, resumo: v => (v || []).map(p => '#' + p.dex + " Lv" + p.lv).join(', '),
         ajuda: "List of { \"dex\", \"lv\", \"glb\" } (up to 6). The preview shows their names." },
       { k: 'dinheiro', rotulo: 'Prize money', tipo: 'num', min: 0, max: 10000000, int: true, col: true },

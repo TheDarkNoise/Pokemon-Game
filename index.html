@@ -8844,11 +8844,11 @@ function pintarTurno(){
   const agora = Date.now(), ativo = membroAtivo();
   const iTroca = jogo.time.findIndex((c, j) => j !== ativo && !(c.hp === 0 && (c.koAte || 0) > agora) && !(c.hp === 0));
   const golpes = (p?.movs || []).map((m, i) => ({ g: GOLPES[m.id], m, i })).filter(x => x.g);
-  el.innerHTML = `<div class="tcab">⚔ <b>${T.info.nome}</b> · Pokémon ${Math.min(T.idx + 1, T.info.time.length)}/${T.info.time.length} · rodada ${T.rodada}${livreE ? '' : ' <span class="tmini">…executando</span>'}</div>
-    <div class="tlinha">${golpes.map(({ g, m, i }) => `<button type="button" class="tbt golpe" data-tg="${i}" ${livreE && m.pp > 0 ? '' : 'disabled'}><b>${i + 1}</b>${g.nome || g.id}<small>${g.tipo || ''} · ${g.poder || '—'} · PP ${m.pp}/${m.ppMax}</small></button>`).join('')}${p && Ind.semPP(p) ? `<button type="button" class="tbt golpe" data-tg="s" ${livreE ? '' : 'disabled'}><b>!</b>Struggle<small>Normal · 50 · sem PP</small></button>` : ''}</div>
-    <div class="tlinha"><button type="button" class="tbt" id="t-mochila" ${livreE ? '' : 'disabled'}>🎒 Mochila</button>
-      <button type="button" class="tbt" id="t-troca" ${livreE && iTroca >= 0 ? '' : 'disabled'}>🔄 Trocar</button>
-      <button type="button" class="tbt fugir" id="t-fugir" ${livreE ? '' : 'disabled'}>🏳 Desistir</button></div>`;
+  el.innerHTML = `<div class="tcab">⚔ <b>${T.info.nome}</b> · Pokémon ${Math.min(T.idx + 1, T.info.time.length)}/${T.info.time.length} · ${I18n.t('rodada')} ${T.rodada}${livreE ? '' : ' <span class="tmini">' + I18n.t('…executando') + '</span>'}</div>
+    <div class="tlinha">${golpes.map(({ g, m, i }) => `<button type="button" class="tbt golpe" data-tg="${i}" ${livreE && m.pp > 0 ? '' : 'disabled'}><b>${i + 1}</b>${I18n.t(g.nome || g.id)}<small>${I18n.t(g.tipo || '')} · ${g.poder || '—'} · PP ${m.pp}/${m.ppMax}</small></button>`).join('')}${p && Ind.semPP(p) ? `<button type="button" class="tbt golpe" data-tg="s" ${livreE ? '' : 'disabled'}><b>!</b>Struggle<small>Normal · 50 · ${I18n.t('sem PP')}</small></button>` : ''}</div>
+    <div class="tlinha"><button type="button" class="tbt" id="t-mochila" ${livreE ? '' : 'disabled'}>🎒 ${I18n.t('Mochila')}</button>
+      <button type="button" class="tbt" id="t-troca" ${livreE && iTroca >= 0 ? '' : 'disabled'}>🔄 ${I18n.t('Trocar Pokémon')}</button>
+      <button type="button" class="tbt fugir" id="t-fugir" ${livreE ? '' : 'disabled'}>🏳 ${I18n.t('Desistir')}</button></div>`;
   el.hidden = false;
   el.querySelectorAll('[data-tg]').forEach(b => b.onclick = () => { Som.destravar(); const g = b.dataset.tg === 's' ? STRUGGLE : GOLPES[jogo.pika.golpesIds[+b.dataset.tg]]; if (g) rodadaTurno({ tipo: 'golpe', g }); });
   $('t-mochila').onclick = () => Menus.abrir('mochila');

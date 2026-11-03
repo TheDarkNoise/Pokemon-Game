@@ -1112,7 +1112,7 @@ async function soAcao(nome, el){
   } else if (nome === 'desfazer-amizade'){
     Popup.mostrarExtra(pop, 'tooltip-amigo', false); if (!soAmigoMenu) return;
     const r = await soChamar('POST', '/social/remover', { usuario: soAmigoMenu.usuario });
-    if (r.ok) Chat.sistema(soAmigoMenu.nick + ' saiu da sua lista de amigos.'); else Chat.sistema('Social: ' + r.erro);
+    if (r.ok) Chat.sistema(soAmigoMenu.nick + ' was removed from your friends list.'); else Chat.sistema('Social: ' + r.erro);
     soCarregar();
   } else if (nome === 'enviar'){
     const inp = soInput(pop, 'conteudo-mensagens', 'campo-mensagem'); const texto = (inp?.value || '').trim();
@@ -1133,13 +1133,13 @@ export function socialEvento(m){
   } else if (m.t === 'social'){
     const n = m.nick || m.de;
     if (m.tipo === 'pedido' || m.tipo === 'aceito') ctx.Som?.tocar?.('ui/sound_click', { volume: .5, prio: true });
-    Chat.sistema(m.tipo === 'pedido' ? '🤝 ' + n + ' wants to be your friend: Social → Requests.' : m.tipo === 'aceito' ? '🤝 ' + n + ' aceitou seu convite.' : n + ' desfez a amizade.');
+    Chat.sistema(m.tipo === 'pedido' ? '🤝 ' + n + ' wants to be your friend: Social → Requests.' : m.tipo === 'aceito' ? '🤝 ' + n + ' accepted your invitation.' : n + ' ended the friendship.');
     soCarregar();
   }
 }
 /* ---------------------------------------------------------------- Ranking de colecionador (servidor/ranking.mjs) */
 let rankingEu = null, rankingEuEm = 0;
-const NOMES_RANKING = { especies: 'Kanto species', shinies: 'shinies', conhecimento: 'pontos de conhecimento' };
+const NOMES_RANKING = { especies: 'Kanto species', shinies: 'shinies', conhecimento: 'knowledge points' };
 async function pegarRanking(caminho, comToken = false){
   const base = ctx.conta?.baseUrl?.(); if (!base) return null;
   if (comToken) { const r = await ctx.conta.chamar('GET', caminho); return r.ok ? r.dados : null; }
@@ -1149,10 +1149,10 @@ async function pegarRanking(caminho, comToken = false){
 export async function mostrarRanking(){
   const R = await pegarRanking('/ranking');
   if (!R){ Chat.sistema("Rankings: server unavailable."); return false; }
-  Chat.sistema('🏆 Ranking de colecionadores (' + R.total + ' treinador' + (R.total === 1 ? '' : 'es') + '):');
+  Chat.sistema('🏆 Collector rankings (' + R.total + ' trainer' + (R.total === 1 ? '' : 's') + '):');
   for (const [chave, nome] of Object.entries(NOMES_RANKING)){
     const l = (R.listas?.[chave] || []).slice(0, 5);
-    Chat.sistema('• ' + nome + ': ' + (l.length ? l.map(x => x.pos + 'º ' + x.nick + ' (' + x.valor + ')').join(' · ') : 'no one yet'));
+    Chat.sistema('• ' + nome + ': ' + (l.length ? l.map(x => x.pos + '. ' + x.nick + ' (' + x.valor + ')').join(' · ') : 'no one yet'));
   }
   return true;
 }
@@ -2324,7 +2324,7 @@ function cfDialogoSenha(){
     const r = await ctx.conta.trocarSenha(atual.value, nova.value);
     if (!r.ok){ av.style.color = '#f58e8e'; av.textContent = tr(r.erro); return; }
     d.remove();
-    Chat.sistema('Senha trocada.' + (r.codigo ? ' SAVE the NEW recovery code (the old one no longer works): ' + r.codigo : ''));
+    Chat.sistema('Password changed.' + (r.codigo ? ' SAVE the NEW recovery code (the old one no longer works): ' + r.codigo : ''));
   };
   atual.focus();
 }

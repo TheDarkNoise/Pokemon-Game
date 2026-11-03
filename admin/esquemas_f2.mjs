@@ -163,7 +163,7 @@ export const ESQUEMAS_F2 = {
     campos: [
       { k: 'id', rotulo: 'ID', tipo: 'num', int: true, min: 1, max: 9999999, col: true, obrigatorio: true, ajuda: 'Player saves store this number: do not change it for an existing badge.' },
       { k: 'n', rotulo: 'Name', tipo: 'texto', max: 60, col: true, obrigatorio: true },
-      { k: 'i', rotulo: "Icon", tipo: 'texto', max: 60, col: true, validar: s => RE_ARQUIVO.test(s) ? null : 'nome do arquivo, sem .png', ajuda: 'File ui/icones/<ícone>.png (Kanto badges use dghz_1 … dghz_8).' },
+      { k: 'i', rotulo: "Icon", tipo: 'texto', max: 60, col: true, validar: s => RE_ARQUIVO.test(s) ? null : 'filename without .png', ajuda: 'File ui/icones/<icon>.png (Kanto badges use dghz_1 … dghz_8).' },
       { k: 'gen', rotulo: 'Generation (region)', tipo: 'num', int: true, min: 1, max: 9, col: true, obrigatorio: true, ajuda: '1 = Kanto (the only region displayed for now).' },
     ],
   },

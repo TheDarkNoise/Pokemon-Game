@@ -1,3 +1,4 @@
+import { carregarMensagens } from './mensagens.mjs';
 /* Editor de Cenário 3D — Pokemon 3D Base (jogo local). Suporta os DOIS modos de mapa:
  *  • BIBLIOTECA (kanto e +71 mapas): o GLB tem os prefabs na origem ("lib:<nome>"); o cenário são os `objetos` do JSON
  *    ({n,x,y,z}, 42k no kanto). Edito os objetos e re-instancio os prefabs nas posições (igual ao `instanciarBiblioteca` do
@@ -13,15 +14,18 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 const BASE = location.protocol === 'https:' ? location.origin + '/servidor' : 'http://' + location.hostname + ':5190';
 const $ = id => document.getElementById(id);
 let token = localStorage.getItem('conta.token') || '';
+let traduzirErro = texto => texto;
+const mensagensProntas = carregarMensagens().then(t => { traduzirErro = t; });
 const api = async (rota, metodo = 'GET', corpo) => {
   const r = await fetch(BASE + rota, { method: metodo, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) }, body: corpo != null ? JSON.stringify(corpo) : undefined });
-  let d = {}; try { d = await r.json(); } catch {} return { status: r.status, ok: r.ok, ...d };
+  let d = {}; try { d = await r.json(); } catch {} await mensagensProntas;
+  return { status: r.status, ok: r.ok, ...d, ...(typeof d.erro === 'string' ? { erro: traduzirErro(d.erro) } : {}) };
 };
-const toast = (m, erro = false) => { const e = document.createElement('div'); if (erro) e.className = 'erro'; e.textContent = m; $('toast').appendChild(e); setTimeout(() => e.remove(), 4500); };
+const toast = (m, erro = false) => { const e = document.createElement('div'); if (erro) e.className = 'erro'; e.textContent = traduzirErro(m); $('toast').appendChild(e); setTimeout(() => e.remove(), 4500); };
 const chaveNome = n => n.toLowerCase().replace(/^lib:?/, '').replace(/\s/g, '_').replace(/[\[\]\.:/]/g, '');
 
 const quem = await api('/admin/eu');
-if (!quem.ok || !quem.gm) { location.href = '/admin'; throw new Error('precisa ser GM'); }
+if (!quem.ok || !quem.gm) { location.href = '/admin'; throw new Error('GM access required'); }
 
 // ── Three ──────────────────────────────────────────────────────────────────────
 const tela = $('tela');
