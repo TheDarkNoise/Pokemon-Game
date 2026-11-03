@@ -6,6 +6,7 @@
  *   exata     "Criar conta" → "Create account"
  *   padrão    "Você chegou em {x}." → "You arrived in {x}."   (o {x} casa com qualquer trecho; o que casou também passa
  *             pelo t(), então "Cidade Pallet" dentro da frase vira "Pallet Town")
+ *   A placeholder named raw_* preserves its captured text verbatim (names, custom text, identifiers).
  * Os pontos de saída (rótulos da maquete, Chat.sistema, flutuar, telaEscura, Popup.texto/botao, avisos das telas) chamam
  * o t() — assim as ~140 chamadas com texto montado por concatenação não precisaram mudar.
  *
@@ -114,7 +115,11 @@ export function t(s, vars = null){
     if (e != null) r = k === s ? e : s.replace(k, e);
     else for (const p of padroes){
       const m = p.re.exec(s);
-      if (m){ r = p.saida.replace(/\{(\w+)\}/g, (tudo, nome) => { const i = p.vars.indexOf(nome); return i >= 0 ? t(m[i + 1]) : tudo; }); break; }
+      if (m){ r = p.saida.replace(/\{(\w+)\}/g, (tudo, nome) => {
+        const i = p.vars.indexOf(nome);
+        // Explicit raw_* slots preserve names and free text inside translated notices.
+        return i >= 0 ? (nome.startsWith('raw_') ? m[i + 1] : t(m[i + 1])) : tudo;
+      }); break; }
     }
   }
   if (vars) r = r.replace(/\{(\w+)\}/g, (tudo, nome) => (nome in vars ? String(vars[nome]) : tudo));

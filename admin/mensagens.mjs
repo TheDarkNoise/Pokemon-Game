@@ -24,7 +24,7 @@ export function criarTradutor(...dicionarios) {
       const m = p.re.exec(texto);
       if (m) return p.valor.replace(/\{(\w+)\}/g, (original, nome) => {
         const i = p.vars.indexOf(nome);
-        return i < 0 ? original : traduzir(m[i + 1]);
+        return i < 0 ? original : (nome.startsWith('raw_') ? m[i + 1] : traduzir(m[i + 1]));
       });
     }
     return texto;
