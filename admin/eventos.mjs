@@ -18,7 +18,7 @@ const CSS = `
 #v-eventos .ev-manut-on { color: var(--erro); font-weight: 700; }
 #v-eventos .ev-aviso { font-size: 12px; color: var(--fraco); margin-top: 6px; }`;
 
-export function instalarEvents({ api, toast }) {
+export function instalarEventos({ api, toast }) {
   let dados = null, efetivo = null, manutAgora = false, online = 0;
   const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
 
