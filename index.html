@@ -8052,7 +8052,7 @@ if (indice?.cenas?.length && !DEMO){
     sel.appendChild(op);
   }
   sel.addEventListener('change', () => { location.search = '?mapa=' + sel.value; });
-  $('teclas').insertAdjacentHTML('beforeend', '<div style="margin-top:6px" id="cena-box">cena: </div>');
+  $('teclas').insertAdjacentHTML('beforeend', I18n.tHtml('<div style="margin-top:6px" id="cena-box">cena: </div>'));
   $('cena-box').appendChild(sel);
 }
 
@@ -8071,7 +8071,7 @@ if (dados.caixas.length > 2 && !DEMO){
     if (c) alvo.copy(mundo(c.x, 0, c.z));
     sel.blur();
   });
-  $('teclas').insertAdjacentHTML('beforeend', '<div style="margin-top:6px" id="ir-box">ir para: </div>');
+  $('teclas').insertAdjacentHTML('beforeend', I18n.tHtml('<div style="margin-top:6px" id="ir-box">ir para: </div>'));
   $('ir-box').appendChild(sel);
 }
 const OFF = new THREE.Vector3(0, 18.8, 23.5);          // MainCamera.prefab (TransformConfig.Pos)
