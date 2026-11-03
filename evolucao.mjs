@@ -1,3 +1,4 @@
+import { t as tr } from './i18n.mjs';
 /* Evolução e XP como nos JOGOS ORIGINAIS (index.html + menus.mjs).
  *
  * Regras: data/evolucoes.json (tools/evolucoes.mjs ← PokéAPI): por espécie, uma lista de { para, nome, gatilho, texto, … }
@@ -49,10 +50,10 @@ export const AMIZADE_EVOLUI = 160;
 /** Avalia uma regra pro Pokémon m ({ dex, lv, amizade }) com o contexto do jogo. Devolve { pode, falta, consome }. */
 export function avaliar(r, m, ctx = {}){
   const lv = m.lv || 1, amizade = m.amizade ?? amizadeBase(m.dex), tem = id => (ctx.itens?.[id] || 0) > 0;
-  if (r.gatilho === 'outro' || r.local || r.chuva || r.beleza) return { pode: false, falta: 'not possible here (' + r.texto + ')', consome: null };
+  if (r.gatilho === 'outro' || r.local || r.chuva || r.beleza) return { pode: false, falta: 'not possible here (' + tr(r.texto) + ')', consome: null };
   if (r.gatilho === 'item' || r.gatilho === 'troca'){
-    if (!r.item) return { pode: false, falta: 'requires ' + r.itemNome + ' (not in the game yet)', consome: null };
-    return tem(r.item) ? { pode: true, falta: '', consome: r.item } : { pode: false, falta: 'missing ' + nomeItem(r.item) + ' in your bag (Poké Mart)', consome: null };
+    if (!r.item) return { pode: false, falta: 'requires ' + tr(r.itemNome) + ' (not in the game yet)', consome: null };
+    return tem(r.item) ? { pode: true, falta: '', consome: r.item } : { pode: false, falta: 'missing ' + tr(nomeItem(r.item)) + ' in your bag (Poké Mart)', consome: null };
   }
   if (r.gatilho === 'muda') return { pode: false, falta: 'appears alongside the other evolution', consome: null, muda: true };
   const faltas = []; let consome = null;
@@ -60,11 +61,11 @@ export function avaliar(r, m, ctx = {}){
   if (r.amizade && amizade < r.amizade) faltas.push(`friendship ${r.amizade} (currently ${amizade})`);
   if (r.horario && r.horario !== horario()) faltas.push(r.horario === 'dia' ? 'daytime only' : 'nighttime only');
   if ('segurando' in r){
-    if (!r.segurando) faltas.push('requires ' + r.segurandoNome + ' (not in the game yet)');
-    else if (!tem(r.segurando)) faltas.push('missing ' + nomeItem(r.segurando) + ' in your bag');
+    if (!r.segurando) faltas.push('requires ' + tr(r.segurandoNome) + ' (not in the game yet)');
+    else if (!tem(r.segurando)) faltas.push('missing ' + tr(nomeItem(r.segurando)) + ' in your bag');
     else consome = r.segurando;
   }
-  if (r.golpe && !ctx.conhece?.(m.dex, lv)?.has(r.golpe)) faltas.push('must know ' + r.golpeNome);
+  if (r.golpe && !ctx.conhece?.(m.dex, lv)?.has(r.golpe)) faltas.push('must know ' + tr(r.golpeNome));
   if (r.tipoGolpe && !ctx.tiposConhecidos?.(m.dex, lv)?.has(r.tipoGolpe)) faltas.push('must know a move of type ' + (TIPOS_PT[r.tipoGolpe] || r.tipoGolpe));
   if (r.noTime && !(ctx.time || []).some(t => t.dex === r.noTime)) faltas.push('requires a specific other Pokémon in the party');
   if (r.tipoNoTime && !(ctx.time || []).some(t => t.dex !== m.dex && (ctx.tiposDe?.(t.dex) || []).includes(r.tipoNoTime))) faltas.push('requires a Pokémon of type ' + (TIPOS_PT[r.tipoNoTime] || r.tipoNoTime) + ' in the party');
