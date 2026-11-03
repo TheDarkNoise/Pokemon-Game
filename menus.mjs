@@ -26,7 +26,7 @@ let ctx = null, D = null, aberta = null, abaAtual = null, carregandoD = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const semBr = s => String(s || '').replace(/<br\s*\/?>/gi, ' ');        // descrição do dump traz <br> escrito: no Figma o texto é puro (v2, rodada 28)
-const CAT_CURTA = { 'Itens transportados': 'Held', 'Máquina Técnica': 'MT', 'Chamando a Pedra': 'Rock', 'Edifícios do Habitat': 'Habitat', 'Materiais do Habitat': 'Habitat', 'Comida do Habitat': 'Habitat', 'Sementes do Habitat': 'Habitat' };
+const CAT_CURTA = { 'Itens transportados': 'Held', 'Máquina Técnica': 'TM', 'Chamando a Pedra': 'Rock', 'Edifícios do Habitat': 'Habitat', 'Materiais do Habitat': 'Habitat', 'Comida do Habitat': 'Habitat', 'Sementes do Habitat': 'Habitat' };
 const catCurta = s => tr(CAT_CURTA[s] || s);                                  // o selo de categoria do detalhe do item (v2) é [max:12]
 export const JANELAS = {
   pokemon:   { titulo: 'Pokémon', icone: 'pokebola', tecla: 'KeyP', sub: 'party and storage' },
@@ -538,7 +538,7 @@ function encherFichaPokemon(pop, e, lista){
   });
   Popup.texto(pop, 'stat-total-valor', S.bst || bs.reduce((a, b) => a + b, 0), f);
   Popup.texto(pop, 'stat-total-iv', e.ivs && ctx.Ind ? 'IV ' + ctx.Ind.somaIV(e) + '/' + ctx.Ind.IV_TOTAL : '', f);
-  Popup.texto(pop, 'natureza', e.natureza ? e.natureza + '  ' + (ctx.Ind?.descNatureza(e.natureza) || '') : '', f);
+  Popup.texto(pop, 'natureza', e.natureza ? e.natureza + '  ' + tr(ctx.Ind?.descNatureza(e.natureza) || '') : '', f);
   const movs = e.movs?.length ? e.movs.map(m => ({ ...(ctx.golpe?.(m.id) || { nome: m.id, tipo: '' }), pp: m.pp, ppMax: m.ppMax })) : (ctx.golpesDe?.(e.dex) || []);
   for (let i = 0; i < 4; i++){
     const g = movs[i], no = Popup.grupo(pop, 'golpe-' + (i + 1));

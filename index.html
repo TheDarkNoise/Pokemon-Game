@@ -4356,7 +4356,7 @@ function hudChefe(c){
   let el = document.getElementById('chefe');
   if (!el){ el = document.createElement('div'); el.id = 'chefe'; el.className = 'ficha'; Object.assign(el.style, { position: 'fixed', left: '50%', top: '14px', transform: 'translateX(-50%)', minWidth: '380px', padding: '8px 14px', border: '1px solid #ff5f5f', borderRadius: '8px', background: 'var(--panel)', boxShadow: '0 8px 18px #000a', zIndex: 7, fontSize: '13px' }); document.body.appendChild(el); }
   const k = Math.max(0, c.hp / c.maxHp);
-  el.innerHTML = `<b style="color:#ffe07a;letter-spacing:.06em">${c.nome.toUpperCase()}</b> <span style="color:var(--muted)">Lv${c.lv} · CHEFE</span><span style="float:right;color:var(--muted)">${Math.max(0, Math.round(c.hp))} / ${c.maxHp}</span><i style="height:9px"><b style="width:${k * 100}%;background:${k > 0.5 ? '#e45670' : k > 0.2 ? '#f4aa35' : '#ff2d2d'}"></b></i>`;
+  el.innerHTML = `<b style="color:#ffe07a;letter-spacing:.06em">${c.nome.toUpperCase()}</b> <span style="color:var(--muted)">Lv${c.lv} · ${I18n.t('CHEFE')}</span><span style="float:right;color:var(--muted)">${Math.max(0, Math.round(c.hp))} / ${c.maxHp}</span><i style="height:9px"><b style="width:${k * 100}%;background:${k > 0.5 ? '#e45670' : k > 0.2 ? '#f4aa35' : '#ff2d2d'}"></b></i>`;
   return el;
 }
 function atualizarChefe(dt){
