@@ -131,7 +131,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
     const d = e.depois || {};
     if (e.acao === 'bolsa') return 'money ' + (e.antes?.dinheiro ?? '—') + ' → ' + (d.dinheiro ?? '—');
     if (e.acao === 'time') return (e.antes?.time?.length ?? 0) + '+' + (e.antes?.caixa?.length ?? 0) + ' → ' + (d.time?.length ?? 0) + '+' + (d.caixa?.length ?? 0) + ' (team+storage)';
-    if (e.acao === 'deu pokemon') return (d.nome || '#' + d.dex) + ' Nv ' + d.lv + (d.shiny ? ' ✨' : '') + ' → ' + d.lugar;
+    if (e.acao === 'deu pokemon') return (d.nome || '#' + d.dex) + ' Lv ' + d.lv + (d.shiny ? ' ✨' : '') + ' → ' + d.lugar;
     if (e.acao === 'cargo') return (d.gm ? 'GM' : 'no GM') + (d.cargo ? ' · ' + d.cargo : '');
     if (e.acao === 'banir') return (d.banidoAte === -1 ? 'forever' : 'until ' + dataHora(d.banidoAte)) + (d.motivo ? ' — ' + d.motivo : '');
     if (e.acao === 'silenciar') return 'until ' + dataHora(d.mudoAte) + (d.motivo ? ' — ' + d.motivo : '');
@@ -167,7 +167,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
         lista.splice(+tr.dataset.i, 1); edTime[destino].push(p); mexeu(); renderTime(); $('j-sujo-time').hidden = false;
       };
       tr.querySelector('.rem').onclick = () => {
-        if (!confirm(`Release ${p.nome || 'this Pokémon'} (Nv ${p.lv})? It will be removed from the account when you save.`)) return;
+        if (!confirm(`Release ${p.nome || 'this Pokémon'} (Lv ${p.lv})? It will be removed from the account when you save.`)) return;
         lista.splice(+tr.dataset.i, 1); mexeu(); renderTime(); $('j-sujo-time').hidden = false;
       };
     }

@@ -57,7 +57,7 @@ async function fotografar(nome, dados) {
       caixaCena.union(im.boundingBox); cena.add(im);
     }
   } else { cena.add(g.scene); caixaCena.setFromObject(g.scene); }
-  if (caixaCena.isEmpty()) throw new Error('cenário vazio');
+  if (caixaCena.isEmpty()) throw new Error('empty scene');
 
   // Enquadra pelas caixas das áreas (o mapa "de verdade"); sem caixas, pelo cenário. Pisos/água planos de ~1000 m ficariam enormes.
   let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;

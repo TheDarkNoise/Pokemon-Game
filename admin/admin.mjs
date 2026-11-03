@@ -454,7 +454,7 @@ function sairDoModoArea() { desenhandoArea = false; tela.classList.remove('coloc
 function criarArea(r) {
   const id = proximoIdArea(), c = { a: id, x: 0, y: 0, z: 0, sx: 1, sy: 60, sz: 1 };
   porRectMundo(c, r);
-  dadosMapa.caixas.push(c); (dadosMapa.areas ||= []).push(id); (dadosMapa.nomes ||= {})[id] = 'Nova área ' + id;
+  dadosMapa.caixas.push(c); (dadosMapa.areas ||= []).push(id); (dadosMapa.nomes ||= {})[id] = 'New area ' + id;
   nomesMudados.add(id); idsUsados.add(id);
   marcarSujoAreas(); selecionarCaixa(c);
   $('a-nome').focus(); $('a-nome').select();

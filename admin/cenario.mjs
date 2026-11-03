@@ -169,7 +169,7 @@ function realcar(peca) {
 }
 function atualizarCamposSel() {
   if (!selPeca) return; const p = selPeca.pos;
-  $('s-nome').textContent = selPeca.nome || '(sem nome)';
+  $('s-nome').textContent = selPeca.nome || '(unnamed)';
   $('s-x').value = +p.x.toFixed(3); $('s-y').value = +p.y.toFixed(3); $('s-z').value = +p.z.toFixed(3);
 }
 

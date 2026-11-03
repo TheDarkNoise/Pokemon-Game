@@ -49,7 +49,7 @@ export async function atualizar(r) {
   if (atual !== glb || !it?.pronto) return;
   await Tinta.aplicarTinta(it.obj, glb);
   P.selecionar(glb); palco.classList.add('pronto');
-  info.textContent = 'Modelo ' + glb + ' (arraste pra girar).';
+  info.textContent = 'Model ' + glb + ' (drag to rotate).';
 }
 async function renderTime(time) {
   const el = raiz.querySelector('.previa-time');

@@ -49,7 +49,7 @@ export async function atualizar(r, forcar = false) {
   if (treinador !== prefab) {                                             // troca o treinador (a mochila é vestida de novo abaixo)
     if (treinador) P.descartar(treinador);
     treinador = prefab; it = null; vestida = null; palco.dataset.id = prefab; palco.classList.remove('pronto');
-    info('carregando ' + esc(prefab) + '…');
+    info('loading ' + esc(prefab) + '…');
     try { montando = P.montar({ id: prefab, glb: prefab, nome: prefab }); it = await montando; }
     catch { if (treinador === prefab) info(`⚠ Could not open trainer <code>cenario/pc/${esc(prefab)}.glb</code>.`, true); return; }
     if (treinador !== prefab || !it?.pronto) return;
@@ -60,11 +60,11 @@ export async function atualizar(r, forcar = false) {
   if (glb === vestida) return;
   vestida = glb;
   const { modelos = [] } = await recurso('modelos?pasta=pc');
-  if (!glb) { tirarMochila(it.obj); info('Sem modelo — preencha "Modelo (glb)".', true); return; }
-  if (!modelos.includes(glb)) { tirarMochila(it.obj); info(`⚠ O modelo <code>cenario/pc/${esc(glb)}.glb</code> does not exist in this copy — this bag will not appear in the game (the trainer keeps the outfit bag).`, true); return; }
-  info('vestindo ' + esc(glb) + '…');
+  if (!glb) { tirarMochila(it.obj); info('No model — fill in "Model (glb)".', true); return; }
+  if (!modelos.includes(glb)) { tirarMochila(it.obj); info(`⚠ Model <code>cenario/pc/${esc(glb)}.glb</code> does not exist in this copy — this bag will not appear in the game (the trainer keeps the outfit bag).`, true); return; }
+  info('equipping ' + esc(glb) + '…');
   const m = await vestirMochila(it.obj, glb).catch(() => null);
   if (vestida !== glb) return;
-  info(m ? `<b>${esc(reg?.nome || glb)}</b> vestida em ${esc(treinador)} (drag to rotate). Default colors: NPC colors screen.`
+  info(m ? `<b>${esc(reg?.nome || glb)}</b> equipped on ${esc(treinador)} (drag to rotate). Default colors: NPC colors screen.`
     : `⚠ <code>${esc(glb)}.glb</code> loaded, but did not fit the trainer skeleton (see console).`, !m);
 }

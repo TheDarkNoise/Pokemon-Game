@@ -348,12 +348,12 @@ export async function abrir(c){
   ctx.jogo.ash.pivo.visible = false; ctx.jogo.pika.pivo.visible = false; ctx.jogo.pika.recolhido = true; ctx.portaOcupado(true);
   if (ctx.relevo){ ctx.rc = new ctx.THREE.Raycaster(); ctx.alvosChao = []; ctx.cena.traverse(o => { if (o.isMesh && !o.isSkinnedMesh && !o.isSprite) ctx.alvosChao.push(o); }); }
   const salvo = ctx.lerLS('diretor.cena3', null);
-  cena = { mapa: salvo?.mapa || '4120013|7170501', banner: salvo?.banner || { titulo: '🏆 TORNEIO DE KANTO', sub: 'FINAL · Liga Índigo' }, placar: salvo?.placar || { on: true, nomeGolpe: true, hp: { 1: 100, 2: 100 } }, jog: salvo?.jog || { 1: { tr: null, mon: null, reserva: null, ativo: 'mon' }, 2: { tr: null, mon: null, reserva: null, ativo: 'mon' } }, slots: salvo?.slots || {} };
+  cena = { mapa: salvo?.mapa || '4120013|7170501', banner: salvo?.banner || { titulo: '🏆 KANTO TOURNAMENT', sub: 'FINAL · Indigo League' }, placar: salvo?.placar || { on: true, nomeGolpe: true, hp: { 1: 100, 2: 100 } }, jog: salvo?.jog || { 1: { tr: null, mon: null, reserva: null, ativo: 'mon' }, 2: { tr: null, mon: null, reserva: null, ativo: 'mon' } }, slots: salvo?.slots || {} };
   for (const n of [1, 2]) cena.jog[n].ativo = cena.jog[n].ativo || 'mon';
   const S = spots(); foco = { vx: S.c.x, vy: chao(S.c.x, S.c.z) + 1.1, vz: S.c.z }; ctx.jogo.foco = foco;
   montarPainel(); pintarBanner(); pintarCards(); controles();
   camera('atras', 1);
   $('boot').hidden = true;
-  if (cena.jog[1].tr || cena.jog[2].tr){ status('montando a cena salva…'); await montarTudo(); encarar(); pintarCards(); status('cena montada'); }
+  if (cena.jog[1].tr || cena.jog[2].tr){ status('loading the saved scene…'); await montarTudo(); encarar(); pintarCards(); status('scene loaded'); }
   window.__diretor = { cena: () => cena, vivos, executar, camera, roupaAleatoria, montarTudo, criarTreinador, criarMon, spots, lugarTreinador, lugarMon, foco };
 }

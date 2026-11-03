@@ -1036,5 +1036,17 @@
   "⚠ Tempo de silêncio inválido.": "⚠ Invalid mute duration.",
   "⚠ Escreva o aviso.": "⚠ Enter an announcement.",
   "⚠ Ação desconhecida.": "⚠ Unknown action.",
-  "🧭 Um GM levou você para perto de {raw_name}…": "🧭 A GM moved you near {raw_name}…"
+  "🧭 Um GM levou você para perto de {raw_name}…": "🧭 A GM moved you near {raw_name}…",
+  "não dá pra mexer na ordem do time durante a batalha": "You cannot reorder your party during a battle",
+  "não dá pra mexer na ordem do time durante a troca": "You cannot reorder your party during a trade",
+  "não dá pra mexer na ordem do time na raid": "You cannot reorder your party during a raid",
+  "espere a evolução terminar": "Wait for the evolution to finish",
+  "{raw_name} não obedece: Lv {level} passa do teto Lv {cap} — {next}": "{raw_name} will not obey: Lv {level} exceeds the Lv {cap} cap — {next}",
+  "🔒 {raw_name} não obedece: Lv {level} passa do teto Lv {cap} — {next}.": "🔒 {raw_name} will not obey: Lv {level} exceeds the Lv {cap} cap — {next}.",
+  "O jogo está em manutenção. Volte daqui a pouco!": "The game is under maintenance. Please come back soon!",
+  "Você foi desconectado por um GM.": "You were disconnected by a GM.",
+  "Faltou a cidade ou x e z.": "A city or x and z coordinates are required.",
+  "A raid do {raw_boss} foi cancelada: ninguém entrou na fila.": "The {raw_boss} raid was canceled: no one joined the queue.",
+  "vencer a Elite Four": "defeat the Elite Four",
+  "vencer {raw_leader} ({gym})": "defeat {raw_leader} ({gym})"
 }

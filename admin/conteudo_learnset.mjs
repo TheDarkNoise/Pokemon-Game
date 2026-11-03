@@ -11,7 +11,7 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
   datalist('dl-f2-golpes', Object.entries(golpes).map(([id, g]) => [id, g.nome + (g.nomePt ? ' · ' + g.nomePt : '')]));
   const nomeSp = n => especies.get(+n)?.nome || `No. ${n}`;
   const maxDex = Math.max(...especies.keys());
-  const descGolpe = id => { const g = golpes[id]; return g ? `${g.nomePt || g.nome} · ${TIPOS[g.tipo] || g.tipo} · ${CAT[g.cat] || g.cat} · power ${g.poder || '—'} · PP ${g.pp ?? '20'}` : '⚠ unknown move (create it under Data files → Moves)'; };
+  const descGolpe = id => { const g = golpes[id]; return g ? `${g.nome || g.nomePt} · ${TIPOS[g.tipo] || g.tipo} · ${CAT[g.cat] || g.cat} · power ${g.poder || '—'} · PP ${g.pp ?? '20'}` : '⚠ unknown move (create it under Data files → Moves)'; };
 
   let learn = {}, orig = '{}', sel = null, filtro = '', soCom = true;
   sec.innerHTML = `
