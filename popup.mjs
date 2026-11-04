@@ -461,11 +461,12 @@ export function imagem(pop, id, url, dentro = null){
 }
 /** EXEMPLOS DA MAQUETE (rodada 30, 18/09): o que já tem texto/imagem do jogo fica; o resto ganha o exemplo do layout (txt, imgvar com a
     folga `exemploPad`, fill a 70%). Veio da bancada dos pop-ups pra servir também ao modo prévia do adm (`Menus.previa`). */
+const EXEMPLOS_BRUTOS = new Set(['pokemon-nome', 'inimigo-nome', 'ficha-nome', 'nome', 'especie-nome', 'jogador-nome', 'amigo-nome', 'conversa-nome', 'solicitante-nome', 'lider-nome', 'candidato-nome', 'membro-nome', 'boss-nome', 'modelo-nome']);
 export function encherExemplo(pop){
   const anda = (filhos, pai) => { for (const f of filhos || []){
     const el = pai.querySelector(':scope > [data-fig="' + (f.nome || '') + '"], :scope > [data-txt="' + (f.id || '') + '"], :scope > [data-var="' + (f.id || '') + '"]');
     if (!el) continue;
-    if (f.tipo === 'txt' && f.exemplo && !el.textContent) el.textContent = f.exemplo;
+    if (f.tipo === 'txt' && f.exemplo && !el.textContent) el.textContent = EXEMPLOS_BRUTOS.has(f.id) ? f.exemplo : tr(f.exemplo);
     if (f.tipo === 'imgvar' && f.exemplo && !el.style.backgroundImage){ el.style.backgroundImage = 'url(' + f.exemplo + ')'; el.style.backgroundSize = 'contain'; el.style.backgroundRepeat = 'no-repeat'; el.style.backgroundPosition = 'center'; el.style.display = 'block'; if (f.exemploPad) Hud.fundoComFolga(el, f.exemploPad); }
     if (f.tipo === 'fill' && el.dataset && !el.dataset.k) Hud.fill(el, 0.7);
     anda(f.filhos, el); } };
