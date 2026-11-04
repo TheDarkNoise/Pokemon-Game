@@ -5473,8 +5473,8 @@ let ultimoItemget = 0;   // 14/09 (manhã): o acelerador do som da loja gravava 
 async function bolsaOp(op, dados = {}){
   if (!comConta()) return null;
   const r = await Rede.pedirBolsa(op, dados);
-  if (r?.erro) Chat.sistema('⚠ ' + r.erro + '.');
-  else if (op === 'comprar' || op === 'coleta'){ const ag = performance.now(); if (ag - ultimoItemget > 160){ ultimoItemget = ag; Som.tocar('ui/sound_itemget', { volume: .7, prio: true }); } }   // sons do jogo original (11/09); 14/09 (Syvel, celular): comprar em rajada empilhava o som e ele distorcia — 1 toque a cada 160 ms
+  if (!r || r.erro){ const erro = r?.erro || 'The server did not respond'; Chat.sistema('⚠ ' + erro + '.'); return r || { erro }; }
+  if (op === 'comprar' || op === 'coleta'){ const ag = performance.now(); if (ag - ultimoItemget > 160){ ultimoItemget = ag; Som.tocar('ui/sound_itemget', { volume: .7, prio: true }); } }   // sons do jogo original (11/09); 14/09 (Syvel, celular): comprar em rajada empilhava o som e ele distorcia — 1 toque a cada 160 ms
   else if (op === 'missao' || op === 'premio') Som.tocar('ui/sound_keyitemget', { volume: .7, prio: true });
   return r || { erro: 'sem resposta' };
 }

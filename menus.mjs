@@ -1333,7 +1333,7 @@ async function encherPokedex(pop){
   if (!sp.some(s => s.n === selDex)) selDex = (sp.find(s => d[s.n]) || sp[0])?.n ?? null;
   Popup.texto(pop, 'contadores', '👁 ' + vistos + ' · ★ ' + pegos + '/' + todos.length);
   if (K){
-    const r = K.resumo(); const base = 'Kanto Collector · ' + r.pegosKanto + '/' + r.kantoAte + ' caught · ' + r.vistosKanto + ' seen · ' + r.shinies + ' shiny';
+    const r = resumoDex(d); const base = 'Kanto Collector · ' + r.pegosKanto + '/' + r.kantoAte + ' caught · ' + r.vistosKanto + ' seen · ' + r.shinies + ' shiny';
     Popup.texto(pop, 'colecionador', base);
     minhaPosicao().then(p => { if (p && p.especies?.pos && aberta === 'pokedex' && Popup.aberto(pop)) Popup.texto(pop, 'colecionador', base + ' · rank ' + p.especies.pos + ' of ' + p.total); });   // posição entre os jogadores (servidor)
   }
@@ -1341,7 +1341,7 @@ async function encherPokedex(pop){
   const cels = Popup.celulas(pop, 'lista-especies', Math.max(sp.length, 1), 'especie');
   cels.forEach((c, i) => {
     const s = sp[i]; c.style.display = s ? 'block' : 'none'; if (!s) return;
-    const st = d[s.n], nv = K ? K.nivel(s.n) : (st === 'pego' ? 2 : st ? 1 : 0);
+    const st = d[s.n], nv = revelacaoDex(s.n, st).nivel;
     c.__dex = s.n; c.style.pointerEvents = 'auto'; c.style.cursor = 'pointer';
     Popup.texto(pop, 'numero', pad3(s.n), c); Popup.textoBruto(pop, 'nome', st ? s.name : '?????', c);
     const prog = c.querySelector('[data-fig="progresso-especie"]'); if (prog){ prog.style.display = st ? 'block' : 'none'; bolinhas(prog, nv); }
@@ -1356,7 +1356,7 @@ async function encherPokedex(pop){
   await Promise.all([carregarElenco(), carregarDexExtra()]);
   if (aberta !== 'pokedex' || !Popup.aberto(pop)) return;
   const X = dexExtra.especies?.[selDex] || {};
-  const rv = K ? K.revela(selDex) : null, nv = rv ? rv.nivel : (st === 'pego' ? 2 : st ? 1 : 0);
+  const rv = revelacaoDex(selDex, st), nv = rv.nivel;
   Popup.textoBruto(pop, 'especie-nome', nv >= 1 ? S?.name : '?????'); Popup.texto(pop, 'especie-numero', 'Nº ' + pad3(selDex));
   Popup.texto(pop, 'especie-visto', '· ' + (st === 'pego' ? 'caught' : st ? 'seen' : 'unknown'));
   bolinhas(Popup.grupo(pop, 'progresso-registro'), nv); Popup.texto(pop, 'nivel-nome', tr(NOMES_NIVEL[nv]));
@@ -1404,7 +1404,7 @@ async function encherPokedex(pop){
 
 /* ------------------------------------------------------------------ Missões */
 function rMissoes(corpo){
-  abas([{ id: 'principal', nome: "Main" }]);
+  if (abas([{ id: 'principal', nome: 'Main' }, { id: 'secundarias', nome: 'Side quests' }]) === 'secundarias'){ corpo.innerHTML = '<div class="vazio">No side quests are available in this version yet.</div>'; return; }
   const M = ctx.missoes;
   if (!M?.pronto?.()){ corpo.innerHTML = '<div class="vazio">Quests are still loading…</div>'; return; }
   const caps = M.capitulos(), ativa = M.ativa(), idx = M.indicePasso(), prog = M.progresso();
@@ -1422,14 +1422,14 @@ function rMissoes(corpo){
    Em cima a missão ativa com até 4 objetivos; embaixo os 20 capítulos, que abrem e fecham. A altura de cada linha
    varia (capítulo fechado 28 px, aberto 26 + missões×46 − 4 + 10), então a pilha é montada na mão. Os ícones de
    estado saem das referências `[estado:…]` da própria página, não de nomes de arquivo escritos aqui. */
-let popMi = null, capAberto = null, capAtivoVisto = null;
+let popMi = null, capAberto = null, capAtivoVisto = null, abaMi = 'principal';
 function popupMi(){
   if (popMi) return popMi;
   const def = defPopup('missoes');
   if (new URLSearchParams(location.search).get('popup') === '0') return null;
   if (!def) return null;                                                 // sem maquete (celular em pé): janela antiga
   popMi = Popup.montar(def, {
-    aba: () => render(),
+    aba: nome => { abaMi = nome; render(); },
     fechar: () => { if (aberta === 'missoes') aberta = null; },
   });
   popMi.addEventListener('click', ev => {                                // clique no capítulo abre/fecha
@@ -1477,6 +1477,7 @@ function encherMissoes(pop){
   const G = geometriaMissoes(pop);
   Popup.rotulo(pop, 'titulo');                                          // "Missões" e os nomes das abas: rótulos da maquete (v2 trouxe como txt/, não na arte)
   for (const aba of pop.querySelectorAll('[data-tag="aba"]')) Popup.rotulo(pop, 'aba', aba);
+  if (!vistaMissoes(pop)) return;
   if (!M?.pronto?.()) return;
   const ativa = M.ativa(), idx = M.indicePasso(), prog = M.progresso();
   const fa = Popup.grupo(pop, 'missao-ativa');
@@ -1781,8 +1782,8 @@ function rPokedex(corpo){
   const vistos = todos.filter(s => d[s.n]).length, pegos = todos.filter(s => d[s.n] === 'pego').length;
   if (!sp.some(s => s.n === selDex)) selDex = (sp.find(s => d[s.n]) || sp[0])?.n || null;
   corpo.innerHTML = `<div class="dois dex-dois"><div><div class="dex-topo"><input id="dex-busca" placeholder="search by name or number…" value="${esc(dexBusca)}" autocomplete="off"><span>👁 ${vistos} · ★ ${pegos} / ${todos.length}</span></div>
-    ${(() => { const K = ctx.conhecimento; if (!K) return ''; const r = K.resumo(); return `<div class="dex-colec"><b>Collector</b> Kanto ${r.pegosKanto}/${r.kantoAte} caught (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} seen · ✨ ${r.shinies} shiny · 📖 ${r.mestres} master${r.mestres === 1 ? '' : 's'}${r.tituloAtual ? ` · 🏅 ${esc(tr(r.tituloAtual))}` : ''}</div>`; })()}
-    <div class="dex-lista">${sp.map(s => `<div class="dex ${d[s.n] === 'pego' ? 'pego' : d[s.n] ? 'visto' : ''} ${s.n === selDex ? 'on' : ''}" data-n="${s.n}"><span class="num">${String(s.n).padStart(3, '0')}</span><span class="nm">${d[s.n] ? esc(s.name) : '?????'}</span><span class="tp">${d[s.n] ? (s.types || []).map(tipoHtml).join('') : ''}</span>${(() => { const n = ctx.conhecimento?.nivel(s.n) ?? (d[s.n] === 'pego' ? 2 : d[s.n] ? 1 : 0); return n ? `<span class="pego-ic" title="knowledge ${n}/5">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span>` : ''; })()}</div>`).join('') || '<div class="vazio">no matching name in this generation</div>'}</div></div><div class="ficha dex-ficha" id="dex-ficha"></div></div>`;
+    ${(() => { const K = ctx.conhecimento; if (!K) return ''; const r = resumoDex(d); return `<div class="dex-colec"><b>Collector</b> Kanto ${r.pegosKanto}/${r.kantoAte} caught (${Math.round(r.pegosKanto / r.kantoAte * 100)}%) · ${r.vistosKanto} seen · ✨ ${r.shinies} shiny · 📖 ${r.mestres} master${r.mestres === 1 ? '' : 's'}${r.tituloAtual ? ` · 🏅 ${esc(tr(r.tituloAtual))}` : ''}</div>`; })()}
+    <div class="dex-lista">${sp.map(s => `<div class="dex ${d[s.n] === 'pego' ? 'pego' : d[s.n] ? 'visto' : ''} ${s.n === selDex ? 'on' : ''}" data-n="${s.n}"><span class="num">${String(s.n).padStart(3, '0')}</span><span class="nm">${d[s.n] ? esc(s.name) : '?????'}</span><span class="tp">${d[s.n] ? (s.types || []).map(tipoHtml).join('') : ''}</span>${(() => { const n = revelacaoDex(s.n, d[s.n]).nivel; return n ? `<span class="pego-ic" title="knowledge ${n}/5">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span>` : ''; })()}</div>`).join('') || '<div class="vazio">no matching name in this generation</div>'}</div></div><div class="ficha dex-ficha" id="dex-ficha"></div></div>`;
   const busca = corpo.querySelector('#dex-busca');
   busca.addEventListener('input', () => { dexBusca = busca.value; const pos = busca.selectionStart; render(); const b2 = $('j-corpo').querySelector('#dex-busca'); b2?.focus(); try { b2?.setSelectionRange(pos, pos); } catch {} });
   corpo.querySelectorAll('.dex').forEach(el => el.onclick = () => { selDex = +el.dataset.n; corpo.querySelectorAll('.dex').forEach(x => x.classList.toggle('on', x === el)); mostrarDex(); });
@@ -1804,8 +1805,8 @@ async function mostrarDex(){
   const catMap = { 1: 'physical', 2: "special", 3: 'status' };
   /* Pokédex de conhecimento: cada nível revela mais (1 tipos/onde · 2 stats, altura/peso, evolução, fraquezas · 3 taxa de
      captura, habilidades · 4 gênero, learnset completo, habilidade oculta · 5 Mestre). Sem o módulo: visto = 1, pego = 2. */
-  const K = ctx.conhecimento, rv = K ? K.revela(selDex) : null;
-  const nv = rv ? rv.nivel : (st === 'pego' ? 2 : st ? 1 : 0);
+  const K = ctx.conhecimento, rv = revelacaoDex(selDex, st);
+  const nv = rv.nivel;
   const nomesNivel = ["unknown", "Sighted", "Registered", "Studied", "Expert", "Master"];
   const vistoGolpe = new Set(K?.registro(selDex)?.gl || []);
   const faltaLista = K && nv < 5 ? K.falta(selDex).slice(0, 4) : [];
@@ -2836,4 +2837,37 @@ async function apagarTudo(){
   const u = new URL(location.href); for (const k of [...u.searchParams.keys()]) if (k !== 'raf' && k !== 'mobile') u.searchParams.delete(k);
   u.searchParams.set('jogar', '1');
   location.href = u.toString();
+}
+
+
+// Older saves already record sightings/captures in dex or the party. Keep those
+// discoveries visible even when the newer knowledge record is still empty.
+function revelacaoDex(dex, estado) {
+  const K = ctx.conhecimento, rv = K?.revela?.(dex) || {};
+  const minimo = estado === 'pego' ? 2 : estado ? 1 : 0;
+  const nivel = Math.max(minimo, rv.nivel ?? K?.nivel?.(dex) ?? 0);
+  const limiares = [0, 1, 4, 10, 18, 28];
+  return { ...rv, nivel, pontos: Math.max(rv.pontos || 0, limiares[nivel] || 0), proximo: limiares[nivel + 1] ?? null };
+}
+
+function vistaMissoes(pop) {
+  const principal = abaMi !== 'secundarias';
+  Popup.trocarAba(pop, principal ? 'principal' : 'secundarias');
+  for (const nome of ['missao-ativa', 'lista-capitulos']) { const el = Popup.grupo(pop, nome); if (el) el.style.display = principal ? '' : 'none'; }
+  const recompensa = Popup.no(pop, 'recompensa'); if (recompensa) recompensa.style.display = principal ? '' : 'none';
+  if (!principal && !pop.__semSecundarias) {
+    const el = document.createElement('div');
+    Object.assign(el.style, { position: 'absolute', left: '8%', top: '34%', width: '84%', color: '#EAF6FB', font: '600 16px system-ui', textAlign: 'center', pointerEvents: 'none' });
+    el.textContent = tr('No side quests are available in this version yet.');
+    pop.appendChild(el); pop.__semSecundarias = el;
+  }
+  if (pop.__semSecundarias) pop.__semSecundarias.style.display = principal ? 'none' : 'block';
+  return principal;
+}
+
+
+function resumoDex(estado) {
+  const r = ctx.conhecimento.resumo();
+  const descobertas = Object.entries(estado).filter(([dex, valor]) => +dex > 0 && +dex <= r.kantoAte && valor);
+  return { ...r, vistosKanto: Math.max(r.vistosKanto, descobertas.length), pegosKanto: Math.max(r.pegosKanto, descobertas.filter(([, valor]) => valor === 'pego').length) };
 }

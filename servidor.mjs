@@ -9,6 +9,7 @@
  * captura de Pokémon, cura no Centro Pokémon).
  */
 
+import { comprarNaLoja } from './servidor_loja.mjs';
 import http from 'node:http';
 import { WebSocketServer, WebSocket } from 'ws';
 import fs from 'node:fs';
@@ -1263,8 +1264,15 @@ wss.on('connection', ws => {
           const op = m.t.slice(6);
           const u = sessoes.get(ws._info?.token) || null;
           const c = u ? contas[u] : null;
+          if (op === 'comprar') {
+            let resultado;
+            try { resultado = comprarNaLoja(c, m, JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB, 'menus_dados.json'), 'utf8'))); }
+            catch { resultado = { erro: 'The shop catalogue could not be loaded. Try again shortly.' }; }
+            if (resultado.erro) enviar(ws, { t: 'bolsa_erro', op, erro: resultado.erro });
+            else { salvarContas(); enviar(ws, { t: 'bolsa', op, ...resultado }); }
+          }
           // bolsa_missao: paga recompensa da missão concluída
-          if (op === 'missao' && m.missao && c) {
+          else if (op === 'missao' && m.missao && c) {
             // ANTI-TRAPAÇA: só paga se a missão foi REALMENTE concluída (está em feitas) e ainda NÃO foi paga.
             const est = c.save?.missoes;
             const feita = !!(est && Array.isArray(est.feitas) && est.feitas.includes(m.missao));
