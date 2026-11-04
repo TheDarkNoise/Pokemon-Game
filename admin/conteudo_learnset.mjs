@@ -2,16 +2,18 @@
  * que golpe cada espécie aprende e em que nível. Os golpes são os de data/golpes.json (Arquivos de dados → Golpes: poder, PP,
  * efeito…). O jogo (individuo.mjs) dá ao Pokémon os 4 últimos golpes até o nível dele e ensina o do nível quando ele sobe. */
 import { esc, copia, campo, gravar, ler, ref, datalist, pad } from '/admin/conteudo.mjs';
+import { carregarMensagens } from './mensagens.mjs';
 import { TIPOS } from '/admin/esquemas_f2.mjs';
 
 const CAT = { fisico: 'physical', especial: 'special', status: 'status' };
 
 export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) {
+  const traduzir = await carregarMensagens();
   const [especies, golpes] = await Promise.all([ref.especies(), ref.golpes()]);
-  datalist('dl-f2-golpes', Object.entries(golpes).map(([id, g]) => [id, g.nome + (g.nomePt ? ' · ' + g.nomePt : '')]));
+  datalist('dl-f2-golpes', Object.entries(golpes).map(([id, g]) => [id, g.nome || traduzir(g.nomePt)]));
   const nomeSp = n => especies.get(+n)?.nome || `No. ${n}`;
   const maxDex = Math.max(...especies.keys());
-  const descGolpe = id => { const g = golpes[id]; return g ? `${g.nome || g.nomePt} · ${TIPOS[g.tipo] || g.tipo} · ${CAT[g.cat] || g.cat} · power ${g.poder || '—'} · PP ${g.pp ?? '20'}` : '⚠ unknown move (create it under Data files → Moves)'; };
+  const descGolpe = id => { const g = golpes[id]; return g ? `${g.nome || traduzir(g.nomePt)} · ${TIPOS[g.tipo] || g.tipo} · ${CAT[g.cat] || g.cat} · power ${g.poder || '—'} · PP ${g.pp ?? '20'}` : '⚠ unknown move (create it under Data files → Moves)'; };
 
   let learn = {}, orig = '{}', sel = null, filtro = '', soCom = true;
   sec.innerHTML = `

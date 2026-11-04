@@ -4,6 +4,7 @@
  * Item "que ainda não existe no jogo" = 0 (o arquivo antigo usava null; o jogo trata os dois igual e o painel grava 0). */
 import { esc, copia, campo, gravar, ler, ref, datalist, pad } from '/admin/conteudo.mjs';
 import { ESQUEMAS, validarCampo } from '/admin/esquemas.mjs';
+import { carregarMensagens } from './mensagens.mjs';
 import { TIPOS } from '/admin/esquemas_f2.mjs';
 
 const CAMPO = Object.fromEntries(ESQUEMAS.evolucoes.campos.map(c => [c.k, c]));
@@ -18,13 +19,14 @@ const VISIVEIS = {
 const SEMPRE = ['para', 'nome', 'gatilho', 'texto'];
 
 export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) {
+  const traduzir = await carregarMensagens();
   const [especies, itens, dexExtra, elenco] = await Promise.all([ref.especies(), ref.itens(), ref.dexExtra(), ref.elenco()]);
   const golpesDex = dexExtra.golpes || {};
   const comModelo = new Set(elenco.map(e => e.n));
   const nomeSp = n => especies.get(+n)?.nome || `No. ${n}`;
-  datalist('dl-f2-itens', Object.entries(itens).map(([id, i]) => [id, i.n]));
+  datalist('dl-f2-itens', Object.entries(itens).map(([id, i]) => [id, traduzir(i.n)]));
   datalist('dl-f2-especies', [...especies].map(([n, s]) => [n, s.nome]));
-  datalist('dl-f2-golpes-dex', Object.entries(golpesDex).map(([id, g]) => [id, g[0]]));
+  datalist('dl-f2-golpes-dex', Object.entries(golpesDex).map(([id, g]) => [id, traduzir(g[0])]));
   const maxDex = Math.max(...especies.keys());
 
   let por = {}, orig = '{}', itensEvo = {}, origItens = '{}', sel = null, filtro = '', todas = false;
@@ -103,10 +105,10 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
       const c = CAMPO[key]; if (!c) return null;
       const tipo = c.tipo === 'opcao' ? 'opcao' : c.tipo === 'num' ? 'num' : 'texto';
       const dica = key === 'para' ? v => v == null ? '' : !especies.has(+v) ? '⚠ unknown number' : comModelo.has(+v) ? '' : '⚠ no 3D model: cannot evolve in the game'
-        : key === 'item' || key === 'segurando' ? v => v == null ? '' : v === 0 ? 'not yet available in the game' : itens[v]?.n || '⚠ unknown item'
-        : key === 'golpe' ? v => v == null ? '' : golpesDex[v]?.[0] || '⚠ unknown move'
+        : key === 'item' || key === 'segurando' ? v => v == null ? '' : v === 0 ? 'not yet available in the game' : traduzir(itens[v]?.n) || '⚠ unknown item'
+        : key === 'golpe' ? v => v == null ? '' : traduzir(golpesDex[v]?.[0]) || '⚠ unknown move'
         : key === 'noTime' ? v => v == null ? '' : nomeSp(v) : null;
-      const w = campo({ rotulo: c.rotulo + (c.obrigatorio ? ' *' : ''), tipo, valor: r[key], opcoes: (c.opcoes || []).map(o => [o.v, o.rotulo ?? o.v]), ajuda: c.ajuda,
+      const w = campo({ rotulo: c.rotulo + (c.obrigatorio ? ' *' : ''), tipo, valor: ['texto', 'itemNome', 'segurandoNome', 'golpeNome', 'extra'].includes(key) ? traduzir(r[key]) : r[key], opcoes: (c.opcoes || []).map(o => [o.v, o.rotulo ?? o.v]), ajuda: c.ajuda,
         min: c.min, max: c.max, step: c.int ? 1 : 'any', max_len: c.max && tipo === 'texto' ? c.max : undefined, dica,
         lista: key === 'para' || key === 'noTime' ? 'dl-f2-especies' : key === 'item' || key === 'segurando' ? 'dl-f2-itens' : key === 'golpe' ? 'dl-f2-golpes-dex' : undefined,
         classe: key === 'texto' ? 'larga' : undefined,
@@ -116,7 +118,7 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
           const antes = r[key];
           ponha(key, res.v);
           const par = parDoNome[key];                                       // nome automático (se o nome estava vazio ou era o automático do valor antigo)
-          if (par && nomeAuto[key]) { const novo = nomeAuto[key](res.v); if (novo && (!r[par] || r[par] === nomeAuto[key](antes))) { r[par] = novo; const wp = widgets[par]; if (wp) wp.entrada.value = novo; } }
+          if (par && nomeAuto[key]) { const novo = nomeAuto[key](res.v); if (novo && (!r[par] || r[par] === nomeAuto[key](antes))) { r[par] = novo; const wp = widgets[par]; if (wp) wp.entrada.value = traduzir(novo); } }
           if (key === 'para') k.querySelector('.cab b').textContent = `→ ${pad(r.para)} ${nomeSp(r.para)}`;
           mudou();
         } });
@@ -142,17 +144,17 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
   }
   /** Texto pro jogador a partir dos campos (o jogador lê na ficha do Pokémon). */
   function textoDa(r) {
-    const nomeIt = (id, nome) => nome || itens[id]?.n || 'item';
+    const nomeIt = (id, nome) => traduzir(nome || itens[id]?.n || 'item');
     const sexo = r.genero === 'm' ? ' ♂' : r.genero === 'f' ? ' ♀' : '';
     if (r.gatilho === 'item') return `use ${nomeIt(r.item, r.itemNome)}${sexo}`;
     if (r.gatilho === 'troca') return r.item ? `trade — or use ${nomeIt(r.item, r.itemNome)}` : `trade while holding ${nomeIt(r.segurando, r.segurandoNome || r.itemNome)}`;
     if (r.gatilho === 'muda') return 'level up (appears alongside the other evolution if there is room in the party and a Poké Ball)';
-    if (r.gatilho === 'outro') return 'special rule' + (r.extra ? ': ' + r.extra : '') + (r.nivel ? ` Lv ${r.nivel}` : '');
+    if (r.gatilho === 'outro') return 'special rule' + (r.extra ? ': ' + traduzir(r.extra) : '') + (r.nivel ? ` Lv ${r.nivel}` : '');
     const c = [];
     if (r.amizade) c.push(r.amizade >= 160 ? 'with high friendship' : `with friendship ${r.amizade}`);
     if (r.horario) c.push(r.horario === 'dia' ? 'during the day' : 'at night');
     if ('segurando' in r) c.push('holding ' + nomeIt(r.segurando, r.segurandoNome));
-    if (r.golpe) c.push('knowing ' + (r.golpeNome || golpesDex[r.golpe]?.[0] || 'the move'));
+    if (r.golpe) c.push('knowing ' + traduzir(r.golpeNome || golpesDex[r.golpe]?.[0] || 'the move'));
     if (r.tipoGolpe) c.push('knowing a move of type ' + (TIPOS[r.tipoGolpe] || r.tipoGolpe));
     if (r.noTime) c.push(`with ${nomeSp(r.noTime)} in the party`);
     if (r.tipoNoTime) c.push(`with a ${TIPOS[r.tipoNoTime] || r.tipoNoTime}-type Pokémon in the party`);
