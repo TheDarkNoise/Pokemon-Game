@@ -1211,5 +1211,9 @@
   "Indo pra raid do {raw_boss}…": "Joining the {raw_boss} raid…",
   "✨ O seu {raw_target} is SHINY!": "✨ Your {raw_target} is SHINY!",
   "O {raw_target} entrou no seu time (ou na caixa, se o time estiver cheio).": "{raw_target} joined your party (or storage, if your party is full).",
-  "Escreva o aviso.": "Enter an announcement."
+  "Escreva o aviso.": "Enter an announcement.",
+  "Sair ▸": "Exit ▸",
+  "{raw_count} treinadores na batalha": "{raw_count} trainers in battle",
+  "Nenhuma raid anunciada agora.": "No raid is currently announced.",
+  "mochila cheia": "Full bag"
 }

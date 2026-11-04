@@ -2412,6 +2412,7 @@ function abrirRecurso(nome){
    Nada é gravado: os pop-ups da prévia são instâncias à parte (`popsPrevia`), fora do estado das janelas de verdade. */
 const PREVIA_URL = (() => { try { return new URLSearchParams(location.search).get('previa') === '1'; } catch { return false; } })();
 const ORDEM_PREVIA = ['mercado', 'eventos', 'guilda', 'calendario', 'raid', 'inicial', 'banner-evento', 'em-breve'];
+const PREVIA_NOMES = { mercado: 'Marketplace', eventos: 'Events', guilda: 'Guild', calendario: 'Calendar', raid: 'Raid', inicial: 'Starter Pokémon', 'banner-evento': 'Event banner', 'em-breve': 'Coming soon', fliperama: 'Arcade' };
 let popPrevia = null, paletaPrevia = null; const popsPrevia = {};
 function fecharPrevia(){ if (popPrevia) Popup.fechar(popPrevia); popPrevia = null; }
 function abrirPrevia(nome){
@@ -2432,18 +2433,18 @@ export function previa(on = null){
   if (on === false) return false;
   const ori = ctx.MOBILE ? (Hud.presetAtual() === 'celular_deitado' ? 'deitado' : null) : 'pc';
   const ps = ori && ctx.jogo?.hudLayout?.popups?.[ori];
-  if (!ps || !ehV2()){ Chat.sistema('Preview: enable the new look (Settings → General → New look, or ?hud=v2)' + (ctx.MOBILE ? ' e deite o celular' : '') + '.'); return false; }
+  if (!ps || !ehV2()){ Chat.sistema('Preview: enable the new look (Settings → General → New look, or ?hud=v2)' + (ctx.MOBILE ? ' and rotate your phone to landscape' : '') + '.'); return false; }
   const nomes = Object.keys(ps), maquete = ORDEM_PREVIA.filter(n => nomes.includes(n)), janelas = nomes.filter(n => !maquete.includes(n) && JANELAS[n]);
   const p = document.createElement('div'); p.id = 'previa';
   p.innerHTML = '<b>Screen preview (admin)</b><span class="fecha" title="close (F7)">×</span>'
-    + '<div class="sec">Maquete, com os exemplos da Amanda</div><div class="bts" data-sec="maquete"></div>'
-    + '<div class="sec">Janelas do jogo</div><div class="bts" data-sec="janela"></div>'
-    + '<div class="sec">Banner "Em breve" por recurso</div><div class="bts" data-sec="breve"></div>'
+    + '<div class="sec">Mockups with Amanda’s examples</div><div class="bts" data-sec="maquete"></div>'
+    + '<div class="sec">Game windows</div><div class="bts" data-sec="janela"></div>'
+    + '<div class="sec">Coming soon banners by feature</div><div class="bts" data-sec="breve"></div>'
     + '<small>' + ori + ' · nothing is saved · Esc closes the popup, F7 closes the palette</small>';
-  const bt = (sec, rotulo, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = rotulo; b.onclick = fn; p.querySelector('[data-sec="' + sec + '"]').appendChild(b); };
+  const bt = (sec, rotulo, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = tr(PREVIA_NOMES[rotulo] || JANELAS[rotulo]?.titulo || rotulo); b.onclick = fn; p.querySelector('[data-sec="' + sec + '"]').appendChild(b); };
   for (const n of maquete) bt('maquete', n, () => abrirPrevia(n));
   for (const n of janelas) bt('janela', n, () => { fecharPrevia(); abrir(n); });
-  bt('janela', 'mochila cheia', () => abrirPreviaMochila());   /* 18/09 (Amanda, PR #2): a Mochila com 46 itens de exemplo, pra lista rolar e conferir a scrollbar */
+  bt('janela', tr('mochila cheia'), () => abrirPreviaMochila());   /* 18/09 (Amanda, PR #2): a Mochila com 46 itens de exemplo, pra lista rolar e conferir a scrollbar */
   for (const r of ['loja', 'fliperama', 'batalha', 'guilda', 'mercado', 'eventos']) bt('breve', r, () => { fecharPrevia(); fechar(); abrirEmBreve(r); });
   p.querySelector('.fecha').onclick = () => previa(false);
   document.body.appendChild(p); paletaPrevia = p;

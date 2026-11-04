@@ -6398,7 +6398,7 @@ async function rodarRaid({ configurarSeguidor }){
   const topo = document.createElement('div'); topo.id = 'raid-topo';
   topo.innerHTML = '<div class="rt-nome"><b>Lugia</b><span>★ RAID · Lv70</span></div><div class="rt-barra"><div class="rt-hp"></div></div><div class="rt-sub"><span id="rt-jog">…</span><span id="rt-pct">100%</span></div>';
   document.body.appendChild(topo);
-  const sair = document.createElement('button'); sair.id = 'raid-sair'; sair.textContent = 'Sair ▸'; document.body.appendChild(sair);
+  const sair = document.createElement('button'); sair.id = 'raid-sair'; sair.textContent = I18n.t('Sair ▸'); document.body.appendChild(sair);
   sair.onclick = terminarRaid; window.addEventListener('keydown', e => { if (e.code === 'Escape') terminarRaid(); });
   ash.pivo.visible = false; pika.pivo.visible = false; pika.recolhido = true; portaOcupado = true;   // o jogador é só a câmera
   const PALCOS = {                                                       // palco por cena; esp = espaçamento entre os players, escBoss = tamanho do chefe
@@ -6459,7 +6459,7 @@ async function rodarRaid({ configurarSeguidor }){
     duplas.push({ tr, m, g: GOLPES[c.golpe] || GOLPES.tackle });
   }
   jogo.cinem = [lug, ...duplas.map(d => d.tr), ...duplas.map(d => d.m)];
-  topo.querySelector('#rt-jog').textContent = duplas.length + ' treinadores na batalha';
+  topo.querySelector('#rt-jog').textContent = I18n.t(duplas.length + ' treinadores na batalha');
   const y0 = chao(cx, (zS + zN) / 2);                                    // altura do palco (no platô do terreno o chão visual fica em y=3)
   const foco = { vx: cx, vy: y0 + 1.5, vz: (zS + zN) / 2 }; jogo.foco = foco;
   zoom = 1.35; giro = 2.75;
