@@ -321,9 +321,6 @@
   "Chat: Local (seu mapa + tudo), Global, Trade, Help. Comandos: /g /t /h /l. Com o servidor no ar, os outros jogadores leem.": "Chat: Local (your map + all channels), Global, Trade, Help. Commands: /g /t /h /l. Other players can read messages when the server is online.",
   "Enter pra falar… /g /t /h /l": "Enter to chat… /g /t /h /l",
   "Entre com uma conta pra usar isto.": "Sign in to use this.",
-  "Indo pra raid do {x0}…": "Joining the {x0} raid…",
-  "✨ O seu {x0} is SHINY!": "✨ Your {x0} is SHINY!",
-  "O {x0} entrou no seu time (ou na caixa, se o time estiver cheio).": "{x0} joined your party (or storage, if your party is full).",
   "arisco": "skittish",
   "agressivo": "aggressive",
   "calmo": "calm",
@@ -1207,5 +1204,11 @@
   "Rota não encontrada: {raw_route}": "Route not found: {raw_route}",
   "O modelo {raw_model}.glb não existe em public/cenario/mon: o chefe vai aparecer só como barra de vida.": "Model {raw_model}.glb is missing from public/cenario/mon: only the boss HP bar will appear.",
   "Nenhuma raid agora (padrão do data/raid.json: {raw_boss} Lv {raw_level}, {raw_slots} vagas, arena {raw_arena}).": "No raid is active (defaults from data/raid.json: Lv {raw_level} {raw_boss}, {raw_slots} places, arena {raw_arena}).",
-  "{raw_count} Mestre · {raw_points} pontos": "{raw_count} Master · {raw_points} points"
+  "{raw_count} Mestre · {raw_points} pontos": "{raw_count} Master · {raw_points} points",
+  "Voltando pra onde você estava…": "Returning to your previous location…",
+  "A raid acabou. Voltando…": "The raid is over. Returning…",
+  "A raid acabou: o {raw_boss} escapou.": "The raid is over: {raw_boss} escaped.",
+  "Indo pra raid do {raw_boss}…": "Joining the {raw_boss} raid…",
+  "✨ O seu {raw_target} is SHINY!": "✨ Your {raw_target} is SHINY!",
+  "O {raw_target} entrou no seu time (ou na caixa, se o time estiver cheio).": "{raw_target} joined your party (or storage, if your party is full)."
 }
