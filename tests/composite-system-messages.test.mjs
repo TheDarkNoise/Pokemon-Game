@@ -17,7 +17,7 @@ test('actual raid summaries translate phases, boss HP, reward modes and both opt
   const raid={id:7,fase:phase,cfg:{vagas:10,chefeNome:'Mew',chefeHp:1000},sobre:{hp:null},chefe:boss?{hp:850,maxHp:1000}:null,fila:new Map(queue?[['a',{nome:'contagem',dano:20,ida:true,chegou:false}],['b',{nome:'João, Jr.',dano:0,ida:false,chegou:true}]]:[])};
   const r={contagemMs:['countdown','both'].includes(timer)?14500:0,fimMs:['remaining','both'].includes(timer)?20900:0},before=JSON.stringify({...raid,fila:[...raid.fila]});
   const raw=vm.runInNewContext(raidSource.slice(status.start,status.end)+';status()',{raid,retrato:()=>r,danoRaid:()=>1.5,taxaRaid:()=>100,premioRaid:()=>reward});
-  const en=I.t('🐉 '+raw),queueText=queue?'2/10 (contagem 20 a caminho, João, Jr.)':'0/10';
+  const en=I.t('🐉 '+raw),queueText=queue?'2/10 (contagem 20 en route, João, Jr.)':'0/10';
   let expected=`🐉 Raid #7 · ${label} · queue ${queueText} · ${boss?'Mew 850/1000':'HP 1000'} · damage ×1.5 · Shiny 1/100 · reward ${reward==='mew'?'Pokémon + items':'items only'}`;
   if(r.contagemMs)expected+=' · starts in 15 s';if(r.fimMs)expected+=' · 21 s remaining';
   assert.equal(en,expected);assert.equal(JSON.stringify({...raid,fila:[...raid.fila]}),before);
