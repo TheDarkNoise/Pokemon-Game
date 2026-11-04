@@ -60,7 +60,7 @@ async function trocarModelo(id) {
   const velho = alvo; alvo = { id, mat: id.includes(':') ? id.slice(id.indexOf(':') + 1) : id, modelo: null, it: null };
   if (velho?.modelo && velho.modelo !== alvo.modelo) P.descartar(velho.modelo);
   const palco = raiz.querySelector('.palco'); palco.hidden = true; palco.classList.remove('pronto');
-  if (!id) { info('Selecione um material na tabela.'); return; }
+  if (!id) { info('Select a material in the table.'); return; }
   const prefixo = id.includes(':') ? id.slice(0, id.indexOf(':')) : null;
   const { materiais = {} } = await recurso('materiais');
   if (alvo.id !== id) return;
@@ -68,7 +68,7 @@ async function trocarModelo(id) {
   if (!lista.length) { info(`No model in this copy uses material <b>${esc(alvo.mat)}</b> — check the colors in the mask map below.`); return; }
   alvo.modelo = lista[0];
   palco.hidden = false; palco.dataset.id = alvo.modelo;
-  info('carregando ' + esc(alvo.modelo) + '…');
+  info('Loading ' + esc(alvo.modelo) + '…');
   const glb = alvo.modelo.startsWith('pc/') ? alvo.modelo.slice(3) : '../' + alvo.modelo;   // o palco busca em cenario/pc/
   let it;
   try { it = await P.montar({ id: alvo.modelo, glb, nome: alvo.modelo }); }

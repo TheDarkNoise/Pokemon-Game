@@ -12,11 +12,11 @@ export function mostrar(caixa, r) {
 }
 export async function atualizar(r) {
   if (!raiz) return;
+  const [ginasios, traduzir] = await Promise.all([carregarGinasios(), carregarMensagens()]);
   raiz.innerHTML = `<div style="width:64px;height:64px;display:grid;place-items:center;background:#0f131b;border:1px solid var(--borda);border-radius:8px">${r?.i ? `<img src="/ui/icones/${esc(r.i)}.png" alt="" style="max-width:56px;max-height:56px">` : '<span class="fraco">—</span>'}</div>
-    <div><b>${esc(r?.n || '(unnamed)')}</b><div class="fraco gins">${r?.gen ? 'generation ' + esc(r.gen) : ''}</div></div>`;
+    <div><b>${esc(traduzir(r?.n || '(unnamed)'))}</b><div class="fraco gins">${r?.gen ? 'generation ' + esc(r.gen) : ''}</div></div>`;
   const img = raiz.querySelector('img');
   if (img) img.onerror = () => { img.replaceWith(Object.assign(document.createElement('span'), { className: 'fraco', textContent: 'missing file', title: 'ui/icones/' + r.i + '.png does not exist (the icon is also missing in the game)' })); };
-  const [ginasios, traduzir] = await Promise.all([carregarGinasios(), carregarMensagens()]);
   const g = Object.values(ginasios).filter(x => x?.insignia?.id === r?.id);
   const el = raiz.querySelector('.gins');
   if (el) el.textContent = (r?.gen ? 'generation ' + r.gen + ' · ' : '') + (g.length ? 'awarded by: ' + g.map(x => traduzir(x.nome)).join(', ') : 'no gym awards this badge');

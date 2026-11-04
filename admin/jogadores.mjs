@@ -1,6 +1,7 @@
 /* Painel admin — Jogadores (Fase 1): buscar conta, ver quem está online e onde, mexer em bolsa e time, cargo, moderação e
  * código de recuperação. Tudo passa pelas rotas /admin/jogador* do servidor, que validam, gravam, registram no admin_log e
  * avisam o jogador online na hora (bolsa e time chegam sem ele reentrar). Senha e token nunca chegam aqui. */
+import { rotuloAcao } from './idioma_dados.mjs';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const dataHora = ms => new Date(ms).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -13,7 +14,7 @@ const CIDADES = [['pallet', 'Pallet (laboratory)'], ['viridian', 'Viridian'], ['
   ['lavender', 'Lavender'], ['celadon', 'Celadon'], ['saffron', 'Saffron'], ['fuchsia', 'Fuchsia'], ['cinnabar', 'Cinnabar']];
 
 /** `canal` = BroadcastChannel do painel (pra levar o seu personagem until o jogador); `resolverEspecie` vem do admin.mjs. */
-export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
+export function instalarJogadores({ api, toast, canal, resolverEspecie, traduzir = s => s }) {
   let sel = null, det = null, ref = null, edTime = null, sujoBolsa = false, sujoTime = false;
 
   async function referencia() {
@@ -22,10 +23,10 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
     const itens = d.itens || {};
     ref = { itens, tipos: d.tipos || {}, insignias: d.insignias || [],
       bolas: Object.entries(itens).filter(([, i]) => i.t === 7).map(([id, i]) => ({ id, nome: i.n })).sort((a, b) => a.id - b.id) };
-    $('dl-itens').innerHTML = Object.entries(itens).filter(([, i]) => i.t !== 7).map(([id, i]) => `<option value="${id} ${esc(i.n)}">`).join('');
+    $('dl-itens').innerHTML = Object.entries(itens).filter(([, i]) => i.t !== 7).map(([id, i]) => `<option value="${id} ${esc(traduzir(i.n))}">`).join('');
     return ref;
   }
-  const nomeItem = id => ref?.itens[id]?.n || ('item ' + id);
+  const nomeItem = id => traduzir(ref?.itens[id]?.n) || ('item ' + id);
 
   // ── Lista ────────────────────────────────────────────────────────────────────
   async function renderLista() {
@@ -77,7 +78,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
         <div class="caixa"><h3>Account</h3>
           <div class="form">
             <label class="inteira">E-mail <input type="text" value="${esc(c.email)}" readonly></label>
-            <label class="chk"><input type="checkbox" id="j-gm" ${c.gm ? 'checked' : ''}> GM (abre o painel)</label>
+            <label class="chk"><input type="checkbox" id="j-gm" ${c.gm ? 'checked' : ''}> GM (opens the admin panel)</label>
             <label>Chat role <select id="j-cargo"><option value="">none</option><option value="staff"${c.cargo === 'staff' ? ' selected' : ''}>[STAFF]</option><option value="mod"${c.cargo === 'mod' ? ' selected' : ''}>[MOD]</option></select></label>
           </div>
           <div class="acoes" style="margin-top:10px"><button id="j-cargo-ok">Save role</button><button id="j-codigo" title="Generates a new code for the player to reset their password (the old one stops working)">Generate recovery code</button></div>
@@ -103,13 +104,13 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
             <label>Money <input type="number" id="j-dinheiro" min="0" step="1" value="${s.dinheiro ?? ''}" placeholder="game default"></label>
           </div>
           <h4>Poké Balls</h4>
-          <div class="j-bolas">${ref.bolas.map(b => `<label>${esc(b.nome)} <input type="number" min="0" max="999999" data-bola="${b.id}" value="${s.bolas?.[b.id] || 0}"></label>`).join('')}</div>
+          <div class="j-bolas">${ref.bolas.map(b => `<label>${esc(traduzir(b.nome))} <input type="number" min="0" max="999999" data-bola="${b.id}" value="${s.bolas?.[b.id] || 0}"></label>`).join('')}</div>
           <h4>Items</h4>
           <table class="esp"><thead><tr><th>Item</th><th>Qty</th><th></th></tr></thead><tbody id="j-itens">
             ${Object.entries(s.itens || {}).map(([id, q]) => linhaItem(id, q)).join('') || ''}</tbody></table>
           <div class="add-esp"><input type="text" list="dl-itens" id="j-item-add" placeholder="add item (name or no.)…"><button id="j-item-ok">Add</button></div>
           <h4>Badges</h4>
-          <div class="j-insignias">${ref.insignias.map(i => `<label class="chk" title="generation ${i.gen}"><input type="checkbox" data-ins="${i.id}" ${(s.insignias || []).includes(i.id) ? 'checked' : ''}> ${esc(i.n)}</label>`).join('')}</div>
+          <div class="j-insignias">${ref.insignias.map(i => `<label class="chk" title="generation ${i.gen}"><input type="checkbox" data-ins="${i.id}" ${(s.insignias || []).includes(i.id) ? 'checked' : ''}> ${esc(traduzir(i.n))}</label>`).join('')}</div>
           <div class="acoes" style="margin-top:12px"><button class="prim" id="j-bolsa-ok">Save bag</button></div>
         </div>
         <div class="caixa j-larga"><h3>Team and storage <span class="sujo" id="j-sujo-time" hidden>● unsaved</span></h3>
@@ -121,7 +122,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
           <div class="acoes" style="margin-top:12px"><button class="prim" id="j-time-ok">Save team</button></div>
         </div>
         <div class="caixa j-larga"><h3>Admin history</h3>
-          ${det.log.length ? `<table class="dados backups"><tbody>${det.log.map(e => `<tr><td>${esc(dataHora(e.quando))}</td><td>${esc(e.gm)}</td><td><b>${esc(e.acao)}</b> ${esc(resumoLog(e))}</td></tr>`).join('')}</tbody></table>` : '<span class="fraco">No admin actions on this account yet.</span>'}
+          ${det.log.length ? `<table class="dados backups"><tbody>${det.log.map(e => `<tr><td>${esc(dataHora(e.quando))}</td><td>${esc(e.gm)}</td><td><b>${esc(rotuloAcao(e.acao))}</b> ${esc(resumoLog(e))}</td></tr>`).join('')}</tbody></table>` : '<span class="fraco">No admin actions on this account yet.</span>'}
         </div>
       </div>`;
     renderTime(); ligarFicha();
@@ -131,7 +132,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
     const d = e.depois || {};
     if (e.acao === 'bolsa') return 'money ' + (e.antes?.dinheiro ?? '—') + ' → ' + (d.dinheiro ?? '—');
     if (e.acao === 'time') return (e.antes?.time?.length ?? 0) + '+' + (e.antes?.caixa?.length ?? 0) + ' → ' + (d.time?.length ?? 0) + '+' + (d.caixa?.length ?? 0) + ' (team+storage)';
-    if (e.acao === 'deu pokemon') return (d.nome || '#' + d.dex) + ' Lv ' + d.lv + (d.shiny ? ' ✨' : '') + ' → ' + d.lugar;
+    if (e.acao === 'deu pokemon') return (d.nome || '#' + d.dex) + ' Lv ' + d.lv + (d.shiny ? ' ✨' : '') + ' → ' + ({ time: 'team', caixa: 'storage' }[d.lugar] || d.lugar);
     if (e.acao === 'cargo') return (d.gm ? 'GM' : 'no GM') + (d.cargo ? ' · ' + d.cargo : '');
     if (e.acao === 'banir') return (d.banidoAte === -1 ? 'forever' : 'until ' + dataHora(d.banidoAte)) + (d.motivo ? ' — ' + d.motivo : '');
     if (e.acao === 'silenciar') return 'until ' + dataHora(d.mudoAte) + (d.motivo ? ' — ' + d.motivo : '');
@@ -209,7 +210,7 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
     };
     ligarItens();
     const addItem = () => {
-      const v = $('j-item-add').value.trim(), id = (v.match(/^(\d+)/) || [])[1] || Object.keys(ref.itens).find(k => ref.itens[k].n.toLowerCase() === v.toLowerCase());
+      const v = $('j-item-add').value.trim(), id = (v.match(/^(\d+)/) || [])[1] || Object.keys(ref.itens).find(k => [ref.itens[k].n, traduzir(ref.itens[k].n)].some(n => n.toLowerCase() === v.toLowerCase()));
       if (!id || !ref.itens[id]) { toast('Item not found.', true); return; }
       if (ref.itens[id].t === 7) { toast("Poké Balls belong in the Poké Balls list above.", true); return; }
       const tr = $('j-itens').querySelector(`tr[data-item="${id}"]`);

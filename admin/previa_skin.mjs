@@ -68,8 +68,8 @@ export async function atualizar(r) {
   atual = { id, glb, tinta: t };
   const palco = raiz.querySelector('.palco'); palco.dataset.id = id; palco.classList.remove('pronto');
   raiz.querySelector('.previa-cores').innerHTML = '';
-  if (!glb) { info('Sem prefab — preencha o campo Prefab.', true); return; }
-  info('carregando ' + esc(glb) + '…');
+  if (!glb) { info('No prefab — fill in the Prefab field.', true); return; }
+  info('Loading ' + esc(glb) + '…');
   let it;
   try { it = await montar({ id, glb, tinta: t, nome: glb }); }
   catch { if (atual.id === id) { P.descartar(id); info(`⚠ Model not found: <code>public/cenario/pc/${esc(glb)}.glb</code>. This skin will not load in the game.`, true); } return; }

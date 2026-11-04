@@ -89,7 +89,7 @@ async function listarMapas() {
   await carregarMapa(mapas.includes('pallet_rota1') ? 'pallet_rota1' : mapas[0]);
 }
 async function carregarMapa(nome) {
-  $('carregando').hidden = false; $('carregando').textContent = 'carregando ' + nome + '…';
+  $('carregando').hidden = false; $('carregando').textContent = 'Loading ' + nome + '…';
   mapaAtual = nome; $('sel-mapa').value = nome; deselecionar();
   for (const g of instGrupos) { raizInst.remove(g); g.dispose?.(); }
   instGrupos = []; pecas = []; partes = new Map(); nomeDoPrefab = new Map(); sceneGLB = null; mapaNode = null;

@@ -40,8 +40,8 @@ export async function atualizar(r) {
   atual = glb;
   const palco = raiz.querySelector('.palco'), info = raiz.querySelector('.previa-info');
   palco.dataset.id = glb; palco.classList.remove('pronto'); info.classList.remove('aviso');
-  if (!glb) { info.textContent = 'Sem modelo.'; return; }
-  info.textContent = 'carregando ' + glb + '…';
+  if (!glb) { info.textContent = 'No model.'; return; }
+  info.textContent = 'Loading ' + glb + '…';
   let it;
   const caminho = glb.includes('/') ? glb : 'npc/' + glb;              // NPCs (npcs_glb) já vêm com a pasta: npc/… ou mon/…
   try { it = await montar({ id: glb, glb: '../' + caminho, nome: glb }); }
@@ -54,7 +54,7 @@ export async function atualizar(r) {
 async function renderTime(time) {
   const el = raiz.querySelector('.previa-time');
   if (time === undefined) { el.innerHTML = ''; return; }                // NPC comum (sem time): nada aqui
-  if (!Array.isArray(time) || !time.length) { el.innerHTML = '<span class="fraco">Sem time.</span>'; return; }
+  if (!Array.isArray(time) || !time.length) { el.innerHTML = '<span class="fraco">No team.</span>'; return; }
   const n = await nomesDex();
-  el.innerHTML = time.map(p => `<span class="pt-mon"><img src="/ui/mon/pm${String(p?.dex).padStart(4, '0')}.png" alt="" onerror="this.style.visibility='hidden'"><b>${esc(n[p?.dex] || '#' + p?.dex)}</b> <span class="fraco">Nv ${esc(p?.lv)}</span></span>`).join('');
+  el.innerHTML = time.map(p => `<span class="pt-mon"><img src="/ui/mon/pm${String(p?.dex).padStart(4, '0')}.png" alt="" onerror="this.style.visibility='hidden'"><b>${esc(n[p?.dex] || '#' + p?.dex)}</b> <span class="fraco">Lv ${esc(p?.lv)}</span></span>`).join('');
 }
