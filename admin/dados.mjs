@@ -1,7 +1,9 @@
 /* Painel admin — "Arquivos de dados" (editor genérico guiado por esquema) e "History / Undo". Fase 0.
  * Tabela e formulário saem de admin/esquemas.mjs — os mesmos esquemas que o servidor usa pra validar, então o erro aparece no
  * campo antes de salvar e o servidor recusa o mesmo que a tela recusa. Registrar um arquivo novo = escrever um esquema. */
+import { campoDado, registroDado } from './idioma_dados.mjs';
 import { ESQUEMAS, validarCampo, validarColecao } from '/admin/esquemas.mjs';
+let traduzirDado = s => s;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -21,17 +23,18 @@ async function carregarItens() {
   if (itensJogo) return itensJogo;
   itensJogo = (await fetch('/data/menus_dados.json').then(r => r.json()).catch(() => ({}))).itens || {};
   const dl = document.createElement('datalist'); dl.id = 'dl-d-itens';
-  dl.innerHTML = Object.entries(itensJogo).map(([id, i]) => `<option value="${id}" label="${esc(i.n)}">`).join('');
+  dl.innerHTML = Object.entries(itensJogo).map(([id, i]) => `<option value="${id}" label="${esc(traduzirDado(i.n))}">`).join('');
   document.body.append(dl);
   return itensJogo;
 }
-const nomeItem = id => id == null || id === '' ? '' : itensJogo?.[id]?.n || '(item ' + id + ' does not exist)';
+const nomeItem = id => id == null || id === '' ? '' : traduzirDado(itensJogo?.[id]?.n) || '(item ' + id + ' does not exist)';
 const ctxColuna = { item: nomeItem };
 /** Colunas da tabela: as calculadas do esquema (esq.colunas = [{ rotulo, valor(registro, ctx) }]) ou os campos marcados `col`. */
-const colunasDe = e => e.colunas || e.campos.filter(c => c.col).map(c => ({ rotulo: c.rotulo, valor: r => fmt(c, r?.[c.k]) }));
+const colunasDe = e => e.colunas || e.campos.filter(c => c.col).map(c => ({ rotulo: c.rotulo, valor: r => fmt(c, campoDado(Object.keys(ESQUEMAS).find(k => ESQUEMAS[k] === e), c.k, r?.[c.k], traduzirDado)) }));
 
 /** avisarJogo(arquivo, cenario?) — avisa a aba do jogo (BroadcastChannel) que um arquivo mudou. */
-export function instalarDados({ api, toast, avisarJogo }) {
+export function instalarDados({ api, toast, avisarJogo, traduzir = s => s }) {
+  traduzirDado = traduzir;
   let nomeAtual = null, esq = null, dados = null, sel = null, sujo = false, filtro = '';
 
   // ── Lista de arquivos ────────────────────────────────────────────────────────
@@ -60,6 +63,7 @@ export function instalarDados({ api, toast, avisarJogo }) {
         <span class="sujo" id="d-sujo" ${sujo ? '' : 'hidden'}>● unsaved</span>
         <button id="d-descartar">Discard</button><button class="prim" id="d-salvar">Save</button></div>
       <div class="fraco">${esc(esq.descricao || '')} File: <code>public/data/${esc(esq.arquivo)}.json${esq.caminho ? ' → ' + esc(esq.caminho) : ''}</code>.
+        English text is shown where a translation is available; saved text changes only when you edit its field.<br>
         ${esq.recarga === 'vivo' ? 'The game applies changes immediately.' : 'After saving, reload the game (Ctrl+Shift+R).'}</div>
       <div id="d-corpo"></div>`;
     $('d-salvar').onclick = salvar;
@@ -67,8 +71,8 @@ export function instalarDados({ api, toast, avisarJogo }) {
     if (esq.forma === 'objeto') {
       const caixa = document.createElement('div'); caixa.className = 'caixa'; $('d-corpo').append(caixa);
       const prev = esq.previa ? previaDe(esq.previa) : null;                      // Fase 3: prévia também no arquivo-objeto (músicas, raid)
-      formulario(caixa, dados, () => prev?.then(m => m?.atualizar(dados)));
-      prev?.then(m => { if (m && caixa.isConnected) m.mostrar(caixa, dados); });
+      formulario(caixa, dados, () => prev?.then(m => m?.atualizar(registroDado(nomeAtual, dados, traduzirDado))));
+      prev?.then(m => { if (m && caixa.isConnected) m.mostrar(caixa, registroDado(nomeAtual, dados, traduzirDado)); });
     }
     else renderTabela();
   }
@@ -99,8 +103,8 @@ export function instalarDados({ api, toast, avisarJogo }) {
       f.innerHTML = `<div class="topo-edit"><h3 style="margin:0;margin-right:auto">${esq.forma === 'mapa' ? 'ID ' + esc(sel) : 'Row ' + (sel + 1)}</h3><button id="d-dup">Duplicate</button><button class="perigo" id="d-del">Delete</button></div>`;
       const caixa = document.createElement('div'); f.append(caixa);
       const r = reg(sel), prev = esq.previa ? previaDe(esq.previa) : null;
-      (esq.registroLista ? formularioLista : formulario)(caixa, r, () => { atualizarLinha(sel); prev?.then(m => m?.atualizar(r)); });
-      prev?.then(m => { if (m && caixa.isConnected) m.mostrar(caixa, r); });
+      (esq.registroLista ? formularioLista : formulario)(caixa, r, () => { atualizarLinha(sel); prev?.then(m => m?.atualizar(registroDado(nomeAtual, r, traduzirDado))); });
+      prev?.then(m => { if (m && caixa.isConnected) m.mostrar(caixa, registroDado(nomeAtual, r, traduzirDado)); });
       $('d-dup').onclick = duplicar; $('d-del').onclick = excluir;
     }
   }
@@ -165,7 +169,7 @@ export function instalarDados({ api, toast, avisarJogo }) {
   function formulario(cont, r, aoMudar) {
     cont.classList.add('form-reg');
     for (const c of esq.campos) {
-      const lab = document.createElement('label'), v = r[c.k];
+      const lab = document.createElement('label'), v = campoDado(nomeAtual, c.k, r[c.k], traduzirDado);
       lab.dataset.k = c.k;                                                          // Fase 3: a prévia acha o campo (ex.: seletor de cor → JSON da tinta)
       let w;
       if (c.tipo === 'bool') { lab.className = 'chk'; w = document.createElement('input'); w.type = 'checkbox'; w.checked = !!v; lab.append(w, ' ' + c.rotulo); }

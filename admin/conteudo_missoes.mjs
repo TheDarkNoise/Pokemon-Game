@@ -3,6 +3,8 @@
  * O save do jogador guarda o id da missão atual e o NÚMERO do passo: mexer na ordem dos passos de uma missão em andamento muda o
  * passo em que a pessoa está (o servidor só corrige quando a missão some ou o passo passa do fim). */
 import { esc, copia, campo, poe, gravar, ler, ref, datalist } from '/admin/conteudo.mjs';
+import { carregarMensagens } from './mensagens.mjs';
+import { textoDado } from './idioma_dados.mjs';
 import { TIPOS_PASSO } from '/admin/esquemas_f2.mjs';
 
 /** Que campos cada tipo de passo usa (além de texto e onde) — os mesmos que o missoes.mjs confere. */
@@ -13,11 +15,13 @@ const CAMPOS_PASSO = {
 const PADRAO_PASSO = { capturar: { n: 1 }, derrotar: { selvagem: true, n: 1 }, nivel: { lv: 10 }, insignia: { n: 1 } };
 
 export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) {
+  const traduzir = await carregarMensagens();
+  const campoTexto = o => campo({ ...o, valor: textoDado(o.valor, traduzir) });
   const [itens, { areas, cenas }, npcs] = await Promise.all([ref.itens(), ref.areas(), ref.npcs()]);
-  datalist('dl-f2-itens', Object.entries(itens).map(([id, i]) => [id, i.n]));
+  datalist('dl-f2-itens', Object.entries(itens).map(([id, i]) => [id, traduzir(i.n)]));
   datalist('dl-f2-areas', Object.entries(areas).map(([id, n]) => [id, n]));
   datalist('dl-f2-npcs', Object.entries(npcs).map(([id, n]) => [id, n.nome]));
-  const nomeItem = id => id == null ? '' : itens[id]?.n || `⚠ item ${id} does not exist`;
+  const nomeItem = id => id == null ? '' : traduzir(itens[id]?.n) || `⚠ item ${id} does not exist`;
   const nomeNpc = v => (Array.isArray(v) ? v : v == null ? [] : [v]).map(c => npcs[c]?.nome || `NPC ${c}`).join(', ');
 
   let caps = [], orig = '[]', sel = null, filtro = '';                      // sel = { c } (capítulo) ou { c, m } (missão)
@@ -44,10 +48,10 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
   function renderLista() {
     const f = filtro, linhas = [];
     caps.forEach((c, ci) => {
-      const ms = c.missoes.map((m, mi) => ({ m, mi })).filter(({ m }) => !f || `${m.id} ${m.nome} ${m.des || ''}`.toLowerCase().includes(f));
-      if (f && !ms.length && !`${c.id} ${c.nome}`.toLowerCase().includes(f)) return;
-      linhas.push(`<button class="cap ${sel && sel.c === ci && sel.m == null ? 'atual' : ''}" data-c="${ci}"><b>Ch. ${esc(c.id)} — ${esc(c.nome)}</b><span class="n">${c.missoes.length}</span></button>`);
-      for (const { m, mi } of ms) linhas.push(`<button class="mis ${sel && sel.c === ci && sel.m === mi ? 'atual' : ''}" data-c="${ci}" data-m="${mi}"><span>${esc(m.nome)}</span><span class="n">${esc(m.id)} · ${m.passos.length}p</span></button>`);
+      const ms = c.missoes.map((m, mi) => ({ m, mi })).filter(({ m }) => !f || `${m.id} ${m.nome} ${m.des || ''} ${traduzir(m.nome)} ${traduzir(m.des || '')}`.toLowerCase().includes(f));
+      if (f && !ms.length && !`${c.id} ${c.nome} ${traduzir(c.nome)}`.toLowerCase().includes(f)) return;
+      linhas.push(`<button class="cap ${sel && sel.c === ci && sel.m == null ? 'atual' : ''}" data-c="${ci}"><b>Ch. ${esc(c.id)} — ${esc(traduzir(c.nome))}</b><span class="n">${c.missoes.length}</span></button>`);
+      for (const { m, mi } of ms) linhas.push(`<button class="mis ${sel && sel.c === ci && sel.m === mi ? 'atual' : ''}" data-c="${ci}" data-m="${mi}"><span>${esc(traduzir(m.nome))}</span><span class="n">${esc(m.id)} · ${m.passos.length}p</span></button>`);
     });
     lista.innerHTML = linhas.join('') || '<div class="fraco" style="padding:8px">Nothing found.</div>';
     for (const b of lista.querySelectorAll('button')) b.onclick = () => { sel = { c: +b.dataset.c, ...(b.dataset.m != null ? { m: +b.dataset.m } : {}) }; renderLista(); renderEditor(); };
@@ -76,7 +80,7 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
       const g = grade();
       g.append(
         campo({ rotulo: 'Chapter ID', tipo: 'num', valor: c.id, min: 1, max: 99999, step: 1, aoMudar: v => { if (!Number.isInteger(v)) return 'whole number'; if (caps.some((x, i) => i !== sel.c && x.id === v)) return 'another chapter already has this ID'; c.id = v; mudou(); } }),
-        campo({ rotulo: 'Name', valor: c.nome, max_len: 80, classe: 'larga', aoMudar: v => { if (!v) return 'required'; c.nome = v; mudou(); } }));
+        campoTexto({ rotulo: 'Name', valor: c.nome, max_len: 80, classe: 'larga', aoMudar: v => { if (!v) return 'required'; c.nome = v; mudou(); } }));
       k.append(g);
       const info = document.createElement('div'); info.className = 'mini';
       info.textContent = `${c.missoes.length} quest(s). Chapters group quests in the Quests screen (J); chapter and quest order follows the story.`;
@@ -98,11 +102,11 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
         if (!Number.isInteger(v)) return 'whole number';
         if (caps.some(x => x.missoes.some(y => y !== m && y.id === v))) return 'another quest already has this ID';
         m.id = v; mudou(); } }),
-      campo({ rotulo: 'Chapter', tipo: 'opcao', valor: c.id, opcoes: caps.map(x => [x.id, `Ch. ${x.id} — ${x.nome}`]), vazio: '—', aoMudar: v => {
+      campo({ rotulo: 'Chapter', tipo: 'opcao', valor: c.id, opcoes: caps.map(x => [x.id, `Ch. ${x.id} — ${traduzir(x.nome)}`]), vazio: '—', aoMudar: v => {
         const ci = caps.findIndex(x => x.id === v); if (ci < 0 || ci === sel.c) return;
         c.missoes.splice(sel.m, 1); caps[ci].missoes.push(m); sel = { c: ci, m: caps[ci].missoes.length - 1 }; mudou(); renderEditor(); } }),
-      campo({ rotulo: 'Name', valor: m.nome, max_len: 100, classe: 'larga', aoMudar: v => { if (!v) return 'required'; m.nome = v; mudou(); } }),
-      campo({ rotulo: 'Description (shown in Quests)', tipo: 'area', valor: m.des, max_len: 400, classe: 'larga', aoMudar: v => { poe(m, 'des', v?.trim() ? v : null); mudou(); } }));
+      campoTexto({ rotulo: 'Name', valor: m.nome, max_len: 100, classe: 'larga', aoMudar: v => { if (!v) return 'required'; m.nome = v; mudou(); } }),
+      campoTexto({ rotulo: 'Description (shown in Quests)', tipo: 'area', valor: m.des, max_len: 400, classe: 'larga', aoMudar: v => { poe(m, 'des', v?.trim() ? v : null); mudou(); } }));
     km.append(g);
     editor.append(km, cartaoRecompensa(m));
     // ── passos
@@ -194,9 +198,9 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
     if (usa.has('cena')) g.append(campo({ rotulo: 'Only at the scene Pokémon Center', tipo: 'num', valor: p.cena, step: 1, ajuda: 'Empty = any Pokémon Center.', dica: v => v == null ? '' : cenas[v] || '⚠ unknown scene',
       aoMudar: v => { poe(p, 'cena', v); mudou(); } }));
     g.append(
-      campo({ rotulo: 'Tracker text *', valor: p.texto, max_len: 200, classe: 'larga', aoMudar: v => { if (!v) return 'required — this is what the player reads'; p.texto = v; mudou(); } }),
-      campo({ rotulo: 'Where (hint, optional)', valor: p.onde, max_len: 120, classe: 'larga', aoMudar: v => { poe(p, 'onde', v); mudou(); } }));
-    if (usa.has('fala')) g.append(campo({ rotulo: 'NPC dialogue for this step (one line each)', tipo: 'linhas', valor: p.fala, classe: 'larga', aoMudar: v => { if (v && v.length > 12) return 'up to 12 lines'; poe(p, 'fala', v); mudou(); } }));
+      campoTexto({ rotulo: 'Tracker text *', valor: p.texto, max_len: 200, classe: 'larga', aoMudar: v => { if (!v) return 'required — this is what the player reads'; p.texto = v; mudou(); } }),
+      campoTexto({ rotulo: 'Where (hint, optional)', valor: p.onde, max_len: 120, classe: 'larga', aoMudar: v => { poe(p, 'onde', v); mudou(); } }));
+    if (usa.has('fala')) g.append(campoTexto({ rotulo: 'NPC dialogue for this step (one line each)', tipo: 'linhas', valor: p.fala, classe: 'larga', aoMudar: v => { if (v && v.length > 12) return 'up to 12 lines'; poe(p, 'fala', v); mudou(); } }));
     if (p.tipo === 'item' || p.tipo === 'entregar') { const a = document.createElement('div'); a.className = 'aviso larga'; a.textContent = 'For accounts, the local server does not check this type yet ("entregar" counts as talking, without removing the item).'; g.append(a); }
     k.append(g);
     return k;

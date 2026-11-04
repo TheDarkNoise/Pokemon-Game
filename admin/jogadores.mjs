@@ -150,8 +150,8 @@ export function instalarJogadores({ api, toast, canal, resolverEspecie }) {
       <td class="j-ivs">${IVS.map(([k, r], i) => `<input type="number" min="0" max="31" data-iv="${i}" value="${ivsDe(p)[i]}" title="${r}">`).join('')}</td>
       <td><button class="mover" title="${onde === 'time' ? 'Send to storage' : 'Move to team'}">${onde === 'time' ? '↓' : '↑'}</button><button class="perigo rem" title="Release">✕</button></td></tr>`;
     const tabela = (lista, onde) => lista.length
-      ? `<table class="esp j-mons"><thead><tr><th>${onde === 'time' ? 'Time' : 'Storage'} (${lista.length})</th><th>Nv</th><th></th><th>Nature</th><th>IVs (HP Atq Def AtE DfE Vel)</th><th></th></tr></thead><tbody>${lista.map((p, i) => linha(p, onde, i)).join('')}</tbody></table>`
-      : `<div class="fraco" style="margin:6px 0">${onde === 'time' ? 'Team empty.' : 'Storage vazia.'}</div>`;
+      ? `<table class="esp j-mons"><thead><tr><th>${onde === 'time' ? 'Team' : 'Storage'} (${lista.length})</th><th>Nv</th><th></th><th>Nature</th><th>IVs (HP Atq Def AtE DfE Vel)</th><th></th></tr></thead><tbody>${lista.map((p, i) => linha(p, onde, i)).join('')}</tbody></table>`
+      : `<div class="fraco" style="margin:6px 0">${onde === 'time' ? 'Team empty.' : 'Storage empty.'}</div>`;
     const el = $('j-time'); if (!el) return;
     el.innerHTML = tabela(edTime.time, 'time') + tabela(edTime.caixa, 'caixa');
     for (const tr of el.querySelectorAll('tr[data-onde]')) {

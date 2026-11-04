@@ -18,7 +18,7 @@ const chaveTamanho = (glb, T) => { const m = String(glb).match(/^(pm\d{4})(?:_(\
 const fmt = n => Number(n).toLocaleString('pt-BR');
 
 export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) {
-  const [especies, modelosR] = await Promise.all([ref.especies(), api('/admin/modelos')]);
+  const [especies, modelosR, descricoesEn] = await Promise.all([ref.especies(), api('/admin/modelos'), fetch('/data/idioma/dex_en.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))]);
   const nomeSp = n => especies.get(+n)?.nome || `No. ${n}`;
   const maxDex = Math.max(...especies.keys());
   const glbsDe = {}; for (const { glb, dex } of modelosR.modelos || []) (glbsDe[dex] ||= []).push(String(glb).replace(/\.glb$/, ''));
@@ -94,10 +94,13 @@ export async function montar(sec, { api, toast, avisarJogo, marcarSujo, tela }) 
         else (D.especies[k] ||= {}).escala = v;
         wAlt.dica(dicaAltura(D.alturas[k])); atualizarLinha(); } });
     const sexoTxt = m => m == null ? '' : m < 0 ? 'genderless' : `♂ ${m}% · ♀ ${100 - m}%`;
+    const descricaoEn = campo({ rotulo: 'Pokédex description (English)', tipo: 'area', valor: descricoesEn[k] || '', classe: 'larga', ajuda: 'English entry shown in the game from species knowledge level 2.' });
+    descricaoEn.entrada.readOnly = true;
+    g.append(descricaoEn);
     g.append(wAlt, wAj,
       campo({ rotulo: '% male', tipo: 'num', valor: D.sexos[k], min: -1, max: 100, ajuda: '-1 = genderless · 50 = half · 87.5 = 7 in 8 (starters) · 0 = female only.', dica: sexoTxt,
         aoMudar: v => { if (v == null) return 'required'; if (v < 0 && v !== -1) return 'use -1 for genderless'; D.sexos[k] = v; if (X) { X.m = v; X.f = v < 0 ? -1 : 100 - v; } atualizarLinha(); } }),
-      campo({ rotulo: 'Pokédex description (Portuguese)', tipo: 'area', valor: D.descricoes_pt[k], classe: 'larga', max_len: 6000,
+      campo({ rotulo: 'Original Pokédex description (Portuguese)', tipo: 'area', valor: D.descricoes_pt[k], classe: 'larga', max_len: 6000,
         ajuda: 'The entry text (Portuguese game; English is in idioma/dex_en.json). Shown from species knowledge level 2.',
         aoMudar: v => { if (v == null || !v.trim()) delete D.descricoes_pt[k]; else D.descricoes_pt[k] = v; atualizarLinha(); } }));
     ke.append(g);

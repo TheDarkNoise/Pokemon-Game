@@ -110,7 +110,7 @@ async function iniciar() {
   await carregarReferencia();
   await carregarTudo();
   ligarUI();
-  if (!dadosInstalado){ dadosInstalado = true; instalarDados({ api, toast, avisarJogo }); instalarJogadores({ api, toast, canal, resolverEspecie }); instalarEventos({ api, toast }); instalarConteudo({ api, toast, avisarJogo }); }
+  if (!dadosInstalado){ dadosInstalado = true; instalarDados({ api, toast, avisarJogo, traduzir: traduzirErro }); instalarJogadores({ api, toast, canal, resolverEspecie }); instalarEventos({ api, toast }); instalarConteudo({ api, toast, avisarJogo }); }
 }
 let dadosInstalado = false;
 function mostrarLogin(msg = '') {
