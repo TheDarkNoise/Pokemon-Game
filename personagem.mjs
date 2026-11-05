@@ -513,7 +513,7 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
   const coresPor = {}; for (const t of Object.keys(PADRAO)) coresPor[t] = coresDe(t, salvo);
   const nomeSalvo = String(lerLS('nome', '') || '');
   const root = document.createElement('div'); root.id = 'criar'; if (sobreJogo) root.classList.add('sobre-jogo');
-  root.innerHTML = `<div class="caixa">${cancelavel ? '<button type="button" class="x" aria-label="fechar">✕</button>' : ''}<h2>Your trainer</h2>
+  root.innerHTML = `<div class="caixa">${cancelavel ? '<button type="button" class="x" aria-label="Close">✕</button>' : ''}<h2>Your trainer</h2>
     <div class="sub">choose your appearance and name${cancelavel ? '' : ' — you can change this later in Settings → ✎ Character'}</div>
     <div class="sexos"><button type="button" data-sexo="menino">Boy</button><button type="button" data-sexo="menina">Girl</button></div>
     <div class="cartas"></div>
@@ -543,7 +543,7 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
   };
   const selecionar = (id, tocar = true) => {
     const s = skinPorId(id); if (!s) return;
-    skin = s; input.placeholder = contaUsuario() || s.nome;
+    skin = s; input.placeholder = contaUsuario() || tr(s.nome);
     cartasEl.querySelectorAll('.carta').forEach(c => c.classList.toggle('on', c.dataset.id === id));
     P.selecionar(id); pintarCores(); if (tocar) clique();
   };
@@ -591,6 +591,6 @@ export function abrir({ som = null, cancelavel = false, sobreJogo = false, reser
   root.querySelector('.ok').onclick = confirmar;
   root.querySelector('.x')?.addEventListener('click', cancelar);
   root.querySelector('.cancela')?.addEventListener('click', cancelar);
-  pintarCartas(); selecionar(skin.id, false); input.placeholder = contaUsuario() || skin.nome;
+  pintarCartas(); selecionar(skin.id, false); input.placeholder = contaUsuario() || tr(skin.nome);
   return promessa;
 }

@@ -1215,5 +1215,7 @@
   "Sair ▸": "Exit ▸",
   "{raw_count} treinadores na batalha": "{raw_count} trainers in battle",
   "Nenhuma raid anunciada agora.": "No raid is currently announced.",
-  "mochila cheia": "Full bag"
+  "mochila cheia": "Full bag",
+  "pedido repetido": "duplicate request",
+  "⚠ pedido repetido.": "⚠ Duplicate request."
 }
