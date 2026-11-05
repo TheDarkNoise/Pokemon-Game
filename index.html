@@ -4979,7 +4979,7 @@ function reanimar(i, id, nome = REANIMADORES[id] || 'Reanimador'){
 }
 /** A cura da Joy (papel 'cura'): o time inteiro e o parceiro em campo voltam a 100%, desmaios removidos. */
 function curarTime(n){
-  if (comConta()) Rede.pedirVida('curar').then(r => { if (r && r.erro) Chat.sistema('⚠ ' + r.erro + '.'); });   // passo 3: a cura completa é do servidor (ele confere o Centro)
+  if (comConta()) Conta.salvarExperiencia().then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r && r.erro) Chat.sistema('⚠ ' + r.erro + '.'); });   // passo 3: a cura completa é do servidor (ele confere o Centro)
   for (const t of jogo.time){ t.hp = t.maxHp || t.hp || 1; t.koAte = 0; Ind.restaurarPP(t); }
   gravarLS('time', jogo.time);
   const p = jogo.pika;
@@ -5071,7 +5071,7 @@ function aposDesmaio(){
   }
   Chat.sistema('Todos os seus Pokémon desmaiaram! Você acorda ' + (noCentro ? 'no último Centro Pokémon…' : 'no laboratório do Professor Oak…'));
   for (const t of jogo.time){ t.hp = t.maxHp || t.hp || 1; t.koAte = 0; Ind.restaurarPP(t); } gravarLS('time', jogo.time);   // guardarEstadoAtivo já rodou no topo: XP do ativo preservado
-  if (comConta()) Rede.pedirVida('curar').then(r => { if (r?.erro){ console.warn('curar no respawn recusado:', r.erro); __boot.aviso('curar no respawn recusado', { erro: r.erro }); } }).catch(e => console.warn('curar no respawn:', e));                                               // 12/09: o HP é do servidor — sem isto a página seguinte lia hp 0 dele e desmaiava de novo (ele aceita a cura com o time todo KO)
+  if (comConta()) Conta.salvarExperiencia().then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r?.erro){ console.warn('curar no respawn recusado:', r.erro); __boot.aviso('curar no respawn recusado', { erro: r.erro }); } }).catch(e => console.warn('curar no respawn:', e));                                               // 12/09: o HP é do servidor — sem isto a página seguinte lia hp 0 dele e desmaiava de novo (ele aceita a cura com o time todo KO)
   p.hp = p.maxHp; p.desmaiado = 0;                                                                     // em memória também: qualquer gravação no unload sai curada
   portaOcupado = true;
   telaEscura(9000, (noCentro ? 'Centro Pokémon' : 'Laboratório') + '…');
@@ -5706,6 +5706,7 @@ async function usarItemEvolucao(id){
 function ganharExp(p, d, ganhoFixo = null){                               // ganhoFixo: o servidor já contou (fase 3c)
   if (!p?.dex || !d?.dex || !Evolucao.pronto()) return 0;
   const ganho = ganhoFixo ?? Math.max(1, Math.round(Evolucao.expGanha(p.lv, d.dex, d.lv, { chefe: !!d.chefe }) * Evento.expMult()));   // Fase 3: × EXP do evento ao vivo (o ganhoFixo o servidor já contou)
+  if (ganhoFixo == null && comConta() && Rede.selvagensDoAparelho()) Conta.registrarExperienciaLocal(uidParceiro(), d);
   p.exp = (p.exp ?? Evolucao.expPara(p.dex, p.lv)) + ganho;
   flutuar(p, '+' + ganho + ' XP', '#8ec5ff');
   const guardou = guardarReserva(p, ganho);                              // teto duro (GDD §7.4)
@@ -6235,6 +6236,7 @@ async function atravessar(p){
   const esperaPasse = (Conta.estado().modo === 'conta' && !Conta.cobreCena(mapa)) ? Rede.pedirPorta(p.id, p.destino, mapa, 1500).catch(() => false) : null;
   await Promise.all([dorme(550), esperaPasse]);
   if (esperaPasse && !Conta.cobreCena(mapa)) __boot.aviso('porta sem passe', { mapa, porta: p.id, chegada: p.destino }, true);
+  if (await Conta.enviarAgora() === false){ jogo.navegando = false; portaOcupado = false; $('boot').hidden = true; Chat.sistema('Progress could not be saved. Check your connection and try the door again.'); return; }
   try { sessionStorage.setItem('porta.ok', '1'); } catch {} descarregarCena(); location.replace(u.toString());
 }
 /* LEVAR O JOGADOR PRA OUTRA CENA A MANDO DO SERVIDOR (14/09, raid ao vivo: `raid_ir` e `raid_voltar`). É o `atravessar` sem porta: o
@@ -6253,7 +6255,7 @@ async function irParaCena({ mapa = null, chegada = null, texto = '', raid = null
   else Raid.apagarCarimbo();
   telaEscura(9000, texto || '…');
   if (mapa && Conta.estado().modo === 'conta' && !Conta.cobreCena(String(mapa))) __boot.aviso('cena sem passe', { mapa, via: 'irParaCena' }, true);   // passe de progresso: quem libera é o servidor (antes de mandar); o boot trata
-  try { await Promise.race([Conta.enviarAgora(), dorme(2500)]); } catch {}   // o que estiver pendente sobe antes da recarga (como o terminarIntro), sem ficar preso numa rede ruim
+  if (await Conta.enviarAgora() === false){ jogo.navegando = false; portaOcupado = false; $('boot').hidden = true; Chat.sistema('Progress could not be saved. Check your connection and try again.'); return false; }
   const u = new URL(location.href);
   if (mapa) u.searchParams.set('mapa', String(mapa)); else u.searchParams.delete('mapa');
   u.searchParams.delete('chegada'); u.searchParams.delete('personagem'); u.searchParams.delete('voltou'); u.searchParams.set('jogar', '1');

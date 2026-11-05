@@ -9,6 +9,7 @@
  * captura de Pokémon, cura no Centro Pokémon).
  */
 
+import { experienciaLocal } from './servidor_experiencia.mjs';
 import { comprarNaLoja } from './servidor_loja.mjs';
 import http from 'node:http';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -641,6 +642,18 @@ const httpServer = http.createServer((req, res) => {
       c.codigo = crypto.randomBytes(8).toString('hex');
       salvarContasJa();
       return json(200, { ok: true, codigo: c.codigo });
+    }
+
+    // Local wild battles run in the browser, but their earned XP must survive scene reloads.
+    if (req.method === 'POST' && rota === '/conta/experiencia') {
+      const u = usuarioDe(req);
+      if (!u) return json(401, { erro: 'Sessão inválida.' });
+      const data = nome => JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB, nome + '.json'), 'utf8'));
+      const r = experienciaLocal(contas[u], d, { exp: data('exp'), especies: JSON.parse(fs.readFileSync(nodePath.join(__dir, 'public/pokedex.json'), 'utf8')).species,
+        learnset: data('learnset'), golpes: data('golpes'), tetoNivel: data('config_jogo').tetoNivel, expMult: eventos.efetivo().expMult });
+      if (r.erro) return json(400, r);
+      salvarContasJa();
+      return json(200, r);
     }
 
     // ── Save (requer auth) ────────────────────────────────────────────────

@@ -405,7 +405,34 @@ export function pararSync(){                                              // sem
 }
 export const estaTravado = () => travado;
 /** Manda o que estiver pendente agora (Configurações, antes de sair). */
-export async function enviarAgora(){ const r = despachar(true); if (r) await r; }   // passo 6: o que estiver pendente vai por HTTP (aguardável: sair/troca)
+// XP receipts are acknowledged independently of party-order/preferences sync.
+const experienciaPendente = new Map();
+function enviarExperiencia(e){
+  if (e.enviando) return e.enviando;
+  e.enviando = api('POST', '/conta/experiencia', e.corpo, true).then(r => {
+    if (r.ok) experienciaPendente.delete(e.corpo.id);
+    return r.ok;
+  }).finally(() => { e.enviando = null; });
+  return e.enviando;
+}
+export function registrarExperienciaLocal(uid, derrotado){
+  if (modo !== 'conta' || travado || uid == null) return false;
+  const id = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+  const e = { corpo: { id, uid, derrotado: { dex: derrotado.dex, lv: derrotado.lv, chefe: !!derrotado.chefe } }, enviando: null };
+  experienciaPendente.set(id, e); enviarExperiencia(e); return true;
+}
+export async function salvarExperiencia(){
+  while (experienciaPendente.size) {
+    const resultados = await Promise.all([...experienciaPendente.values()].map(enviarExperiencia));
+    if (resultados.some(ok => !ok)) return false;
+  }
+  return true;
+}
+export async function enviarAgora(){
+  if (!await salvarExperiencia()) return false;
+  const r = despachar(true); if (r) await r;
+  return true;
+}   // passo 6: o que estiver pendente vai por HTTP (aguardável: sair/troca)
 
 /* ------------------------------------------------------------------ sair / zerar */
 export async function sair(){
