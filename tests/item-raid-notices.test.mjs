@@ -8,13 +8,14 @@ globalThis.fetch=async url=>{try{return{ok:true,json:async()=>JSON.parse(await r
 const I=await import('../i18n.mjs');await I.carregar('en');let itemSource;
 const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
 for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi))if(!m[1].includes('importmap')){const s=m[2],fn=parseAst(s).body.find(n=>n.type==='FunctionDeclaration'&&n.id.name==='usarItem');if(fn)itemSource=s.slice(fn.start,fn.end);}assert(itemSource);
-function use({p={},items={},id=2001,name='Poção',turn=null,callback=true}){
+function use({p={},items={},id=2001,name='Poção',turn=null,callback=true,revive=false}){
  const notices=[],requests=[],writes=[],rounds=[];
- const ctx={jogo:{pika:p,ash:{},time:[],turno:turn},eliteEstado:{corrida:null},REANIMADORES:{},ehReanimador:()=>false,lerLS:()=>items,gravarLS:(...x)=>writes.push(x),bolsaOp:(...x)=>requests.push(x),uidParceiro:()=> 'partner-7',flutuar:(e,s)=>notices.push(I.t(s)),Som:{tocar(){}},pintarTime(){},pintarTurno(){},rodadaDoServidor:(t,r)=>rounds.push(r),id,name,aviso:callback?(s,ok)=>notices.push(I.t(s)):null};
+ const ctx={jogo:{pika:p,ash:{},time:[],turno:turn},eliteEstado:{corrida:null},REANIMADORES:{},ehReanimador:()=>revive,lerLS:()=>items,gravarLS:(...x)=>writes.push(x),bolsaOp:(...x)=>requests.push(x),uidParceiro:()=> 'partner-7',flutuar:(e,s)=>notices.push(I.t(s)),Som:{tocar(){}},pintarTime(){},pintarTurno(){},rodadaDoServidor:(t,r)=>rounds.push(r),id,name,aviso:callback?(s,ok)=>notices.push(I.t(s)):null};
  const result=vm.runInNewContext(itemSource+';usarItem(id,name,aviso)',ctx);return{result,notices,requests,writes,rounds};
 }
 test('actual item refusals display English without spending items or turns',()=>{
  const cases=[
+  {p:{nome:'Pikachu',hp:20,maxHp:20},items:{2012:2},id:2012,name:'Reanimador',revive:true,expected:'No fainted Pokémon'},
   {p:{nome:'Pikachu',hp:20,maxHp:20},items:{2001:2},expected:'Pikachu already has full HP. To heal another Pokémon, select it from the party bar'},
   {p:{nome:'Pikachu',hp:0,maxHp:20},items:{2001:2},expected:'Pikachu has fainted: use a Revive or visit a Pokémon Center'},
   {p:{nome:'Pikachu',movs:[{id:1,pp:10,ppMax:10}]},items:{2022:2},id:2022,name:'Éter',expected:'Pikachu already has full PP'},

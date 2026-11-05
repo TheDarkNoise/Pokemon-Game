@@ -49,3 +49,22 @@ test('admin notices use English prompts and preserve names while Portuguese rema
  assert.equal(tr('Cancelar não está online.'),'Cancelar is not online.');
  await I.carregar('pt');assert.equal(I.t('A raid do Moeda começa em 15 s!'),'A raid do Moeda começa em 15 s!');await I.carregar('en');
 });
+
+
+test('actual event banner and chat translate before the lightning prefix and preserve custom event names',async()=>{
+ const html=await read('index.html');let code;
+ for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi))if(!m[1].includes('importmap')){const found=find(parseAst(m[2]),n=>n.type==='FunctionExpression'&&n.id?.name==='letreiroInvasao');if(found)code=m[2].slice(found.start,found.end);}
+ assert(code);const name='Double Xp , Shiny 10 , Wild 2',raw='🎉 Evento: '+name+' · EXP ×3 · selvagens ×2',expected='⚡ 🎉 Event: '+name+' · EXP ×3 · wild Pokémon ×2',lt={style:{}},messages=[],el={classList:{remove(){}},querySelector:()=>lt};
+ vm.runInNewContext('('+code+')(text)',{text:raw,I18n:I,document:{getElementById:id=>id==='letreiro-css'?{}:el},Chat:{sistema:txt=>messages.push(I.t(txt))},clearTimeout(){},setTimeout(){}});
+ assert.equal(lt.textContent.trim(),expected);assert.deepEqual(messages,[expected]);
+});
+
+test('F-slot ball icons use the catalogue, including the shared Shiny Ball icon',async()=>{
+ const html=await read('index.html'),catalogue=JSON.parse(await read('public/data/menus_dados.json')).itens;let code;
+ for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi))if(!m[1].includes('importmap')){const found=find(parseAst(m[2]),n=>n.type==='FunctionDeclaration'&&n.id.name==='iconeBola');if(found)code=m[2].slice(found.start,found.end);}
+ assert(code);const before=JSON.stringify(catalogue);
+ for(const [id,item] of Object.entries(catalogue).filter(([,v])=>v.t===7)){
+  const path=vm.runInNewContext(code+';iconeBola(id)',{ITENS_CATALOGO:catalogue,id});assert.equal(path,'./ui/itens/'+item.i+'.png');assert((await readFile(new URL('../'+path,import.meta.url))).length>0);
+ }
+ assert.equal(vm.runInNewContext(code+';iconeBola(1012)',{ITENS_CATALOGO:catalogue}),'./ui/itens/ic_1008.png');assert.equal(JSON.stringify(catalogue),before);
+});

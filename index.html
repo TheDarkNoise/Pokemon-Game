@@ -3260,7 +3260,8 @@ function ginasioEspera(g){ const cd = ginasioCd()[g.numero]; if (!cd) return 0; 
 const CENAS_EXPORTADAS = new Set((await fetch('./data/interiores_mapas.txt').then(r => r.ok ? r.text() : '').catch(() => '')).split(/\s+/).filter(Boolean).map(Number));   // interiores com GLB: porta só pra esses (Kanto tem portas pra cenas ainda não exportadas)
 const NPCS_GLB = await fetch('./data/npcs_glb.json').then(r => r.json()).catch(() => ({}));
 Ind.carregarLearnset(await fetch('./data/learnset.json').then(r => r.json()).then(L => { for (const [id, g] of Object.entries(GOLPES)) if (Number.isInteger(g.pp) && g.pp > 0) (L.pp ||= {})[id] = g.pp; return L; }).catch(() => null));   // golpes por nível (Sword/Shield) + PP (Fase 2: o PP de cada golpe vem do data/golpes.json, que o painel edita)
-const ITENS_NOME = await fetch('./data/menus_dados.json').then(r => r.json()).then(d => Object.fromEntries(Object.entries(d.itens || {}).map(([id, it]) => [id, it.n]))).catch(() => ({}));   // nomes pros avisos de missão
+const ITENS_CATALOGO = await fetch('./data/menus_dados.json').then(r => r.json()).then(d => d.itens || {}).catch(() => ({}));
+const ITENS_NOME = Object.fromEntries(Object.entries(ITENS_CATALOGO).map(([id, it]) => [id, it.n]));   // nomes pros avisos de missão
 await Evolucao.carregar();                                                 // regras de evolução + curvas de XP (antes do nascimento: o parceiro nasce com exp)
 let DEX_EXTRA = null; fetch('./data/dex_extra.json').then(r => r.json()).then(j => { DEX_EXTRA = j; }).catch(() => {});   // golpes por nível (regras "conhecendo X"); pode chegar depois
 const portasCena = []; const emPorta = new Set(); let portaOcupado = false;   // estado das portas/NPCs (funções mais abaixo)
@@ -7627,6 +7628,7 @@ if (jogo.ash){
      barra e o texto rola da direita pra esquerda; some sozinho depois de ~28 s. Também joga no chat, pra ficar no histórico. */
   window.letreiroInvasao = function letreiroInvasao(texto){
     if (!texto) return;
+    texto = I18n.t(texto);
     try {
       if (!document.getElementById('letreiro-css')){
         const st = document.createElement('style'); st.id = 'letreiro-css';
@@ -7744,6 +7746,7 @@ Object.assign(window, { usarGolpe, proximoAlvo, emPe, dePeMaisPerto, desmaiar, a
 function setHTML(el, html){ if (el.__html !== html){ el.innerHTML = html; el.__html = html; } }   // `function` (içada): pintarBarra pode ser chamada por mensagem da rede antes desta linha (auditoria 12/09)
 function setTexto(el, s){ if (el.__txt !== s){ el.textContent = s; el.__txt = s; } }
 /* `TIPO_PT` (nomes dos ícones de tipo) mora junto do `jogo`, lá em cima: `pintarBarra` pode rodar por mensagem da rede antes desta linha (auditoria 12/09). */
+function iconeBola(id){ return './ui/itens/' + (ITENS_CATALOGO[id]?.i || ('ic_' + id)) + '.png'; }
 function pintarBarra(){
   const p = jogo.pika; if (!p) return;
   const bc = $('chefe-btn'); if (bc){ const ocupado = !!jogo.chefe; if (bc.disabled !== ocupado){ bc.disabled = ocupado; bc.style.opacity = ocupado ? 0.45 : 1; bc.innerHTML = ocupado ? I18n.t('☄ chefe em campo') : I18n.t('☄ Chamar chefe') + ' <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #ff5f5f;border-radius:3px;font-family:ui-monospace,Consolas,monospace">B</b>'; } }
@@ -7784,7 +7787,7 @@ function pintarBarra(){
   if (a) Hud.fill(elAlvo.querySelector('.alvo-fill'), a.hp / a.maxHp, corVida(a.hp / a.maxHp));
   const sel = jogo.bolaSel, nb = jogo.bolas?.[sel] || 0;
   setTexto($('bola-nome'), I18n.t(BOLAS[sel]?.[0] || sel)); setTexto($('bola-n'), '×' + nb);
-  const bi = $('bola-icone'); if (bi && bi.__sel !== sel){ bi.__sel = sel; bi.classList.add('real'); bi.style.backgroundImage = "url('./ui/itens/ic_" + sel + ".png')"; }   // ícone real da bola (pacote Item)
+  const bi = $('bola-icone'); if (bi && bi.__sel !== sel){ bi.__sel = sel; bi.classList.add('real'); bi.style.backgroundImage = "url('" + iconeBola(sel) + "')"; }   // Use the catalogue icon: event balls can share another ball's image.
   const bb = $('bola-btn'), semBola = nb <= 0; if (bb.__frio !== semBola){ bb.classList.toggle('frio', semBola); bb.__frio = semBola; }
   pintarAtalhos();
 }
