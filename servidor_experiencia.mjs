@@ -1,3 +1,4 @@
+import {prepararEstadoLocal} from './servidor_estado_local.mjs';
 import {hpDe} from './individuo.mjs';
 
 /** Local-world server: the client reports a defeated opponent, never an XP amount or a new level.
@@ -23,7 +24,7 @@ export function experienciaLocal(conta, evento, {exp, especies, learnset, golpes
     const sobra = Math.max(0, p.exp - max); p.exp -= sobra;
     p.expReserva = (p.expReserva || 0) + sobra;
   }
-  if (!Array.isArray(p.movs) || !p.movs.length) p.movs = (learnset.learnset?.[p.dex] || []).filter(([,n]) => n <= p.lv).slice(-4).map(([id]) => ({id, pp: learnset.pp?.[id] ?? 20, ppMax: learnset.pp?.[id] ?? 20}));
+  prepararEstadoLocal(p, {especies,learnset,golpes});
   while (p.lv < 100 && p.exp >= curva[p.lv + 1]) {
     const maxAntes = S ? hpDe(S, p) : p.maxHp;
     p.lv++; p.amizade = Math.min(255, (p.amizade ?? exp.especies[p.dex]?.a ?? 70) + 2);

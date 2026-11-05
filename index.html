@@ -2918,6 +2918,7 @@ async function montar(glb, { trocar = false } = {}){
   const aguaAqui = naAgua(ash.x, ash.z);
   if (meio === 'agua' && !aguaAqui){ const p = aguaPerto(ash.x, ash.z, 6); if (!p){ flutuar(ash, def[1] + ' só entra pela beira da água', '#ffd23a'); return; } px = p.x; pz = p.z; }
   if (aguaAqui && meio === 'terra' && !def[4]){ flutuar(ash, def[1] + ' não anda na água', '#ffd23a'); return; }
+  guardarEstadoAtivo();
   jogo.montando = true;
   try {
     const g = await modeloMon(glb + '.glb');
@@ -2993,6 +2994,7 @@ function desmontar(){
   const emLinha = (px, pz) => linhaAte(px, pz, ash.x, ash.z);
   const t = doSurf ? (terraPerto(ash.x, ash.z, raio, (px, pz) => emLinha(px, pz) && aguaPerto(px, pz) !== null) || terraPerto(ash.x, ash.z, raio, (px, pz) => emLinha(px, pz) && desceSemPrender(px, pz))) : terraPerto(ash.x, ash.z, raio);
   if (!t){ flutuar(ash, 'sem terra firme por perto pra descer', '#ffd23a'); return false; }
+  guardarEstadoAtivo();
   soltarMontaria();
   ash.x = t.x; ash.z = t.z; ash.y = chaoEm(t.x, t.z) ?? m.y; ash.vx = ash.x; ash.vz = ash.z; ash.vy = ash.y; ash.giro = m.giro; ash.alvoX = null;
   ash.pivo.position.set(ash.vx, ash.vy, ash.vz); ash.pivo.rotation.set(0, ash.giro, 0);
@@ -3430,15 +3432,7 @@ if (JOGAR){
     // quem segue o Ash: Pikachu por padrão, ou ?seguidor=pm0244_00 (Entei) etc.
     /* 4 golpes: os da espécie (tabela) e, pra completar, golpes de dano com efeito, do tipo do
        Pokémon primeiro, do mais fraco pro mais forte — até a tabela de aprendizado por nível entrar. */
-    const quatroGolpes = dex => {
-      const S = porDex.get(dex);
-      const base = [...(dex === 25 ? GOLPES_PIKA : (GOLPES_ESPECIE[dex] || ['tackle']))];
-      const tipos = S?.types || [], usados = new Set(base);
-      const cands = Object.values(GOLPES).filter(g => g && g.id && g.efeito && g.cat !== 'status' && g.poder >= 30 && g.poder <= 95 && !usados.has(g.id))
-        .sort((a, b) => (tipos.includes(b.tipo) - tipos.includes(a.tipo)) || a.poder - b.poder);
-      for (const g of cands){ if (base.length >= 4) break; base.push(g.id); usados.add(g.id); }
-      return base.slice(0, 4);
-    };
+    const quatroGolpes = dex => Ind.fallbackDaEspecie(dex, porDex.get(dex), GOLPES);
     const configurarSeguidor = (pika, seguidorNome) => {
       const dex = +((seguidorNome || 'pm0025_00').match(/pm(\d{4})/)?.[1] || 25);
       const S = porDex.get(dex) || porDex.get(25);
@@ -4967,7 +4961,7 @@ function reanimar(i, id, nome = REANIMADORES[id] || 'Reanimador'){
   const it = lerLS('itens', {}), t = jogo.time[i]; if (!t || !(it[id] > 0)) return false;
   if (!estaKO(t, i)){ flutuar(jogo.ash, t.nome + ' não está desmaiado', '#ffd23a'); return false; }
   const cheio = /m[aá]x/i.test(nome);
-  bolsaOp('usar', { item: +id, uid: uidAlvo });                           // com conta, quem desconta e quem reanima de verdade é o SERVIDOR
+  bolsaOp('usar', { item: +id, uid: uidAlvo, estado:{hp:t.hp,movs:(t.movs||[]).map(m=>({...m}))} });                           // com conta, quem desconta e quem reanima de verdade é o SERVIDOR
   it[id]--; if (it[id] <= 0) delete it[id]; gravarLS('itens', it);        // local já, pro jogador ver na hora
   if (i === membroAtivo()){
     const p = jogo.pika; p.hp = cheio ? p.maxHp : Math.ceil(p.maxHp / 2); p.desmaiado = 0; p.travaAnim = 0; p.anim = null; tocarAnim(p, 'Idle');
@@ -4979,7 +4973,7 @@ function reanimar(i, id, nome = REANIMADORES[id] || 'Reanimador'){
 }
 /** A cura da Joy (papel 'cura'): o time inteiro e o parceiro em campo voltam a 100%, desmaios removidos. */
 function curarTime(n){
-  if (comConta()) Conta.salvarExperiencia().then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r && r.erro) Chat.sistema('⚠ ' + r.erro + '.'); });   // passo 3: a cura completa é do servidor (ele confere o Centro)
+  if (comConta()) (guardarEstadoAtivo(), Conta.enviarAgora()).then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r && r.erro) Chat.sistema('⚠ ' + r.erro + '.'); });   // passo 3: a cura completa é do servidor (ele confere o Centro)
   for (const t of jogo.time){ t.hp = t.maxHp || t.hp || 1; t.koAte = 0; Ind.restaurarPP(t); }
   gravarLS('time', jogo.time);
   const p = jogo.pika;
@@ -5071,7 +5065,7 @@ function aposDesmaio(){
   }
   Chat.sistema('Todos os seus Pokémon desmaiaram! Você acorda ' + (noCentro ? 'no último Centro Pokémon…' : 'no laboratório do Professor Oak…'));
   for (const t of jogo.time){ t.hp = t.maxHp || t.hp || 1; t.koAte = 0; Ind.restaurarPP(t); } gravarLS('time', jogo.time);   // guardarEstadoAtivo já rodou no topo: XP do ativo preservado
-  if (comConta()) Conta.salvarExperiencia().then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r?.erro){ console.warn('curar no respawn recusado:', r.erro); __boot.aviso('curar no respawn recusado', { erro: r.erro }); } }).catch(e => console.warn('curar no respawn:', e));                                               // 12/09: o HP é do servidor — sem isto a página seguinte lia hp 0 dele e desmaiava de novo (ele aceita a cura com o time todo KO)
+  if (comConta()) (guardarEstadoAtivo(), Conta.enviarAgora()).then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r?.erro){ console.warn('curar no respawn recusado:', r.erro); __boot.aviso('curar no respawn recusado', { erro: r.erro }); } }).catch(e => console.warn('curar no respawn:', e));                                               // 12/09: o HP é do servidor — sem isto a página seguinte lia hp 0 dele e desmaiava de novo (ele aceita a cura com o time todo KO)
   p.hp = p.maxHp; p.desmaiado = 0;                                                                     // em memória também: qualquer gravação no unload sai curada
   portaOcupado = true;
   telaEscura(9000, (noCentro ? 'Centro Pokémon' : 'Laboratório') + '…');
@@ -5108,6 +5102,7 @@ function usarItem(id, nome = '', aviso = null){
      e como a conta de cura logo abaixo é feita pelo NOME, nenhum casava com Poção/Super/Hiper e os quatro davam 20 de HP.
      Sai antes das checagens de HP porque recarregar golpe não é curar: vale com o HP cheio e vale em Pokémon desmaiado.
      Quem restaura de verdade é o servidor (o `bolsa_usar` devolve o PP novo); aqui é só o efeito na hora, pro jogador ver. */
+  const estadoAntes = {hp:p.hp,movs:(p.movs || []).map(m=>({...m}))};
   const PP_ITENS = { 2022: { pp: 10, todos: false }, 2023: { pp: 'cheio', todos: false }, 2024: { pp: 10, todos: true }, 2025: { pp: 'cheio', todos: true } };
   const doPP = PP_ITENS[+id];
   if (doPP){
@@ -5118,7 +5113,7 @@ function usarItem(id, nome = '', aviso = null){
     if (!alvos.length || alvos.every(cheio)) return recusa(aviso ? p.nome + ' já está com o PP cheio' : 'PP já está cheio', p);
     let subiu = 0;
     for (const m of alvos){ const max = m.ppMax ?? m.pp ?? 0, antes = m.pp || 0; m.pp = doPP.pp === 'cheio' ? max : Math.min(max, antes + doPP.pp); subiu += m.pp - antes; }
-    bolsaOp('usar', { item: +id, uid: uidParceiro() });
+    bolsaOp('usar', { item: +id, uid: uidParceiro(), estado: estadoAntes });
     it[id]--; if (it[id] <= 0) delete it[id]; gravarLS('itens', it);
     flutuar(p, '+' + subiu + ' PP', '#8ecdf5'); Som.tocar('ui/sound_pkmnhealing', { volume: .6 });
     aviso?.(p.nome + ' recuperou ' + subiu + ' PP' + (doPP.todos ? ' (todos os golpes)' : ''), true);
@@ -5130,7 +5125,7 @@ function usarItem(id, nome = '', aviso = null){
   const cura = /Total|total/.test(nome) ? 1e9 : /Super/.test(nome) ? 60 : /Hiper|Máx/.test(nome) ? 200 : 20;
   const hpAntes = p.hp || 0;
   p.hp = Math.min(p.maxHp || p.hp, (p.hp || 0) + cura);
-  bolsaOp('usar', { item: +id, uid: uidParceiro() });                     // com conta, quem desconta e quem cura de verdade é o SERVIDOR
+  bolsaOp('usar', { item: +id, uid: uidParceiro(), estado: estadoAntes });                     // com conta, quem desconta e quem cura de verdade é o SERVIDOR
   it[id]--; if (it[id] <= 0) delete it[id]; gravarLS('itens', it);        // local já, pro jogador ver na hora
   flutuar(p, 'curou ' + Math.min(cura, 999) + ' HP', '#8ef58e'); Som.tocar('ui/sound_pkmnhealing', { volume: .6 });
   aviso?.(p.nome + ' recuperou ' + Math.round(p.hp - hpAntes) + ' HP', true);
@@ -5438,6 +5433,7 @@ function aplicarVidas(lista){
     for (const [arr, ehTime] of alvos){
       const e = arr.find(x => String(x?.uid) === String(v.uid)); if (!e) continue;
       if (v.lv != null && v.lv > (e.lv || 0)){ for (let L = (e.lv || 0) + 1; L <= v.lv; L++){ e.lv = L; try { aprenderNoNivel(e); } catch (x){ console.warn('aprender:', x); } } }   // 12/09: nível do servidor também ensina os golpes do nível (com conta ninguém aprendia golpe novo)
+      if (Array.isArray(v.movs)) e.movs = v.movs.map(m=>({...m}));
       if (v.lv != null) e.lv = v.lv; if (v.exp != null) e.exp = v.exp;
       if (v.hp != null) e.hp = v.hp; if (v.maxHp != null) e.maxHp = v.maxHp;
       if (v.expReserva != null) e.expReserva = v.expReserva;               // XP guardada pelo teto de nível: agora é do servidor (12/09)
@@ -5472,6 +5468,7 @@ function aplicarVidas(lista){
 let ultimoItemget = 0;   // 14/09 (manhã): o acelerador do som da loja gravava em Som.__ultimoItemget — Som é o NAMESPACE do módulo (import *), read-only: toda compra no Pokémart lançava TypeError (l.neto, Syvel, catatum: 3 relatos no #relatos) e o item comprado não entrava na mochila local até o F5 (a "Pedra da Lua" da evolução do Nidorino)
 async function bolsaOp(op, dados = {}){
   if (!comConta()) return null;
+  if (op === 'usar' && await Conta.salvarExperiencia() === false) return {erro:'Progress could not be saved.'};
   const r = await Rede.pedirBolsa(op, dados);
   if (!r || r.erro){ const erro = r?.erro || 'The server did not respond'; Chat.sistema('⚠ ' + erro + '.'); return r || { erro }; }
   if (op === 'comprar' || op === 'coleta'){ const ag = performance.now(); if (ag - ultimoItemget > 160){ ultimoItemget = ag; Som.tocar('ui/sound_itemget', { volume: .7, prio: true }); } }   // sons do jogo original (11/09); 14/09 (Syvel, celular): comprar em rajada empilhava o som e ele distorcia — 1 toque a cada 160 ms
@@ -6236,6 +6233,7 @@ async function atravessar(p){
   const esperaPasse = (Conta.estado().modo === 'conta' && !Conta.cobreCena(mapa)) ? Rede.pedirPorta(p.id, p.destino, mapa, 1500).catch(() => false) : null;
   await Promise.all([dorme(550), esperaPasse]);
   if (esperaPasse && !Conta.cobreCena(mapa)) __boot.aviso('porta sem passe', { mapa, porta: p.id, chegada: p.destino }, true);
+  guardarEstadoAtivo();
   if (await Conta.enviarAgora() === false){ jogo.navegando = false; portaOcupado = false; $('boot').hidden = true; Chat.sistema('Progress could not be saved. Check your connection and try the door again.'); return; }
   try { sessionStorage.setItem('porta.ok', '1'); } catch {} descarregarCena(); location.replace(u.toString());
 }
@@ -6255,6 +6253,7 @@ async function irParaCena({ mapa = null, chegada = null, texto = '', raid = null
   else Raid.apagarCarimbo();
   telaEscura(9000, texto || '…');
   if (mapa && Conta.estado().modo === 'conta' && !Conta.cobreCena(String(mapa))) __boot.aviso('cena sem passe', { mapa, via: 'irParaCena' }, true);   // passe de progresso: quem libera é o servidor (antes de mandar); o boot trata
+  guardarEstadoAtivo();
   if (await Conta.enviarAgora() === false){ jogo.navegando = false; portaOcupado = false; $('boot').hidden = true; Chat.sistema('Progress could not be saved. Check your connection and try again.'); return false; }
   const u = new URL(location.href);
   if (mapa) u.searchParams.set('mapa', String(mapa)); else u.searchParams.delete('mapa');

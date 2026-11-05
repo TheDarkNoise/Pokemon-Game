@@ -28,7 +28,7 @@ test('actual item refusals display English without spending items or turns',()=>
 test('successful all-move PP restoration retains inventory, request and turn contracts',()=>{
  const p={nome:'Pikachu',movs:[{id:1,pp:0,ppMax:10},{id:2,pp:7,ppMax:20}]},items={2024:2},turn={serv:true,fase:'escolha'};const r=use({p,items,turn,id:2024,name:'Elixir'});
  assert.equal(r.result,true);assert.deepEqual(p.movs.map(m=>m.pp),[10,17]);assert.equal(items[2024],1);assert(r.notices.includes('Pikachu recovered 20 PP (all moves)'));
- assert.deepEqual(JSON.parse(JSON.stringify(r.requests)),[['usar',{item:2024,uid:'partner-7'}]]);assert.deepEqual(JSON.parse(JSON.stringify(r.rounds)),[{tipo:'item',item:2024}]);assert.equal(turn.fase,'usando');assert.equal(r.writes[0][0],'itens');
+ assert.deepEqual(JSON.parse(JSON.stringify(r.requests)),[['usar',{item:2024,uid:'partner-7',estado:{movs:[{id:1,pp:0,ppMax:10},{id:2,pp:7,ppMax:20}]}}]]);assert.deepEqual(JSON.parse(JSON.stringify(r.rounds)),[{tipo:'item',item:2024}]);assert.equal(turn.fase,'usando');assert.equal(r.writes[0][0],'itens');
 });
 test('raid queue refusals translate with the actual server warning prefix',async()=>{
  const source=await readFile(new URL('../servidor_raid.mjs',import.meta.url),'utf8');let fn;

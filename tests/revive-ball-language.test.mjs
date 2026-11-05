@@ -19,7 +19,7 @@ test('actual Revive handler translates both success messages without changing HP
   assert.equal(vm.runInNewContext(code('reanimar')+';reanimar(0,id,nome)',scope),true);
   const label=max?'Max Revive':'Revive';assert.deepEqual(notices,[label+' → '+nickname,label+' used on '+nickname+(max?' (full HP).':' (half HP).')]);
   assert.equal((active?pika:target).hp,max?31:16);assert.equal(items[id],1);assert.equal(target.nome,nickname);
-  assert.deepEqual(JSON.parse(JSON.stringify(requests)),[['usar',{item:id,uid:'unchanged-uid'}]]);assert.equal(writes[0][0],'itens');
+  assert.deepEqual(JSON.parse(JSON.stringify(requests)),[['usar',{item:id,uid:'unchanged-uid',estado:{hp:0,movs:[]}}]]);assert.equal(writes[0][0],'itens');
  }
 });
 
@@ -64,7 +64,7 @@ test('actual potion and single/all-move PP recovery callbacks translate without 
   assert.equal(vm.runInNewContext(code('usarItem')+';usarItem(id,nome,aviso)',ctx),true);assert.equal(items[id],1);assert.equal(p.nome,nickname);
   assert.deepEqual(notices,[nickname+(id===2001?' recovered 20 HP':id===2022?' recovered 10 PP':' recovered 10 PP (all moves)')]);assert.equal(p.hp,id===2001?25:5);assert.equal(p.movs[0].pp,id===2001?0:10);
   assert.deepEqual(floating,[id===2001?'healed 20 HP':'+10 PP']);
-  assert.deepEqual(JSON.parse(JSON.stringify(requests)),[['usar',{item:id,uid:'unchanged-uid'}]]);
+  assert.deepEqual(JSON.parse(JSON.stringify(requests)),[['usar',{item:id,uid:'unchanged-uid',estado:{hp:5,movs:[{id:1,pp:0,ppMax:20}]}}]]);
  }
  for(const nickname of ['Moeda','Pedra'])for(const [raw,en]of [[' não tem golpes',' has no moves'],[' já está com o PP cheio',' already has full PP'],[' está desmaiado',' has fainted'],[' está desmaiado: use um Reanimador ou vá ao Centro Pokémon',' has fainted: use a Revive or visit a Pokémon Center'],[' já está com o HP cheio. Pra curar outro, chame ele pela barra do time',' already has full HP. To heal another Pokémon, select it from the party bar']])assert.equal(I.t(nickname+raw),nickname+en);
 });

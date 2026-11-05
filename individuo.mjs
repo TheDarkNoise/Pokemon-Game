@@ -1,3 +1,4 @@
+import { GOLPES_PIKA, GOLPES_ESPECIE } from './golpes_base.mjs';
 /* Indivíduo: IV (0–31 por stat) e natureza (25, +10 %/−10 %) — o que faz cada Pokémon ser único.
    Fórmulas da série (as de regras.mjs são estas com IV/EV zerados e natureza neutra; o ×3 do HP é a folga do
    combate em tempo real). EV fica reservado (parâmetro `ev`, sempre 0 por enquanto — decisão no GDD §11.3).
@@ -39,6 +40,14 @@ export function carregarLearnset(d){ LEARN = d || null; }
 export const ppDe = id => LEARN?.pp?.[id] ?? 20;
 export const learnsetDe = dex => LEARN?.learnset?.[dex] || [];
 /** Ids que um indivíduo dessa espécie/nível teria: os últimos 4 do learnset ≤ lv; mínimo 2 (completa com o fallback). */
+export function fallbackDaEspecie(dex, especie, golpes){
+  const base = [...(dex === 25 ? GOLPES_PIKA : (GOLPES_ESPECIE[dex] || ['tackle']))];
+  const tipos = especie?.types || [], usados = new Set(base);
+  const candidatos = Object.values(golpes).filter(g => g && g.id && g.efeito && g.cat !== 'status' && g.poder >= 30 && g.poder <= 95 && !usados.has(g.id))
+    .sort((a,b) => (tipos.includes(b.tipo) - tipos.includes(a.tipo)) || a.poder - b.poder);
+  for (const g of candidatos){ if (base.length >= 4) break; base.push(g.id); usados.add(g.id); }
+  return base.slice(0,4);
+}
 export function golpesIniciais(dex, lv, fallback = []){
   const ids = [...new Set(learnsetDe(dex).filter(([, n]) => n <= (lv || 1)).map(([k]) => k))].slice(-4);
   for (const f of fallback){ if (ids.length >= 2) break; if (!ids.includes(f)) ids.push(f); }

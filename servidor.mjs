@@ -1,3 +1,5 @@
+import { usarItemLocal } from './servidor_itens.mjs';
+import { aplicarEstadoLocal, prepararEstadoLocal } from './servidor_estado_local.mjs';
 /**
  * Servidor de desenvolvimento — Pokemon 3D Base
  * HTTP + WebSocket na porta 5190
@@ -216,6 +218,19 @@ function aplicarPrefs(c, prefs) {
 /* `arranjo` só REORDENA (e move entre time/caixa) os Pokémon que a conta JÁ tem, casando por uid: o registro de cada
    um continua sendo o do servidor, então o cliente não inventa espécie/nível/shiny nem edita stats por aqui. Só aceita
    se o conjunto de uids continuar o mesmo (nada criado, duplicado ou sumido). */
+let estadoLocalCache = null;
+function dadosEstadoLocal(){
+  const arquivos = ['public/pokedex.json','public/data/learnset.json','public/data/golpes.json'].map(p=>nodePath.join(__dir,p));
+  const marca = arquivos.map(p=>fs.statSync(p).mtimeMs).join(':');
+  if (estadoLocalCache?.marca !== marca) { const [pokedex,learnset,golpes] = arquivos.map(p=>JSON.parse(fs.readFileSync(p,'utf8'))); estadoLocalCache = {marca, especies:pokedex.species,learnset,golpes}; }
+  return estadoLocalCache;
+}
+function prepararTimeLocal(c){
+  if (!c?.save) return;
+  const dados = dadosEstadoLocal(), antes = JSON.stringify(c.save);
+  for (const p of [...(c.save.time || []),...(c.save.caixa || [])]) prepararEstadoLocal(p,dados);
+  if (JSON.stringify(c.save) !== antes){ c.rev = (c.rev || 0) + 1; salvarContas(); }
+}
 function aplicarArranjo(c, arranjo) {
   if (!arranjo || typeof arranjo !== 'object') return;
   const porUid = new Map();
@@ -231,7 +246,11 @@ function aplicarArranjo(c, arranjo) {
     return max ? nova.slice(0, max) : nova;
   };
   const time = reordenar(arranjo.time, 6), caixa = reordenar(arranjo.caixa, 0);
-  if (time && caixa && time.length + caixa.length === porUid.size) { c.save.time = time; c.save.caixa = caixa; }
+  if (time && caixa && time.length + caixa.length === porUid.size && new Set([...time,...caixa].map(p=>String(p.uid))).size === porUid.size) {
+    const dados = dadosEstadoLocal();
+    for (const recebido of [...arranjo.time,...arranjo.caixa]) if (recebido && typeof recebido === 'object') { const p = porUid.get(String(recebido.uid)); if (p) aplicarEstadoLocal(p,recebido,dados); }
+    c.save.time = time; c.save.caixa = caixa;
+  }
 }
 /* dex (Pokédex) e conhecimento: o cliente NÃO sobrescreve o objeto inteiro — só ACRESCENTA (merge monotônico), senão dava
    pra mandar a Pokédex 100%/conhecimento no talo. dex = { nºdex: 'visto'|'pego' }: o cliente só marca 'visto'; o 'pego' quem
@@ -623,6 +642,7 @@ const httpServer = http.createServer((req, res) => {
       const ban = banidoAteDe(c);                                         // painel → Jogadores → Banir
       if (ban) return json(403, { erro: 'Conta suspensa ' + (ban === -1 ? 'para sempre' : 'até ' + new Date(ban).toLocaleString('pt-BR')) + '.' + (c.banMotivo ? ' Motivo: ' + c.banMotivo : '') });
       const manut = eventos.bloqueiaLogin(c); if (manut) return json(503, { erro: manut });   // Fase 3: modo manutenção (GM entra)
+      prepararTimeLocal(c);
       const token = tokenNovo();
       c.token = token;
       c.tokenExp = Date.now() + TOKEN_VIDA_MS;
@@ -661,6 +681,7 @@ const httpServer = http.createServer((req, res) => {
       const u = usuarioDe(req);
       if (!u) return json(401, { erro: 'Sessão inválida.' });
       const c = contas[u];
+      prepararTimeLocal(c);
       return json(200, { ok: true, save: c.save || null, rev: c.rev || 0, gm: !!c.gm, cargo: c.cargo || null, alfa: !!c.alfa, idioma: c.idioma || null, ...(c.posGm ? { pos: c.posGm } : {}) });
     }
 
@@ -686,7 +707,7 @@ const httpServer = http.createServer((req, res) => {
         if (d.conhecimento !== undefined) c.save.conhecimento = mesclarConhecimento(c.save.conhecimento, d.conhecimento);   // nº15: só soma, não sobrescreve
         if (d.dex !== undefined) c.save.dex = mesclarDex(c.save.dex, d.dex);                                                 // nº15: cliente só adiciona 'visto'
         c.rev = (c.rev || 0) + 1;
-        salvarContas();
+        salvarContasJa();
         if (d.outroAparelho) return json(409, { erro: 'Conflito de sessão.', outroAparelho: true });
       }
       return json(200, { ok: true, rev: contas[u]?.rev || 0 });
@@ -1149,6 +1170,16 @@ wss.on('connection', ws => {
         break;
       }
 
+      case 'pref': {
+        const c = contas[sessoes.get(ws._info?.token)];
+        if (c?.save) { aplicarPrefs(c,{[m.chave]:m.valor}); c.rev = (c.rev || 0) + 1; salvarContas(); }
+        break;
+      }
+      case 'arranjo': {
+        const c = contas[sessoes.get(ws._info?.token)];
+        if (c?.save) { aplicarArranjo(c,m); c.rev = (c.rev || 0) + 1; salvarContas(); }
+        break;
+      }
       // Save de intenções do cliente (arranjo/prefs/conhecimento)
       case 'save': {
         const u = (sessoes.get(ws._info?.token) || null);
@@ -1284,6 +1315,11 @@ wss.on('connection', ws => {
             if (resultado.erro) enviar(ws, { t: 'bolsa_erro', op, erro: resultado.erro });
             else { salvarContas(); enviar(ws, { t: 'bolsa', op, ...resultado }); }
           }
+          else if (op === 'usar') {
+            const resultado = usarItemLocal(c,m,JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB,'menus_dados.json'),'utf8')),dadosEstadoLocal());
+            if (resultado.erro) enviar(ws,{t:'bolsa_erro',op,erro:resultado.erro,bolsa:c?.save ? {dinheiro:c.save.dinheiro,itens:c.save.itens,bolas:c.save.bolas,insignias:c.save.insignias} : null,vidas:c?.save?.time});
+            else { salvarContasJa(); enviar(ws,{t:'bolsa',op,...resultado}); }
+          }
           // bolsa_missao: paga recompensa da missão concluída
           else if (op === 'missao' && m.missao && c) {
             // ANTI-TRAPAÇA: só paga se a missão foi REALMENTE concluída (está em feitas) e ainda NÃO foi paga.
@@ -1314,7 +1350,8 @@ wss.on('connection', ws => {
           const c = u ? contas[u] : null;
           let vidas = null;
           if (c?.save?.time) {
-            vidas = c.save.time.map(p => ({ ...p, hp: p.hpMax || p.stats?.hp || 100, status: null }));
+            prepararTimeLocal(c);
+            vidas = c.save.time.map(p => { const movs = (p.movs || []).map(m=>({...m,pp:m.ppMax})); return {...p,hp:p.maxHp,koAte:0,status:null,movs,ppEsq:{}}; });
             c.save.time = vidas;
             c.rev = (c.rev || 0) + 1;
             salvarContas();
