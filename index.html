@@ -2912,7 +2912,7 @@ async function montar(glb, { trocar = false } = {}){
   if (jogo.turno && !jogo.montaria){ flutuar(jogo.ash, 'não dá pra montar em batalha', '#f58e8e'); return; }   // 14/09 (l.neto, vídeo): o atalho 5–9 montava no meio da batalha por turno
   glb = String(glb || '').replace(/\.glb$/, '');
   if (jogo.montaria && (!trocar || jogo.montaria.glb === glb)) return desmontar();   // desmontar vem ANTES do portão (14/09): montado no Arcanine, o M com outro glb travava em cima dele
-  if (!podeMontar(glb)){ if (jogo.ash) flutuar(jogo.ash, 'montarias chegam em breve', '#ffd23a'); return; }
+  if (!podeMontar(glb)){ if (jogo.ash) flutuar(jogo.ash, 'Mounts are disabled for your account.', '#ffd23a'); return; }
   const def = MONTARIAS.find(d => d[0] === glb) || [glb, glb, 'RideIdle1', 'Ride1', true, 0.6, 25000, 'anfibia'];
   const meio = def[7] || 'terra', { ash } = jogo;
   let px = ash.x, pz = ash.z;                                            // onde a montaria nasce
