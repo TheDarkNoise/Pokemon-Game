@@ -10,13 +10,22 @@ export function experienciaLocal(conta, evento, {exp, especies, learnset, golpes
   const p = conta.save?.time?.find(p => p.uid != null && String(p.uid) === String(evento.uid));
   const dex = evento?.derrotado?.dex, lv = evento?.derrotado?.lv;
   if (!p || !Number.isInteger(dex) || !exp.especies?.[dex] || !Number.isInteger(lv) || lv < 1 || lv > 100) return {erro: 'Invalid local battle.'};
+  const b = exp.especies[dex].b || 60;
+  const base = b * lv / 5 * ((2 * lv + 10) / (lv + p.lv + 10)) ** 2.5 + 1;
+  const ganho = Math.max(1, Math.round(Math.max(1, Math.floor(base * (evento.derrotado.chefe === true ? 3 : 1))) * expMult));
+  const resultado = concederExperiencia(conta, p, ganho, {exp, especies, learnset, golpes, tetoNivel});
+  if (resultado.erro) return resultado;
+  conta.experienciaLocalIds = [...(conta.experienciaLocalIds || []), id].slice(-1024);
+  conta.rev = (conta.rev || 0) + 1;
+  return resultado;
+}
+
+/** Fixed XP from a server-owned reward table; never called with a client XP amount. */
+export function concederExperiencia(conta, p, ganho, {exp, especies, learnset, golpes, tetoNivel}) {
   const curva = exp.curvas[exp.especies[p.dex]?.c || 'medium'];
   if (!curva || !Number.isInteger(p.lv) || p.lv < 1 || p.lv > 100) return {erro: 'Invalid Pokémon progression.'};
   const limites = Array.isArray(tetoNivel) && tetoNivel.length === 9 ? tetoNivel : [20,26,32,38,46,52,58,62,70];
   const teto = conta.save.eliteVencida ? 100 : limites[Math.min(8, (conta.save.insignias || []).length)];
-  const b = exp.especies[dex].b || 60;
-  const base = b * lv / 5 * ((2 * lv + 10) / (lv + p.lv + 10)) ** 2.5 + 1;
-  const ganho = Math.max(1, Math.round(Math.max(1, Math.floor(base * (evento.derrotado.chefe === true ? 3 : 1))) * expMult));
   const antes = p.lv, S = especies.find(s => s.n === +p.dex);
   p.exp = (Number.isFinite(p.exp) ? p.exp : curva[p.lv]) + ganho;
   if (teto < 100) {
@@ -35,7 +44,5 @@ export function experienciaLocal(conta, evento, {exp, especies, learnset, golpes
       else p.aprender = [...(p.aprender || []), id];
     }
   }
-  conta.experienciaLocalIds = [...(conta.experienciaLocalIds || []), id].slice(-1024);
-  conta.rev = (conta.rev || 0) + 1;
-  return {ok: true, ganho, lv: p.lv, subiu: p.lv - antes};
+  return {ok:true, ganho, lv:p.lv, subiu:p.lv-antes};
 }

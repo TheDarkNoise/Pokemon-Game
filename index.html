@@ -2861,7 +2861,8 @@ const MONTARIAS_PADRAO = [
   ['pm0131_00', 'Lapras',    'RideIdle2', 'Ride2', false, 0.9,  18750, 'agua'],
   ['pm0211_00', 'Qwilfish',  'RideIdle5', 'Ride5', false, 2.3,  10000, 'agua'],   // 02/09: a 3ª aquática do jogo (MountConfig 57002: MapSize 2,3, MoveSpeed2 = a pé)
 ];
-const MONTARIAS_ARQ = await fetch('./data/montarias.json').then(r => r.ok ? r.json() : null).then(l => Array.isArray(l) && l.length ? l : null).catch(() => null);
+// Read the current admin catalogue, not the stale copy from the last website build.
+const MONTARIAS_ARQ = await fetch(Conta.baseHttp(new URLSearchParams(location.search)) + '/montarias', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(l => Array.isArray(l) ? l : null).catch(() => null);
 const MONTARIAS = MONTARIAS_ARQ ? MONTARIAS_ARQ.map(d => [d.glb, d.nome, d.poseIdle, d.poseRun, !!d.voa, d.escala, d.vel, d.meio]) : MONTARIAS_PADRAO;
 /** Quanto a montaria afunda quando está n'água (a origem do modelo é o chão; na água o corpo fica meio submerso). */
 const MERGULHO = { agua: 0.3, anfibia: 0.15 };
@@ -2904,7 +2905,7 @@ function selaNaSuperficie(m, nomeOsso){
 /* MONTARIA SÓ PRA STAFF por enquanto (11/09): a tecla M montava o Lugia voador pra QUALQUER conta nova e o seletor de atalho
    oferecia as 8 montarias de graça (o Jaime viu). Até a loja de montarias existir, com conta só staff monta; jogo local
    (?rede=0, demo, bancadas) segue livre pra testar. `podeMontar` é o único portão: M, atalhos 5–9 e ?montaria= passam por ele. */
-const MONTARIAS_LIVRES = new Set(MONTARIAS_ARQ ? MONTARIAS_ARQ.filter(d => d.livre).map(d => d.glb) : ['pm0059_00', 'pm0131_00']);   // 14/09 (Jaime): o ARCANINE é de todo mundo; 15/09 (Jaime): a LAPRAS também (capítulo 11 em diante é pelo mar) — o resto segue só pra staff até a loja de montarias (Fase 2: "Liberada pra todos" no painel)
+const MONTARIAS_LIVRES = new Set((MONTARIAS_ARQ || []).filter(d => d.livre === true).map(d => d.glb));   // Missing catalogue never grants account mounts.
 const podeMontar = (glb = null) => Conta.estado().modo !== 'conta' || GM_REAL || (glb != null && MONTARIAS_LIVRES.has(String(glb).replace(/\.glb$/, '')));   // pelo modo da conta, não pela rede: cair do WebSocket não pode liberar
 async function montar(glb, { trocar = false } = {}){
   if (!jogo.ash || jogo.montando) return;
@@ -4924,16 +4925,13 @@ jogo.bolas = lerLS('bolas', { 1001: 10, 1002: 5, 1003: 2, 1004: 1 });
 const ATALHOS_N = 5, ATALHOS_TECLAS = ['5', '6', '7', '8', '9'];   // 5º slot: pedido do Jaime 31/08 (a barra da Amanda tem 5 casas)
 const atalhosSalvos = lerLS('atalhos', null);
 jogo.atalhos = (atalhosSalvos || []).slice(0, ATALHOS_N); while (jogo.atalhos.length < ATALHOS_N) jogo.atalhos.push(null);
-/* Starter mount shortcuts are assigned only without a saved preference. Empty saved slots stay empty.
-   ARCANINE PRA TODO MUNDO (14/09): quem tem conta e nenhuma montaria nos atalhos ganha o Arcanine no primeiro slot vazio (no celular é
-   o jeito de montar; no PC o M também serve). Fica na preferência `atalhos`, que a conta guarda. */
-if (CONTA.modo === 'conta' && !Array.isArray(atalhosSalvos) && !jogo.atalhos.some(a => a && a.tipo === 'montaria')){
+/* Only enabled starter mounts are assigned, and only without saved shortcut preferences.
+   Empty saved slots stay empty across map changes. */
+if (CONTA.modo === 'conta' && MONTARIAS_LIVRES.has('pm0059_00') && !Array.isArray(atalhosSalvos) && !jogo.atalhos.some(a => a && a.tipo === 'montaria')){
   const vago = jogo.atalhos.findIndex(a => !a);
   if (vago >= 0){ jogo.atalhos[vago] = { tipo: 'montaria', glb: 'pm0059_00', nome: 'Arcanine', icone: './ui/mon/pm0059.png' }; gravarLS('atalhos', jogo.atalhos); }
 }
-/* LAPRAS PRA TODO MUNDO (15/09, Jaime): as missões do capítulo 11 em diante (Rotas 19 e 20) são pelo mar. Quem tem conta e ainda não tem a
-   Lapras nos atalhos ganha ela no primeiro slot vazio (sem slot vazio, ela aparece no seletor do atalho). Aquática: entra pela beira. */
-if (CONTA.modo === 'conta' && !Array.isArray(atalhosSalvos) && !jogo.atalhos.some(a => a && a.tipo === 'montaria' && a.glb === 'pm0131_00')){
+if (CONTA.modo === 'conta' && MONTARIAS_LIVRES.has('pm0131_00') && !Array.isArray(atalhosSalvos) && !jogo.atalhos.some(a => a && a.tipo === 'montaria' && a.glb === 'pm0131_00')){
   const vago = jogo.atalhos.findIndex(a => !a);
   if (vago >= 0){ jogo.atalhos[vago] = { tipo: 'montaria', glb: 'pm0131_00', nome: 'Lapras', icone: './ui/mon/pm0131.png' }; gravarLS('atalhos', jogo.atalhos); }
 }

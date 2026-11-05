@@ -1,3 +1,4 @@
+import { pagarRecompensaMissao } from './servidor_missoes.mjs';
 import { usarItemLocal } from './servidor_itens.mjs';
 import { aplicarEstadoLocal, prepararEstadoLocal } from './servidor_estado_local.mjs';
 /**
@@ -158,16 +159,25 @@ function passoJaFeito(u, p) {
 function enviarMissao(ws, resultado) {
   if (!resultado) return;
   const { estado, passoFeito, concluida } = resultado;
-  enviar(ws, { t: 'missao', estado, passoFeito: passoFeito && !concluida, concluiu: concluida?.id || null, nome: concluida?.nome || null });
+  const u = sessoes.get(ws._info?.token), c = contas[u];
+  const pago = concluida && c ? pagarRecompensaMissao(c, concluida, dadosRecompensaMissao()) : null;
+  if (pago?.ok) salvarContasJa();
+  enviar(ws, { t: 'missao', estado, passoFeito: passoFeito && !concluida, concluiu: concluida?.id || null, nome: concluida?.nome || null,
+    ...(pago?.ok ? {pago, bolsa:pago.bolsa, vidas:pago.vidas} : {}) });
 }
-function recompensaMissao(m) {
-  const r = m?.recompensa;
-  if (!r) return null;
-  const bolsa = {};
-  if (r.dinheiro) bolsa.dinheiro = r.dinheiro;
-  if (r.itens) bolsa.itens = r.itens;
-  if (r.bolas) bolsa.bolas = r.bolas;
-  return bolsa;
+function dadosRecompensaMissao() {
+  const data = nome => JSON.parse(fs.readFileSync(nodePath.join(__dir, 'public/data', nome + '.json'), 'utf8'));
+  return {...dadosEstadoLocal(), exp:data('exp'), tetoNivel:data('config_jogo').tetoNivel};
+}
+function recuperarRecompensasMissao(c) {
+  carregarMissoes();
+  let pago = false;
+  for (const id of c.save?.missoes?.feitas || []) {
+    if (!MISSOES[id] || c.save.recompensasPagas?.some(x=>String(x)===String(id))) continue;
+    if (pagarRecompensaMissao(c, MISSOES[id], dadosRecompensaMissao()).ok) pago = true;
+  }
+  if (pago) salvarContasJa();
+  return pago;
 }
 
 // ── Persistência ────────────────────────────────────────────────────────────
@@ -555,6 +565,16 @@ const httpServer = http.createServer((req, res) => {
     res.writeHead(code, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(obj));
   };
+
+  // Public mount settings are read directly so admin changes do not require a website rebuild.
+  if (req.method === 'GET' && rota === '/montarias') {
+    res.setHeader('Cache-Control', 'no-store');
+    try {
+      const catalogo = JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB, 'montarias.json'), 'utf8'));
+      if (!Array.isArray(catalogo)) throw new Error('Invalid mount catalogue');
+      return json(200, catalogo);
+    } catch { return json(503, { erro: 'Mount settings are temporarily unavailable.' }); }
+  }
 
   // ── Upload do GLB de cenário (binário; o editor 3D re-exporta o mapa) ──────────
   // Caminho próprio: o corpo é um .glb (vários MB), não JSON — não passa pelo cap de 1MB nem pelo parse de texto.
@@ -1126,7 +1146,8 @@ wss.on('connection', ws => {
         const uM = sessoes.get(m.token) || null;
         if (uM && contas[uM]) {
           const estM = missaoEstadoDe(uM);
-          if (estM.atual) enviar(ws, { t: 'missao', estado: estM });
+          const recuperado = recuperarRecompensasMissao(contas[uM]);
+          enviar(ws, { t: 'missao', estado: estM, ...(recuperado ? {bolsa:{dinheiro:contas[uM].save.dinheiro,itens:contas[uM].save.itens,bolas:contas[uM].save.bolas},vidas:contas[uM].save.time} : {}) });
         }
         console.log(`[+] ${ws._usuario} entrou em ${ws._mapa} (${conexoes.size} online)`);
         break;
@@ -1320,24 +1341,13 @@ wss.on('connection', ws => {
             if (resultado.erro) enviar(ws,{t:'bolsa_erro',op,erro:resultado.erro,bolsa:c?.save ? {dinheiro:c.save.dinheiro,itens:c.save.itens,bolas:c.save.bolas,insignias:c.save.insignias} : null,vidas:c?.save?.time});
             else { salvarContasJa(); enviar(ws,{t:'bolsa',op,...resultado}); }
           }
-          // bolsa_missao: paga recompensa da missão concluída
+          // Retry support uses the same completed-quest check and once-only ledger.
           else if (op === 'missao' && m.missao && c) {
-            // ANTI-TRAPAÇA: só paga se a missão foi REALMENTE concluída (está em feitas) e ainda NÃO foi paga.
-            const est = c.save?.missoes;
-            const feita = !!(est && Array.isArray(est.feitas) && est.feitas.includes(m.missao));
-            if (c.save && !Array.isArray(c.save.recompensasPagas)) c.save.recompensasPagas = [];
-            const jaPaga = !!c.save?.recompensasPagas?.includes(m.missao);
-            const miss = MISSOES[m.missao];
-            const rec = recompensaMissao(miss);
-            if (feita && !jaPaga && rec && c.save) {
-              c.save.recompensasPagas.push(m.missao);
-              if (rec.dinheiro) c.save.dinheiro = (c.save.dinheiro || 0) + rec.dinheiro;
-              if (rec.itens) { if (!c.save.itens) c.save.itens = {}; for (const [k, v] of Object.entries(rec.itens)) c.save.itens[k] = (c.save.itens[k] || 0) + v; }
-              if (rec.bolas) { if (!c.save.bolas) c.save.bolas = {}; for (const [k, v] of Object.entries(rec.bolas)) c.save.bolas[k] = (c.save.bolas[k] || 0) + v; }
-              c.rev = (c.rev || 0) + 1;
-              salvarContas();
-            }
-            enviar(ws, { t: 'bolsa', op, bolsa: { dinheiro: c.save?.dinheiro, itens: c.save?.itens, bolas: c.save?.bolas } });
+            carregarMissoes();
+            const pago = pagarRecompensaMissao(c, MISSOES[m.missao], dadosRecompensaMissao());
+            if (pago.ok) salvarContasJa();
+            if (pago.erro) enviar(ws, {t:'bolsa_erro',op,erro:pago.erro});
+            else enviar(ws, {t:'bolsa',op,bolsa:{dinheiro:c.save?.dinheiro,itens:c.save?.itens,bolas:c.save?.bolas},...(pago.ok?{vidas:pago.vidas}:{})});
           } else {
             enviar(ws, { t: 'bolsa', op, bolsa: c?.save ? { dinheiro: c.save.dinheiro ?? 9999, bolas: c.save.bolas, itens: c.save.itens } : null });
           }
