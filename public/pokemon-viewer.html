@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,12 +54,12 @@
     <div id="info">
         <h2>Pokemon 3D Viewer</h2>
         <select id="pokemon-select">
-            <option value="">Selecione um Pokemon</option>
+            <option value="">Select a Pokémon</option>
         </select>
         <div>
-            <button onclick="loadPokemon()">Carregar</button>
+            <button onclick="loadPokemon()">Load</button>
             <button onclick="toggleWireframe()">Wireframe</button>
-            <button onclick="toggleRotate()">Auto-Rotacionar</button>
+            <button onclick="toggleRotate()">Auto-rotate</button>
         </div>
         <div id="stats"></div>
     </div>
@@ -128,7 +128,7 @@
             p.meshes.forEach((mesh, i) => {
                 const opt = document.createElement('option');
                 opt.value = `/assets/pokemon/pm${p.id}_${mesh}.obj`;
-                opt.textContent = `#${p.id} ${p.name} (Forma ${i + 1})`;
+                opt.textContent = `#${p.id} ${p.name} (Form ${i + 1})`;
                 select.appendChild(opt);
             });
         });
@@ -140,7 +140,7 @@
             const path = select.value;
             if (!path) return;
 
-            document.getElementById('stats').textContent = 'Carregando...';
+            document.getElementById('stats').textContent = 'Loading...';
 
             if (currentModel) {
                 scene.remove(currentModel);
@@ -191,10 +191,10 @@
                 },
                 (xhr) => {
                     const pct = Math.round(xhr.loaded / xhr.total * 100);
-                    document.getElementById('stats').textContent = `Carregando... ${pct}%`;
+                    document.getElementById('stats').textContent = `Loading... ${pct}%`;
                 },
                 (error) => {
-                    document.getElementById('stats').textContent = `Erro: ${error.message}`;
+                    document.getElementById('stats').textContent = `Error: ${error.message}`;
                 }
             );
         };

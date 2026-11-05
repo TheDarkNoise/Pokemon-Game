@@ -6,7 +6,9 @@
     "dev": "vite",
     "servidor": "node servidor.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start:server": "node servidor.mjs",
+    "start:preview": "vite preview --host 0.0.0.0 --port 5300 --strictPort"
   },
   "dependencies": {
     "fairygui-three": "^1.0.1",
@@ -15,5 +17,8 @@
   },
   "devDependencies": {
     "vite": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

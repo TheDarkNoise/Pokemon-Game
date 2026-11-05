@@ -111,7 +111,7 @@ function criarPaginas(cartas, mudar){
   const a = Math.round(h * 0.17), folga = Math.round(a * 0.3);
   const seta = (txt, x, n) => {
     const b = document.createElement('div');
-    b.className = 'pf-pagina'; b.textContent = txt; b.setAttribute('role', 'button'); b.setAttribute('aria-label', n < 0 ? 'página anterior' : 'próxima página');
+    b.className = 'pf-pagina'; b.textContent = txt; b.setAttribute('role', 'button'); b.setAttribute('aria-label', n < 0 ? 'previous page' : 'next page');
     Object.assign(b.style, { position: 'absolute', left: x + 'px', top: (y0 + h / 2 - a / 2) + 'px', width: a + 'px', height: a + 'px', borderRadius: '50%',
       border: Math.max(1, a * 0.05) + 'px solid ' + OURO, background: '#0B1220', color: OURO, display: 'none', placeItems: 'center',
       font: '900 ' + Math.round(a * 0.62) + 'px/1 "Nunito Sans", system-ui, sans-serif', cursor: 'pointer', zIndex: '600', userSelect: 'none', pointerEvents: 'auto' });
@@ -277,7 +277,7 @@ function montarPersonalizar(pop, def, ctx){
   /* conjunto de visual fixo: some com as cores e diz por quê (esse caso não existe na maquete) */
   if (!canais.length){
     for (const f of ['bg-cores', 'btn-aleatorio', 'btn-padrao']){ const el = pop.querySelector('[data-fig="' + f + '"]'); if (el) el.style.display = 'none'; }
-    rotuloTexto(pop, 'dica-tela', 'este conjunto tem visual fixo — escolha só o nome');
+    rotuloTexto(pop, 'dica-tela', 'this outfit has a fixed appearance — just choose a name');
   }
 
   /* nome */
@@ -329,7 +329,7 @@ async function comecar(pop, ctx, C){
   let r = { ok: true, nome };
   try { if (ctx?.conta?.trocarNome) r = await ctx.conta.trocarNome(nome); } catch (e){ r = { ok: false, erro: String(e?.message || e) }; }
   ocupado = false;
-  if (!r?.ok){ C.aviso(tr(r?.erro || 'esse nome não deu — tente outro')); return; }
+  if (!r?.ok){ C.aviso(tr(r?.erro || 'that name did not work — try another')); return; }
   const p = { tipo: skin.id };
   if (skin.tinta) p.cores = { ...estado.coresPor[skin.tinta] };
   Personagem.gravar(p);

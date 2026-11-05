@@ -6,7 +6,7 @@ import { t as tr, tHtml } from './i18n.mjs';   // IDIOMA (11/09): tr() traduz te
  * quem conhece as regras do jogo é quem chama (menus.mjs), escrevendo nas áreas pelo id do Figma:
  *
  *   const p = Popup.montar(layout.popups.pokemon, { acao, aba, item, fechar });
- *   Popup.texto(p, 'ficha-nome', 'Pikachu');      Popup.imagem(p, 'pokemon', './ui/mon/pm0025.png', item);
+ *   Popup.textoBruto(p, 'ficha-nome', 'Pikachu'); Popup.imagem(p, 'pokemon', './ui/mon/pm0025.png', item);
  *   Popup.barra(p, 'vida', 0.7, '#2FAE47', item); Popup.badge(p, 'ficha-tipo', 'eletrico', 'Electric');
  *   Popup.abrir(p);  Popup.fechar(p);
  *
@@ -432,7 +432,10 @@ export function item(pop, i, prefixo = 'item-time'){ return pop?.querySelector('
 export function grupo(pop, nome){ return pop?.querySelector('[data-fig="' + nome + '"]'); }
 
 export function texto(pop, id, s, dentro = null){
-  s = tr(s);                                                               // idioma (11/09): valor em pt vira o do jogador; número e nome passam direto
+  return textoBruto(pop, id, tr(s), dentro);
+}
+/** Player-authored text bypasses translation while retaining normal popup sizing and line breaks. */
+export function textoBruto(pop, id, s, dentro = null){
   const el = noDe(pop, 'data-txt', id, dentro); if (!el) return null;
   const v = s == null ? '' : String(s);
   /* Texto com QUEBRA escrita (rodada 26: a descrição da raid `[quebrar:3]` vem em 3 frases separadas por \n): o `white-space:normal`
@@ -458,11 +461,12 @@ export function imagem(pop, id, url, dentro = null){
 }
 /** EXEMPLOS DA MAQUETE (rodada 30, 18/09): o que já tem texto/imagem do jogo fica; o resto ganha o exemplo do layout (txt, imgvar com a
     folga `exemploPad`, fill a 70%). Veio da bancada dos pop-ups pra servir também ao modo prévia do adm (`Menus.previa`). */
+const EXEMPLOS_BRUTOS = new Set(['pokemon-nome', 'inimigo-nome', 'ficha-nome', 'nome', 'especie-nome', 'jogador-nome', 'amigo-nome', 'conversa-nome', 'solicitante-nome', 'lider-nome', 'candidato-nome', 'membro-nome', 'boss-nome', 'modelo-nome']);
 export function encherExemplo(pop){
   const anda = (filhos, pai) => { for (const f of filhos || []){
     const el = pai.querySelector(':scope > [data-fig="' + (f.nome || '') + '"], :scope > [data-txt="' + (f.id || '') + '"], :scope > [data-var="' + (f.id || '') + '"]');
     if (!el) continue;
-    if (f.tipo === 'txt' && f.exemplo && !el.textContent) el.textContent = f.exemplo;
+    if (f.tipo === 'txt' && f.exemplo && !el.textContent) el.textContent = EXEMPLOS_BRUTOS.has(f.id) ? f.exemplo : tr(f.exemplo);
     if (f.tipo === 'imgvar' && f.exemplo && !el.style.backgroundImage){ el.style.backgroundImage = 'url(' + f.exemplo + ')'; el.style.backgroundSize = 'contain'; el.style.backgroundRepeat = 'no-repeat'; el.style.backgroundPosition = 'center'; el.style.display = 'block'; if (f.exemploPad) Hud.fundoComFolga(el, f.exemploPad); }
     if (f.tipo === 'fill' && el.dataset && !el.dataset.k) Hud.fill(el, 0.7);
     anda(f.filhos, el); } };

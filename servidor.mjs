@@ -1,3 +1,6 @@
+import { pagarRecompensaMissao } from './servidor_missoes.mjs';
+import { usarItemLocal } from './servidor_itens.mjs';
+import { aplicarEstadoLocal, prepararEstadoLocal } from './servidor_estado_local.mjs';
 /**
  * Servidor de desenvolvimento — Pokemon 3D Base
  * HTTP + WebSocket na porta 5190
@@ -9,6 +12,8 @@
  * captura de Pokémon, cura no Centro Pokémon).
  */
 
+import { experienciaLocal } from './servidor_experiencia.mjs';
+import { comprarNaLoja } from './servidor_loja.mjs';
 import http from 'node:http';
 import { WebSocketServer, WebSocket } from 'ws';
 import fs from 'node:fs';
@@ -154,16 +159,25 @@ function passoJaFeito(u, p) {
 function enviarMissao(ws, resultado) {
   if (!resultado) return;
   const { estado, passoFeito, concluida } = resultado;
-  enviar(ws, { t: 'missao', estado, passoFeito: passoFeito && !concluida, concluiu: concluida?.id || null, nome: concluida?.nome || null });
+  const u = sessoes.get(ws._info?.token), c = contas[u];
+  const pago = concluida && c ? pagarRecompensaMissao(c, concluida, dadosRecompensaMissao()) : null;
+  if (pago?.ok) salvarContasJa();
+  enviar(ws, { t: 'missao', estado, passoFeito: passoFeito && !concluida, concluiu: concluida?.id || null, nome: concluida?.nome || null,
+    ...(pago?.ok ? {pago, bolsa:pago.bolsa, vidas:pago.vidas} : {}) });
 }
-function recompensaMissao(m) {
-  const r = m?.recompensa;
-  if (!r) return null;
-  const bolsa = {};
-  if (r.dinheiro) bolsa.dinheiro = r.dinheiro;
-  if (r.itens) bolsa.itens = r.itens;
-  if (r.bolas) bolsa.bolas = r.bolas;
-  return bolsa;
+function dadosRecompensaMissao() {
+  const data = nome => JSON.parse(fs.readFileSync(nodePath.join(__dir, 'public/data', nome + '.json'), 'utf8'));
+  return {...dadosEstadoLocal(), exp:data('exp'), tetoNivel:data('config_jogo').tetoNivel};
+}
+function recuperarRecompensasMissao(c) {
+  carregarMissoes();
+  let pago = false;
+  for (const id of c.save?.missoes?.feitas || []) {
+    if (!MISSOES[id] || c.save.recompensasPagas?.some(x=>String(x)===String(id))) continue;
+    if (pagarRecompensaMissao(c, MISSOES[id], dadosRecompensaMissao()).ok) pago = true;
+  }
+  if (pago) salvarContasJa();
+  return pago;
 }
 
 // ── Persistência ────────────────────────────────────────────────────────────
@@ -214,6 +228,19 @@ function aplicarPrefs(c, prefs) {
 /* `arranjo` só REORDENA (e move entre time/caixa) os Pokémon que a conta JÁ tem, casando por uid: o registro de cada
    um continua sendo o do servidor, então o cliente não inventa espécie/nível/shiny nem edita stats por aqui. Só aceita
    se o conjunto de uids continuar o mesmo (nada criado, duplicado ou sumido). */
+let estadoLocalCache = null;
+function dadosEstadoLocal(){
+  const arquivos = ['public/pokedex.json','public/data/learnset.json','public/data/golpes.json'].map(p=>nodePath.join(__dir,p));
+  const marca = arquivos.map(p=>fs.statSync(p).mtimeMs).join(':');
+  if (estadoLocalCache?.marca !== marca) { const [pokedex,learnset,golpes] = arquivos.map(p=>JSON.parse(fs.readFileSync(p,'utf8'))); estadoLocalCache = {marca, especies:pokedex.species,learnset,golpes}; }
+  return estadoLocalCache;
+}
+function prepararTimeLocal(c){
+  if (!c?.save) return;
+  const dados = dadosEstadoLocal(), antes = JSON.stringify(c.save);
+  for (const p of [...(c.save.time || []),...(c.save.caixa || [])]) prepararEstadoLocal(p,dados);
+  if (JSON.stringify(c.save) !== antes){ c.rev = (c.rev || 0) + 1; salvarContas(); }
+}
 function aplicarArranjo(c, arranjo) {
   if (!arranjo || typeof arranjo !== 'object') return;
   const porUid = new Map();
@@ -229,7 +256,11 @@ function aplicarArranjo(c, arranjo) {
     return max ? nova.slice(0, max) : nova;
   };
   const time = reordenar(arranjo.time, 6), caixa = reordenar(arranjo.caixa, 0);
-  if (time && caixa && time.length + caixa.length === porUid.size) { c.save.time = time; c.save.caixa = caixa; }
+  if (time && caixa && time.length + caixa.length === porUid.size && new Set([...time,...caixa].map(p=>String(p.uid))).size === porUid.size) {
+    const dados = dadosEstadoLocal();
+    for (const recebido of [...arranjo.time,...arranjo.caixa]) if (recebido && typeof recebido === 'object') { const p = porUid.get(String(recebido.uid)); if (p) aplicarEstadoLocal(p,recebido,dados); }
+    c.save.time = time; c.save.caixa = caixa;
+  }
 }
 /* dex (Pokédex) e conhecimento: o cliente NÃO sobrescreve o objeto inteiro — só ACRESCENTA (merge monotônico), senão dava
    pra mandar a Pokédex 100%/conhecimento no talo. dex = { nºdex: 'visto'|'pego' }: o cliente só marca 'visto'; o 'pego' quem
@@ -535,6 +566,16 @@ const httpServer = http.createServer((req, res) => {
     res.end(JSON.stringify(obj));
   };
 
+  // Public mount settings are read directly so admin changes do not require a website rebuild.
+  if (req.method === 'GET' && rota === '/montarias') {
+    res.setHeader('Cache-Control', 'no-store');
+    try {
+      const catalogo = JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB, 'montarias.json'), 'utf8'));
+      if (!Array.isArray(catalogo)) throw new Error('Invalid mount catalogue');
+      return json(200, catalogo);
+    } catch { return json(503, { erro: 'Mount settings are temporarily unavailable.' }); }
+  }
+
   // ── Upload do GLB de cenário (binário; o editor 3D re-exporta o mapa) ──────────
   // Caminho próprio: o corpo é um .glb (vários MB), não JSON — não passa pelo cap de 1MB nem pelo parse de texto.
   if (req.method === 'POST' && rota === '/admin/mapa-glb') {
@@ -621,6 +662,7 @@ const httpServer = http.createServer((req, res) => {
       const ban = banidoAteDe(c);                                         // painel → Jogadores → Banir
       if (ban) return json(403, { erro: 'Conta suspensa ' + (ban === -1 ? 'para sempre' : 'até ' + new Date(ban).toLocaleString('pt-BR')) + '.' + (c.banMotivo ? ' Motivo: ' + c.banMotivo : '') });
       const manut = eventos.bloqueiaLogin(c); if (manut) return json(503, { erro: manut });   // Fase 3: modo manutenção (GM entra)
+      prepararTimeLocal(c);
       const token = tokenNovo();
       c.token = token;
       c.tokenExp = Date.now() + TOKEN_VIDA_MS;
@@ -642,11 +684,24 @@ const httpServer = http.createServer((req, res) => {
       return json(200, { ok: true, codigo: c.codigo });
     }
 
+    // Local wild battles run in the browser, but their earned XP must survive scene reloads.
+    if (req.method === 'POST' && rota === '/conta/experiencia') {
+      const u = usuarioDe(req);
+      if (!u) return json(401, { erro: 'Sessão inválida.' });
+      const data = nome => JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB, nome + '.json'), 'utf8'));
+      const r = experienciaLocal(contas[u], d, { exp: data('exp'), especies: JSON.parse(fs.readFileSync(nodePath.join(__dir, 'public/pokedex.json'), 'utf8')).species,
+        learnset: data('learnset'), golpes: data('golpes'), tetoNivel: data('config_jogo').tetoNivel, expMult: eventos.efetivo().expMult });
+      if (r.erro) return json(400, r);
+      salvarContasJa();
+      return json(200, r);
+    }
+
     // ── Save (requer auth) ────────────────────────────────────────────────
     if (req.method === 'GET' && rota === '/save') {
       const u = usuarioDe(req);
       if (!u) return json(401, { erro: 'Sessão inválida.' });
       const c = contas[u];
+      prepararTimeLocal(c);
       return json(200, { ok: true, save: c.save || null, rev: c.rev || 0, gm: !!c.gm, cargo: c.cargo || null, alfa: !!c.alfa, idioma: c.idioma || null, ...(c.posGm ? { pos: c.posGm } : {}) });
     }
 
@@ -672,7 +727,7 @@ const httpServer = http.createServer((req, res) => {
         if (d.conhecimento !== undefined) c.save.conhecimento = mesclarConhecimento(c.save.conhecimento, d.conhecimento);   // nº15: só soma, não sobrescreve
         if (d.dex !== undefined) c.save.dex = mesclarDex(c.save.dex, d.dex);                                                 // nº15: cliente só adiciona 'visto'
         c.rev = (c.rev || 0) + 1;
-        salvarContas();
+        salvarContasJa();
         if (d.outroAparelho) return json(409, { erro: 'Conflito de sessão.', outroAparelho: true });
       }
       return json(200, { ok: true, rev: contas[u]?.rev || 0 });
@@ -1091,7 +1146,8 @@ wss.on('connection', ws => {
         const uM = sessoes.get(m.token) || null;
         if (uM && contas[uM]) {
           const estM = missaoEstadoDe(uM);
-          if (estM.atual) enviar(ws, { t: 'missao', estado: estM });
+          const recuperado = recuperarRecompensasMissao(contas[uM]);
+          enviar(ws, { t: 'missao', estado: estM, ...(recuperado ? {bolsa:{dinheiro:contas[uM].save.dinheiro,itens:contas[uM].save.itens,bolas:contas[uM].save.bolas},vidas:contas[uM].save.time} : {}) });
         }
         console.log(`[+] ${ws._usuario} entrou em ${ws._mapa} (${conexoes.size} online)`);
         break;
@@ -1135,6 +1191,16 @@ wss.on('connection', ws => {
         break;
       }
 
+      case 'pref': {
+        const c = contas[sessoes.get(ws._info?.token)];
+        if (c?.save) { aplicarPrefs(c,{[m.chave]:m.valor}); c.rev = (c.rev || 0) + 1; salvarContas(); }
+        break;
+      }
+      case 'arranjo': {
+        const c = contas[sessoes.get(ws._info?.token)];
+        if (c?.save) { aplicarArranjo(c,m); c.rev = (c.rev || 0) + 1; salvarContas(); }
+        break;
+      }
       // Save de intenções do cliente (arranjo/prefs/conhecimento)
       case 'save': {
         const u = (sessoes.get(ws._info?.token) || null);
@@ -1263,24 +1329,25 @@ wss.on('connection', ws => {
           const op = m.t.slice(6);
           const u = sessoes.get(ws._info?.token) || null;
           const c = u ? contas[u] : null;
-          // bolsa_missao: paga recompensa da missão concluída
-          if (op === 'missao' && m.missao && c) {
-            // ANTI-TRAPAÇA: só paga se a missão foi REALMENTE concluída (está em feitas) e ainda NÃO foi paga.
-            const est = c.save?.missoes;
-            const feita = !!(est && Array.isArray(est.feitas) && est.feitas.includes(m.missao));
-            if (c.save && !Array.isArray(c.save.recompensasPagas)) c.save.recompensasPagas = [];
-            const jaPaga = !!c.save?.recompensasPagas?.includes(m.missao);
-            const miss = MISSOES[m.missao];
-            const rec = recompensaMissao(miss);
-            if (feita && !jaPaga && rec && c.save) {
-              c.save.recompensasPagas.push(m.missao);
-              if (rec.dinheiro) c.save.dinheiro = (c.save.dinheiro || 0) + rec.dinheiro;
-              if (rec.itens) { if (!c.save.itens) c.save.itens = {}; for (const [k, v] of Object.entries(rec.itens)) c.save.itens[k] = (c.save.itens[k] || 0) + v; }
-              if (rec.bolas) { if (!c.save.bolas) c.save.bolas = {}; for (const [k, v] of Object.entries(rec.bolas)) c.save.bolas[k] = (c.save.bolas[k] || 0) + v; }
-              c.rev = (c.rev || 0) + 1;
-              salvarContas();
-            }
-            enviar(ws, { t: 'bolsa', op, bolsa: { dinheiro: c.save?.dinheiro, itens: c.save?.itens, bolas: c.save?.bolas } });
+          if (op === 'comprar') {
+            let resultado;
+            try { resultado = comprarNaLoja(c, m, JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB, 'menus_dados.json'), 'utf8'))); }
+            catch { resultado = { erro: 'The shop catalogue could not be loaded. Try again shortly.' }; }
+            if (resultado.erro) enviar(ws, { t: 'bolsa_erro', op, erro: resultado.erro });
+            else { salvarContas(); enviar(ws, { t: 'bolsa', op, ...resultado }); }
+          }
+          else if (op === 'usar') {
+            const resultado = usarItemLocal(c,m,JSON.parse(fs.readFileSync(nodePath.join(DADOS_PUB,'menus_dados.json'),'utf8')),dadosEstadoLocal());
+            if (resultado.erro) enviar(ws,{t:'bolsa_erro',op,erro:resultado.erro,bolsa:c?.save ? {dinheiro:c.save.dinheiro,itens:c.save.itens,bolas:c.save.bolas,insignias:c.save.insignias} : null,vidas:c?.save?.time});
+            else { salvarContasJa(); enviar(ws,{t:'bolsa',op,...resultado}); }
+          }
+          // Retry support uses the same completed-quest check and once-only ledger.
+          else if (op === 'missao' && m.missao && c) {
+            carregarMissoes();
+            const pago = pagarRecompensaMissao(c, MISSOES[m.missao], dadosRecompensaMissao());
+            if (pago.ok) salvarContasJa();
+            if (pago.erro) enviar(ws, {t:'bolsa_erro',op,erro:pago.erro});
+            else enviar(ws, {t:'bolsa',op,bolsa:{dinheiro:c.save?.dinheiro,itens:c.save?.itens,bolas:c.save?.bolas},...(pago.ok?{vidas:pago.vidas}:{})});
           } else {
             enviar(ws, { t: 'bolsa', op, bolsa: c?.save ? { dinheiro: c.save.dinheiro ?? 9999, bolas: c.save.bolas, itens: c.save.itens } : null });
           }
@@ -1293,7 +1360,8 @@ wss.on('connection', ws => {
           const c = u ? contas[u] : null;
           let vidas = null;
           if (c?.save?.time) {
-            vidas = c.save.time.map(p => ({ ...p, hp: p.hpMax || p.stats?.hp || 100, status: null }));
+            prepararTimeLocal(c);
+            vidas = c.save.time.map(p => { const movs = (p.movs || []).map(m=>({...m,pp:m.ppMax})); return {...p,hp:p.maxHp,koAte:0,status:null,movs,ppEsq:{}}; });
             c.save.time = vidas;
             c.rev = (c.rev || 0) + 1;
             salvarContas();

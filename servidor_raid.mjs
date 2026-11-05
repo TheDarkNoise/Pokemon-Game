@@ -369,7 +369,7 @@ export function criarRaid(h) {
   function status() {
     if (!raid) return 'Nenhuma raid agora (padrão do data/raid.json: ' + (c => c.chefeNome + ' Lv ' + c.chefeNivel + ', ' + c.vagas + ' vagas, arena ' + c.arena)(lerCfg()) + ').';
     const r = retrato(null), ch = raid.chefe;
-    return 'Raid #' + raid.id + ' · ' + raid.fase + ' · fila ' + raid.fila.size + '/' + raid.cfg.vagas + (raid.fila.size ? ' (' + [...raid.fila.values()].map(p => p.nome + (p.dano ? ' ' + p.dano : '') + (p.chegou ? '' : p.ida ? ' a caminho' : '')).join(', ') + ')' : '')
+    return 'Raid #' + raid.id + ' · ' + raid.fase + ' · fila ' + raid.fila.size + '/' + raid.cfg.vagas + (raid.fila.size ? ' (' + [...raid.fila.values()].map(p => p.nome + (p.dano ? ' ' + p.dano : '') + (p.chegou ? '' : p.ida ? ' en route' : '')).join(', ') + ')' : '')
       + (ch ? ' · ' + raid.cfg.chefeNome + ' ' + ch.hp + '/' + ch.maxHp : ' · vida ' + (raid.sobre.hp ?? (raid.cfg.chefeHp || 'auto')))
       + ' · dano ×' + danoRaid() + ' · shiny 1/' + taxaRaid() + ' · prêmio ' + premioRaid()
       + (r.contagemMs ? ' · começa em ' + Math.ceil(r.contagemMs / 1000) + ' s' : '') + (r.fimMs ? ' · ' + Math.ceil(r.fimMs / 1000) + ' s restantes' : '');

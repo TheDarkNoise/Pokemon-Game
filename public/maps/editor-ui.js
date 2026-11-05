@@ -94,15 +94,15 @@ class MapEditorUI {
                 }
             </style>
 
-            <h3>Editor de Mapa</h3>
+            <h3>Map Editor</h3>
 
             <div class="section">
-                <label>Objeto Selecionado</label>
-                <div id="selected-info" class="info">Nenhum</div>
+                <label>Selected object</label>
+                <div id="selected-info" class="info">None</div>
             </div>
 
             <div class="section">
-                <label>Mover <span class="shortcut">[WASD + QE]</span></label>
+                <label>Move <span class="shortcut">[WASD + QE]</span></label>
                 <div class="btn-row">
                     <button onclick="mapEditor.move(-1, 0, 0)">X-</button>
                     <button onclick="mapEditor.move(1, 0, 0)">X+</button>
@@ -114,7 +114,7 @@ class MapEditorUI {
             </div>
 
             <div class="section">
-                <label>Rotacionar/Escalar <span class="shortcut">[R/T F/G]</span></label>
+                <label>Rotate/Scale <span class="shortcut">[R/T F/G]</span></label>
                 <div class="btn-row">
                     <button onclick="mapEditor.rotate(-15)">Rot -15</button>
                     <button onclick="mapEditor.rotate(15)">Rot +15</button>
@@ -124,38 +124,38 @@ class MapEditorUI {
             </div>
 
             <div class="section">
-                <label>Ações <span class="shortcut">[Del Ctrl+D Ctrl+Z]</span></label>
+                <label>Actions <span class="shortcut">[Del Ctrl+D Ctrl+Z]</span></label>
                 <div class="btn-row">
-                    <button onclick="mapEditor.duplicate()">Duplicar</button>
-                    <button onclick="mapEditor.delete()" class="danger">Deletar</button>
-                    <button onclick="mapEditor.undo()">Desfazer</button>
+                    <button onclick="mapEditor.duplicate()">Duplicate</button>
+                    <button onclick="mapEditor.delete()" class="danger">Delete</button>
+                    <button onclick="mapEditor.undo()">Undo</button>
                 </div>
             </div>
 
             <div class="section">
-                <label>Adicionar Objeto</label>
+                <label>Add object</label>
                 <select id="add-object-type">
-                    <option value="box">Cubo</option>
-                    <option value="plane">Plano</option>
-                    <option value="sphere">Esfera</option>
-                    <option value="cylinder">Cilindro</option>
+                    <option value="box">Cube</option>
+                    <option value="plane">Plane</option>
+                    <option value="sphere">Sphere</option>
+                    <option value="cylinder">Cylinder</option>
                 </select>
-                <button onclick="mapEditor.addPrimitive()">Adicionar</button>
+                <button onclick="mapEditor.addPrimitive()">Add</button>
             </div>
 
             <div class="section">
-                <label>Salvar/Carregar</label>
-                <input type="text" id="map-name" placeholder="Nome do mapa">
+                <label>Save/Load</label>
+                <input type="text" id="map-name" placeholder="Map name">
                 <div class="btn-row">
-                    <button onclick="mapEditor.save()">Salvar</button>
-                    <button onclick="mapEditor.load()">Carregar</button>
+                    <button onclick="mapEditor.save()">Save</button>
+                    <button onclick="mapEditor.load()">Load</button>
                     <button onclick="mapEditor.download()">Download</button>
                 </div>
                 <div id="saved-maps" style="margin-top:8px; font-size:11px; color:#888;"></div>
             </div>
 
             <div class="section">
-                <label>Atalhos</label>
+                <label>Shortcuts</label>
                 <div style="font-size:11px; color:#888;">
                     <span class="shortcut">F1</span> Toggle Editor |
                     <span class="shortcut">ESC</span> Deselect<br>
@@ -262,7 +262,7 @@ class MapEditorUI {
     }
 
     save() {
-        const name = document.getElementById('map-name').value || 'Mapa sem nome';
+        const name = document.getElementById('map-name').value || 'Untitled map';
         this.mapSystem.saveToLocalStorage(name);
         this.updateSavedMaps();
     }
@@ -282,9 +282,9 @@ class MapEditorUI {
         const div = document.getElementById('saved-maps');
         const maps = this.mapSystem.listSavedMaps();
         if (maps.length > 0) {
-            div.innerHTML = 'Salvos: ' + maps.join(', ');
+            div.innerHTML = 'Saved: ' + maps.join(', ');
         } else {
-            div.innerHTML = 'Nenhum mapa salvo';
+            div.innerHTML = 'No saved maps';
         }
     }
 }

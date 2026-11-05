@@ -43,38 +43,38 @@ function painel(html){
 }
 /** Mostra o código de recuperação UMA vez, depois do cadastro. Só fecha depois de marcar "anotei". */
 export function mostrarCodigo(codigo, aoFechar){
-  const f = painel('<b style="color:#ffe07a;font-size:16px">Anote o seu código de recuperação</b>'
-    + '<p style="color:#98a4c0;margin:8px 0 12px">É a ÚNICA forma de voltar pra sua conta se você esquecer a senha. Ele não fica guardado neste aparelho e não dá pra vê-lo de novo.</p>'
+  const f = painel('<b style="color:#ffe07a;font-size:16px">Write down your recovery code</b>'
+    + '<p style="color:#98a4c0;margin:8px 0 12px">It is the ONLY way to recover your account if you forget your password. It is not stored on this device and cannot be viewed again.</p>'
     + '<div id="codigo-recuperacao" style="font:600 20px/1.4 ui-monospace,Consolas,monospace;letter-spacing:2px;text-align:center;padding:12px;border:1px dashed #ffd23a;border-radius:10px;background:#241f0e">' + codigo + '</div>'
-    + '<div style="display:flex;gap:8px;align-items:center;margin-top:14px"><button type="button" class="btn" id="cod-copiar">Copiar</button>'
-    + '<label style="flex:1;display:flex;gap:6px;align-items:center;color:#98a4c0"><input type="checkbox" id="cod-anotei"> anotei em lugar seguro</label>'
-    + '<button type="button" class="btn ouro" id="cod-ok" disabled>Continuar</button></div>');
+    + '<div style="display:flex;gap:8px;align-items:center;margin-top:14px"><button type="button" class="btn" id="cod-copiar">Copy</button>'
+    + '<label style="flex:1;display:flex;gap:6px;align-items:center;color:#98a4c0"><input type="checkbox" id="cod-anotei"> I saved it somewhere safe</label>'
+    + '<button type="button" class="btn ouro" id="cod-ok" disabled>Continue</button></div>');
   const ok = f.querySelector('#cod-ok');
   f.querySelector('#cod-anotei').onchange = ev => { ok.disabled = !ev.target.checked; };
-  f.querySelector('#cod-copiar').onclick = () => { try { navigator.clipboard?.writeText(codigo); f.querySelector('#cod-copiar').textContent = 'copiado ✓'; } catch {} };
+  f.querySelector('#cod-copiar').onclick = () => { try { navigator.clipboard?.writeText(codigo); f.querySelector('#cod-copiar').textContent = 'copied ✓'; } catch {} };
   ok.onclick = () => { f.remove(); aoFechar?.(); };
 }
-/** Esqueci a senha: usuário + código + senha nova. */
+/** Forgot password: usuário + código + senha nova. */
 function formRecuperar(pop){
-  const f = painel('<b style="color:#ffe07a;font-size:16px">Esqueci a senha</b>'
-    + '<p style="color:#98a4c0;margin:8px 0 12px">Use o código de recuperação que apareceu quando você criou a conta. Se perdeu os dois, chame no Discord do jogo.</p>'
-    + '<label style="display:block;margin-bottom:8px">usuário<input id="rec-usuario" autocomplete="username" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit"></label>'
-    + '<label style="display:block;margin-bottom:8px">código de recuperação<input id="rec-codigo" placeholder="XXXX-XXXX-XXXX-XXXX" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit;text-transform:uppercase"></label>'
-    + '<label style="display:block;margin-bottom:12px">senha nova<input id="rec-senha" type="password" autocomplete="new-password" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit"></label>'
-    + '<div style="display:flex;gap:8px"><button type="button" class="btn" id="rec-nao">Voltar</button><button type="button" class="btn ouro" id="rec-sim">Trocar a senha</button></div>'
+  const f = painel('<b style="color:#ffe07a;font-size:16px">Forgot password</b>'
+    + '<p style="color:#98a4c0;margin:8px 0 12px">Use the recovery code shown when you created your account. If you lost both your password and code, contact us on the game’s Discord.</p>'
+    + '<label style="display:block;margin-bottom:8px">username<input id="rec-usuario" autocomplete="username" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit"></label>'
+    + '<label style="display:block;margin-bottom:8px">recovery code<input id="rec-codigo" placeholder="XXXX-XXXX-XXXX-XXXX" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit;text-transform:uppercase"></label>'
+    + '<label style="display:block;margin-bottom:12px">new password<input id="rec-senha" type="password" autocomplete="new-password" style="width:100%;margin-top:4px;padding:8px;border:1px solid #2a3350;border-radius:8px;background:#0d142c;color:#e8eefc;font:inherit"></label>'
+    + '<div style="display:flex;gap:8px"><button type="button" class="btn" id="rec-nao">Back</button><button type="button" class="btn ouro" id="rec-sim">Change password</button></div>'
     + '<div id="rec-aviso" style="margin-top:10px;color:#f58e8e;min-height:18px"></div>');
   const aviso = t => { f.querySelector('#rec-aviso').textContent = tr(t); };
   f.querySelector('#rec-nao').onclick = () => f.remove();
   f.querySelector('#rec-sim').onclick = async () => {
     const u = f.querySelector('#rec-usuario').value.trim(), c = f.querySelector('#rec-codigo').value.trim(), s2 = f.querySelector('#rec-senha').value;
-    if (!u || !c) return aviso('Preencha o usuário e o código.');
-    if (s2.length < 6) return aviso('Senha nova: pelo menos 6 caracteres.');
-    aviso('Trocando…');
+    if (!u || !c) return aviso('Enter your username and recovery code.');
+    if (s2.length < 6) return aviso('New password: at least 6 characters.');
+    aviso('Changing…');
     const r = await ctx.conta.recuperar(u, c, s2);
-    if (!r.ok) return aviso(r.erro || 'Não deu.');
+    if (!r.ok) return aviso(r.erro || 'Something went wrong.');
     f.remove();
-    if (r.codigo) mostrarCodigo(r.codigo, () => avisar(pop, 'Senha trocada. Entre com ela.', false));
-    else avisar(pop, 'Senha trocada. Entre com ela.', false);
+    if (r.codigo) mostrarCodigo(r.codigo, () => avisar(pop, 'Password changed. Sign in with it.', false));
+    else avisar(pop, 'Password changed. Sign in with it.', false);
   };
 }
 export function mostrar(nome, L, c = {}){
@@ -102,7 +102,7 @@ export function mostrar(nome, L, c = {}){
   if (nome === 'login' && ctx?.conta?.recuperar && !pop.querySelector('[data-tagval="recuperar-senha"]')){
     const btn = pop.querySelector('[data-fig="btn-entrar"]');
     const link = document.createElement('button');
-    link.type = 'button'; link.id = 'tela-esqueci'; link.textContent = 'esqueci minha senha';
+    link.type = 'button'; link.id = 'tela-esqueci'; link.textContent = 'forgot my password';
     const x = parseFloat(btn?.style.left) || 0, y = (parseFloat(btn?.style.top) || 0) + (parseFloat(btn?.style.height) || 0) + 16, w = parseFloat(btn?.style.width) || 200;
     link.style.cssText = 'position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;z-index:30;background:none;border:0;color:#cfd8ee;text-decoration:underline;cursor:pointer;font:inherit;font-size:13px';
     pop.appendChild(link);
@@ -119,7 +119,7 @@ export function mostrar(nome, L, c = {}){
   } else {
     Popup.imagem(pop, 'fundo', './ui/figma/backgrounds/fundo-login-escuro.png');   // sempre escuro (rodada 23)
     Popup.imagem(pop, 'logo', './ui/figma/backgrounds/logo-pokefable.png');
-    Popup.texto(pop, 'versao', ctx?.conta ? 'v0.2.0 · alfa' : 'v0.1.0 · prévia');
+    Popup.texto(pop, 'versao', ctx?.conta ? 'v0.2.0 · alpha' : 'v0.1.0 · preview');
   }
   for (const inp of (H ? [] : pop.querySelectorAll('input'))){            // Enter = o botão da tela; sem Esc fechando (a tela é obrigatória no login)
     const campo = inp.closest('[data-fig]')?.dataset.fig || '';
@@ -209,12 +209,12 @@ export function atualizando(){
 }
 /** KIKADO (10/09): a conta entrou de outro lugar. Tela por cima de tudo, curta, com o caminho de volta — como em qualquer
     MMO. Nada de explicar save: o jogo daqui parou e ponto. */
-export function derrubado(texto = 'Você entrou de outro lugar.'){
+export function derrubado(texto = 'You signed in from another location.'){
   texto = tr(texto);
   if (document.getElementById('tela-derrubado')) return;
   const f = painel('<b style="color:#ffe07a;font-size:17px">' + texto + '</b>'
-    + '<p style="color:#98a4c0;margin:10px 0 16px">A sua conta só joga de um lugar por vez.</p>'
-    + '<button type="button" class="btn ouro" id="der-voltar" style="width:100%">Ir pro login</button>');
+    + '<p style="color:#98a4c0;margin:10px 0 16px">Your account can only play from one location at a time.</p>'
+    + '<button type="button" class="btn ouro" id="der-voltar" style="width:100%">Go to login</button>');
   f.id = 'tela-derrubado'; f.style.zIndex = '1200';
   /* Volta pra TELA DE LOGIN, não pro jogo (pedido dele, 10/09): a sessão daqui acabou, então o certo é sair da conta e
      deixar a pessoa entrar de novo se quiser. Apagar a sessão local basta — no próximo boot o portão mostra o login. */
@@ -270,23 +270,23 @@ async function caixaAlphaKey(pop, erroInicial = ''){
   }
   if (document.getElementById('tela-alpha')) return;
   const f = painel('<b style="color:#ffe07a;font-size:16px">Alpha Key</b>'
-    + '<p style="color:#98a4c0;margin:8px 0 12px">O alfa é fechado: pra criar conta você precisa da chave que recebeu. Cole ela aqui:</p>'
+    + '<p style="color:#98a4c0;margin:8px 0 12px">The alpha is closed: you need an invitation key to create an account. Paste it here:</p>'
     + '<input id="alpha-chave" placeholder="ALPHA-XXXX-XXXX" autocapitalize="characters" autocomplete="off" spellcheck="false" style="width:100%;padding:10px;border:1px solid #2a3350;border-radius:8px;background:#151e30;color:#e8eefc;font:600 18px/1.2 ui-monospace,Consolas,monospace;letter-spacing:2px;text-align:center;box-sizing:border-box">'
     + '<div id="alpha-aviso" style="margin-top:10px;color:#f58e8e;min-height:18px"></div>'
-    + '<div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn" id="alpha-nao">Voltar</button><button type="button" class="btn ouro" id="alpha-sim" style="flex:1">Continuar</button></div>'
+    + '<div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn" id="alpha-nao">Back</button><button type="button" class="btn ouro" id="alpha-sim" style="flex:1">Continue</button></div>'
     /* ONDE SE CONSEGUE UMA CHAVE (20/09): a caixa pedia "a chave que recebeu" sem dizer nunca de onde ela vem — e ela vem
        dos sorteios do Discord. Quem chegava no site sem chave batia aqui e não tinha para onde ir. */
-    + '<p style="color:#7f8db0;margin:14px 0 0;font-size:13px">' + tr('Não tem uma chave?') + ' '
+    + '<p style="color:#7f8db0;margin:14px 0 0;font-size:13px">' + tr('Don’t have a key?') + ' '
     + '<a class="tela-alpha-discord" href="' + DISCORD + '" target="_blank" rel="noopener noreferrer">' + LOGO_DISCORD
-    + tr('Peça no nosso Discord') + '</a></p>');
+    + tr('Ask on our Discord') + '</a></p>');
   f.id = 'tela-alpha';
   const inp = f.querySelector('#alpha-chave'), botao = f.querySelector('#alpha-sim'), aviso = t => { f.querySelector('#alpha-aviso').textContent = tr(t); };
   if (erroInicial) aviso(erroInicial);
   f.querySelector('#alpha-nao').onclick = () => { f.remove(); chaveAlfa = null; mostrar('login', layout, ctx); };
   const confirmar = async () => {
-    const v = inp.value.trim(); if (!v) return aviso('Cole a sua Alpha Key.');
+    const v = inp.value.trim(); if (!v) return aviso('Enter your Alpha Key.');
     botao.disabled = true; const r = await ctx.conta.validarChave(v); botao.disabled = false;
-    if (!r.ok) return aviso(r.erro || 'Chave inválida.');
+    if (!r.ok) return aviso(r.erro || 'Invalid key.');
     chaveAlfa = r.chave; f.remove();
     avisar(pop, 'Alpha Key aceita ✓ — agora crie a sua conta.');
     pop.querySelector('input')?.focus();
@@ -299,31 +299,31 @@ async function caixaAlphaKey(pop, erroInicial = ''){
 function acao(tela, a, el, pop){
   if (!ctx?.conta){                                                       // prévia (?tela=): só conta o que faria
     const aviso = t => { ctx?.Chat?.sistema?.(t); console.log('telas:', t); };
-    if (a === 'login') aviso('Prévia: o login de verdade abre quando o jogo está com o servidor no ar (conta por usuário + senha).');
-    else if (a === 'cadastrar') aviso('Prévia: o cadastro de verdade abre quando o jogo está com o servidor no ar.');
-    else if (a === 'recuperar-senha') aviso('Prévia: recuperação de senha.');
+    if (a === 'login') aviso('Preview: the real login opens when the game server is online (username + password account).');
+    else if (a === 'cadastrar') aviso('Preview: the real registration opens when the game server is online.');
+    else if (a === 'recuperar-senha') aviso('Preview: password recovery.');
     fechar(); return;
   }
   if (ocupado) return;
   const fim = r => {
     ocupado = false;
     if (!r?.ok && r?.precisaChave){ chaveAlfa = null; avisar(pop, ''); caixaAlphaKey(pop, r.erro || 'Precisa de uma Alpha Key.'); return; }   // a chave foi gasta no meio do caminho (ou nunca houve)
-    if (!r?.ok) return avisar(pop, r?.erro || 'Não deu. Tente de novo.', true);
+    if (!r?.ok) return avisar(pop, r?.erro || 'Something went wrong. Tente de novo.', true);
     const cod = ctx.conta.codigoNovo?.();                                 // cadastro: o código de recuperação aparece UMA vez, antes de entrar
-    if (cod) return mostrarCodigo(cod, () => { avisar(pop, 'Entrando…'); fechar(); ctx.aoEntrar?.(r); });
-    avisar(pop, 'Entrando…'); fechar(); ctx.aoEntrar?.(r);
+    if (cod) return mostrarCodigo(cod, () => { avisar(pop, 'Signing in…'); fechar(); ctx.aoEntrar?.(r); });
+    avisar(pop, 'Signing in…'); fechar(); ctx.aoEntrar?.(r);
   };
   if (a === 'login'){
     const u = valor(pop, 'campo-usuario'), s = valor(pop, 'campo-senha');
-    if (!u || !s) return avisar(pop, 'Preencha usuário e senha.', true);
-    ocupado = true; avisar(pop, 'Entrando…');
+    if (!u || !s) return avisar(pop, 'Enter username and password.', true);
+    ocupado = true; avisar(pop, 'Signing in…');
     ctx.conta.entrar(u, s).then(fim, e => fim({ ok: false, erro: String(e?.message || e) }));
   } else if (a === 'cadastrar'){
     const u = valor(pop, 'campo-usuario').toLowerCase(), e = valor(pop, 'campo-email'), s = valor(pop, 'campo-senha'), s2 = valor(pop, 'campo-confirmar-senha');
-    if (!/^[a-z0-9_.]{3,16}$/.test(u)) return avisar(pop, 'Nome de usuário: 3 a 16 letras minúsculas, números, ponto ou _.', true);
-    if (e && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) return avisar(pop, 'E-mail inválido (pode deixar em branco).', true);
-    if (s.length < 6) return avisar(pop, 'Senha: pelo menos 6 caracteres.', true);
-    if (s !== s2) return avisar(pop, 'As duas senhas não batem.', true);
+    if (!/^[a-z0-9_.]{3,16}$/.test(u)) return avisar(pop, 'Username: 3 to 16 lowercase letters, numbers, period, or _.', true);
+    if (e && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) return avisar(pop, 'Invalid email (you can leave it blank).', true);
+    if (s.length < 6) return avisar(pop, 'Password: at least 6 characters.', true);
+    if (s !== s2) return avisar(pop, 'The two passwords do not match.', true);
     ocupado = true; avisar(pop, 'Criando a conta…');
     ctx.conta.criar(u, e, s, chaveAlfa).then(fim, err => fim({ ok: false, erro: String(err?.message || err) }));   // com a Alpha Key, se o servidor pediu
   } else if (a === 'recuperar-senha'){

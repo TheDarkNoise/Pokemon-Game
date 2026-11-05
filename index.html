@@ -1,13 +1,13 @@
 <!doctype html>
 <!-- Pokemon 3D Base -->
-<html lang="pt-BR" translate="no">
+<html lang="en" translate="no">
 <head>
 <meta charset="utf-8">
 <meta name="google" content="notranslate">   <!-- 15/09: o jogo já traduz sozinho (i18n); barra o Chrome de traduzir a página e virar "Abra" → "Open" (xspartanz) -->
 <meta name="robots" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="./ui/favicon/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="./ui/favicon/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="./ui/favicon/favicon-16.png"><link rel="apple-touch-icon" href="./ui/favicon/apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#13254A">
-<title>Pokemon 3D Base</title>
+<title>PokeFablemmo</title>
 <script>
 /* TELA CHEIA QUE CAI NA PORTA (17/09 — diego5itu8334 no #bugs com vídeo, TheSyvel e dv_dasmerces no #alpha-testers; Android no Chrome
    e no Samsung Internet): toda porta recarrega a página e o navegador larga a tela cheia, que só volta dentro de um gesto do jogador.
@@ -92,23 +92,23 @@ html,body{height:100%;margin:0;overflow:hidden;background:#06080d;color:var(--te
 <div id="hud">
   <h1 id="titulo">Kanto</h1>
   <table>
-    <tr><td class="k">props no GLB</td><td id="h-inst">–</td></tr>
-    <tr><td class="k">malhas instanciadas</td><td id="h-malhas">–</td></tr>
-    <tr><td class="k">triângulos</td><td id="h-tris">–</td></tr>
-    <tr><td class="k">eixo X do GLB</td><td id="h-flip">–</td></tr>
-    <tr><td class="k">cursor (mundo)</td><td id="h-pos">–</td></tr>
+    <tr><td class="k">props in GLB</td><td id="h-inst">–</td></tr>
+    <tr><td class="k">instanced meshes</td><td id="h-malhas">–</td></tr>
+    <tr><td class="k">triangles</td><td id="h-tris">–</td></tr>
+    <tr><td class="k">GLB X axis</td><td id="h-flip">–</td></tr>
+    <tr><td class="k">cursor (world)</td><td id="h-pos">–</td></tr>
     <tr><td class="k">fps</td><td id="h-fps">–</td></tr>
     <tr><td class="k">gpu</td><td id="h-gpu" style="font-size:10px">–</td></tr>
   </table>
   <div class="teclas" id="teclas">
-    <div><b>W A S D</b> mover · <b>roda</b> / <b>+ −</b> zoom · <b>arrastar</b> pan · <b>Q E</b> girar · <b>R</b> gravar vídeo</div>
+    <div><b>W A S D</b> move · <b>wheel</b> / <b>+ −</b> zoom · <b>drag</b> pan · <b>Q E</b> rotate · <b>R</b> record video</div>
     <div style="margin-top:4px">
-      <span id="t-g"><b>G</b> grama <i></i></span> ·
-      <span id="t-a"><b>H</b> água <i></i></span> ·
+      <span id="t-g"><b>G</b> grass <i></i></span> ·
+      <span id="t-a"><b>H</b> water <i></i></span> ·
       <span id="t-n"><b>N</b> npcs <i></i></span> ·
-      <span id="t-t"><b>T</b> batalha <i></i></span> ·
-      <span id="t-p"><b>P</b> portas <i></i></span> ·
-      <span id="t-c"><b>C</b> áreas <i></i></span>
+      <span id="t-t"><b>T</b> battle <i></i></span> ·
+      <span id="t-p"><b>P</b> doors <i></i></span> ·
+      <span id="t-c"><b>C</b> areas <i></i></span>
     </div>
   </div>
 </div>
@@ -118,23 +118,23 @@ html,body{height:100%;margin:0;overflow:hidden;background:#06080d;color:var(--te
   <div id="skills">
     <button id="sk1" class="sk"></button><button id="sk2" class="sk"></button><button id="sk3" class="sk"></button><button id="sk4" class="sk"></button>
   </div>
-  <button id="bola-btn" class="sk bola" title="joga a bola no alvo desmaiado (F)"><b>F</b><div id="bola-icone"></div><em id="bola-nome">Pokébola</em><small id="bola-n">×10</small><span id="bola-tipo" title="trocar a bola (Shift+F)">⇄</span></button>
+  <button id="bola-btn" class="sk bola" title="throw a ball at the fainted target (F)"><b>F</b><div id="bola-icone"></div><em id="bola-nome">Poké Ball</em><small id="bola-n">×10</small><span id="bola-tipo" title="switch ball (Shift+F)">⇄</span></button>
   <div id="atalhos"></div>
-  <div class="ficha" id="f-alvo">sem alvo — clique num selvagem ou <b>Tab</b></div>
+  <div class="ficha" id="f-alvo">no target — click a wild Pokémon or press <b>Tab</b></div>
 </div>
 <div id="fala" hidden></div>
 <div id="turno" hidden></div>
 <div id="chat" hidden></div>
-<div id="missao" hidden><div id="missao-txt"></div><button type="button" id="missao-toggle" aria-expanded="true" title="recolher a missão"></button></div>
+<div id="missao" hidden><div id="missao-txt"></div><button type="button" id="missao-toggle" aria-expanded="true" title="collapse quest"></button></div>
 <div id="inicial" hidden></div>
 <div id="joy" hidden><div id="joy-knob"></div></div>
 <div id="cam-btns" hidden><button id="cam-esq" type="button">↺</button><button id="cam-dir" type="button">↻</button></div>
 <button id="menu-btn" type="button" hidden>☰</button>
 <button id="chat-btn" type="button" hidden>💬</button>   <!-- só a maquete do celular o posiciona ([abre:chat]); sem maquete fica escondido -->
 <div id="time-hud" hidden></div>
-<div id="menu-icones"><button type="button" data-j="pokemon" title="Pokémon"><i class="ic ic-pokebola"></i><b>Pokémon</b></button><button type="button" data-j="mochila" title="Mochila"><i class="ic ic-mochila"></i><b>Mochila</b></button><button type="button" data-j="missoes" title="Missões"><i class="ic ic-missoes"></i><b>Missões</b></button><button type="button" data-j="mapa" title="Mapa"><i class="ic ic-mapa"></i><b>Mapa</b></button><button type="button" data-j="pokedex" title="Pokédex"><i class="ic ic-pokedex"></i><b>Pokédex</b></button><button type="button" data-j="treinador" title="Treinador"><i class="ic ic-personagem"></i><b>Treinador</b></button><button type="button" data-j="loja" title="Loja"><i class="ic ic-loja"></i><b>Loja</b></button><button type="button" data-j="social" title="Social"><i class="ic ic-amigos"></i><b>Social</b></button><button type="button" data-j="batalha" title="Batalha"><i class="ic ic-batalha"></i><b>Batalha</b></button><button type="button" data-j="config" title="Config"><i class="ic ic-ajuda"></i><b>Config</b></button></div>
+<div id="menu-icones"><button type="button" data-j="pokemon" title="Pokémon"><i class="ic ic-pokebola"></i><b>Pokémon</b></button><button type="button" data-j="mochila" title="Bag"><i class="ic ic-mochila"></i><b>Bag</b></button><button type="button" data-j="missoes" title="Quests"><i class="ic ic-missoes"></i><b>Quests</b></button><button type="button" data-j="mapa" title="Map"><i class="ic ic-mapa"></i><b>Map</b></button><button type="button" data-j="pokedex" title="Pokédex"><i class="ic ic-pokedex"></i><b>Pokédex</b></button><button type="button" data-j="treinador" title="Trainer"><i class="ic ic-personagem"></i><b>Trainer</b></button><button type="button" data-j="loja" title="Shop"><i class="ic ic-loja"></i><b>Shop</b></button><button type="button" data-j="social" title="Social"><i class="ic ic-amigos"></i><b>Social</b></button><button type="button" data-j="batalha" title="Battle"><i class="ic ic-batalha"></i><b>Battle</b></button><button type="button" data-j="config" title="Settings"><i class="ic ic-ajuda"></i><b>Settings</b></button></div>
 <div id="boot"><div class="girando"></div></div>
-<div id="gire" hidden><div class="gire-icone">📱</div><b>Vire o celular</b><span>O jogo é na horizontal.</span><button type="button" id="gire-cheia" hidden>Tela cheia</button></div>   <!-- celular em pé: cobre o jogo até deitar (a HUD só existe deitada) -->
+<div id="gire" hidden><div class="gire-icone">📱</div><b>Rotate your phone</b><span>The game uses landscape mode.</span><button type="button" id="gire-cheia" hidden>Full screen</button></div>   <!-- celular em pé: cobre o jogo até deitar (a HUD só existe deitada) -->
 
 <script>
 /* MÓDULO DESENCONTRADO (19/09 — iPhone iOS 18.7 no Safari, 12:10 UTC: "Hud.marcarSobreBarra is not a function" e a TELA DE LOGIN
@@ -202,6 +202,7 @@ import * as Evento from './evento.mjs';         // Fase 3 do painel: evento ao v
 import * as Dialogos from './dialogos.mjs';     // Fase 3 do painel: falas fixas (portão, Oak, abertura) vêm do data/dialogos.json
 import { GOLPES, GOLPES_PIKA, GOLPES_ESPECIE, VEL_PROJETIL, ajusteEfeito, atrasoDoGolpe, corrigirEfeito } from './golpes.mjs';
 import * as R from './regras.mjs';              // fórmulas da série: stats, dano, tipos
+import * as Areas from './areas.mjs';
 import * as I18n from './i18n.mjs';             // IDIOMA do jogador (11/09): pt (fonte), en, es
 import * as Arrastar from './arrastar_time.mjs';   // 20/09: arrastar pra reordenar o time (e mover entre time e caixa); o servidor já aceitava (intenção `arranjo`)
 
@@ -298,13 +299,13 @@ const DEMO = DEMO_FIXO || new URLSearchParams(location.search).get('demo') === '
 const FAIRY = !DEMO && new URLSearchParams(location.search).get('fairy') === '1';
 const Fairy = FAIRY ? await import('./inicio.mjs') : null;
 const CARDS_PARCEIRO = [
-  { glb: 'pm0025_00', nome: 'Pikachu',   tipo: 'Elétrico',         golpes: 'Thunder Shock · Thunderbolt' },
-  { glb: 'pm0001_00', nome: 'Bulbasaur', tipo: 'Planta · Veneno',  golpes: 'Tackle · Vine Whip' },
-  { glb: 'pm0447',    nome: 'Riolu',     tipo: 'Lutador',          golpes: 'Quick Attack · Swift' },
+  { glb: 'pm0025_00', nome: 'Pikachu',   tipo: "Electric",         golpes: 'Thunder Shock · Thunderbolt' },
+  { glb: 'pm0001_00', nome: 'Bulbasaur', tipo: "Grass · Poison",  golpes: 'Tackle · Vine Whip' },
+  { glb: 'pm0447',    nome: 'Riolu',     tipo: "Fighting",          golpes: 'Quick Attack · Swift' },
 ];
 const CARDS_MONTARIA = [
-  { glb: 'pm0250_00', nome: 'Ho-Oh',   tipo: 'voadora · passa por cima de tudo' },
-  { glb: 'pm0383_00', nome: 'Groudon', tipo: 'terrestre · pesado e rápido' },
+  { glb: 'pm0250_00', nome: 'Ho-Oh',   tipo: "flying · flies over everything" },
+  { glb: 'pm0383_00', nome: 'Groudon', tipo: "ground · heavy and fast" },
 ];
 const CSS_CARDS = `
 #cards{position:fixed;inset:0;z-index:12;display:grid;place-items:center;background:radial-gradient(1200px 700px at 50% 30%,#1a2440,#06080d 70%);overflow:auto}
@@ -332,12 +333,12 @@ function escolherCards(){
   return new Promise(resolve => {
     const css = document.createElement('style'); css.textContent = CSS_CARDS; document.head.appendChild(css);
     const ov = document.createElement('div'); ov.id = 'cards';
-    ov.innerHTML = '<div class="caixa"><h1>Pallet &amp; Rota 1</h1>'
-      + '<p class="sub">uma prévia do nosso Kanto em 3D — escolha quem vai te seguir e em quem você vai montar</p>'
-      + '<h2>Parceiro</h2><div class="fila" id="fila-parceiro"></div>'
-      + '<h2>Montaria <small>(tecla M dentro do jogo)</small></h2><div class="fila" id="fila-montaria"></div>'
-      + '<button id="jogar" type="button">Jogar ▶</button>'
-      + '<p class="dica"><b>W A S D</b> anda · <b>clique</b> no chão vai até lá · <b>1 2</b> golpes · <b>Tab</b> alvo · <b>M</b> monta · <b>F</b> joga a bola (Shift+F troca) · <b>Z</b> fala com NPC perto / interage com o parceiro (Shift+Z: próximo do time) · portas: entre no anel amarelo · <b>roda</b> zoom · <b>Q E</b> giram</p></div>';
+    ov.innerHTML = "<div class=\"caixa\"><h1>Pallet &amp; Route 1</h1>"
+      + "<p class=\"sub\">a preview of our Kanto in 3D — choose your partner and mount</p>"
+      + "<h2>Partner</h2><div class=\"fila\" id=\"fila-parceiro\"></div>"
+      + "<h2>Mount <small>(M key in game)</small></h2><div class=\"fila\" id=\"fila-montaria\"></div>"
+      + "<button id=\"jogar\" type=\"button\">Play ▶</button>"
+      + "<p class=\"dica\"><b>W A S D</b> to move · <b>click</b> the ground to walk there · <b>1 2</b> moves · <b>Tab</b> target · <b>M</b> mount · <b>F</b> throw a ball (Shift+F to switch) · <b>Z</b> talk to a nearby NPC / interact with your partner (Shift+Z: next party member) · doors: enter the yellow ring · <b>wheel</b> zoom · <b>Q E</b> rotate</p></div>";
     document.body.appendChild(ov);
     const cv = document.createElement('canvas'); cv.id = 'cards-tela'; document.body.appendChild(cv);
     const r2 = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: false });
@@ -509,7 +510,7 @@ function bootErroCarga(e, texto = 'O mapa não terminou de baixar. Toque em Tent
   bt.textContent = I18n.t('Tentar de novo');
   bt.addEventListener('click', () => { bt.disabled = true; bootErroNaTela = false; bootErroEspera = null; bootCaixa = null; b.textContent = ''; b.style.zIndex = ''; resolve(); }, { once: true });
   const det = document.createElement('div'); det.style.cssText = 'margin-top:12px;font-size:10px;color:#4c566e;word-break:break-all';
-  const feito = e?.recebido && e?.total ? ' · ' + (e.recebido / 1048576).toFixed(1) + '/' + (e.total / 1048576).toFixed(1) + ' MB já baixados' : '';
+  const feito = e?.recebido && e?.total ? ' · ' + (e.recebido / 1048576).toFixed(1) + '/' + (e.total / 1048576).toFixed(1) + ' ' + I18n.t('MB já baixados') : '';
   det.textContent = String(e?.url || e?.message || e || '').slice(0, 120) + feito;
   raiz.append(t1, t2, bt, det); b.appendChild(raiz);
   });
@@ -715,15 +716,15 @@ function remapearInteriorCompartilhado(){
   }
 }
 document.title = 'Pokemon 3D Base';                                    // era 'Kanto' / nome da cena (Jaime, 12/09: o título é o do jogo)
-$('titulo').textContent = cenaAtual ? cenaAtual.nome + ' · ' + NOME
+$('titulo').textContent = I18n.t(cenaAtual ? cenaAtual.nome + ' · ' + NOME
   : 'Kanto — ' + (dados.areas.length > 4
-    ? dados.areas.length + ' áreas (' + Object.values(dados.nomes || {}).filter(n => /Cidade|Ilha/.test(n)).length + ' cidades)'
-    : dados.areas.map(a => dados.nomes?.[a] || NOMES_AREA[a] || ('área ' + a)).join(' + '));
+    ? dados.areas.length + ' áreas (' + Object.values(dados.nomes || {}).filter(Areas.ehCidadeOuIlha).length + ' cidades)'
+    : dados.areas.map(a => dados.nomes?.[a] || NOMES_AREA[a] || ('área ' + a)).join(' + ')));
 if (DEMO){
   $('titulo').textContent = 'Pallet & Rota 1 · demo';
   $('hud').querySelector('table').hidden = true;
   const tl = $('teclas').children;
-  tl[0].innerHTML = '<b>W A S D</b> anda · <b>clique</b> no chão vai até lá · <b>roda</b> zoom · <b>Q E</b> giram a câmera';
+  tl[0].innerHTML = "<b>W A S D</b> to move · <b>click</b> the ground to walk there · <b>wheel</b> zoom · <b>Q E</b> rotate the camera";
   tl[1].hidden = true;
 }
 
@@ -2860,7 +2861,8 @@ const MONTARIAS_PADRAO = [
   ['pm0131_00', 'Lapras',    'RideIdle2', 'Ride2', false, 0.9,  18750, 'agua'],
   ['pm0211_00', 'Qwilfish',  'RideIdle5', 'Ride5', false, 2.3,  10000, 'agua'],   // 02/09: a 3ª aquática do jogo (MountConfig 57002: MapSize 2,3, MoveSpeed2 = a pé)
 ];
-const MONTARIAS_ARQ = await fetch('./data/montarias.json').then(r => r.ok ? r.json() : null).then(l => Array.isArray(l) && l.length ? l : null).catch(() => null);
+// Read the current admin catalogue, not the stale copy from the last website build.
+const MONTARIAS_ARQ = await fetch(Conta.baseHttp(new URLSearchParams(location.search)) + '/montarias', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(l => Array.isArray(l) ? l : null).catch(() => null);
 const MONTARIAS = MONTARIAS_ARQ ? MONTARIAS_ARQ.map(d => [d.glb, d.nome, d.poseIdle, d.poseRun, !!d.voa, d.escala, d.vel, d.meio]) : MONTARIAS_PADRAO;
 /** Quanto a montaria afunda quando está n'água (a origem do modelo é o chão; na água o corpo fica meio submerso). */
 const MERGULHO = { agua: 0.3, anfibia: 0.15 };
@@ -2903,20 +2905,21 @@ function selaNaSuperficie(m, nomeOsso){
 /* MONTARIA SÓ PRA STAFF por enquanto (11/09): a tecla M montava o Lugia voador pra QUALQUER conta nova e o seletor de atalho
    oferecia as 8 montarias de graça (o Jaime viu). Até a loja de montarias existir, com conta só staff monta; jogo local
    (?rede=0, demo, bancadas) segue livre pra testar. `podeMontar` é o único portão: M, atalhos 5–9 e ?montaria= passam por ele. */
-const MONTARIAS_LIVRES = new Set(MONTARIAS_ARQ ? MONTARIAS_ARQ.filter(d => d.livre).map(d => d.glb) : ['pm0059_00', 'pm0131_00']);   // 14/09 (Jaime): o ARCANINE é de todo mundo; 15/09 (Jaime): a LAPRAS também (capítulo 11 em diante é pelo mar) — o resto segue só pra staff até a loja de montarias (Fase 2: "Liberada pra todos" no painel)
+const MONTARIAS_LIVRES = new Set((MONTARIAS_ARQ || []).filter(d => d.livre === true).map(d => d.glb));   // Missing catalogue never grants account mounts.
 const podeMontar = (glb = null) => Conta.estado().modo !== 'conta' || GM_REAL || (glb != null && MONTARIAS_LIVRES.has(String(glb).replace(/\.glb$/, '')));   // pelo modo da conta, não pela rede: cair do WebSocket não pode liberar
 async function montar(glb, { trocar = false } = {}){
   if (!jogo.ash || jogo.montando) return;
   if (jogo.turno && !jogo.montaria){ flutuar(jogo.ash, 'não dá pra montar em batalha', '#f58e8e'); return; }   // 14/09 (l.neto, vídeo): o atalho 5–9 montava no meio da batalha por turno
   glb = String(glb || '').replace(/\.glb$/, '');
   if (jogo.montaria && (!trocar || jogo.montaria.glb === glb)) return desmontar();   // desmontar vem ANTES do portão (14/09): montado no Arcanine, o M com outro glb travava em cima dele
-  if (!podeMontar(glb)){ if (jogo.ash) flutuar(jogo.ash, 'montarias chegam em breve', '#ffd23a'); return; }
+  if (!podeMontar(glb)){ if (jogo.ash) flutuar(jogo.ash, 'Mounts are disabled for your account.', '#ffd23a'); return; }
   const def = MONTARIAS.find(d => d[0] === glb) || [glb, glb, 'RideIdle1', 'Ride1', true, 0.6, 25000, 'anfibia'];
   const meio = def[7] || 'terra', { ash } = jogo;
   let px = ash.x, pz = ash.z;                                            // onde a montaria nasce
   const aguaAqui = naAgua(ash.x, ash.z);
   if (meio === 'agua' && !aguaAqui){ const p = aguaPerto(ash.x, ash.z, 6); if (!p){ flutuar(ash, def[1] + ' só entra pela beira da água', '#ffd23a'); return; } px = p.x; pz = p.z; }
   if (aguaAqui && meio === 'terra' && !def[4]){ flutuar(ash, def[1] + ' não anda na água', '#ffd23a'); return; }
+  guardarEstadoAtivo();
   jogo.montando = true;
   try {
     const g = await modeloMon(glb + '.glb');
@@ -2959,7 +2962,7 @@ async function montar(glb, { trocar = false } = {}){
     efeito('MountIn', m.peito, m.altura, { vidaMax: 1.6 });
     Som.tocar('skill/Wind1');
     flutuar(ash, (m.shiny ? '✨ ' : '') + (meio === 'agua' ? 'surfando no ' : 'montou no ') + m.nome, m.shiny ? '#8be9fd' : '#ffd23a');
-    if (ADM && m.voa) $('t-v').textContent = 'voo livre (adm): Espaço sobe · X desce · Shift turbo · sem barreira';
+    if (ADM && m.voa) $('t-v').textContent = I18n.t('voo livre (adm): Espaço sobe · X desce · Shift turbo · sem barreira');
   } catch (e){ console.warn('montaria:', e); }
   jogo.montando = false;
 }
@@ -2992,6 +2995,7 @@ function desmontar(){
   const emLinha = (px, pz) => linhaAte(px, pz, ash.x, ash.z);
   const t = doSurf ? (terraPerto(ash.x, ash.z, raio, (px, pz) => emLinha(px, pz) && aguaPerto(px, pz) !== null) || terraPerto(ash.x, ash.z, raio, (px, pz) => emLinha(px, pz) && desceSemPrender(px, pz))) : terraPerto(ash.x, ash.z, raio);
   if (!t){ flutuar(ash, 'sem terra firme por perto pra descer', '#ffd23a'); return false; }
+  guardarEstadoAtivo();
   soltarMontaria();
   ash.x = t.x; ash.z = t.z; ash.y = chaoEm(t.x, t.z) ?? m.y; ash.vx = ash.x; ash.vz = ash.z; ash.vy = ash.y; ash.giro = m.giro; ash.alvoX = null;
   ash.pivo.position.set(ash.vx, ash.vy, ash.vz); ash.pivo.rotation.set(0, ash.giro, 0);
@@ -3092,7 +3096,7 @@ function arrastavelDev(el, chave){
   const LS = 'janela.' + chave, interativo = t => t.closest('button, select, input, textarea, a');
   const encaixar = (x, y) => { const r = el.getBoundingClientRect(); x = Math.max(0, Math.min(innerWidth - Math.min(r.width || 40, innerWidth), x)); y = Math.max(0, Math.min(innerHeight - 24, y)); Object.assign(el.style, { left: x + 'px', top: y + 'px', right: 'auto', bottom: 'auto' }); };
   try { const p = JSON.parse(localStorage.getItem(LS) || 'null'); if (Array.isArray(p)) encaixar(p[0], p[1]); } catch {}
-  el.style.cursor = 'move'; el.style.touchAction = 'none'; el.title = 'Arraste pra mover · duplo clique volta pro lugar';
+  el.style.cursor = 'move'; el.style.touchAction = 'none'; el.title = I18n.t('Arraste pra mover · duplo clique volta pro lugar');
   el.addEventListener('pointerdown', ev => {
     if (ev.button !== 0 || interativo(ev.target)) return;
     const r = el.getBoundingClientRect(), dx = ev.clientX - r.left, dy = ev.clientY - r.top;
@@ -3256,7 +3260,8 @@ function ginasioEspera(g){ const cd = ginasioCd()[g.numero]; if (!cd) return 0; 
 const CENAS_EXPORTADAS = new Set((await fetch('./data/interiores_mapas.txt').then(r => r.ok ? r.text() : '').catch(() => '')).split(/\s+/).filter(Boolean).map(Number));   // interiores com GLB: porta só pra esses (Kanto tem portas pra cenas ainda não exportadas)
 const NPCS_GLB = await fetch('./data/npcs_glb.json').then(r => r.json()).catch(() => ({}));
 Ind.carregarLearnset(await fetch('./data/learnset.json').then(r => r.json()).then(L => { for (const [id, g] of Object.entries(GOLPES)) if (Number.isInteger(g.pp) && g.pp > 0) (L.pp ||= {})[id] = g.pp; return L; }).catch(() => null));   // golpes por nível (Sword/Shield) + PP (Fase 2: o PP de cada golpe vem do data/golpes.json, que o painel edita)
-const ITENS_NOME = await fetch('./data/menus_dados.json').then(r => r.json()).then(d => Object.fromEntries(Object.entries(d.itens || {}).map(([id, it]) => [id, it.n]))).catch(() => ({}));   // nomes pros avisos de missão
+const ITENS_CATALOGO = await fetch('./data/menus_dados.json').then(r => r.json()).then(d => d.itens || {}).catch(() => ({}));
+const ITENS_NOME = Object.fromEntries(Object.entries(ITENS_CATALOGO).map(([id, it]) => [id, it.n]));   // nomes pros avisos de missão
 await Evolucao.carregar();                                                 // regras de evolução + curvas de XP (antes do nascimento: o parceiro nasce com exp)
 let DEX_EXTRA = null; fetch('./data/dex_extra.json').then(r => r.json()).then(j => { DEX_EXTRA = j; }).catch(() => {});   // golpes por nível (regras "conhecendo X"); pode chegar depois
 const portasCena = []; const emPorta = new Set(); let portaOcupado = false;   // estado das portas/NPCs (funções mais abaixo)
@@ -3429,15 +3434,7 @@ if (JOGAR){
     // quem segue o Ash: Pikachu por padrão, ou ?seguidor=pm0244_00 (Entei) etc.
     /* 4 golpes: os da espécie (tabela) e, pra completar, golpes de dano com efeito, do tipo do
        Pokémon primeiro, do mais fraco pro mais forte — até a tabela de aprendizado por nível entrar. */
-    const quatroGolpes = dex => {
-      const S = porDex.get(dex);
-      const base = [...(dex === 25 ? GOLPES_PIKA : (GOLPES_ESPECIE[dex] || ['tackle']))];
-      const tipos = S?.types || [], usados = new Set(base);
-      const cands = Object.values(GOLPES).filter(g => g && g.id && g.efeito && g.cat !== 'status' && g.poder >= 30 && g.poder <= 95 && !usados.has(g.id))
-        .sort((a, b) => (tipos.includes(b.tipo) - tipos.includes(a.tipo)) || a.poder - b.poder);
-      for (const g of cands){ if (base.length >= 4) break; base.push(g.id); usados.add(g.id); }
-      return base.slice(0, 4);
-    };
+    const quatroGolpes = dex => Ind.fallbackDaEspecie(dex, porDex.get(dex), GOLPES);
     const configurarSeguidor = (pika, seguidorNome) => {
       const dex = +((seguidorNome || 'pm0025_00').match(/pm(\d{4})/)?.[1] || 25);
       const S = porDex.get(dex) || porDex.get(25);
@@ -3623,7 +3620,7 @@ if (JOGAR){
         cam: { get zoom(){ return zoom; }, set zoom(v){ zoom = v; }, get giro(){ return giro; }, set giro(v){ giro = v; } },
       })).catch(e => { console.warn('captura:', e); jogo.raidErro = String(e?.stack || e); });
     }
-    $('teclas').insertAdjacentHTML('beforeend', '<div style="margin-top:6px"><b>V</b> <span id="t-v">jogando: WASD anda, clique no chão vai até lá, botão direito arrasta</span></div>' + (DEMO ? '<div style="margin-top:4px"><b>M</b> monta / desmonta · <b>1 2</b> golpes · <b>Tab</b> alvo · <b>Esc</b> solta o alvo</div>' : '<div style="margin-top:4px"><b>M</b> monta / desmonta (o painel 🐉 escolhe a montaria) · <b>B</b> chama o chefão</div>') + '<div style="margin-top:6px" id="tam-box">tamanhos: <select id="tam-modo"><option value="proporcional">proporcionais (altura real comprimida)</option><option value="jogo">do Fairy (Pikachu 2,9×, Lugia 0,5×…)</option><option value="nativo">nativos (fofinhos)</option></select></div>');
+    $('teclas').insertAdjacentHTML('beforeend', "<div style=\"margin-top:6px\"><b>V</b> <span id=\"t-v\">playing: WASD to move, click the ground to walk there, right-drag to pan</span></div>" + (DEMO ? "<div style=\"margin-top:4px\"><b>M</b> mount / dismount · <b>1 2</b> moves · <b>Tab</b> target · <b>Esc</b> clear target</div>" : "<div style=\"margin-top:4px\"><b>M</b> mount / dismount (choose your mount in the 🐉 panel) · <b>B</b> summon the boss</div>") + "<div style=\"margin-top:6px\" id=\"tam-box\">sizes: <select id=\"tam-modo\"><option value=\"proporcional\">proportional (compressed real height)</option><option value=\"jogo\">Fairy sizes (Pikachu 2.9×, Lugia 0.5×…)</option><option value=\"nativo\">native (cute)</option></select></div>");
     $('tam-modo').value = jogo.tamanhos;
     $('tam-modo').addEventListener('change', e => { definirTamanhos(e.target.value); e.target.blur(); });
   } catch (e){ console.warn('sem personagens:', e); try { __boot.falha('sem personagens: ' + String(e?.stack || e).slice(0, 300)); } catch {} }   // 12/09: o jogador não nasceu — vai pro diagnóstico (antes só o console via, e o celular não tem console)
@@ -3793,7 +3790,7 @@ const DENS_JOGADOR = (() => {                                            // Fase
   return Math.max(0.2, Math.min(4, v || 1));
 })();
 const caixaArea = new Map((dados.caixas || []).map(c => [c.a, c]));
-const cidades = new Set(Object.entries(dados.nomes || {}).filter(([, n]) => /^Cidade/.test(n)).map(([a]) => +a));
+const cidades = new Set(Object.entries(dados.nomes || {}).filter(([, n]) => Areas.ehCidade(n)).map(([a]) => +a));
 const dentroDeCidade = (x, z) => {                     // x, z em coordenadas de mundo
   for (const a of cidades){ const c = caixaArea.get(a); if (!c) continue;
     if (Math.abs(x - flipX * c.x) <= c.sx / 2 && Math.abs(z - c.z) <= c.sz / 2) return true; }
@@ -4183,7 +4180,7 @@ function nivelTreinador(area, n){
 }
 function renivelarTreinador(info, area){
   const lv = nivelTreinador(area, info.time.length);
-  return lv ? { ...info, time: info.time.map(m => ({ ...m, lv })) } : info;
+  return { ...info, nome: I18n.nomeTreinador(info.nome), time: lv ? info.time.map(m => ({ ...m, lv })) : info.time };
 }
 const poolMon = new Map();
 function guardarSelvagem(s){
@@ -4355,7 +4352,7 @@ function hudChefe(c){
   let el = document.getElementById('chefe');
   if (!el){ el = document.createElement('div'); el.id = 'chefe'; el.className = 'ficha'; Object.assign(el.style, { position: 'fixed', left: '50%', top: '14px', transform: 'translateX(-50%)', minWidth: '380px', padding: '8px 14px', border: '1px solid #ff5f5f', borderRadius: '8px', background: 'var(--panel)', boxShadow: '0 8px 18px #000a', zIndex: 7, fontSize: '13px' }); document.body.appendChild(el); }
   const k = Math.max(0, c.hp / c.maxHp);
-  el.innerHTML = `<b style="color:#ffe07a;letter-spacing:.06em">${c.nome.toUpperCase()}</b> <span style="color:var(--muted)">Lv${c.lv} · CHEFE</span><span style="float:right;color:var(--muted)">${Math.max(0, Math.round(c.hp))} / ${c.maxHp}</span><i style="height:9px"><b style="width:${k * 100}%;background:${k > 0.5 ? '#e45670' : k > 0.2 ? '#f4aa35' : '#ff2d2d'}"></b></i>`;
+  el.innerHTML = `<b style="color:#ffe07a;letter-spacing:.06em">${c.nome.toUpperCase()}</b> <span style="color:var(--muted)">Lv${c.lv} · ${I18n.t('CHEFE')}</span><span style="float:right;color:var(--muted)">${Math.max(0, Math.round(c.hp))} / ${c.maxHp}</span><i style="height:9px"><b style="width:${k * 100}%;background:${k > 0.5 ? '#e45670' : k > 0.2 ? '#f4aa35' : '#ff2d2d'}"></b></i>`;
   return el;
 }
 function atualizarChefe(dt){
@@ -4547,7 +4544,7 @@ function atualizarSelvagens(dt){
     if (s.estado === 'desmaiado'){
       s.mix.update(dt); s.desmaio -= dt;
       const seg = Math.max(0, Math.ceil(s.desmaio));
-      if (s.rotulo && !s.raid && s.rotDesm !== seg){ s.rotDesm = seg; s.rotulo.innerHTML = `<span>${s.nome} desmaiado · <b>F</b> captura ${seg}s</span><i><b></b></i>`; s.rotHp = undefined; }
+      if (s.rotulo && !s.raid && s.rotDesm !== seg){ s.rotDesm = seg; s.rotulo.innerHTML = `<span>${s.nome} fainted · <b>F</b> catch ${seg}s</span><i><b></b></i>`; s.rotHp = undefined; }
       if (s.desmaio <= 0 && !s.rede){ s.rotDesm = undefined; if (s.rotulo) s.rotulo.innerHTML = `<span>${s.nome} Lv${s.lv}</span><i><b></b></i>`; morrer(s); }   // na rede, quem some é o servidor (`sumiu`)
       continue;
     }
@@ -4927,16 +4924,15 @@ jogo.bolas = lerLS('bolas', { 1001: 10, 1002: 5, 1003: 2, 1004: 1 });
    clique no vazio / botão direito / toque longo abre o seletor (menus.mjs `abrirAtalho`). localStorage `atalhos`:
    [{ tipo: 'item', id, nome, icone, bola } | { tipo: 'montaria', glb, nome, icone } | null]. */
 const ATALHOS_N = 5, ATALHOS_TECLAS = ['5', '6', '7', '8', '9'];   // 5º slot: pedido do Jaime 31/08 (a barra da Amanda tem 5 casas)
-jogo.atalhos = (lerLS('atalhos', null) || []).slice(0, ATALHOS_N); while (jogo.atalhos.length < ATALHOS_N) jogo.atalhos.push(null);
-/* ARCANINE PRA TODO MUNDO (14/09): quem tem conta e nenhuma montaria nos atalhos ganha o Arcanine no primeiro slot vazio (no celular é
-   o jeito de montar; no PC o M também serve). Fica na preferência `atalhos`, que a conta guarda. */
-if (CONTA.modo === 'conta' && !jogo.atalhos.some(a => a && a.tipo === 'montaria')){
+const atalhosSalvos = lerLS('atalhos', null);
+jogo.atalhos = (atalhosSalvos || []).slice(0, ATALHOS_N); while (jogo.atalhos.length < ATALHOS_N) jogo.atalhos.push(null);
+/* Only enabled starter mounts are assigned, and only without saved shortcut preferences.
+   Empty saved slots stay empty across map changes. */
+if (CONTA.modo === 'conta' && MONTARIAS_LIVRES.has('pm0059_00') && !Array.isArray(atalhosSalvos) && !jogo.atalhos.some(a => a && a.tipo === 'montaria')){
   const vago = jogo.atalhos.findIndex(a => !a);
   if (vago >= 0){ jogo.atalhos[vago] = { tipo: 'montaria', glb: 'pm0059_00', nome: 'Arcanine', icone: './ui/mon/pm0059.png' }; gravarLS('atalhos', jogo.atalhos); }
 }
-/* LAPRAS PRA TODO MUNDO (15/09, Jaime): as missões do capítulo 11 em diante (Rotas 19 e 20) são pelo mar. Quem tem conta e ainda não tem a
-   Lapras nos atalhos ganha ela no primeiro slot vazio (sem slot vazio, ela aparece no seletor do atalho). Aquática: entra pela beira. */
-if (CONTA.modo === 'conta' && !jogo.atalhos.some(a => a && a.tipo === 'montaria' && a.glb === 'pm0131_00')){
+if (CONTA.modo === 'conta' && MONTARIAS_LIVRES.has('pm0131_00') && !Array.isArray(atalhosSalvos) && !jogo.atalhos.some(a => a && a.tipo === 'montaria' && a.glb === 'pm0131_00')){
   const vago = jogo.atalhos.findIndex(a => !a);
   if (vago >= 0){ jogo.atalhos[vago] = { tipo: 'montaria', glb: 'pm0131_00', nome: 'Lapras', icone: './ui/mon/pm0131.png' }; gravarLS('atalhos', jogo.atalhos); }
 }
@@ -4966,7 +4962,7 @@ function reanimar(i, id, nome = REANIMADORES[id] || 'Reanimador'){
   const it = lerLS('itens', {}), t = jogo.time[i]; if (!t || !(it[id] > 0)) return false;
   if (!estaKO(t, i)){ flutuar(jogo.ash, t.nome + ' não está desmaiado', '#ffd23a'); return false; }
   const cheio = /m[aá]x/i.test(nome);
-  bolsaOp('usar', { item: +id, uid: uidAlvo });                           // com conta, quem desconta e quem reanima de verdade é o SERVIDOR
+  bolsaOp('usar', { item: +id, uid: uidAlvo, estado:{hp:t.hp,movs:(t.movs||[]).map(m=>({...m}))} });                           // com conta, quem desconta e quem reanima de verdade é o SERVIDOR
   it[id]--; if (it[id] <= 0) delete it[id]; gravarLS('itens', it);        // local já, pro jogador ver na hora
   if (i === membroAtivo()){
     const p = jogo.pika; p.hp = cheio ? p.maxHp : Math.ceil(p.maxHp / 2); p.desmaiado = 0; p.travaAnim = 0; p.anim = null; tocarAnim(p, 'Idle');
@@ -4978,7 +4974,7 @@ function reanimar(i, id, nome = REANIMADORES[id] || 'Reanimador'){
 }
 /** A cura da Joy (papel 'cura'): o time inteiro e o parceiro em campo voltam a 100%, desmaios removidos. */
 function curarTime(n){
-  if (comConta()) Rede.pedirVida('curar').then(r => { if (r && r.erro) Chat.sistema('⚠ ' + r.erro + '.'); });   // passo 3: a cura completa é do servidor (ele confere o Centro)
+  if (comConta()) (guardarEstadoAtivo(), Conta.enviarAgora()).then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r && r.erro) Chat.sistema('⚠ ' + r.erro + '.'); });   // passo 3: a cura completa é do servidor (ele confere o Centro)
   for (const t of jogo.time){ t.hp = t.maxHp || t.hp || 1; t.koAte = 0; Ind.restaurarPP(t); }
   gravarLS('time', jogo.time);
   const p = jogo.pika;
@@ -5070,7 +5066,7 @@ function aposDesmaio(){
   }
   Chat.sistema('Todos os seus Pokémon desmaiaram! Você acorda ' + (noCentro ? 'no último Centro Pokémon…' : 'no laboratório do Professor Oak…'));
   for (const t of jogo.time){ t.hp = t.maxHp || t.hp || 1; t.koAte = 0; Ind.restaurarPP(t); } gravarLS('time', jogo.time);   // guardarEstadoAtivo já rodou no topo: XP do ativo preservado
-  if (comConta()) Rede.pedirVida('curar').then(r => { if (r?.erro){ console.warn('curar no respawn recusado:', r.erro); __boot.aviso('curar no respawn recusado', { erro: r.erro }); } }).catch(e => console.warn('curar no respawn:', e));                                               // 12/09: o HP é do servidor — sem isto a página seguinte lia hp 0 dele e desmaiava de novo (ele aceita a cura com o time todo KO)
+  if (comConta()) (guardarEstadoAtivo(), Conta.enviarAgora()).then(ok => ok ? Rede.pedirVida('curar') : { erro: 'Progress could not be saved.' }).then(r => { if (r?.erro){ console.warn('curar no respawn recusado:', r.erro); __boot.aviso('curar no respawn recusado', { erro: r.erro }); } }).catch(e => console.warn('curar no respawn:', e));                                               // 12/09: o HP é do servidor — sem isto a página seguinte lia hp 0 dele e desmaiava de novo (ele aceita a cura com o time todo KO)
   p.hp = p.maxHp; p.desmaiado = 0;                                                                     // em memória também: qualquer gravação no unload sai curada
   portaOcupado = true;
   telaEscura(9000, (noCentro ? 'Centro Pokémon' : 'Laboratório') + '…');
@@ -5107,6 +5103,7 @@ function usarItem(id, nome = '', aviso = null){
      e como a conta de cura logo abaixo é feita pelo NOME, nenhum casava com Poção/Super/Hiper e os quatro davam 20 de HP.
      Sai antes das checagens de HP porque recarregar golpe não é curar: vale com o HP cheio e vale em Pokémon desmaiado.
      Quem restaura de verdade é o servidor (o `bolsa_usar` devolve o PP novo); aqui é só o efeito na hora, pro jogador ver. */
+  const estadoAntes = {hp:p.hp,movs:(p.movs || []).map(m=>({...m}))};
   const PP_ITENS = { 2022: { pp: 10, todos: false }, 2023: { pp: 'cheio', todos: false }, 2024: { pp: 10, todos: true }, 2025: { pp: 'cheio', todos: true } };
   const doPP = PP_ITENS[+id];
   if (doPP){
@@ -5117,7 +5114,7 @@ function usarItem(id, nome = '', aviso = null){
     if (!alvos.length || alvos.every(cheio)) return recusa(aviso ? p.nome + ' já está com o PP cheio' : 'PP já está cheio', p);
     let subiu = 0;
     for (const m of alvos){ const max = m.ppMax ?? m.pp ?? 0, antes = m.pp || 0; m.pp = doPP.pp === 'cheio' ? max : Math.min(max, antes + doPP.pp); subiu += m.pp - antes; }
-    bolsaOp('usar', { item: +id, uid: uidParceiro() });
+    bolsaOp('usar', { item: +id, uid: uidParceiro(), estado: estadoAntes });
     it[id]--; if (it[id] <= 0) delete it[id]; gravarLS('itens', it);
     flutuar(p, '+' + subiu + ' PP', '#8ecdf5'); Som.tocar('ui/sound_pkmnhealing', { volume: .6 });
     aviso?.(p.nome + ' recuperou ' + subiu + ' PP' + (doPP.todos ? ' (todos os golpes)' : ''), true);
@@ -5129,7 +5126,7 @@ function usarItem(id, nome = '', aviso = null){
   const cura = /Total|total/.test(nome) ? 1e9 : /Super/.test(nome) ? 60 : /Hiper|Máx/.test(nome) ? 200 : 20;
   const hpAntes = p.hp || 0;
   p.hp = Math.min(p.maxHp || p.hp, (p.hp || 0) + cura);
-  bolsaOp('usar', { item: +id, uid: uidParceiro() });                     // com conta, quem desconta e quem cura de verdade é o SERVIDOR
+  bolsaOp('usar', { item: +id, uid: uidParceiro(), estado: estadoAntes });                     // com conta, quem desconta e quem cura de verdade é o SERVIDOR
   it[id]--; if (it[id] <= 0) delete it[id]; gravarLS('itens', it);        // local já, pro jogador ver na hora
   flutuar(p, 'curou ' + Math.min(cura, 999) + ' HP', '#8ef58e'); Som.tocar('ui/sound_pkmnhealing', { volume: .6 });
   aviso?.(p.nome + ' recuperou ' + Math.round(p.hp - hpAntes) + ' HP', true);
@@ -5141,8 +5138,8 @@ function usarAtalho(i){
   const b = jogo.atalhos[i]; if (!jogo.ash) return;
   if (!b){ abrirSeletorAtalho(i); return; }
   if (b.tipo === 'montaria'){ montar(b.glb, { trocar: true }); return; }   // outra montaria assume no lugar (sem pisar no chão); a mesma = desmonta
-  if (b.bola){ if ((jogo.bolas[b.id] || 0) <= 0){ flutuar(jogo.ash, 'sem ' + b.nome, '#f58e8e'); return; } jogo.bolaSel = String(b.id); gravarLS('bolaSel', jogo.bolaSel); flutuar(jogo.ash, b.nome + ' no F', '#ffd23a'); pintarAtalhos(true); return; }
-  if (!usarItem(b.id, b.nome) && !(lerLS('itens', {})[b.id] > 0)) flutuar(jogo.ash, 'sem ' + b.nome, '#f58e8e');
+  if (b.bola){ if ((jogo.bolas[b.id] || 0) <= 0){ flutuar(jogo.ash, 'no ' + I18n.t(b.nome) + ' left', '#f58e8e'); return; } jogo.bolaSel = String(b.id); gravarLS('bolaSel', jogo.bolaSel); flutuar(jogo.ash, b.nome + ' no F', '#ffd23a'); pintarAtalhos(true); return; }
+  if (!usarItem(b.id, b.nome) && !(lerLS('itens', {})[b.id] > 0)) flutuar(jogo.ash, 'no ' + I18n.t(b.nome) + ' left', '#f58e8e');
 }
 function pintarAtalhos(forcar = false){
   const el = $('atalhos'); if (!el) return;
@@ -5150,10 +5147,10 @@ function pintarAtalhos(forcar = false){
   const it = lerLS('itens', {}), partes = [];
   for (let i = 0; i < ATALHOS_N; i++){
     const b = jogo.atalhos[i], tecla = ATALHOS_TECLAS[i];
-    if (!b){ partes.push(`<button type="button" class="atalho vazio" data-i="${i}" title="atalho ${tecla}: clique pra escolher (poção, bola ou montaria)"><b>${tecla}</b><span>+</span></button>`); continue; }
+    if (!b){ partes.push(`<button type="button" class="atalho vazio" data-i="${i}" title="shortcut ${tecla}: click to choose (potion, ball or mount)"><b>${tecla}</b><span>+</span></button>`); continue; }
     const n = b.tipo === 'item' ? (b.bola ? (jogo.bolas?.[b.id] || 0) : (it[b.id] || 0)) : null;
     const on = (b.tipo === 'montaria' && jogo.montaria?.glb === b.glb) || (b.bola && String(jogo.bolaSel) === String(b.id));
-    partes.push(`<button type="button" class="atalho${n === 0 ? ' frio' : ''}${on ? ' on' : ''}" data-i="${i}" title="${escHtml(b.nome)} (${tecla}) · botão direito ou toque longo: trocar"><b>${tecla}</b><i style="background-image:url('${b.icone}')"></i><em>${escHtml(b.nome)}</em>${n > 1 ? `<small>×${n}</small>` : '<small></small>'}</button>`);
+    partes.push(`<button type="button" class="atalho${n === 0 ? ' frio' : ''}${on ? ' on' : ''}" data-i="${i}" title="${escHtml(I18n.t(b.nome))} (${tecla}) · right-click or touch and hold to change"><b>${tecla}</b><i style="background-image:url('${b.icone}')"></i><em>${escHtml(I18n.t(b.nome))}</em>${n > 1 ? `<small>×${n}</small>` : '<small></small>'}</button>`);
   }
   const html = partes.join(''); if (html === el.__html) return; el.__html = html; el.innerHTML = html; Hud.remontar(el);   // Figma: reaplica a barra prata nos botões novos
 }
@@ -5183,7 +5180,7 @@ function proximaBola(){
   if (!ids.length) return;
   const i = ids.indexOf(String(jogo.bolaSel));
   jogo.bolaSel = ids[(i + 1) % ids.length]; gravarLS('bolaSel', jogo.bolaSel);
-  if (jogo.ash) flutuar(jogo.ash, BOLAS[jogo.bolaSel][0] + ' ×' + jogo.bolas[jogo.bolaSel], '#ffd23a');
+  if (jogo.ash) flutuar(jogo.ash, I18n.t(BOLAS[jogo.bolaSel][0]) + ' ×' + jogo.bolas[jogo.bolaSel], '#ffd23a');
 }
 /** Quantas chacoalhadas a bola dá (0–4); 4 = pegou. */
 function sortearCaptura(s, bonus){
@@ -5253,7 +5250,7 @@ async function verBolaDoOutro(s, m){
     if (chac >= 4){
       const luz = anim.getObjectByName('ee105_03_succeeded_light') || anim;
       efeito('Capture_OK', luz, 0.6); Som.tocar('ui/sound_pkmnget', { volume: .5 });
-      flutuar(de || s, (m.por || 'alguém') + ' capturou ' + s.nome + '!', '#8ef58e');
+      flutuar(de || s, (m.por || I18n.t('alguém')) + ' capturou ' + s.nome + '!', '#8ef58e');
       await dorme(2000);
       s.pivo.scale.setScalar(escBase);                                    // o corpo some pelo `sumiu capturado` do servidor
     } else {
@@ -5261,7 +5258,7 @@ async function verBolaDoOutro(s, m){
       await dorme(Math.max(0.17, tocar('Open')) * 1000);
       grupo.visible = false; await dorme(100);
       if (s.estado !== 'guardado'){ s.pivo.visible = true; await animar(120, k => s.pivo.scale.setScalar(escBase * (0.1 + 0.9 * k))); if (s.rotulo) s.rotulo.style.display = ''; }
-      flutuar(s, 'escapou da bola de ' + (m.por || 'alguém'), '#f58e8e');
+      flutuar(s, 'escapou da bola de ' + (m.por || I18n.t('alguém')), '#f58e8e');
       await dorme(400);
     }
   } catch (e){ console.warn('bola do outro:', e); }
@@ -5279,7 +5276,7 @@ async function jogarBola(){
   if (s.raid){ flutuar(ash, 'o Mew da raid não pode ser capturado', '#ffd23a'); Chat.sistema('O Mew da raid não pode ser capturado: derrube ele junto com o grupo e o prêmio chega no fim.'); return; }   // RAID AO VIVO (14/09)
   if (s.chefe){ flutuar(ash, 'chefão não cabe numa bola', '#f58e8e'); return; }
   if (s.estado !== 'desmaiado'){ flutuar(ash, 'derruba ele primeiro: só captura desmaiado', '#ffd23a'); return; }
-  if ((jogo.bolas[id] || 0) <= 0){ flutuar(ash, 'sem ' + (BOLAS[id]?.[0] || 'bola'), '#f58e8e'); return; }
+  if ((jogo.bolas[id] || 0) <= 0){ flutuar(ash, 'no ' + I18n.t(BOLAS[id]?.[0] || 'bola') + ' left', '#f58e8e'); return; }
   const dist = Math.hypot(s.x - ash.x, s.z - ash.z);
   if (dist > RAIO_BOLA){ flutuar(ash, 'longe demais (' + dist.toFixed(0) + ' m)', '#ffd23a'); return; }
   if (bolasVivas.length >= MAX_BOLAS_NO_AR){ flutuar(ash, 'espera as bolas caírem', '#ffd23a'); return; }
@@ -5437,6 +5434,7 @@ function aplicarVidas(lista){
     for (const [arr, ehTime] of alvos){
       const e = arr.find(x => String(x?.uid) === String(v.uid)); if (!e) continue;
       if (v.lv != null && v.lv > (e.lv || 0)){ for (let L = (e.lv || 0) + 1; L <= v.lv; L++){ e.lv = L; try { aprenderNoNivel(e); } catch (x){ console.warn('aprender:', x); } } }   // 12/09: nível do servidor também ensina os golpes do nível (com conta ninguém aprendia golpe novo)
+      if (Array.isArray(v.movs)) e.movs = v.movs.map(m=>({...m}));
       if (v.lv != null) e.lv = v.lv; if (v.exp != null) e.exp = v.exp;
       if (v.hp != null) e.hp = v.hp; if (v.maxHp != null) e.maxHp = v.maxHp;
       if (v.expReserva != null) e.expReserva = v.expReserva;               // XP guardada pelo teto de nível: agora é do servidor (12/09)
@@ -5471,9 +5469,10 @@ function aplicarVidas(lista){
 let ultimoItemget = 0;   // 14/09 (manhã): o acelerador do som da loja gravava em Som.__ultimoItemget — Som é o NAMESPACE do módulo (import *), read-only: toda compra no Pokémart lançava TypeError (l.neto, Syvel, catatum: 3 relatos no #relatos) e o item comprado não entrava na mochila local até o F5 (a "Pedra da Lua" da evolução do Nidorino)
 async function bolsaOp(op, dados = {}){
   if (!comConta()) return null;
+  if (op === 'usar' && await Conta.salvarExperiencia() === false) return {erro:'Progress could not be saved.'};
   const r = await Rede.pedirBolsa(op, dados);
-  if (r?.erro) Chat.sistema('⚠ ' + r.erro + '.');
-  else if (op === 'comprar' || op === 'coleta'){ const ag = performance.now(); if (ag - ultimoItemget > 160){ ultimoItemget = ag; Som.tocar('ui/sound_itemget', { volume: .7, prio: true }); } }   // sons do jogo original (11/09); 14/09 (Syvel, celular): comprar em rajada empilhava o som e ele distorcia — 1 toque a cada 160 ms
+  if (!r || r.erro){ const erro = r?.erro || 'The server did not respond'; Chat.sistema('⚠ ' + erro + '.'); return r || { erro }; }
+  if (op === 'comprar' || op === 'coleta'){ const ag = performance.now(); if (ag - ultimoItemget > 160){ ultimoItemget = ag; Som.tocar('ui/sound_itemget', { volume: .7, prio: true }); } }   // sons do jogo original (11/09); 14/09 (Syvel, celular): comprar em rajada empilhava o som e ele distorcia — 1 toque a cada 160 ms
   else if (op === 'missao' || op === 'premio') Som.tocar('ui/sound_keyitemget', { volume: .7, prio: true });
   return r || { erro: 'sem resposta' };
 }
@@ -5519,7 +5518,7 @@ function pintarTime(forcar = false){
     vals[i] = { k, pct: Math.round(k * 100), cor, hp, maxHp, alt };
     if (on && (forcar || !jogo.evoPronta || (jogo.quadroEvo = (jogo.quadroEvo || 0) + 1) % 30 === 0)) jogo.evoPronta = { v: evolucaoDe(p) };   // regras dos jogos (evolucao.mjs), reavaliadas a cada 30 quadros
     const evo = on && !jogo.evoluindo && !jogo.trocandoSeguidor ? jogo.evoPronta?.v : null;   // botão ✧ no canto do slot em campo: só quando alguma regra já vale
-    partes.push(`<div class="tcel"><button type="button" class="tslot${on ? ' on' : ''}${ko ? ' ko' : ''}${frio ? ' frio' : ''}${evo ? ' evo' : ''}" data-i="${i}" title="${escHtml(t.nome)} Lv${t.lv}${t.lv > tetoNivel() ? ' · 🔒 não obedece (teto Lv ' + tetoNivel() + ')' : t.lv >= tetoNivel() ? ' · no teto Lv ' + tetoNivel() + ' (XP guardada' + (t.expReserva > 0 ? ': ' + t.expReserva : '') + ')' : ''}${ko ? ' · desmaiado: clique usa um Reanimador da mochila' : on ? ' · em campo' : ' · clique pra trocar'} · arraste (ou segure, no toque) pra mudar a ordem · Alt+↑/↓" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><img src="${iconeMon(t.glb)}" alt="" draggable="false"><b class="tk">${i + 1}</b><small>${t.lv}</small><i><b style="width:${Math.round(k * 100)}%;background:${cor}"></b></i>${ko ? '<em>KO</em>' : ''}<u style="height:${alt}%"></u></button><div class="tcard"><b class="tc-nome">${escHtml(t.nome)}</b><small class="tc-lv">Lv ${t.lv}</small><b class="tc-lvn">${t.lv}</b><i class="tc-trilho"><b class="tc-fill" data-k="${k.toFixed(3)}" style="width:${Math.round(k * 100)}%;background:${cor}"></b></i><small class="tc-hp">${Math.round(hp)}/${maxHp}</small></div>${evo ? `<button type="button" class="tevo" data-arr-nao="1" title="evoluir → ${escHtml(evo.nome)}${evo.itemNome ? ' (usa ' + escHtml(evo.itemNome) + ')' : ''}">✧</button>` : ''}</div>`);
+    partes.push(`<div class="tcel"><button type="button" class="tslot${on ? ' on' : ''}${ko ? ' ko' : ''}${frio ? ' frio' : ''}${evo ? ' evo' : ''}" data-i="${i}" title="${escHtml(t.nome)} Lv${t.lv}${t.lv > tetoNivel() ? " · 🔒 disobeys (cap Lv " + tetoNivel() + ')' : t.lv >= tetoNivel() ? " · at the level cap Lv " + tetoNivel() + " (stored XP" + (t.expReserva > 0 ? ': ' + t.expReserva : '') + ')' : ''}${ko ? " · fainted: click to use a Revive from your bag" : on ? " · in the field" : " · click to switch"} · drag (or touch and hold) to reorder · Alt+↑/↓" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><img src="${iconeMon(t.glb)}" alt="" draggable="false"><b class="tk">${i + 1}</b><small>${t.lv}</small><i><b style="width:${Math.round(k * 100)}%;background:${cor}"></b></i>${ko ? '<em>KO</em>' : ''}<u style="height:${alt}%"></u></button><div class="tcard"><b class="tc-nome">${escHtml(t.nome)}</b><small class="tc-lv">Lv ${t.lv}</small><b class="tc-lvn">${t.lv}</b><i class="tc-trilho"><b class="tc-fill" data-k="${k.toFixed(3)}" style="width:${Math.round(k * 100)}%;background:${cor}"></b></i><small class="tc-hp">${Math.round(hp)}/${maxHp}</small></div>${evo ? `<button type="button" class="tevo" data-arr-nao="1" title="evolve → ${escHtml(evo.nome)}${evo.itemNome ? " (uses " + escHtml(I18n.t(evo.itemNome)) + ')' : ''}">✧</button>` : ''}</div>`);
   }
   const html = partes.join('');
   /* Assinatura SEM o que muda a cada quadro (HP, cor, recarga da troca): em batalha o HP muda todo quadro e refazer o innerHTML
@@ -5705,6 +5704,7 @@ async function usarItemEvolucao(id){
 function ganharExp(p, d, ganhoFixo = null){                               // ganhoFixo: o servidor já contou (fase 3c)
   if (!p?.dex || !d?.dex || !Evolucao.pronto()) return 0;
   const ganho = ganhoFixo ?? Math.max(1, Math.round(Evolucao.expGanha(p.lv, d.dex, d.lv, { chefe: !!d.chefe }) * Evento.expMult()));   // Fase 3: × EXP do evento ao vivo (o ganhoFixo o servidor já contou)
+  if (ganhoFixo == null && comConta() && Rede.selvagensDoAparelho()) Conta.registrarExperienciaLocal(uidParceiro(), d);
   p.exp = (p.exp ?? Evolucao.expPara(p.dex, p.lv)) + ganho;
   flutuar(p, '+' + ganho + ' XP', '#8ec5ff');
   const guardou = guardarReserva(p, ganho);                              // teto duro (GDD §7.4)
@@ -5770,7 +5770,7 @@ async function evoluirParceiro(opcao = null){
      achava 0 quando o jogador tinha só UMA (a recém-comprada), avisava "sem Pedra do Trovão" e desistia com o servidor já evoluído; a
      forma nova só chegava no próximo save (a saída da loja). Com 2+ pedras passava, por isso parecia coisa da loja. Agora confere antes;
      depois do "sim" do servidor a evolução é fato e a animação segue. */
-  if (alvo.consome && !(lerLS('itens', {})[alvo.consome] > 0)){ flutuar(p, 'sem ' + Evolucao.nomeItem(alvo.consome), '#f58e8e'); return false; }
+  if (alvo.consome && !(lerLS('itens', {})[alvo.consome] > 0)){ flutuar(p, 'missing ' + I18n.t(Evolucao.nomeItem(alvo.consome)), '#f58e8e'); return false; }
   if (comConta()){
     if (!t?.uid){ flutuar(p, 'este Pokémon ainda não está registrado no servidor', '#f58e8e'); return false; }
     const r = await Rede.pedirPosse('evoluir', { uid: t.uid, item: alvo.consome ?? null, itens: lerLS('itens', {}) });
@@ -5927,11 +5927,11 @@ function rotularJogador(){
      TÍTULO (12/09): numa SEGUNDA linha, embaixo do nome (Alpha Tester, ou o do colecionador quando conquistado). */
   const eu = Conta.comCargo(nomeJogador(), Conta.meuCargoAtual?.());
   const titulo = Conhecimento.tituloAtual?.() || '';
-  a.rotuloNome = rotuloSprite(eu.texto, eu.cor, 2.0, titulo);
+  a.rotuloNome = rotuloSprite(eu.texto, eu.cor, 2.0, titulo, '#bcd3ff', false);
   a.rotuloNome.position.set(0, (a.altura || 1.5) + 0.35 + (titulo ? 0.16 : 0), 0); a.pivo.add(a.rotuloNome);   // (06/09: um comentário tinha engolido estas duas chamadas — o próprio nome nunca entrava na cena); título sobe um pouco a plaquinha
 }
-function rotuloSprite(txt, cor = '#ffe07a', larg = 2.2, sub = '', subCor = '#bcd3ff'){
-  txt = I18n.t(txt);                                                      // idioma (etapa 2): NPC, líder, treinador e título; nome de jogador passa direto
+function rotuloSprite(txt, cor = '#ffe07a', larg = 2.2, sub = '', subCor = '#bcd3ff', traduzirNome = true){
+  if (traduzirNome) txt = I18n.t(txt);                                    // NPC labels translate; player names stay verbatim.
   sub = sub ? '<' + I18n.t(sub) + '>' : '';                              // título sob o nome (12/09): linha menor, entre < > (Alpha Tester ou o do colecionador)
   const med = document.createElement('canvas').getContext('2d');
   med.font = 'bold 44px Segoe UI, Arial'; const wNome = med.measureText(txt).width;
@@ -6234,6 +6234,8 @@ async function atravessar(p){
   const esperaPasse = (Conta.estado().modo === 'conta' && !Conta.cobreCena(mapa)) ? Rede.pedirPorta(p.id, p.destino, mapa, 1500).catch(() => false) : null;
   await Promise.all([dorme(550), esperaPasse]);
   if (esperaPasse && !Conta.cobreCena(mapa)) __boot.aviso('porta sem passe', { mapa, porta: p.id, chegada: p.destino }, true);
+  guardarEstadoAtivo();
+  if (await Conta.enviarAgora() === false){ jogo.navegando = false; portaOcupado = false; $('boot').hidden = true; Chat.sistema('Progress could not be saved. Check your connection and try the door again.'); return; }
   try { sessionStorage.setItem('porta.ok', '1'); } catch {} descarregarCena(); location.replace(u.toString());
 }
 /* LEVAR O JOGADOR PRA OUTRA CENA A MANDO DO SERVIDOR (14/09, raid ao vivo: `raid_ir` e `raid_voltar`). É o `atravessar` sem porta: o
@@ -6252,7 +6254,8 @@ async function irParaCena({ mapa = null, chegada = null, texto = '', raid = null
   else Raid.apagarCarimbo();
   telaEscura(9000, texto || '…');
   if (mapa && Conta.estado().modo === 'conta' && !Conta.cobreCena(String(mapa))) __boot.aviso('cena sem passe', { mapa, via: 'irParaCena' }, true);   // passe de progresso: quem libera é o servidor (antes de mandar); o boot trata
-  try { await Promise.race([Conta.enviarAgora(), dorme(2500)]); } catch {}   // o que estiver pendente sobe antes da recarga (como o terminarIntro), sem ficar preso numa rede ruim
+  guardarEstadoAtivo();
+  if (await Conta.enviarAgora() === false){ jogo.navegando = false; portaOcupado = false; $('boot').hidden = true; Chat.sistema('Progress could not be saved. Check your connection and try again.'); return false; }
   const u = new URL(location.href);
   if (mapa) u.searchParams.set('mapa', String(mapa)); else u.searchParams.delete('mapa');
   u.searchParams.delete('chegada'); u.searchParams.delete('personagem'); u.searchParams.delete('voltou'); u.searchParams.set('jogar', '1');
@@ -6312,7 +6315,7 @@ async function rodarIntro({ configurarSeguidor }){
     + '#intro-pular{position:fixed;right:18px;top:14px;z-index:41;background:#0009;color:#fff;border:1px solid #fff6;border-radius:8px;padding:6px 12px;font:600 13px system-ui,sans-serif;cursor:pointer}';
   document.head.appendChild(css);
   const leg = document.createElement('div'); leg.id = 'intro-leg'; document.body.appendChild(leg);
-  const pular = document.createElement('button'); pular.id = 'intro-pular'; pular.textContent = 'Pular ▸'; document.body.appendChild(pular);
+  const pular = document.createElement('button'); pular.id = 'intro-pular'; pular.textContent = I18n.t('Pular ▸'); document.body.appendChild(pular);
   pular.onclick = terminarIntro; window.addEventListener('keydown', e => { if (e.code === 'Escape') terminarIntro(); });
   const legenda = async (txt, seg) => { leg.textContent = txt; leg.classList.add('on'); await esperarSeg(seg); leg.classList.remove('on'); };
   const mover = async (seg, fn) => { const n = Math.max(1, Math.round(seg / 0.04)); for (let i = 1; i <= n; i++){ fn(i / n); await esperarSeg(0.04); } };
@@ -6397,7 +6400,7 @@ async function rodarRaid({ configurarSeguidor }){
   const topo = document.createElement('div'); topo.id = 'raid-topo';
   topo.innerHTML = '<div class="rt-nome"><b>Lugia</b><span>★ RAID · Lv70</span></div><div class="rt-barra"><div class="rt-hp"></div></div><div class="rt-sub"><span id="rt-jog">…</span><span id="rt-pct">100%</span></div>';
   document.body.appendChild(topo);
-  const sair = document.createElement('button'); sair.id = 'raid-sair'; sair.textContent = 'Sair ▸'; document.body.appendChild(sair);
+  const sair = document.createElement('button'); sair.id = 'raid-sair'; sair.textContent = I18n.t('Sair ▸'); document.body.appendChild(sair);
   sair.onclick = terminarRaid; window.addEventListener('keydown', e => { if (e.code === 'Escape') terminarRaid(); });
   ash.pivo.visible = false; pika.pivo.visible = false; pika.recolhido = true; portaOcupado = true;   // o jogador é só a câmera
   const PALCOS = {                                                       // palco por cena; esp = espaçamento entre os players, escBoss = tamanho do chefe
@@ -6458,7 +6461,7 @@ async function rodarRaid({ configurarSeguidor }){
     duplas.push({ tr, m, g: GOLPES[c.golpe] || GOLPES.tackle });
   }
   jogo.cinem = [lug, ...duplas.map(d => d.tr), ...duplas.map(d => d.m)];
-  topo.querySelector('#rt-jog').textContent = duplas.length + ' treinadores na batalha';
+  topo.querySelector('#rt-jog').textContent = I18n.t(duplas.length + ' treinadores na batalha');
   const y0 = chao(cx, (zS + zN) / 2);                                    // altura do palco (no platô do terreno o chão visual fica em y=3)
   const foco = { vx: cx, vy: y0 + 1.5, vz: (zS + zN) / 2 }; jogo.foco = foco;
   zoom = 1.35; giro = 2.75;
@@ -6542,10 +6545,10 @@ async function rodarTorneio({ configurarSeguidor }){
     + '#tn-flash.golpe b{font-size:min(8vw,60px);color:#fff}#tn-flash.golpe span{color:#ffd23a}'
     + '#tn-sair{position:fixed;right:12px;top:10px;z-index:42;background:#0009;color:#fff;border:1px solid #fff6;border-radius:8px;padding:4px 10px;font:600 12px system-ui,sans-serif;cursor:pointer;opacity:.12}#tn-sair:hover{opacity:1}';
   document.head.appendChild(css);
-  const topo = document.createElement('div'); topo.id = 'tn-topo'; topo.innerHTML = '<b>🏆 TORNEIO DE <i>KANTO</i></b><span id="tn-rodada">FINAL · Liga Índigo</span>'; document.body.appendChild(topo);
+  const topo = document.createElement('div'); topo.id = 'tn-topo'; topo.innerHTML = "<b>🏆 TOURNAMENT OF <i>KANTO</i></b><span id=\"tn-rodada\">FINAL · Indigo League</span>"; document.body.appendChild(topo);
   const cards = document.createElement('div'); cards.id = 'tn-cards'; document.body.appendChild(cards);
   const flash = document.createElement('div'); flash.id = 'tn-flash'; document.body.appendChild(flash);
-  const sair = document.createElement('button'); sair.id = 'tn-sair'; sair.textContent = 'Sair ▸'; document.body.appendChild(sair);
+  const sair = document.createElement('button'); sair.id = 'tn-sair'; sair.textContent = "Exit ▸"; document.body.appendChild(sair);
   sair.onclick = terminarTorneio; window.addEventListener('keydown', e => { if (e.code === 'Escape') terminarTorneio(); });
   ash.pivo.visible = false; pika.pivo.visible = false; pika.recolhido = true; portaOcupado = true;
   const cx = 1.6, zS = 1.5, zN = -9.5;                                   // palco da abertura: eixo z no meio do Quarto do Campeão
@@ -6611,7 +6614,7 @@ async function rodarTorneio({ configurarSeguidor }){
     if (fim()) return; vezDe = P; pintar();
     const velho = atual(P);
     cam('troca');
-    mostrarFlash('TROCA!', P.nick + ' recolhe ' + nomeDex(P.time[P.i]), 1.6);
+    mostrarFlash("SWITCH!", P.nick + " recalls " + nomeDex(P.time[P.i]), 1.6);
     if (P.tr.acoes?.has('Attack')) tocarUma(P.tr, 'Attack');
     await esperarSeg(0.45);
     efeito('FX_Evolution2', velho.peito, velho.altura, { escala: 1.2 }); await esperarSeg(0.35); velho.pivo.visible = false;
@@ -6620,7 +6623,7 @@ async function rodarTorneio({ configurarSeguidor }){
     try { await bolaLancada(P.tr, novo.x, novo.z); } catch {}
     novo.pivo.visible = true; if (novo.acoes?.has('Appear')) tocarUma(novo, 'Appear');
     encarar(); pintar();
-    mostrarFlash('VAI, ' + nomeDex(P.time[1]).toUpperCase() + '!', P.nick, 1.3);
+    mostrarFlash("GO, " + nomeDex(P.time[1]).toUpperCase() + '!', P.nick, 1.3);
     cam('alvo', novo); await esperarSeg(1.4);
     cam('tras'); await esperarSeg(0.3);
   }
@@ -6629,9 +6632,9 @@ async function rodarTorneio({ configurarSeguidor }){
     cam('alvo', def); jogo.tremor = 0.7;
     if (def.acoes?.has('Dead')){ tocarUma(def, 'Dead'); def.travaAnim = 9e9; }
     else { tocarUma(def, 'Wound'); def.travaAnim = 9e9; mover(0.45, k => { def.pivo.rotation.x = -1.35 * k; def.pivo.position.y = def.y + 0.15 * k; }); }   // sem clipe de queda: tomba
-    await mostrarFlash('KO!', nomeDex(Q.time[Q.i]) + ' caiu', 1.5);
+    await mostrarFlash('KO!', nomeDex(Q.time[Q.i]) + " fainted", 1.5);
   }
-  const RODADAS = ['FINAL · Liga Índigo', 'FINAL · melhor de 3 · jogo 2', 'FINAL · jogo decisivo'];
+  const RODADAS = ["FINAL · Indigo League", "FINAL · best of 3 · game 2", "FINAL · deciding game"];
   let ciclo = 0;
   while (!fim()){
     ciclo++;
@@ -6649,7 +6652,7 @@ async function rodarTorneio({ configurarSeguidor }){
     await ataque(B, A, 'surf', 0.18, 0.4);
     await ataque(A, B, 'thunder', 0.5, 0.2);
     await ko(B, A);
-    cam('troca'); await mostrarFlash('🏆 CAMPEÃO', A.nick + ' vence a final', 3.4);
+    cam('troca'); await mostrarFlash("🏆 CHAMPION", A.nick + " wins the final", 3.4);
     await esperarSeg(1.6);
   }
 }
@@ -6900,7 +6903,7 @@ async function montarLiderGinasio(g, n){
   const chaoRef = jogo.ash ? (chaoEm(jogo.ash.x, jogo.ash.z) ?? 0) : 0;
   teleportar(e, flipX * n.x, n.z); if (INTERIOR && e.y < chaoRef - 0.3){ e.y = e.vy = chaoRef; e.pivo.position.y = chaoRef; }
   e.giro = -(n.face || 0) * Math.PI / 180; e.pivo.rotation.y = e.giro;
-  e.rotSprite = rotuloSprite((tem ? '🏅 ' : '⚔ ') + g.lider + ' · ' + g.nome, tem ? '#ffd23a' : '#ffb1b1', 2.6); e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
+  e.rotSprite = rotuloSprite((tem ? '🏅 ' : '⚔ ') + I18n.t(g.lider) + ' · ' + I18n.t(g.nome), tem ? '#ffd23a' : '#ffb1b1', 2.6); e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
   tocarAnim(e, 'Idle'); jogo.npcs.push(e);
 }
 /** Membro da ELITE FOUR no quarto dele: um treinador ⚔ como o líder de ginásio, com o time montado pelo SERVIDOR. */
@@ -6912,7 +6915,7 @@ async function montarMembroElite(M, n){
   const chaoRef = jogo.ash ? (chaoEm(jogo.ash.x, jogo.ash.z) ?? 0) : 0;
   teleportar(e, flipX * n.x, n.z); if (INTERIOR && e.y < chaoRef - 0.3){ e.y = e.vy = chaoRef; e.pivo.position.y = chaoRef; }
   e.giro = -(n.face || 0) * Math.PI / 180; e.pivo.rotation.y = e.giro;
-  e.rotSprite = rotuloSprite('⚔ ' + M.nome + ' · ' + (M.titulo || 'Elite Four'), M.campeao ? '#ffd23a' : '#ffb1b1', 2.8);
+  e.rotSprite = rotuloSprite('⚔ ' + I18n.t(M.nome) + ' · ' + I18n.t(M.titulo || 'Elite Four'), M.campeao ? '#ffd23a' : '#ffb1b1', 2.8);
   e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
   tocarAnim(e, 'Idle'); jogo.npcs.push(e);
 }
@@ -7001,7 +7004,7 @@ async function mostrarFala(quem, linhas, dono = null, { semTempo = false } = {})
       caixa.innerHTML = '<b class="fala-nome"></b><span class="fala-txt"></span><small class="fala-dica"></small>';
       caixa.hidden = false; Hud.remontar(caixa);                         // Figma: nome/fala/dica nos lugares do balão
       const bN = caixa.querySelector('.fala-nome'), bT = caixa.querySelector('.fala-txt'), bD = caixa.querySelector('.fala-dica');
-      bN.textContent = I18n.t(quem);                                   // idioma (etapa 2): nome do NPC e cada linha da fala
+      bN.textContent = dono && (dono.papel === 'treinador' || dono.ginasio || dono.elite) ? I18n.nomeTreinador(quem) : I18n.t(quem);
       bT.style.whiteSpace = 'pre-line';                                // o `<br>` do dump vira quebra de linha de verdade (placas: "Cidade Pewter" / descrição)
       for (const pedaco of paginarFala(bT, limparTextoRico(I18n.t(linhas[i])))){
         bT.textContent = pedaco.txt; Hud.encolher(bT);
@@ -7217,10 +7220,10 @@ function escolherInicial(){
   caixa.hidden = false; jogo.ash.alvoX = null;
   const P = palcoIniciais(); P.abrir(); P.montar(gen);
   const pintar = () => {
-    caixa.innerHTML = `<div class="caixa"><button type="button" class="x" aria-label="fechar"></button><h2>${Dialogos.textoHtml('escolhaTitulo')}</h2><div class="sub">${Dialogos.textoHtml('escolhaSub')}</div>
+    caixa.innerHTML = `<div class="caixa"><button type="button" class="x" aria-label="close"></button><h2>${Dialogos.textoHtml('escolhaTitulo')}</h2><div class="sub">${Dialogos.textoHtml('escolhaSub')}</div>
       <div class="gens">${gens.map(g => `<button type="button" data-gen="${g}" class="${g === gen ? 'on' : ''}">GEN ${g}</button>`).join('')}</div>
       <div class="cartas">${INICIAIS[gen].map((o, i) => `<div class="carta ${i === sel ? 'on' : ''}" data-i="${i}"><div class="palco ${P.gen === gen && P.itens.some(it => it.i === i) ? 'pronto' : ''}" data-i="${i}"><div class="bola"></div></div><b>${o.nome}</b><small>Nº ${String(o.dex).padStart(3, '0')}</small><span>${o.tipos.map(tp => `<i style="background:${R.COR_TIPO?.[tp] || '#556'}">${tp}</i>`).join('')}</span></div>`).join('')}</div>
-      <div class="acoes"><button type="button" class="ok">${sel >= 0 ? 'Escolher ' + INICIAIS[gen][sel].nome : 'Escolher'}</button></div></div>`;
+      <div class="acoes"><button type="button" class="ok">${sel >= 0 ? "Choose " + INICIAIS[gen][sel].nome : "Choose"}</button></div></div>`;
     caixa.querySelector('.caixa').appendChild(P.canvas);                                   // o canvas 3D por cima da caixa (o innerHTML acima o tinha tirado)
     caixa.querySelectorAll('[data-gen]').forEach(b => b.onclick = () => { gen = b.dataset.gen; sel = -1; P.montar(gen); pintar(); });
     caixa.querySelectorAll('.carta').forEach(c => { c.onclick = () => { if (sel === +c.dataset.i) return; sel = +c.dataset.i; P.selecionar(sel); Som.tocar('ui/sound_click', { volume: 0.5 }); pintar(); }; P.arrastavel(c, +c.dataset.i); });
@@ -7261,27 +7264,29 @@ $('fala').addEventListener('click', () => pularFala?.());
    recarga gastos, nada acontecia). Agora: o Tab gira entre os DE PÉ e só cai no caído quando não
    há nenhum de pé; quando o alvo cai, a mira vai sozinha pro próximo de pé; e o golpe em caído
    avisa sem gastar nada. */
+const ALCANCE_ALVO = 8; // Nearby targets only, measured from the trainer in world metres.
 function emPe(s){
   return !!s && s.estado !== 'morto' && s.estado !== 'desmaiado' && s.estado !== 'capturando' && s.estado !== 'guardado' && s.estado !== 'koTurno';
 }
-/** O selvagem DE PÉ mais perto do Ash (raio 16 m: mais longe que isso o parceiro já larga a ordem). */
+/** Nearest standing wild Pokémon within the same range as Tab. */
 function dePeMaisPerto(excluir = null){
   const a = jogo.ash; if (!a) return null;
-  let melhor = null, md = 16;
+  let melhor = null, md = ALCANCE_ALVO;
   for (const s of jogo.selvagens){
     if (s === excluir || !emPe(s)) continue;
     const d = Math.hypot(s.x - a.x, s.z - a.z);
-    if (d < md){ md = d; melhor = s; }
+    if (d <= md){ md = d; melhor = s; }
   }
   return melhor;
 }
 function proximoAlvo(){
   const a = jogo.ash;
+  if (!a){ jogo.alvo = null; return; }
   const dist = s => Math.hypot(s.x - a.x, s.z - a.z);
-  const perto = jogo.selvagens.filter(s => s.estado !== 'morto' && s.estado !== 'capturando' && dist(s) < 25).sort((p, q) => dist(p) - dist(q));
+  const perto = jogo.selvagens.filter(s => (emPe(s) || s.estado === 'desmaiado') && s.pivo?.visible !== false && dist(s) <= ALCANCE_ALVO).sort((p, q) => dist(p) - dist(q));
   if (!perto.length){ jogo.alvo = null; return; }
-  /* O rodízio do Tab é entre os de pé; só com ninguém de pé ele passa pelos caídos (pra mirar a bola). */
-  const roda = perto.filter(emPe).length ? perto.filter(emPe) : perto;
+  // Standing targets first; fainted Pokémon remain available for capture when none are standing nearby.
+  const dePe = perto.filter(emPe), roda = dePe.length ? dePe : perto;
   jogo.alvo = roda[(roda.indexOf(jogo.alvo) + 1) % roda.length];
 }
 const anelAlvo = new THREE.Mesh(new THREE.RingGeometry(0.34, 0.46, 32).rotateX(-Math.PI / 2),
@@ -7401,7 +7406,7 @@ if (jogo.ash){
     Object.assign(sel.style, { padding: '3px 4px', border: '1px solid var(--line)', borderRadius: '3px', background: '#0b1020', color: 'var(--text)', font: 'inherit' });
     for (const [glb, nome] of LENDARIOS){ const o = document.createElement('option'); o.value = glb; o.textContent = nome; sel.appendChild(o); }
     sel.value = (params0.get('chefe') || 'pm0249_00').replace(/\.glb$/, ''); if (!sel.value) sel.value = 'pm0249_00';
-    const btn = document.createElement('button'); btn.id = 'chefe-btn'; btn.type = 'button'; btn.innerHTML = '☄ Chamar chefe <b>B</b>';
+    const btn = document.createElement('button'); btn.id = 'chefe-btn'; btn.type = 'button'; btn.innerHTML = I18n.t('☄ Chamar chefe') + ' <b>B</b>';
     Object.assign(btn.style, { padding: '5px 10px', border: '1px solid #ff5f5f', borderRadius: '6px', background: 'linear-gradient(#4a1414,#10131b)', color: '#ffd9d9', font: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap' });
     btn.querySelector('b').style.cssText = 'display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #ff5f5f;border-radius:3px;font-family:ui-monospace,Consolas,monospace';
     btn.addEventListener('click', () => { Som.destravar(); btn.blur(); chegarChefe(sel.value); });
@@ -7428,7 +7433,7 @@ if (jogo.ash){
     Object.assign(painel.style, { position: 'fixed', right: '320px', top: '88px', zIndex: 30, display: 'flex', gap: '6px', alignItems: 'center', padding: '5px 8px', border: '1px solid #8ef58e', borderRadius: '8px', background: 'rgba(10,20,14,.85)', backdropFilter: 'blur(4px)', color: 'var(--text)', font: 'inherit', fontSize: '12px' });
     const sel = document.createElement('select'); sel.id = 'segue-esp';
     Object.assign(sel.style, { padding: '3px 4px', border: '1px solid var(--line)', borderRadius: '3px', background: '#0b1020', color: 'var(--text)', font: 'inherit', maxWidth: '190px' });
-    const btn = document.createElement('button'); btn.id = 'segue-btn'; btn.type = 'button'; btn.innerHTML = '🐾 Seguir';
+    const btn = document.createElement('button'); btn.id = 'segue-btn'; btn.type = 'button'; btn.innerHTML = I18n.t('🐾 Seguir');
     Object.assign(btn.style, { padding: '5px 10px', border: '1px solid #8ef58e', borderRadius: '6px', background: 'linear-gradient(#14401f,#10131b)', color: '#d9ffe0', font: 'inherit', cursor: 'pointer' });
     const encher = async () => {
       let lista = [];
@@ -7436,7 +7441,7 @@ if (jogo.ash){
       sel.innerHTML = '';
       const doTime = new Map((jogo.time || []).map(e => [e.glb.replace(/\.glb$/, ''), e]));
       for (const e of jogo.time || []){ const o = document.createElement('option'); o.value = e.glb.replace(/\.glb$/, ''); o.textContent = `★ ${e.nome} Lv${e.lv || '?'}`; sel.appendChild(o); }
-      for (const e of lista){ if (doTime.has(e.glb)) continue; const o = document.createElement('option'); o.value = e.glb; o.textContent = `#${String(e.n).padStart(3, '0')} ${e.nome}${e.nota ? ' · ' + e.nota : ''}`; sel.appendChild(o); }
+      for (const e of lista){ if (doTime.has(e.glb)) continue; const o = document.createElement('option'); o.value = e.glb; o.textContent = `#${String(e.n).padStart(3, '0')} ${e.nome}${e.nota ? ' · ' + I18n.t(e.nota) : ''}`; sel.appendChild(o); }
       sel.value = (jogo.pika?.glb || 'pm0025_00').replace(/\.glb$/, '');
     };
     encher(); painel.__encher = encher;
@@ -7460,7 +7465,7 @@ if (jogo.ash){
   if (!DEMO) {
     const painel = document.createElement('div'); painel.id = 'admin-ctl';
     Object.assign(painel.style, { position: 'fixed', right: '320px', top: '126px', zIndex: 30, display: 'flex', alignItems: 'center', padding: '5px 8px', border: '1px solid #F8C237', borderRadius: '8px', background: 'rgba(26,20,6,.85)', backdropFilter: 'blur(4px)', font: 'inherit', fontSize: '12px', boxShadow: '0 8px 18px #000a' });
-    const btn = document.createElement('button'); btn.id = 'admin-btn'; btn.type = 'button'; btn.innerHTML = '⚙ Painel Admin';
+    const btn = document.createElement('button'); btn.id = 'admin-btn'; btn.type = 'button'; btn.innerHTML = I18n.t('⚙ Painel Admin');
     Object.assign(btn.style, { padding: '5px 10px', border: '1px solid #F8C237', borderRadius: '6px', background: 'linear-gradient(#4a3a10,#10131b)', color: '#ffe9a8', font: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap' });
     btn.addEventListener('click', () => { btn.blur(); window.open(new URL('/admin', location.href).toString(), '_blank'); });
     painel.append(btn); document.body.appendChild(painel);
@@ -7623,6 +7628,7 @@ if (jogo.ash){
      barra e o texto rola da direita pra esquerda; some sozinho depois de ~28 s. Também joga no chat, pra ficar no histórico. */
   window.letreiroInvasao = function letreiroInvasao(texto){
     if (!texto) return;
+    texto = I18n.t(texto);
     try {
       if (!document.getElementById('letreiro-css')){
         const st = document.createElement('style'); st.id = 'letreiro-css';
@@ -7688,7 +7694,7 @@ if (jogo.ash){
   // chegada em área durante o jogo (o "Você chegou em" acima é só do boot): chat + evento de missão
   let areaVista = areaInteriorVisitada ?? areaAtual();
   let areaNoServidor = null;                                               // "área@conexão" que o servidor já sabe (reconectou = conexão nova = manda de novo)
-  setInterval(() => { if (!jogo.ash || INTRO) return; const mmA = document.getElementById('mm-area'); if (mmA) mmA.textContent = nomeAreaAtual(); const a = areaInteriorVisitada ?? areaAtual(); if (a != null && a !== areaVista){ atualizarMusica(); areaVista = a; Chat.sistema('Você chegou em ' + nomeAreaAtual() + '.'); if (jogo.missoesOk) Missoes.evento({ tipo: 'area', area: a }); }
+  setInterval(() => { if (!jogo.ash || INTRO) return; const mmA = document.getElementById('mm-area'); if (mmA) mmA.textContent = I18n.t(nomeAreaAtual()); const a = areaInteriorVisitada ?? areaAtual(); if (a != null && a !== areaVista){ atualizarMusica(); areaVista = a; Chat.sistema('Você chegou em ' + nomeAreaAtual() + '.'); if (jogo.missoesOk) Missoes.evento({ tipo: 'area', area: a }); }
     const aS = a + '@' + Rede.estadoRede().id;                              // com conta quem marca o passo 'ir' é o servidor: o `pos` só leva o NOME da área, a missão usa o número.
     if (a != null && comConta() && aS !== areaNoServidor){ areaNoServidor = aS; Rede.enviar({ t: 'missao_area', area: a }); }   // fora do "mudou de área": no load a conexão ainda não estava pronta e o aviso se perdia
   }, 700);
@@ -7740,19 +7746,20 @@ Object.assign(window, { usarGolpe, proximoAlvo, emPe, dePeMaisPerto, desmaiar, a
 function setHTML(el, html){ if (el.__html !== html){ el.innerHTML = html; el.__html = html; } }   // `function` (içada): pintarBarra pode ser chamada por mensagem da rede antes desta linha (auditoria 12/09)
 function setTexto(el, s){ if (el.__txt !== s){ el.textContent = s; el.__txt = s; } }
 /* `TIPO_PT` (nomes dos ícones de tipo) mora junto do `jogo`, lá em cima: `pintarBarra` pode rodar por mensagem da rede antes desta linha (auditoria 12/09). */
+function iconeBola(id){ return './ui/itens/' + (ITENS_CATALOGO[id]?.i || ('ic_' + id)) + '.png'; }
 function pintarBarra(){
   const p = jogo.pika; if (!p) return;
-  const bc = $('chefe-btn'); if (bc){ const ocupado = !!jogo.chefe; if (bc.disabled !== ocupado){ bc.disabled = ocupado; bc.style.opacity = ocupado ? 0.45 : 1; bc.innerHTML = ocupado ? '☄ chefe em campo' : '☄ Chamar chefe <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #ff5f5f;border-radius:3px;font-family:ui-monospace,Consolas,monospace">B</b>'; } }
-  const bm = $('monta-btn'); if (bm){ const rot = jogo.montaria ? '⬇ Desmontar' : '🐉 Montar'; if (bm.dataset.rot !== rot){ bm.dataset.rot = rot; bm.innerHTML = rot + ' <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #79a7ff;border-radius:3px;font-family:ui-monospace,Consolas,monospace">M</b>'; } }
+  const bc = $('chefe-btn'); if (bc){ const ocupado = !!jogo.chefe; if (bc.disabled !== ocupado){ bc.disabled = ocupado; bc.style.opacity = ocupado ? 0.45 : 1; bc.innerHTML = ocupado ? I18n.t('☄ chefe em campo') : I18n.t('☄ Chamar chefe') + ' <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #ff5f5f;border-radius:3px;font-family:ui-monospace,Consolas,monospace">B</b>'; } }
+  const bm = $('monta-btn'); if (bm){ const rot = I18n.t(jogo.montaria ? '⬇ Desmontar' : '🐉 Montar'); if (bm.dataset.rot !== rot){ bm.dataset.rot = rot; bm.innerHTML = rot + ' <b style="display:inline-block;padding:0 5px;margin-left:5px;border:1px solid #79a7ff;border-radius:3px;font-family:ui-monospace,Consolas,monospace">M</b>'; } }
   const hpEl = $('f-pika-hp'), hpK = p.hp / p.maxHp;
   if (hpEl.__k !== hpK){ hpEl.__k = hpK; hpEl.style.width = (hpK * 100) + '%'; hpEl.style.background = hpK > 0.5 ? '#86ef5f' : hpK > 0.2 ? '#f4aa35' : '#e45670'; }
   setTexto($('f-pika-nome'), p.nome);
   setTexto($('f-pika-lv'), 'Lv' + p.lv + ' · ' + (jogo.montaria ? 'na Pokébola' : p.desmaiado > 0 ? 'desmaiado' : p.emBatalha ? 'em batalha' : 'seguindo'));
   for (let i = 0; i < 4; i++){
     const id = p.golpesIds[i], g = id && GOLPES[id], el = $('sk' + (i + 1));
-    if (!g){ if (!el.classList.contains('vazio')){ el.classList.add('vazio'); for (const f of [...el.children]) if (!f.dataset.fig) f.remove(); el.__pronto = false; el.__id = null; el.__ic = null; el.__txt = null; el.__pct = null; el.title = 'sem golpe'; } continue; } else if (el.classList.contains('vazio')) el.classList.remove('vazio');
+    if (!g){ if (!el.classList.contains('vazio')){ el.classList.add('vazio'); for (const f of [...el.children]) if (!f.dataset.fig) f.remove(); el.__pronto = false; el.__id = null; el.__ic = null; el.__txt = null; el.__pct = null; el.title = I18n.t('sem golpe'); } continue; } else if (el.classList.contains('vazio')) el.classList.remove('vazio');
     if (!el.__pronto){ el.insertAdjacentHTML('afterbegin', `<b>${i + 1}</b><em></em><s></s><i></i><small></small>`); el.__pronto = true; el.__em = el.querySelector(':scope > em'); el.__s = el.querySelector(':scope > s'); el.__i = el.querySelector(':scope > i'); el.__small = el.querySelector(':scope > small'); Hud.remontar($('skills')); }   // os <span data-fig> do Figma ficam; a peça remonta pra estilizar o miolo novo
-    if (el.__id !== id){ el.__id = id; el.__em.textContent = g.nome; el.__s.style.background = R.COR_TIPO?.[g.tipo] || '#556'; el.title = `${g.nome} · ${g.tipo} · poder ${g.poder} · recarga ${g.recarga}s`; Hud.encolher(el.__em); }
+    if (el.__id !== id){ el.__id = id; el.__em.textContent = g.nome; el.__s.style.background = R.COR_TIPO?.[g.tipo] || '#556'; el.title = I18n.t(`${g.nome} · ${g.tipo} · poder ${g.poder} · recarga ${g.recarga}s`); Hud.encolher(el.__em); }
     const ic = el.__ic || (el.__ic = el.querySelector('[data-var="tipo"]'));                       // Figma: ícone do tipo do golpe no slot (img/tipo)
     if (ic && ic.__tipo !== g.tipo){
       ic.__tipo = g.tipo; const srcTipo = './ui/figma/tipo/' + (TIPO_PT[g.tipo] || 'normal') + '.png';   /* 18/09 (rodada 32, Amanda: "a qualidade caiu depois do d6239fe0"): de volta aos PNGs de 692 px; o tamanho continua sendo a caixa do slot-tipo */
@@ -7766,7 +7773,7 @@ function pintarBarra(){
     if (el.__frio !== frio){ el.classList.toggle('frio', frio); el.__frio = frio; }
     const pct = rec > 0 ? Math.min(100, rec / (g.recarga || 1) * 100) : 0;
     if (el.__pct !== pct){ el.__i.style.height = pct + '%'; Hud.estado(el, 'cooldown', pct / 100); el.__pct = pct; }   // Figma: a sombra do estado [cooldown] desce junto
-    const txt = rec > 0 && p.hp > 0 ? rec.toFixed(1) : (m ? (semPp ? 'sem PP' : m.pp + '/' + m.ppMax) : '');
+    const txt = rec > 0 && p.hp > 0 ? rec.toFixed(1) : (m ? (semPp ? "no PP" : m.pp + '/' + m.ppMax) : '');
     if (el.__txt !== txt){ el.__small.textContent = txt; el.__txt = txt; }
   }
   const a = jogo.alvo;
@@ -7774,13 +7781,13 @@ function pintarBarra(){
      o TEXTO muda (a largura da barra saiu do template e vai por Hud.fill), senão a árvore montada seria destruída a
      cada ponto de dano. */
   const elAlvo = $('f-alvo');
-  const htmlAlvo = a ? `<b class="alvo-nome">${a.nome}</b> <span class="alvo-lv">Lv ${a.lv}</span> <span class="alvo-estado">${a.estado === 'desmaiado' ? `· desmaiado ${Math.max(0, Math.ceil(a.desmaio))}s · <b>F</b> captura` : [a.perfil, a.estado].filter(Boolean).map(x => '· ' + x).join(' ')}</span><i class="alvo-trilho"><b class="alvo-fill"></b></i>`
-                     : 'sem alvo — clique num selvagem ou <b>Tab</b>';
+  const htmlAlvo = a ? `<b class="alvo-nome">${a.nome}</b> <span class="alvo-lv">Lv ${a.lv}</span> <span class="alvo-estado">${a.estado === 'desmaiado' ? `· fainted ${Math.max(0, Math.ceil(a.desmaio))}s · <b>F</b> catch` : [a.perfil, a.estado].filter(Boolean).map(x => '· ' + I18n.t(x)).join(' ')}</span><i class="alvo-trilho"><b class="alvo-fill"></b></i>`
+                     : "no target — click a wild Pokémon or press <b>Tab</b>";
   if (elAlvo.__html !== htmlAlvo){ setHTML(elAlvo, htmlAlvo); Hud.remontar(elAlvo); }
   if (a) Hud.fill(elAlvo.querySelector('.alvo-fill'), a.hp / a.maxHp, corVida(a.hp / a.maxHp));
   const sel = jogo.bolaSel, nb = jogo.bolas?.[sel] || 0;
-  setTexto($('bola-nome'), BOLAS[sel]?.[0] || sel); setTexto($('bola-n'), '×' + nb);
-  const bi = $('bola-icone'); if (bi && bi.__sel !== sel){ bi.__sel = sel; bi.classList.add('real'); bi.style.backgroundImage = "url('./ui/itens/ic_" + sel + ".png')"; }   // ícone real da bola (pacote Item)
+  setTexto($('bola-nome'), I18n.t(BOLAS[sel]?.[0] || sel)); setTexto($('bola-n'), '×' + nb);
+  const bi = $('bola-icone'); if (bi && bi.__sel !== sel){ bi.__sel = sel; bi.classList.add('real'); bi.style.backgroundImage = "url('" + iconeBola(sel) + "')"; }   // Use the catalogue icon: event balls can share another ball's image.
   const bb = $('bola-btn'), semBola = nb <= 0; if (bb.__frio !== semBola){ bb.classList.toggle('frio', semBola); bb.__frio = semBola; }
   pintarAtalhos();
 }
@@ -7815,7 +7822,7 @@ Object.assign(window, { jogo, chaoEm, livre, bloqueio, pisos, aguas, deslocar, r
 function alternarJogo(){
   if (!jogo.ash) return;
   jogo.ativo = !jogo.ativo;
-  $('t-v').textContent = jogo.ativo ? 'jogando: WASD anda, clique no chão vai até lá, botão direito arrasta' : 'câmera livre (V volta ao Ash)';
+  $('t-v').textContent = I18n.t(jogo.ativo ? 'jogando: WASD anda, clique no chão vai até lá, botão direito arrasta' : 'câmera livre (V volta ao Ash)');
 }
 function atualizarJogo(dt, entrada){
   const { ash, pika } = jogo;
@@ -8051,7 +8058,7 @@ if (indice?.cenas?.length && !DEMO){
     sel.appendChild(op);
   }
   sel.addEventListener('change', () => { location.search = '?mapa=' + sel.value; });
-  $('teclas').insertAdjacentHTML('beforeend', '<div style="margin-top:6px" id="cena-box">cena: </div>');
+  $('teclas').insertAdjacentHTML('beforeend', I18n.tHtml('<div style="margin-top:6px" id="cena-box">cena: </div>'));
   $('cena-box').appendChild(sel);
 }
 
@@ -8070,7 +8077,7 @@ if (dados.caixas.length > 2 && !DEMO){
     if (c) alvo.copy(mundo(c.x, 0, c.z));
     sel.blur();
   });
-  $('teclas').insertAdjacentHTML('beforeend', '<div style="margin-top:6px" id="ir-box">ir para: </div>');
+  $('teclas').insertAdjacentHTML('beforeend', I18n.tHtml('<div style="margin-top:6px" id="ir-box">ir para: </div>'));
   $('ir-box').appendChild(sel);
 }
 const OFF = new THREE.Vector3(0, 18.8, 23.5);          // MainCamera.prefab (TransformConfig.Pos)
@@ -8125,8 +8132,9 @@ function noChao(ev){
 let arrasto = null, clicando = false;
 tela.addEventListener('contextmenu', ev => ev.preventDefault());
 /** No jogo o clique esquerdo manda o Ash até o ponto do chão (raio nos pisos). */
+function cliqueParaMover(){ return lerLS('controls.clickToMove', true) !== false; }
 function irPara(ev){
-  if (jogo.turno) return;                                                  // em turno não se anda no clique
+  if (!cliqueParaMover() || !jogo.ash || jogo.turno) return;                                                  // em turno não se anda no clique
   // plano na altura do Ash: basta para apontar o destino; a altura real vem do chaoEm
   const r = tela.getBoundingClientRect();
   ponteiro.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
@@ -8139,7 +8147,7 @@ tela.addEventListener('pointerdown', ev => {
   if (Menus.aberto() || Troca.aberta()) return;              // menu/janela/troca aberta: o chão não recebe o toque
   tela.setPointerCapture(ev.pointerId);
   Som.destravar();
-  if (Fairy && jogo.ativo && ev.button === 0){                  // clicou num NPC do Fairy: vai até ele e conversa
+  if (Fairy && jogo.ativo && ev.button === 0 && cliqueParaMover()){                  // clicou num NPC do Fairy: vai até ele e conversa
     const r = tela.getBoundingClientRect();
     ponteiro.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
     raio.setFromCamera(ponteiro, cam);
@@ -8152,6 +8160,7 @@ tela.addEventListener('pointerdown', ev => {
     const np = npcSobCursor(ev);                      // clicou num NPC ao alcance: conversa
     if (np && Math.hypot(np.x - jogo.ash.x, np.z - jogo.ash.z) <= alcanceDeFala(np)){ falarCom(np); return; }
     if (pertoDaMesa() && mesaSobCursor(ev)){ escolherInicial(); return; }   // tocou nas Pokébolas da mesa
+    if (!cliqueParaMover()) return;
     clicando = true; irPara(ev); return;
   }
   const p = noChao(ev); if (p) arrasto = { p, alvo: alvo.clone() };
@@ -8406,11 +8415,11 @@ async function povoarTreinadores(){
         const spotKey = spot.cfg + '@' + Math.round(spot.x) + ',' + Math.round(spot.z);
         const venceu = treinadorVencido(spot.cfg, vencidos);                // 17/09: pelo cfg, não pela vaga (ver treinadorVencido)
         e.npc = true; e.papel = 'treinador'; e.cfg = spot.cfg; e.treino = renivelarTreinador(info, spot.a); e.spotKey = spotKey; e.spot = spot;
-        e.nome = info.nome;
+        e.nome = e.treino.nome;
         e.falas = venceu ? [info.vitoria[0] || Dialogos.texto('jaVenceu')] : info.fala;   // vencido: ele te parabeniza (a fala de consolo é pra quando VOCÊ perde)
         teleportar(e, tx, tz);                                            // tx/tz = a vaga, já tirada da água (16/09)
         e.giro = Math.random() * Math.PI * 2; e.pivo.rotation.y = e.giro;
-        e.rotSprite = rotuloSprite((venceu ? '✔ ' : '⚔ ') + info.nome, venceu ? '#9fb2d0' : '#ffb1b1', 2.4);
+        e.rotSprite = rotuloSprite((venceu ? '✔ ' : '⚔ ') + e.nome, venceu ? '#9fb2d0' : '#ffb1b1', 2.4, '', '#bcd3ff', false);
         e.rotSprite.position.set(0, e.altura + 0.35, 0); e.pivo.add(e.rotSprite);
         tocarAnim(e, 'Idle');
         jogo.npcs.push(e); jogo.treinadores.push(e);
@@ -8435,7 +8444,7 @@ function marcarTreinadorVencido(n){
   if (!treinadorVencido(n.cfg, v)){ v.push(n.spotKey || (n.cfg + '@' + Math.round(flipX * n.x) + ',' + Math.round(n.z))); gravarLS('treinadoresVencidos', v); }
   const info = n.treino || {};
   n.falas = [(info.vitoria || [])[0] || Dialogos.texto('jaVenceu')];
-  if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + (info.nome || n.nome || ''), '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+  if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.nomeTreinador(info.nome || n.nome || ''), '#9fb2d0', 2.4, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
 }
 async function desafiarTreinador(n){
   if (jogo.turno) return;
@@ -8449,9 +8458,9 @@ function pintarConvite(n){
   if (E){
     const insignias = (lerLS('insignias', []) || []).length, faltam = Math.max(0, 8 - insignias);
     const naCorrida = !!eliteEstado.corrida;
-    el.innerHTML = `<div class="tcab">⚔ <b>${escHtml(E.nome)}</b> · ${escHtml(E.titulo || 'Elite Four')} <span class="tmini">${escHtml(E.tipo || '')} · ${(E.time || []).length} Pokémon · ${E.ordem}ª de 5</span></div>
-      <div class="tmini" style="margin:4px 0">${faltam ? 'A Liga só abre com as 8 insígnias de Kanto (faltam <b>' + faltam + '</b>).' : naCorrida ? 'Você está no meio da corrida: <b>nada de cura</b> até o Campeão cair.' : 'As cinco lutas são uma corrida só: <b>não dá pra curar entre elas</b>, e perder recomeça do primeiro quarto.'}</div>
-      <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Desafiar</button><button type="button" class="tbt" id="t-nao">Agora não</button></div>`;
+    el.innerHTML = `<div class="tcab">⚔ <b>${escHtml(E.nome)}</b> · ${escHtml(I18n.t(E.titulo || 'Elite Four'))} <span class="tmini">${escHtml(I18n.t(E.tipo || ''))} · ${(E.time || []).length} Pokémon · ${E.ordem} of 5</span></div>
+      <div class="tmini" style="margin:4px 0">${faltam ? "The League requires all 8 Kanto badges (missing <b>" + faltam + '</b>).' : naCorrida ? "You are in the middle of the challenge: <b>no healing</b> until the Champion is defeated." : "All five battles form one challenge: <b>you cannot heal between them</b>, and losing restarts from the first room."}</div>
+      <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Challenge</button><button type="button" class="tbt" id="t-nao">Not now</button></div>`;
     el.hidden = false;
     $('t-sim').onclick = () => { Som.destravar(); iniciarTurno(n); };
     $('t-nao').onclick = () => { el.hidden = true; };
@@ -8459,17 +8468,17 @@ function pintarConvite(n){
   }
   if (g){                                                            // ginásio: cabeçalho próprio, cooldown e "tentar agora" pago
     const tem = (lerLS('insignias', []) || []).includes(g.insignia.id), esp = ginasioEspera(g), min = Math.ceil(esp / 60);
-    el.innerHTML = `<div class="tcab">🏟 <b>${g.nome}</b> · Líder ${g.lider} <span class="tmini">${g.tipo} · ${g.time.length} Pokémon · Lv ${g.time[0].lv}–${g.time[g.time.length - 1].lv}${tem ? ' · você já tem a ' + g.insignia.nome : ' · vale a ' + g.insignia.nome}</span></div>
-      ${esp ? `<div class="tmini" style="margin:4px 0">Você perdeu há pouco: o líder volta em <b>${min} min</b>. Tentar agora custa <b>${g.resetMoedas} Moedas</b>.</div>` : ''}
-      <div class="tlinha">${esp ? `<button type="button" class="tbt luta" id="t-pagar">💰 Tentar agora (${g.resetMoedas})</button>` : '<button type="button" class="tbt luta" id="t-sim">⚔ Desafiar</button>'}<button type="button" class="tbt" id="t-nao">Agora não</button></div>`;
+    el.innerHTML = `<div class="tcab">🏟 <b>${I18n.t(g.nome)}</b> · Leader ${I18n.nomeTreinador(g.lider)} <span class="tmini">${I18n.t(g.tipo)} · ${g.time.length} Pokémon · Lv ${g.time[0].lv}–${g.time[g.time.length - 1].lv}${tem ? " · you already have the " + I18n.t(g.insignia.nome) : " · reward: " + I18n.t(g.insignia.nome)}</span></div>
+      ${esp ? `<div class="tmini" style="margin:4px 0">You recently lost: the leader returns in <b>${min} min</b>. Trying now costs <b>${g.resetMoedas} Coins</b>.</div>` : ''}
+      <div class="tlinha">${esp ? `<button type="button" class="tbt luta" id="t-pagar">💰 Try now (${g.resetMoedas})</button>` : "<button type=\"button\" class=\"tbt luta\" id=\"t-sim\">⚔ Challenge</button>"}<button type="button" class="tbt" id="t-nao">Not now</button></div>`;
     el.hidden = false;
     $('t-sim')?.addEventListener('click', () => { Som.destravar(); iniciarTurno(n); });
     $('t-pagar')?.addEventListener('click', () => { const d = lerLS('dinheiro', 50000); if (d < g.resetMoedas){ flutuar(jogo.ash, 'sem Moedas suficientes', '#f58e8e'); return; } if (comConta()) bolsaOp('ginasioreset', { ginasio: g.insignia.id }); else gravarLS('dinheiro', d - g.resetMoedas); const cd = ginasioCd(); delete cd[g.numero]; gravarLS('ginasioCd', cd); Chat.sistema('Você pagou ' + g.resetMoedas + ' Moedas pra desafiar ' + g.lider + ' de novo.'); Som.destravar(); iniciarTurno(n); });
     $('t-nao').onclick = () => { el.hidden = true; };
     return;
   }
-  el.innerHTML = `<div class="tcab">⚔ <b>${n.treino.nome}</b> quer batalhar! <span class="tmini">${n.treino.time.length} Pokémon · turnos</span></div>
-    <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Batalhar</button><button type="button" class="tbt" id="t-nao">Agora não</button></div>`;
+  el.innerHTML = `<div class="tcab">⚔ <b>${I18n.nomeTreinador(n.treino.nome)}</b> wants to battle! <span class="tmini">${n.treino.time.length} Pokémon · turn-based</span></div>
+    <div class="tlinha"><button type="button" class="tbt luta" id="t-sim">⚔ Battle</button><button type="button" class="tbt" id="t-nao">Not now</button></div>`;
   el.hidden = false;
   $('t-sim').onclick = () => { Som.destravar(); iniciarTurno(n); };
   $('t-nao').onclick = () => { el.hidden = true; };
@@ -8496,7 +8505,7 @@ async function iniciarTurno(n){
   }
   jogo.turno = { npc: n, info: n.treino, idx: -1, rodada: 0, fase: 'posiciona', caiu: false, inimigo: null, serv };
   atualizarMusica();                                                      // música de batalha (treinador / ginásio / elite)
-  if (serv) jogo.turno.info = { ...n.treino, nome: serv.nomeInimigo || n.treino?.nome, time: serv.dele.map(x => ({ dex: x.dex, lv: x.lv, glb: 'pm' + String(x.dex).padStart(4, '0') + '_00' })) };
+  if (serv) jogo.turno.info = { ...n.treino, nome: I18n.nomeTreinador(serv.nomeInimigo || n.treino?.nome), time: serv.dele.map(x => ({ dex: x.dex, lv: x.lv, glb: 'pm' + String(x.dex).padStart(4, '0') + '_00' })) };
   for (const s of jogo.selvagens) if (s.estado === 'atacando'){ s.estado = 'vagando'; s.pausa = 2; s.investida = null; }   // selvagem desiste: a batalha é só de vocês
   p.pivo.visible = false;                                                // o parceiro "volta pra bola" — sai dela no arremesso
   $('turno').hidden = true;
@@ -8770,7 +8779,7 @@ function fimTurno(vitoria, op = {}){
       Chat.sistema('🏆 Você venceu ' + E.nome + ' e é o Campeão de Kanto! Os seus Pokémon obedecem até o Lv 100' + (r.soltou ? ' e a XP guardada pelo teto saiu (' + r.soltou + ' Pokémon)' : '') + '.' + (r.premio && r.premio.dinheiro ? ' +' + r.premio.dinheiro + ' Moedas' : ''));
       flutuar(jogo.ash, '🏆 Campeão de Kanto!', '#ffd23a');
       liberarReserva();
-      if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏆 ' + E.nome + ' · ex-Campeão', '#ffd23a', 2.8); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+      if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏆 ' + I18n.nomeTreinador(E.nome) + ' · ' + I18n.t('ex-Campeão'), '#ffd23a', 2.8, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     } else if (vitoria){
       /* o `dinheiro` do membro (data/elite.json) é pago pelo servidor na PRIMEIRA vez que aquele membro cai: sem dizer aqui,
          a bolsa engordava em silêncio e o jogador só via a diferença ao abrir a Mochila */
@@ -8796,7 +8805,7 @@ function fimTurno(vitoria, op = {}){
     if (!comConta() && !doServidor) gravarLS('dinheiro', lerLS('dinheiro', 50000) + ganho);
     const cd = ginasioCd(); delete cd[g.numero]; gravarLS('ginasioCd', cd);
     n.falas = [g.vitoria[0]];
-    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏅 ' + g.lider + ' · ' + g.nome, '#ffd23a', 2.6); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('🏅 ' + I18n.nomeTreinador(g.lider) + ' · ' + I18n.t(g.nome), '#ffd23a', 2.6, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     if (primeira){ Chat.sistema('🏅 Você venceu ' + g.lider + ' e ganhou a ' + g.insignia.nome + '! (' + ins.length + '/8 de Kanto · Pokémon obedecem até um nível maior) +' + ganho + ' Moedas'); flutuar(jogo.ash, '🏅 ' + g.insignia.nome + '!', '#ffd23a'); if (jogo.missoesOk) Missoes.evento({ tipo: 'insignia', id: g.insignia.id, numero: g.numero }); }
     else { Chat.sistema('🏆 Revanche vencida contra ' + g.lider + ': +' + ganho + ' Moedas.'); flutuar(jogo.ash, '+' + ganho + ' Moedas', '#ffd23a'); }
     mostrarFala(g.lider, g.vitoria, n);
@@ -8822,7 +8831,7 @@ function fimTurno(vitoria, op = {}){
     else if (comConta()) bolsaOp('treinador', { treinador: n.spotKey, dinheiro: g, venceu: true });
     else gravarLS('dinheiro', lerLS('dinheiro', 50000) + g);
     n.falas = [t.vitoria[0] || Dialogos.texto('jaVenceu')];
-    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + t.nome, '#9fb2d0', 2.4); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
+    if (n.rotSprite){ n.pivo.remove(n.rotSprite); n.rotSprite = rotuloSprite('✔ ' + I18n.nomeTreinador(t.nome), '#9fb2d0', 2.4, '', '#bcd3ff', false); n.rotSprite.position.set(0, n.altura + 0.35, 0); n.pivo.add(n.rotSprite); }
     Chat.sistema('🏆 Você venceu ' + t.nome + ' e ganhou ' + g + ' Moedas!');
     flutuar(jogo.ash, '+' + g + ' Moedas', '#ffd23a');
     mostrarFala(t.nome, t.vitoria, n);
@@ -8843,11 +8852,11 @@ function pintarTurno(){
   const agora = Date.now(), ativo = membroAtivo();
   const iTroca = jogo.time.findIndex((c, j) => j !== ativo && !(c.hp === 0 && (c.koAte || 0) > agora) && !(c.hp === 0));
   const golpes = (p?.movs || []).map((m, i) => ({ g: GOLPES[m.id], m, i })).filter(x => x.g);
-  el.innerHTML = `<div class="tcab">⚔ <b>${T.info.nome}</b> · Pokémon ${Math.min(T.idx + 1, T.info.time.length)}/${T.info.time.length} · rodada ${T.rodada}${livreE ? '' : ' <span class="tmini">…executando</span>'}</div>
-    <div class="tlinha">${golpes.map(({ g, m, i }) => `<button type="button" class="tbt golpe" data-tg="${i}" ${livreE && m.pp > 0 ? '' : 'disabled'}><b>${i + 1}</b>${g.nome || g.id}<small>${g.tipo || ''} · ${g.poder || '—'} · PP ${m.pp}/${m.ppMax}</small></button>`).join('')}${p && Ind.semPP(p) ? `<button type="button" class="tbt golpe" data-tg="s" ${livreE ? '' : 'disabled'}><b>!</b>Struggle<small>Normal · 50 · sem PP</small></button>` : ''}</div>
-    <div class="tlinha"><button type="button" class="tbt" id="t-mochila" ${livreE ? '' : 'disabled'}>🎒 Mochila</button>
-      <button type="button" class="tbt" id="t-troca" ${livreE && iTroca >= 0 ? '' : 'disabled'}>🔄 Trocar</button>
-      <button type="button" class="tbt fugir" id="t-fugir" ${livreE ? '' : 'disabled'}>🏳 Desistir</button></div>`;
+  el.innerHTML = `<div class="tcab">⚔ <b>${T.info.nome}</b> · Pokémon ${Math.min(T.idx + 1, T.info.time.length)}/${T.info.time.length} · ${I18n.t('rodada')} ${T.rodada}${livreE ? '' : ' <span class="tmini">' + I18n.t('…executando') + '</span>'}</div>
+    <div class="tlinha">${golpes.map(({ g, m, i }) => `<button type="button" class="tbt golpe" data-tg="${i}" ${livreE && m.pp > 0 ? '' : 'disabled'}><b>${i + 1}</b>${I18n.t(g.nome || g.id)}<small>${I18n.t(g.tipo || '')} · ${g.poder || '—'} · PP ${m.pp}/${m.ppMax}</small></button>`).join('')}${p && Ind.semPP(p) ? `<button type="button" class="tbt golpe" data-tg="s" ${livreE ? '' : 'disabled'}><b>!</b>Struggle<small>Normal · 50 · ${I18n.t('sem PP')}</small></button>` : ''}</div>
+    <div class="tlinha"><button type="button" class="tbt" id="t-mochila" ${livreE ? '' : 'disabled'}>🎒 ${I18n.t('Mochila')}</button>
+      <button type="button" class="tbt" id="t-troca" ${livreE && iTroca >= 0 ? '' : 'disabled'}>🔄 ${I18n.t('Trocar Pokémon')}</button>
+      <button type="button" class="tbt fugir" id="t-fugir" ${livreE ? '' : 'disabled'}>🏳 ${I18n.t('Desistir')}</button></div>`;
   el.hidden = false;
   el.querySelectorAll('[data-tg]').forEach(b => b.onclick = () => { Som.destravar(); const g = b.dataset.tg === 's' ? STRUGGLE : GOLPES[jogo.pika.golpesIds[+b.dataset.tg]]; if (g) rodadaTurno({ tipo: 'golpe', g }); });
   $('t-mochila').onclick = () => Menus.abrir('mochila');

@@ -1,3 +1,4 @@
+import { carregarMensagens } from './mensagens.mjs';
 /* Editor de Cenário 3D — Pokemon 3D Base (jogo local). Suporta os DOIS modos de mapa:
  *  • BIBLIOTECA (kanto e +71 mapas): o GLB tem os prefabs na origem ("lib:<nome>"); o cenário são os `objetos` do JSON
  *    ({n,x,y,z}, 42k no kanto). Edito os objetos e re-instancio os prefabs nas posições (igual ao `instanciarBiblioteca` do
@@ -13,15 +14,18 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 const BASE = location.protocol === 'https:' ? location.origin + '/servidor' : 'http://' + location.hostname + ':5190';
 const $ = id => document.getElementById(id);
 let token = localStorage.getItem('conta.token') || '';
+let traduzirErro = texto => texto;
+const mensagensProntas = carregarMensagens().then(t => { traduzirErro = t; });
 const api = async (rota, metodo = 'GET', corpo) => {
   const r = await fetch(BASE + rota, { method: metodo, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) }, body: corpo != null ? JSON.stringify(corpo) : undefined });
-  let d = {}; try { d = await r.json(); } catch {} return { status: r.status, ok: r.ok, ...d };
+  let d = {}; try { d = await r.json(); } catch {} await mensagensProntas;
+  return { status: r.status, ok: r.ok, ...d, ...(typeof d.erro === 'string' ? { erro: traduzirErro(d.erro) } : {}) };
 };
-const toast = (m, erro = false) => { const e = document.createElement('div'); if (erro) e.className = 'erro'; e.textContent = m; $('toast').appendChild(e); setTimeout(() => e.remove(), 4500); };
+const toast = (m, erro = false) => { const e = document.createElement('div'); if (erro) e.className = 'erro'; e.textContent = traduzirErro(m); $('toast').appendChild(e); setTimeout(() => e.remove(), 4500); };
 const chaveNome = n => n.toLowerCase().replace(/^lib:?/, '').replace(/\s/g, '_').replace(/[\[\]\.:/]/g, '');
 
 const quem = await api('/admin/eu');
-if (!quem.ok || !quem.gm) { location.href = '/admin'; throw new Error('precisa ser GM'); }
+if (!quem.ok || !quem.gm) { location.href = '/admin'; throw new Error('GM access required'); }
 
 // ── Three ──────────────────────────────────────────────────────────────────────
 const tela = $('tela');
@@ -81,17 +85,17 @@ async function listarMapas() {
   const r = await api('/admin/mapas-glb');
   const mapas = r.mapas || [];
   $('sel-mapa').innerHTML = mapas.map(m => `<option>${m}</option>`).join('');
-  if (!mapas.length) { $('carregando').textContent = 'Nenhum mapa com GLB local.'; return; }
+  if (!mapas.length) { $('carregando').textContent = 'No map has a local GLB.'; return; }
   await carregarMapa(mapas.includes('pallet_rota1') ? 'pallet_rota1' : mapas[0]);
 }
 async function carregarMapa(nome) {
-  $('carregando').hidden = false; $('carregando').textContent = 'carregando ' + nome + '…';
+  $('carregando').hidden = false; $('carregando').textContent = 'Loading ' + nome + '…';
   mapaAtual = nome; $('sel-mapa').value = nome; deselecionar();
   for (const g of instGrupos) { raizInst.remove(g); g.dispose?.(); }
   instGrupos = []; pecas = []; partes = new Map(); nomeDoPrefab = new Map(); sceneGLB = null; mapaNode = null;
   let g;
   try { g = await loader.loadAsync('/cenario/' + nome + '.glb'); }
-  catch (e) { $('carregando').textContent = 'não consegui carregar o GLB de ' + nome; return; }
+  catch (e) { $('carregando').textContent = 'could not load the GLB for ' + nome; return; }
   sceneGLB = g.scene; sceneGLB.updateMatrixWorld(true);
   mapaNode = g.scene.getObjectByName('Mapa') || g.scene;
   // o GLTFLoader tira o ":" dos nomes, então "lib:floor" chega como "libfloor": detecta biblioteca pela maioria dos nós começar com "lib"
@@ -169,7 +173,7 @@ function realcar(peca) {
 }
 function atualizarCamposSel() {
   if (!selPeca) return; const p = selPeca.pos;
-  $('s-nome').textContent = selPeca.nome || '(sem nome)';
+  $('s-nome').textContent = selPeca.nome || '(unnamed)';
   $('s-x').value = +p.x.toFixed(3); $('s-y').value = +p.y.toFixed(3); $('s-z').value = +p.z.toFixed(3);
 }
 
@@ -222,7 +226,7 @@ function enquadrar() {
   const c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3()), r = Math.max(s.x, s.z, 10);
   orbit.target.copy(c); camera.position.set(c.x, c.y + r * 0.8, c.z + r * 0.9); orbit.update();
 }
-function atualizarHud() { $('hud').innerHTML = `<b>${pecas.length}</b> peças · <b>${instGrupos.length}</b> tipos · <b>${modo}</b> · mapa <b>${mapaAtual}</b>`; }
+function atualizarHud() { $('hud').innerHTML = `<b>${pecas.length}</b> pieces · <b>${instGrupos.length}</b> types · <b>${modo}</b> · map <b>${mapaAtual}</b>`; }
 
 // ── Paleta ────────────────────────────────────────────────────────────────────
 function renderPaleta() {
@@ -246,39 +250,39 @@ const exporter = new GLTFExporter();
 const canal = new BroadcastChannel('p3d-admin');                  // a aba do jogo avisa "recarregue" se estiver neste mapa
 const avisarJogo = () => canal.postMessage({ t: 'dados-mudaram', arquivo: mapaAtual, cenario: true });
 async function salvar() {
-  $('b-salvar').disabled = true; $('b-salvar').textContent = 'salvando…';
+  $('b-salvar').disabled = true; $('b-salvar').textContent = 'saving…';
   try {
     if (modo === 'biblioteca') {
       const listas = { objetos: [], ambiente: [], areaEnv: [] };   // refaz as 3 listas a partir das peças atuais
       for (const p of pecas) if (p.obj) listas[p.lista || 'objetos'].push(p.obj);
       const r = await api('/admin/mapa-objetos', 'POST', { mapa: mapaAtual, ...listas });
-      if (!r.ok) { toast(r.erro || 'Falha ao salvar.', true); return; }
-      sujo = false; $('sujo').hidden = true; toast('Cenário salvo (' + r.total + ' peças). Dê Ctrl+Shift+R no jogo.'); avisarJogo();
+      if (!r.ok) { toast(r.erro || 'Failed to save.', true); return; }
+      sujo = false; $('sujo').hidden = true; toast('Scene saved (' + r.total + ' pieces). Press Ctrl+Shift+R in the game.'); avisarJogo();
     } else {
       transform.detach();
       const buf = await new Promise((res, rej) => exporter.parse(sceneGLB, res, rej, { binary: true, onlyVisible: false }));
       const r = await fetch(BASE + '/admin/mapa-glb?mapa=' + encodeURIComponent(mapaAtual), { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/octet-stream' }, body: buf });
       const d = await r.json().catch(() => ({}));
-      if (!r.ok) { toast(d.erro || 'Falha ao salvar o GLB.', true); return; }
-      sujo = false; $('sujo').hidden = true; toast('Cenário salvo (' + (d.bytes / 1048576).toFixed(1) + ' MB). Ctrl+Shift+R no jogo.'); avisarJogo();
+      if (!r.ok) { toast(d.erro || 'Failed to save the GLB.', true); return; }
+      sujo = false; $('sujo').hidden = true; toast('Scene saved (' + (d.bytes / 1048576).toFixed(1) + ' MB). Press Ctrl+Shift+R in the game.'); avisarJogo();
     }
-  } catch (e) { toast('Erro ao salvar: ' + e.message, true); }
-  finally { $('b-salvar').disabled = false; $('b-salvar').textContent = 'Salvar cenário'; if (selPeca && modo === 'montado') transform.attach(proxy); }
+  } catch (e) { toast('Error saving: ' + e.message, true); }
+  finally { $('b-salvar').disabled = false; $('b-salvar').textContent = 'Save scene'; if (selPeca && modo === 'montado') transform.attach(proxy); }
 }
 
 // ── Ligações ──────────────────────────────────────────────────────────────────
 $('t-sel').onclick = () => usarFerramenta('sel');
-$('t-add').onclick = () => { if (!addTipo) toast('Escolha uma peça na paleta primeiro.'); usarFerramenta('add'); };
+$('t-add').onclick = () => { if (!addTipo) toast('Select a piece from the palette first.'); usarFerramenta('add'); };
 $('t-foco').onclick = enquadrar;
 $('t-snap').onchange = e => { snap = e.target.checked; };
-$('s-var').onclick = () => toast('A rotação está na própria peça: use a paleta pra colocar a variante que quiser.');
+$('s-var').onclick = () => toast('Rotation is part of the piece: use the palette to place the variant you want.');
 $('s-dup').onclick = duplicar;
 $('s-del').onclick = deletar;
 for (const k of ['x', 'y', 'z']) $('s-' + k).addEventListener('input', () => { if (!selPeca) return; const p = selPeca.pos; setPos(selPeca, k === 'x' ? (+$('s-x').value || 0) : p.x, k === 'y' ? (+$('s-y').value || 0) : p.y, k === 'z' ? (+$('s-z').value || 0) : p.z); proxy.position.set(fx * selPeca.pos.x, selPeca.pos.y, selPeca.pos.z); atualizarInst(selPeca); realcar(selPeca); marcarSujo(); });
 $('pal-busca').addEventListener('input', renderPaleta);
 $('b-salvar').onclick = salvar;
-$('b-recarregar').onclick = async () => { if (sujo && !confirm('Descartar as alterações não salvas?')) return; await carregarMapa(mapaAtual); };
-$('sel-mapa').onchange = async e => { if (sujo && !confirm('Trocar de mapa descarta o não salvo. Continuar?')) { e.target.value = mapaAtual; return; } await carregarMapa(e.target.value); };
+$('b-recarregar').onclick = async () => { if (sujo && !confirm('Discard unsaved changes?')) return; await carregarMapa(mapaAtual); };
+$('sel-mapa').onchange = async e => { if (sujo && !confirm('Changing maps discards unsaved changes. Continue?')) { e.target.value = mapaAtual; return; } await carregarMapa(e.target.value); };
 addEventListener('keydown', e => {
   if (/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
   if (e.key === 'Delete' || e.key === 'Backspace') deletar();

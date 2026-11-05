@@ -1,21 +1,22 @@
-/* IDIOMA DO JOGADOR (11/09/2026) — PT (a fonte), EN e ES. Etapa 1: telas, HUD, menus, avisos e os nomes que vieram do
- * dump (itens, golpes, áreas, títulos, roupas, NPCs). Missões e falas dos NPCs ficam pra etapa 2.
+/* PLAYER LANGUAGES — English is the default; Portuguese remains the source language and Spanish is also supported.
+ * The translation dictionaries cover the interface, HUD, menus, notices, game data, quests and NPC dialogue.
  *
- * COMO FUNCIONA: o código continua escrito em português. `t(texto)` procura o texto no dicionário do idioma escolhido e
- * devolve a tradução; sem tradução, devolve o próprio texto. Duas formas de chave:
+ * HOW IT WORKS: source strings remain unchanged. `t(text)` looks up the selected language dictionary and returns the
+ * translated string; if no translation exists, it returns the original source text. Duas formas de chave:
  *   exata     "Criar conta" → "Create account"
  *   padrão    "Você chegou em {x}." → "You arrived in {x}."   (o {x} casa com qualquer trecho; o que casou também passa
  *             pelo t(), então "Cidade Pallet" dentro da frase vira "Pallet Town")
+ *   A placeholder named raw_* preserves its captured text verbatim (names, custom text, identifiers).
  * Os pontos de saída (rótulos da maquete, Chat.sistema, flutuar, telaEscura, Popup.texto/botao, avisos das telas) chamam
  * o t() — assim as ~140 chamadas com texto montado por concatenação não precisaram mudar.
  *
- * Dicionários: data/idioma/ui_<l>.json (escritos à mão) + data/idioma/nomes_<l>.json (gerados de LanguageConfig_<l> pelo
- * tools/idioma_nomes.mjs). Escolha: ?idioma=en|es|pt na URL, a barra PT·EN·ES da tela de login (telas.mjs), o localStorage
- * `idioma` e a conta (POST /conta/idioma; volta no login). Padrão: o idioma do navegador, caindo em pt.
- * Nomes dos Pokémon ficam em inglês em todos os idiomas (decisão do Jaime, 11/09). */
+ * Dictionaries: data/idioma/ui_<l>.json, conteudo_<l>.json and nomes_<l>.json. Selection order: ?idioma=en|es|pt in the URL,
+ * saved device preference, then browser language. English is the fallback for new players. Account language preferences are
+ * restored at login. Portuguese and Spanish remain available.
+ * Pokémon names remain in English in every language. */
 export const IDIOMAS = { pt: 'Português', en: 'English', es: 'Español' };
 const LS = 'idioma';
-let atual = 'pt', exatas = new Map(), padroes = [], carregado = { pt: true };
+let atual = 'en', exatas = new Map(), padroes = [], habilidades = {}, carregado = { pt: true };
 const cache = new Map();                                                  // idioma → { exatas, padroes }
 
 export const idioma = () => atual;
@@ -23,7 +24,7 @@ export const ehPt = () => atual === 'pt';
 /** O que o navegador sugere, sem consultar nada guardado. */
 export function doNavegador(){
   const n = String((navigator.languages && navigator.languages[0]) || navigator.language || 'pt').toLowerCase();
-  return n.startsWith('es') ? 'es' : n.startsWith('en') ? 'en' : 'pt';
+  return n.startsWith('es') ? 'es' : 'en';
 }
 /** O idioma a usar nesta carga: URL > guardado no aparelho > navegador. */
 export function detectar(url = null){
@@ -54,8 +55,9 @@ async function baixar(l, bust = ''){
   const pega = async n => { try { const r = await fetch('./data/idioma/' + n + '_' + l + '.json'); return r.ok ? await r.json() : {}; } catch { return {}; } };
   /* PAINEL (Fase 3 → Traduções): data/traducoes.json = [{ pt, en, es }] editado pelo GM — vence tudo (é a correção mais recente). */
   const painel = async () => { try { const r = await fetch('./data/traducoes.json' + bust, { cache: 'no-cache' }); const lista = r.ok ? await r.json() : []; return Object.fromEntries((Array.isArray(lista) ? lista : []).filter(x => x?.pt && typeof x[l] === 'string' && x[l].trim()).map(x => [String(x.pt).trim(), x[l]])); } catch { return {}; } };
-  const [ui, conteudo, nomes, doPainel] = await Promise.all([pega('ui'), pega('conteudo'), pega('nomes'), painel()]);
+  const [ui, conteudo, nomes, doPainel, nomesHabilidades] = await Promise.all([pega('ui'), pega('conteudo'), pega('nomes'), painel(), l === 'en' ? pega('habilidades') : {}]);
   const d = montar([nomes, conteudo, ui, doPainel]);                       // a mão (ui, conteudo = missões/ginásios) vence o gerado (nomes); o painel vence tudo
+  d.habilidades = nomesHabilidades;
   cache.set(l, d); return d;
 }
 /** O painel salvou as traduções: relê o idioma atual (pt não traduz, não precisa). */
@@ -63,7 +65,7 @@ export async function recarregar(){
   cache.clear();
   if (atual === 'pt') return atual;
   const d = await baixar(atual, '?t=' + Date.now());
-  exatas = d.exatas; padroes = d.padroes;
+  exatas = d.exatas; padroes = d.padroes; habilidades = d.habilidades || {};
   return atual;
 }
 /* DESCRIÇÕES DA POKÉDEX (etapa 3): data/idioma/dex_<l>.json, por número da dex, geradas do jogo original pelo
@@ -83,9 +85,9 @@ export async function carregarDex(){ dex = await baixarDex(atual); return dex; }
 export async function carregar(l){
   if (!IDIOMAS[l]) l = 'pt';
   dex = dexCache.get(l) || {};
-  if (l === 'pt'){ atual = 'pt'; exatas = new Map(); padroes = []; document.documentElement.lang = 'pt-BR'; return atual; }
+  if (l === 'pt'){ atual = 'pt'; exatas = new Map(); padroes = []; habilidades = {}; document.documentElement.lang = 'pt'; return atual; }
   const d = await baixar(l);
-  atual = l; exatas = d.exatas; padroes = d.padroes; carregado[l] = true;
+  atual = l; exatas = d.exatas; padroes = d.padroes; habilidades = d.habilidades || {}; carregado[l] = true;
   document.documentElement.lang = l;
   return atual;
 }
@@ -114,11 +116,29 @@ export function t(s, vars = null){
     if (e != null) r = k === s ? e : s.replace(k, e);
     else for (const p of padroes){
       const m = p.re.exec(s);
-      if (m){ r = p.saida.replace(/\{(\w+)\}/g, (tudo, nome) => { const i = p.vars.indexOf(nome); return i >= 0 ? t(m[i + 1]) : tudo; }); break; }
+      if (m){ r = p.saida.replace(/\{(\w+)\}/g, (tudo, nome) => {
+        const i = p.vars.indexOf(nome);
+        // Explicit raw_* slots preserve names and free text inside translated notices.
+        return i >= 0 ? (nome.startsWith('raw_') ? m[i + 1] : t(m[i + 1])) : tudo;
+      }); break; }
     }
   }
   if (vars) r = r.replace(/\{(\w+)\}/g, (tudo, nome) => (nome in vars ? String(vars[nome]) : tudo));
   return r;
+}
+/** Ability labels use a separate dictionary so common words and user names are unaffected. */
+export function habilidade(nome){
+  if (atual === 'pt' || typeof nome !== 'string') return nome;
+  const chave = nome.trim();
+  return Object.hasOwn(habilidades, chave) ? nome.replace(chave, habilidades[chave]) : t(nome);
+}
+/** Translate built-in trainer classes without looking up the personal name as ordinary UI text. */
+export function nomeTreinador(nome){
+  if (typeof nome !== 'string' || atual === 'pt') return nome;
+  const classes = { Aluno: 'Student', Campista: 'Camper', 'Menina de Pique Nique': 'Picnicker', Jovem: 'Youngster', 'Menino de Shorts': 'Youngster', 'Gêmeas': 'Twins', Montanhista: 'Hiker', Alpinista: 'Hiker', 'Irmãos Lutadores': 'Fighting Brothers' };
+  const m = /^(Aluno|Campista|Menina de Pique Nique|Jovem|Menino de Shorts|Gêmeas|Montanhista|Alpinista|Irmãos Lutadores)(\s*-\s*)(.+)$/.exec(nome);
+  if (!m) return nome;
+  return atual === 'en' ? classes[m[1]] + m[2] + m[3] : t(nome);
 }
 /** Traduz um HTML pequeno trocando só os textos entre as tags (pra templates antigos). */
 export function tHtml(html){
