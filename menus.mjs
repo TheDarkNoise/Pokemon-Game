@@ -2723,6 +2723,23 @@ async function cfBuscarEmail(){
   if (aberta === 'config') render();
 }
 /** CONTROLES: mostra as teclas de verdade; remapear e joystick ainda não existem. */
+function definirCliqueParaMover(permitido){
+  ctx.gravarLS('controls.clickToMove', !!permitido);
+  if (!permitido && ctx.jogo?.ash){ ctx.jogo.ash.alvoX = null; ctx.jogo.ash.alvoZ = null; }
+}
+function linhaCliqueParaMover(area){
+  // Reuse the unused sprint row so the control fits both existing layouts.
+  const row = area.querySelector('[data-fig="tecla-correr"]'); if (!row) return;
+  const font = row.querySelector('[data-fig="rotulo"]')?.style.fontSize || row.dataset.clickFont || '14px';
+  row.dataset.clickFont = font; row.title = 'Allow clicking the ground to walk. WASD always works.';
+  row.replaceChildren();
+  const label = document.createElement('label'), input = document.createElement('input'), text = document.createElement('span');
+  Object.assign(label.style,{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',height:'100%',color:'#fff',fontSize:font,fontWeight:'700',pointerEvents:'auto',cursor:'pointer'});
+  input.type='checkbox';input.checked=ctx.lerLS('controls.clickToMove',true)!==false;input.setAttribute('aria-label','Click to move');
+  Object.assign(input.style,{accentColor:'#F8C237',cursor:'pointer',margin:'0 4px'});
+  text.textContent='Click to move';label.append(text,input);row.appendChild(label);
+  input.onchange=()=>definirCliqueParaMover(input.checked);
+}
 function encherCfControles(pop){
   for (const [id, tecla] of Object.entries(CF_TECLAS)){
     const g = pop.querySelector('[data-fig="tecla-' + id + '"]');
@@ -2730,6 +2747,7 @@ function encherCfControles(pop){
     Popup.texto(pop, 'tecla', tecla, g);
     if (CF_DICA_TECLA[id]) g.title = tr(CF_DICA_TECLA[id]);
   }
+  linhaCliqueParaMover(pop);
   Popup.seletor(pop, 'seletor-lado-joystick', 'Esquerda');
   Popup.ajuste(pop, 'ajuste-tamanho-joystick', 0.5, 'Normal');
   Popup.ajuste(pop, 'ajuste-tamanho-botoes', 0.5, 'Normal');              // rodada 25: coluna Celular (ainda não ajustável)
@@ -2750,6 +2768,7 @@ function rConfig(corpo){
   corpo.innerHTML = `<div class="config">
     <label><span>your name (shown above your head and in chat)</span><input type="text" id="c-nome" maxlength="16" value="${esc(ctx.nome || 'Ash')}" style="width:160px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#0b1020;color:var(--text);font:inherit"></label>
     <div id="c-nome-aviso" style="grid-column:1/-1;margin:-6px 0 4px;color:#98a4c0;font-size:12px">your name must be unique: you cannot use another trainer’s name</div>
+    <label><span>Click to move</span><input type="checkbox" id="c-click-move"></label>
     <label><span>volume</span><input type="range" id="c-vol" min="0" max="100" value="${vol}"> <span id="c-volv">${vol}%</span></label>
     <label><span>graphics quality</span><select id="c-qual"><option value="">automatic (${esc(ctx.qualidade || '?')})</option><option value="alta">high</option><option value="baixa">low (no shadows, 0.75×)</option></select></label>
     <label><span>Pokémon size</span><select id="c-tam"><option value="proporcional">proportional (default)</option><option value="jogo">game size</option><option value="nativo">native model size</option></select></label>
@@ -2780,6 +2799,7 @@ function rConfig(corpo){
     if (r && !r.ok){ av.textContent = tr(r.erro); av.style.color = '#f58e8e'; }
     else { av.textContent = 'done — you are now ' + ctx.nome + '.'; av.style.color = '#8fe08f'; }
   };
+  const clickMove=corpo.querySelector('#c-click-move');clickMove.checked=ctx.lerLS('controls.clickToMove',true)!==false;clickMove.onchange=()=>definirCliqueParaMover(clickMove.checked);
   corpo.querySelector('#c-vol').oninput = ev => { const v = +ev.target.value; corpo.querySelector('#c-volv').textContent = v + '%'; ctx.gravarLS('volume', v); ctx.Som?.ajustar?.({ sfx: v / 100, mus: v / 100 }); };
   const recarregar = (chave, valor) => { const u = new URL(location.href); if (valor) u.searchParams.set(chave, valor); else u.searchParams.delete(chave); location.href = u.toString(); };
   corpo.querySelector('#c-qual').onchange = ev => recarregar('qualidade', ev.target.value);
@@ -2832,7 +2852,7 @@ function rConfig(corpo){
 async function apagarTudo(){
   if (ctx.conta?.estado?.().modo === 'conta') await ctx.conta.zerarSave();   // fase 2: o save da conta também vira vazio (a conta fica)
   const manter = {};
-  for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (k && (k.startsWith('hud.') || k.startsWith('conta.') || k === 'volume' || k === 'tamanhos')) manter[k] = localStorage.getItem(k); }
+  for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (k && (k.startsWith('hud.') || k.startsWith('conta.') || k === 'volume' || k === 'tamanhos' || k.startsWith('controls.'))) manter[k] = localStorage.getItem(k); }
   try { localStorage.clear(); sessionStorage.clear(); } catch {}
   for (const [k, v] of Object.entries(manter)) localStorage.setItem(k, v);
   const u = new URL(location.href); for (const k of [...u.searchParams.keys()]) if (k !== 'raf' && k !== 'mobile') u.searchParams.delete(k);

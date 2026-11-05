@@ -7263,27 +7263,29 @@ $('fala').addEventListener('click', () => pularFala?.());
    recarga gastos, nada acontecia). Agora: o Tab gira entre os DE PÉ e só cai no caído quando não
    há nenhum de pé; quando o alvo cai, a mira vai sozinha pro próximo de pé; e o golpe em caído
    avisa sem gastar nada. */
+const ALCANCE_ALVO = 8; // Nearby targets only, measured from the trainer in world metres.
 function emPe(s){
   return !!s && s.estado !== 'morto' && s.estado !== 'desmaiado' && s.estado !== 'capturando' && s.estado !== 'guardado' && s.estado !== 'koTurno';
 }
-/** O selvagem DE PÉ mais perto do Ash (raio 16 m: mais longe que isso o parceiro já larga a ordem). */
+/** Nearest standing wild Pokémon within the same range as Tab. */
 function dePeMaisPerto(excluir = null){
   const a = jogo.ash; if (!a) return null;
-  let melhor = null, md = 16;
+  let melhor = null, md = ALCANCE_ALVO;
   for (const s of jogo.selvagens){
     if (s === excluir || !emPe(s)) continue;
     const d = Math.hypot(s.x - a.x, s.z - a.z);
-    if (d < md){ md = d; melhor = s; }
+    if (d <= md){ md = d; melhor = s; }
   }
   return melhor;
 }
 function proximoAlvo(){
   const a = jogo.ash;
+  if (!a){ jogo.alvo = null; return; }
   const dist = s => Math.hypot(s.x - a.x, s.z - a.z);
-  const perto = jogo.selvagens.filter(s => s.estado !== 'morto' && s.estado !== 'capturando' && dist(s) < 25).sort((p, q) => dist(p) - dist(q));
+  const perto = jogo.selvagens.filter(s => (emPe(s) || s.estado === 'desmaiado') && s.pivo?.visible !== false && dist(s) <= ALCANCE_ALVO).sort((p, q) => dist(p) - dist(q));
   if (!perto.length){ jogo.alvo = null; return; }
-  /* O rodízio do Tab é entre os de pé; só com ninguém de pé ele passa pelos caídos (pra mirar a bola). */
-  const roda = perto.filter(emPe).length ? perto.filter(emPe) : perto;
+  // Standing targets first; fainted Pokémon remain available for capture when none are standing nearby.
+  const dePe = perto.filter(emPe), roda = dePe.length ? dePe : perto;
   jogo.alvo = roda[(roda.indexOf(jogo.alvo) + 1) % roda.length];
 }
 const anelAlvo = new THREE.Mesh(new THREE.RingGeometry(0.34, 0.46, 32).rotateX(-Math.PI / 2),
@@ -8127,8 +8129,9 @@ function noChao(ev){
 let arrasto = null, clicando = false;
 tela.addEventListener('contextmenu', ev => ev.preventDefault());
 /** No jogo o clique esquerdo manda o Ash até o ponto do chão (raio nos pisos). */
+function cliqueParaMover(){ return lerLS('controls.clickToMove', true) !== false; }
 function irPara(ev){
-  if (jogo.turno) return;                                                  // em turno não se anda no clique
+  if (!cliqueParaMover() || !jogo.ash || jogo.turno) return;                                                  // em turno não se anda no clique
   // plano na altura do Ash: basta para apontar o destino; a altura real vem do chaoEm
   const r = tela.getBoundingClientRect();
   ponteiro.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
@@ -8141,7 +8144,7 @@ tela.addEventListener('pointerdown', ev => {
   if (Menus.aberto() || Troca.aberta()) return;              // menu/janela/troca aberta: o chão não recebe o toque
   tela.setPointerCapture(ev.pointerId);
   Som.destravar();
-  if (Fairy && jogo.ativo && ev.button === 0){                  // clicou num NPC do Fairy: vai até ele e conversa
+  if (Fairy && jogo.ativo && ev.button === 0 && cliqueParaMover()){                  // clicou num NPC do Fairy: vai até ele e conversa
     const r = tela.getBoundingClientRect();
     ponteiro.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
     raio.setFromCamera(ponteiro, cam);
@@ -8154,6 +8157,7 @@ tela.addEventListener('pointerdown', ev => {
     const np = npcSobCursor(ev);                      // clicou num NPC ao alcance: conversa
     if (np && Math.hypot(np.x - jogo.ash.x, np.z - jogo.ash.z) <= alcanceDeFala(np)){ falarCom(np); return; }
     if (pertoDaMesa() && mesaSobCursor(ev)){ escolherInicial(); return; }   // tocou nas Pokébolas da mesa
+    if (!cliqueParaMover()) return;
     clicando = true; irPara(ev); return;
   }
   const p = noChao(ev); if (p) arrasto = { p, alvo: alvo.clone() };
